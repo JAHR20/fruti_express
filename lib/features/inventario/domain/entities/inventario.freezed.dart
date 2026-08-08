@@ -11,33 +11,31 @@ part of 'inventario.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$Inventario {
 
- String get id; String get productoId; String get sucursalId; int get cantidadDisponible; int get cantidadReservada; DateTime get ultimaActualizacion;
+ String get productoId; String get sucursalId; int get stockDisponible; int get stockReservado; int? get precioLocal;// 🌟 CORRECCIÓN CRÍTICA: int en lugar de double para los centavos
+ DateTime get fechaActualizacion;
 /// Create a copy of Inventario
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $InventarioCopyWith<Inventario> get copyWith => _$InventarioCopyWithImpl<Inventario>(this as Inventario, _$identity);
 
-  /// Serializes this Inventario to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Inventario&&(identical(other.id, id) || other.id == id)&&(identical(other.productoId, productoId) || other.productoId == productoId)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.cantidadDisponible, cantidadDisponible) || other.cantidadDisponible == cantidadDisponible)&&(identical(other.cantidadReservada, cantidadReservada) || other.cantidadReservada == cantidadReservada)&&(identical(other.ultimaActualizacion, ultimaActualizacion) || other.ultimaActualizacion == ultimaActualizacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Inventario&&(identical(other.productoId, productoId) || other.productoId == productoId)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.stockDisponible, stockDisponible) || other.stockDisponible == stockDisponible)&&(identical(other.stockReservado, stockReservado) || other.stockReservado == stockReservado)&&(identical(other.precioLocal, precioLocal) || other.precioLocal == precioLocal)&&(identical(other.fechaActualizacion, fechaActualizacion) || other.fechaActualizacion == fechaActualizacion));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,productoId,sucursalId,cantidadDisponible,cantidadReservada,ultimaActualizacion);
+int get hashCode => Object.hash(runtimeType,productoId,sucursalId,stockDisponible,stockReservado,precioLocal,fechaActualizacion);
 
 @override
 String toString() {
-  return 'Inventario(id: $id, productoId: $productoId, sucursalId: $sucursalId, cantidadDisponible: $cantidadDisponible, cantidadReservada: $cantidadReservada, ultimaActualizacion: $ultimaActualizacion)';
+  return 'Inventario(productoId: $productoId, sucursalId: $sucursalId, stockDisponible: $stockDisponible, stockReservado: $stockReservado, precioLocal: $precioLocal, fechaActualizacion: $fechaActualizacion)';
 }
 
 
@@ -48,7 +46,7 @@ abstract mixin class $InventarioCopyWith<$Res>  {
   factory $InventarioCopyWith(Inventario value, $Res Function(Inventario) _then) = _$InventarioCopyWithImpl;
 @useResult
 $Res call({
- String id, String productoId, String sucursalId, int cantidadDisponible, int cantidadReservada, DateTime ultimaActualizacion
+ String productoId, String sucursalId, int stockDisponible, int stockReservado, int? precioLocal, DateTime fechaActualizacion
 });
 
 
@@ -65,14 +63,14 @@ class _$InventarioCopyWithImpl<$Res>
 
 /// Create a copy of Inventario
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? productoId = null,Object? sucursalId = null,Object? cantidadDisponible = null,Object? cantidadReservada = null,Object? ultimaActualizacion = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? productoId = null,Object? sucursalId = null,Object? stockDisponible = null,Object? stockReservado = null,Object? precioLocal = freezed,Object? fechaActualizacion = null,}) {
   return _then(_self.copyWith(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,productoId: null == productoId ? _self.productoId : productoId // ignore: cast_nullable_to_non_nullable
+productoId: null == productoId ? _self.productoId : productoId // ignore: cast_nullable_to_non_nullable
 as String,sucursalId: null == sucursalId ? _self.sucursalId : sucursalId // ignore: cast_nullable_to_non_nullable
-as String,cantidadDisponible: null == cantidadDisponible ? _self.cantidadDisponible : cantidadDisponible // ignore: cast_nullable_to_non_nullable
-as int,cantidadReservada: null == cantidadReservada ? _self.cantidadReservada : cantidadReservada // ignore: cast_nullable_to_non_nullable
-as int,ultimaActualizacion: null == ultimaActualizacion ? _self.ultimaActualizacion : ultimaActualizacion // ignore: cast_nullable_to_non_nullable
+as String,stockDisponible: null == stockDisponible ? _self.stockDisponible : stockDisponible // ignore: cast_nullable_to_non_nullable
+as int,stockReservado: null == stockReservado ? _self.stockReservado : stockReservado // ignore: cast_nullable_to_non_nullable
+as int,precioLocal: freezed == precioLocal ? _self.precioLocal : precioLocal // ignore: cast_nullable_to_non_nullable
+as int?,fechaActualizacion: null == fechaActualizacion ? _self.fechaActualizacion : fechaActualizacion // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
@@ -158,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String productoId,  String sucursalId,  int cantidadDisponible,  int cantidadReservada,  DateTime ultimaActualizacion)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String productoId,  String sucursalId,  int stockDisponible,  int stockReservado,  int? precioLocal,  DateTime fechaActualizacion)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Inventario() when $default != null:
-return $default(_that.id,_that.productoId,_that.sucursalId,_that.cantidadDisponible,_that.cantidadReservada,_that.ultimaActualizacion);case _:
+return $default(_that.productoId,_that.sucursalId,_that.stockDisponible,_that.stockReservado,_that.precioLocal,_that.fechaActualizacion);case _:
   return orElse();
 
 }
@@ -179,10 +177,10 @@ return $default(_that.id,_that.productoId,_that.sucursalId,_that.cantidadDisponi
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String productoId,  String sucursalId,  int cantidadDisponible,  int cantidadReservada,  DateTime ultimaActualizacion)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String productoId,  String sucursalId,  int stockDisponible,  int stockReservado,  int? precioLocal,  DateTime fechaActualizacion)  $default,) {final _that = this;
 switch (_that) {
 case _Inventario():
-return $default(_that.id,_that.productoId,_that.sucursalId,_that.cantidadDisponible,_that.cantidadReservada,_that.ultimaActualizacion);case _:
+return $default(_that.productoId,_that.sucursalId,_that.stockDisponible,_that.stockReservado,_that.precioLocal,_that.fechaActualizacion);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +197,10 @@ return $default(_that.id,_that.productoId,_that.sucursalId,_that.cantidadDisponi
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String productoId,  String sucursalId,  int cantidadDisponible,  int cantidadReservada,  DateTime ultimaActualizacion)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String productoId,  String sucursalId,  int stockDisponible,  int stockReservado,  int? precioLocal,  DateTime fechaActualizacion)?  $default,) {final _that = this;
 switch (_that) {
 case _Inventario() when $default != null:
-return $default(_that.id,_that.productoId,_that.sucursalId,_that.cantidadDisponible,_that.cantidadReservada,_that.ultimaActualizacion);case _:
+return $default(_that.productoId,_that.sucursalId,_that.stockDisponible,_that.stockReservado,_that.precioLocal,_that.fechaActualizacion);case _:
   return null;
 
 }
@@ -211,18 +209,19 @@ return $default(_that.id,_that.productoId,_that.sucursalId,_that.cantidadDisponi
 }
 
 /// @nodoc
-@JsonSerializable()
 
-class _Inventario implements Inventario {
-  const _Inventario({required this.id, required this.productoId, required this.sucursalId, required this.cantidadDisponible, required this.cantidadReservada, required this.ultimaActualizacion});
-  factory _Inventario.fromJson(Map<String, dynamic> json) => _$InventarioFromJson(json);
 
-@override final  String id;
+class _Inventario extends Inventario {
+  const _Inventario({required this.productoId, required this.sucursalId, required this.stockDisponible, required this.stockReservado, this.precioLocal, required this.fechaActualizacion}): super._();
+  
+
 @override final  String productoId;
 @override final  String sucursalId;
-@override final  int cantidadDisponible;
-@override final  int cantidadReservada;
-@override final  DateTime ultimaActualizacion;
+@override final  int stockDisponible;
+@override final  int stockReservado;
+@override final  int? precioLocal;
+// 🌟 CORRECCIÓN CRÍTICA: int en lugar de double para los centavos
+@override final  DateTime fechaActualizacion;
 
 /// Create a copy of Inventario
 /// with the given fields replaced by the non-null parameter values.
@@ -230,23 +229,20 @@ class _Inventario implements Inventario {
 @pragma('vm:prefer-inline')
 _$InventarioCopyWith<_Inventario> get copyWith => __$InventarioCopyWithImpl<_Inventario>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$InventarioToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Inventario&&(identical(other.id, id) || other.id == id)&&(identical(other.productoId, productoId) || other.productoId == productoId)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.cantidadDisponible, cantidadDisponible) || other.cantidadDisponible == cantidadDisponible)&&(identical(other.cantidadReservada, cantidadReservada) || other.cantidadReservada == cantidadReservada)&&(identical(other.ultimaActualizacion, ultimaActualizacion) || other.ultimaActualizacion == ultimaActualizacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Inventario&&(identical(other.productoId, productoId) || other.productoId == productoId)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.stockDisponible, stockDisponible) || other.stockDisponible == stockDisponible)&&(identical(other.stockReservado, stockReservado) || other.stockReservado == stockReservado)&&(identical(other.precioLocal, precioLocal) || other.precioLocal == precioLocal)&&(identical(other.fechaActualizacion, fechaActualizacion) || other.fechaActualizacion == fechaActualizacion));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,productoId,sucursalId,cantidadDisponible,cantidadReservada,ultimaActualizacion);
+int get hashCode => Object.hash(runtimeType,productoId,sucursalId,stockDisponible,stockReservado,precioLocal,fechaActualizacion);
 
 @override
 String toString() {
-  return 'Inventario(id: $id, productoId: $productoId, sucursalId: $sucursalId, cantidadDisponible: $cantidadDisponible, cantidadReservada: $cantidadReservada, ultimaActualizacion: $ultimaActualizacion)';
+  return 'Inventario(productoId: $productoId, sucursalId: $sucursalId, stockDisponible: $stockDisponible, stockReservado: $stockReservado, precioLocal: $precioLocal, fechaActualizacion: $fechaActualizacion)';
 }
 
 
@@ -257,7 +253,7 @@ abstract mixin class _$InventarioCopyWith<$Res> implements $InventarioCopyWith<$
   factory _$InventarioCopyWith(_Inventario value, $Res Function(_Inventario) _then) = __$InventarioCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String productoId, String sucursalId, int cantidadDisponible, int cantidadReservada, DateTime ultimaActualizacion
+ String productoId, String sucursalId, int stockDisponible, int stockReservado, int? precioLocal, DateTime fechaActualizacion
 });
 
 
@@ -274,14 +270,14 @@ class __$InventarioCopyWithImpl<$Res>
 
 /// Create a copy of Inventario
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? productoId = null,Object? sucursalId = null,Object? cantidadDisponible = null,Object? cantidadReservada = null,Object? ultimaActualizacion = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? productoId = null,Object? sucursalId = null,Object? stockDisponible = null,Object? stockReservado = null,Object? precioLocal = freezed,Object? fechaActualizacion = null,}) {
   return _then(_Inventario(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,productoId: null == productoId ? _self.productoId : productoId // ignore: cast_nullable_to_non_nullable
+productoId: null == productoId ? _self.productoId : productoId // ignore: cast_nullable_to_non_nullable
 as String,sucursalId: null == sucursalId ? _self.sucursalId : sucursalId // ignore: cast_nullable_to_non_nullable
-as String,cantidadDisponible: null == cantidadDisponible ? _self.cantidadDisponible : cantidadDisponible // ignore: cast_nullable_to_non_nullable
-as int,cantidadReservada: null == cantidadReservada ? _self.cantidadReservada : cantidadReservada // ignore: cast_nullable_to_non_nullable
-as int,ultimaActualizacion: null == ultimaActualizacion ? _self.ultimaActualizacion : ultimaActualizacion // ignore: cast_nullable_to_non_nullable
+as String,stockDisponible: null == stockDisponible ? _self.stockDisponible : stockDisponible // ignore: cast_nullable_to_non_nullable
+as int,stockReservado: null == stockReservado ? _self.stockReservado : stockReservado // ignore: cast_nullable_to_non_nullable
+as int,precioLocal: freezed == precioLocal ? _self.precioLocal : precioLocal // ignore: cast_nullable_to_non_nullable
+as int?,fechaActualizacion: null == fechaActualizacion ? _self.fechaActualizacion : fechaActualizacion // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }

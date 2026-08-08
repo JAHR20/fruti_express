@@ -2,8 +2,11 @@ import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/au
 import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/confirmar_stock.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/liberar_reserva.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/obtener_inventario.dart';
+import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/obtener_inventario_por_sucursal.dart';
+import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/obtener_stock_actual.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/reducir_stock.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/reservar_stock.dart';
+import 'package:fruti_express_jahr_admin/features/inventario/presentation/cubits/inventario_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 // Data Sources
@@ -25,11 +28,15 @@ void initInventario(GetIt sl) {
 
   sl.registerLazySingleton(() => LiberarReserva(sl()));
 
-  sl.registerLazySingleton(() => ObtenerInventario(sl()));
+  sl.registerLazySingleton(() => ObtenerInventarioPorProducto(sl()));
+
+  sl.registerLazySingleton(() => ObtenerInventarioPorSucursal(sl()));
 
   sl.registerLazySingleton(() => ReducirStock(sl()));
 
   sl.registerLazySingleton(() => ReservarStock(sl()));
+
+  sl.registerLazySingleton(() => ObtenerStockActual(sl()));
 
   // --- 🤝 REPOSITORIO (Repository) ---
   sl.registerLazySingleton<InventarioRepository>(
@@ -39,5 +46,14 @@ void initInventario(GetIt sl) {
   // --- 🛰️ FUENTE DE DATOS (Data Source) ---
   sl.registerLazySingleton<InventarioRemoteDatasource>(
     () => InventarioRemoteDatasourceImpl(sl()),
+  );
+
+  // -- Cubits ----
+  sl.registerFactory<InventarioCubit>(
+    () => InventarioCubit(
+      obtenerInventarioPorSucursalUseCase: sl(),
+      aumentarStockUseCase: sl(),
+      reducirStockUseCase: sl()
+    ),
   );
 }

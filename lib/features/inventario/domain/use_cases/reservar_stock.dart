@@ -44,8 +44,8 @@ class ReservarStock {
 
       // 5️⃣ Actualizar reserva (Inmutabilidad)
       final actualizado = inventario.copyWith(
-        cantidadReservada: inventario.cantidadReservada + cantidad,
-        ultimaActualizacion: DateTime.now(),
+        stockReservado: inventario.stockReservado + cantidad,
+        fechaActualizacion: DateTime.now(),
       );
 
       // 6️⃣ Persistencia
@@ -73,7 +73,7 @@ class ReservarStock {
         );
 
   ResultTask<Unit> _validarStockSuficiente(Inventario inv, int solicitado) {
-    final stockReal = inv.cantidadDisponible - inv.cantidadReservada;
+    final stockReal = inv.stockDisponible - inv.stockReservado;
 
     return stockReal >= solicitado
         ? TaskEither.right(unit)

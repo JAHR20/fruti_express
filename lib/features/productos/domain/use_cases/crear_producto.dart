@@ -37,7 +37,7 @@ class CrearProducto {
 
       // 3️⃣ Construcción de la Entidad
       final producto = Producto(
-        id: '', // Se genera en el servidor
+        id: '', 
         categoriaId: categoriaId,
         nombre: nombreTrim,
         descripcion: descripcion,

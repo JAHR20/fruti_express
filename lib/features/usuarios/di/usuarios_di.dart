@@ -1,3 +1,4 @@
+import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/usuarios_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 // Data Sources
@@ -46,5 +47,21 @@ void initUsuarios(GetIt sl) {
   // --- 🛰️ FUENTE DE DATOS (Data Source) ---
   sl.registerLazySingleton<UsuarioRemoteDatasource>(
     () => UsuarioRemoteDatasourceImpl(sl()),
+  );
+
+  // --- 🧑‍💼 CUBIT (Cubit) ---
+  sl.registerFactory<UsuariosCubit>(
+    () => UsuariosCubit(
+      actualizarPerfilUseCase: sl(),
+      buscarUsuariosUseCase: sl(),
+      cambiarEstadoUsuarioUseCase: sl(),
+      cambiarRolUseCase: sl(),
+      contarAdminsActivosUseCase: sl(),
+      existeEncargadoActivoUseCase: sl(),
+      obtenerClientesUseCase: sl(),
+      obtenerRepartidoresUseCase: sl(),
+      obtenerUsuarioPorIdUseCase: sl(),
+      obtenerUsuariosUseCase: sl(),
+    ),
   );
 }

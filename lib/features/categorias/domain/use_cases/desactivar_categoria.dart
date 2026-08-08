@@ -14,7 +14,7 @@ class CambiarEstadoCategoria {
   ResultTask<Categoria> ejecutar({
     required Perfil usuarioActual,
     required String categoriaId,
-    required bool nuevoEstado, // <--- El interruptor
+    required bool nuevoEstado,
   }) {
     return TaskEither.Do(($) async {
       // 1️⃣ Validación de Permisos (Solo Admin/Personal autorizado)

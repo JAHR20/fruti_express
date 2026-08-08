@@ -1,3 +1,4 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/entities/inventario.dart';
 
@@ -18,5 +19,12 @@ abstract class InventarioRepository {
 
   // --- 📡 TIEMPO REAL ---
   /// Para ver alertas de "Stock Bajo" al instante.
+  ResultTask<Unit> ajustarStockAtomicamente({
+    required String productoId,
+    required String sucursalId,
+    required int cantidadCambio, 
+  });
   ResultStream<List<Inventario>> watchPorSucursal(String sucursalId);
+
+  ResultTask<int> obtenerStockActual(String productoId, String sucursalId);
 }

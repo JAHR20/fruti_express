@@ -2,10 +2,10 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fruti_express_jahr_admin/features/productos/domain/enums/unidad_medida_producto.dart';
 
 part 'producto.freezed.dart';
-part 'producto.g.dart';
 
 @freezed
 abstract class Producto with _$Producto {
+  const Producto._();
   const factory Producto({
     String? id,
     required String categoriaId,
@@ -17,8 +17,20 @@ abstract class Producto with _$Producto {
     String? imagenUrl,
     required bool isActive,
     required DateTime fechaCreacion,
+    DateTime? updatedAt,
+    @Default(0) int stock,
   }) = _Producto;
 
-  factory Producto.fromJson(Map<String, dynamic> json) =>
-      _$ProductoFromJson(json);
+  bool get tieneDescuento => 
+      precioComparacion != null && precioComparacion! > precioActual;
+      
+  /// Calcula el porcentaje exacto de descuento para los badges
+  int get porcentajeDescuento {
+    if (!tieneDescuento) return 0;
+    
+    final calculo = (1 - (precioActual / precioComparacion!)) * 100;
+    return calculo.round();
+  }
+
 }
+

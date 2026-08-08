@@ -9,28 +9,24 @@ class ObtenerProductosPorCategoria {
 
   ObtenerProductosPorCategoria({required this.repository});
 
-  ResultTask<List<Producto>> ejecutar(String categoriaId) {
+  // 🌟 Ahora pedimos ambos IDs
+  ResultTask<List<Producto>> ejecutar(String categoriaId, String sucursalId) {
     final idLimpio = categoriaId.trim();
+    final sucursalLimpia = sucursalId.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación de entrada (Fail Fast)
-      if (idLimpio.isEmpty) {
+      if (idLimpio.isEmpty || sucursalLimpia.isEmpty) {
         return await $(
           TaskEither.left(
             const Failure.validation(
-              'El ID de la categoría es necesario para la búsqueda',
+              'El ID de la categoría y la sucursal son necesarios para la búsqueda',
             ),
           ),
         );
       }
 
-      // 2️⃣ Llamada al repositorio
-      // El operador $ extrae la lista si el resultado es Right.
-      // Si es Left (ej. error de conexión), el flujo se corta aquí.
-      final productos = await $(repository.obtenerPorCategoria(idLimpio));
+      final productos = await $(repository.obtenerPorCategoria(idLimpio, sucursalLimpia));
 
-      // 3️⃣ Éxito: Devolvemos la lista (vacía o con datos).
-      // La UI se encargará de renderizar un "Empty State" si productos.isEmpty.
       return productos;
     });
   }

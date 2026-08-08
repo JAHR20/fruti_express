@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:fruti_express_jahr_admin/features/usuarios/data/models/perfil_model.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/repositories/usuario_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
@@ -15,7 +16,10 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   @override
   ResultTask<List<Perfil>> obtenerTodos() {
     return TaskEither.tryCatch(
-      () async => await remoteDatasource.obtenerTodos(),
+      () async {
+        final models = await remoteDatasource.obtenerTodos();
+        return models.map((m) => m.toDomain()).toList();
+      },
       _handleException,
     );
   }
@@ -23,18 +27,21 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   @override
   ResultTask<Perfil> obtenerPorId(String id) {
     return TaskEither.tryCatch(() async {
-      final res = await remoteDatasource.obtenerPorId(id);
-      if (res == null) {
+      final model = await remoteDatasource.obtenerPorId(id);
+      if (model == null) {
         throw const PostgrestException(message: 'No encontrado', code: '404');
       }
-      return res;
+      return model.toDomain();
     }, _handleException);
   }
 
   @override
   ResultTask<List<Perfil>> buscarUsuarios(String query) {
     return TaskEither.tryCatch(
-      () async => await remoteDatasource.buscarUsuarios(query),
+      () async {
+        final models = await remoteDatasource.buscarUsuarios(query);
+        return models.map((m) => m.toDomain()).toList();
+      },
       _handleException,
     );
   }
@@ -42,8 +49,10 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   @override
   ResultTask<List<Perfil>> obtenerRepartidores({String? sucursalId}) {
     return TaskEither.tryCatch(
-      () async =>
-          await remoteDatasource.obtenerRepartidores(sucursalId: sucursalId),
+      () async {
+        final models = await remoteDatasource.obtenerRepartidores(sucursalId: sucursalId);
+        return models.map((m) => m.toDomain()).toList();
+      },
       _handleException,
     );
   }
@@ -51,10 +60,7 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   @override
   ResultTask<int> contarAdminsActivos() {
     return TaskEither.tryCatch(
-      () async => await remoteDatasource.contarPorRolYEstado(
-        rol: 'admin',
-        activo: true,
-      ),
+      () async => remoteDatasource.contarPorRolYEstado(rol: 'admin', activo: true),
       _handleException,
     );
   }
@@ -62,17 +68,18 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   @override
   ResultTask<bool> existeEncargadoEnSucursal(String sucursalId) {
     return TaskEither.tryCatch(
-      () async => await remoteDatasource.existeEncargadoEnSucursal(sucursalId),
+      () async => remoteDatasource.existeEncargadoEnSucursal(sucursalId),
       _handleException,
     );
   }
 
   @override
-  ResultTask<List<Perfil>> obtenerClientesQueHanCompradoEnSucursal(
-    String sucursalId,
-  ) {
+  ResultTask<List<Perfil>> obtenerClientesQueHanCompradoEnSucursal(String sucursalId) {
     return TaskEither.tryCatch(
-      () async => await remoteDatasource.obtenerPorSucursal(sucursalId),
+      () async {
+        final models = await remoteDatasource.obtenerPorSucursal(sucursalId);
+        return models.map((m) => m.toDomain()).toList();
+      },
       _handleException,
     );
   }
@@ -80,7 +87,11 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   @override
   ResultTask<Perfil> actualizar(Perfil usuario) {
     return TaskEither.tryCatch(
-      () async => await remoteDatasource.actualizarPerfil(usuario),
+      () async {
+        final model = PerfilModelX.fromDomain(usuario); // Perfil → PerfilModel
+        final updated = await remoteDatasource.actualizarPerfil(model);
+        return updated.toDomain();                       // PerfilModel → Perfil
+      },
       _handleException,
     );
   }
@@ -88,36 +99,30 @@ class UsuarioRepositoryImpl implements UsuarioRepository {
   @override
   ResultTask<Perfil> cambiarEstado({required String id, required bool activo}) {
     return TaskEither.tryCatch(
-      () async => await remoteDatasource.cambiarEstado(id: id, activo: activo),
+      () async {
+        final model = await remoteDatasource.cambiarEstado(id: id, activo: activo);
+        return model.toDomain();
+      },
       _handleException,
     );
   }
 
   @override
-  ResultTask<Perfil> cambiarRol({
-    required String id,
-    required TipoUsuario nuevoRol,
-  }) {
+  ResultTask<Perfil> cambiarRol({required String id, required TipoUsuario nuevoRol}) {
     return TaskEither.tryCatch(
-      () async => await remoteDatasource.cambiarRol(id: id, rol: nuevoRol.name),
+      () async {
+        final model = await remoteDatasource.cambiarRol(id: id, rol: nuevoRol.name);
+        return model.toDomain();
+      },
       _handleException,
     );
   }
 
-  // --- 🛠️ MANEJO DE ERRORES ---
   Failure _handleException(Object error, StackTrace stackTrace) {
     if (error is PostgrestException) {
-      if (error.code == '404') {
-        return const Failure.notFound("El usuario no existe.");
-      }
-      if (error.code == '42501') {
-        return const Failure.unauthorized(
-          "No tienes permisos para esta acción.",
-        );
-      }
-      if (error.code == '23505') {
-        return const Failure.alreadyExists("Este registro ya existe.");
-      }
+      if (error.code == '404') return const Failure.notFound("El usuario no existe.");
+      if (error.code == '42501') return const Failure.unauthorized("No tienes permisos para esta acción.");
+      if (error.code == '23505') return const Failure.alreadyExists("Este registro ya existe.");
       return Failure.server("Error de base de datos: ${error.message}");
     }
     return Failure.server("Ocurrió un error inesperado: $error");

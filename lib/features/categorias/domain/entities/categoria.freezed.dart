@@ -11,34 +11,30 @@ part of 'categoria.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$Categoria {
 
- String get id; String get nombre; String? get descripcion; String? get imagenUrl; bool get activa; String? get categoriaPadreId;// para subcategorías
- DateTime get fechaCreacion;
+ String get id; String get nombre; String? get descripcion; String? get imagenUrl; bool get activa; String? get categoriaPadreId; DateTime get fechaCreacion; DateTime? get fechaActualizacion;
 /// Create a copy of Categoria
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $CategoriaCopyWith<Categoria> get copyWith => _$CategoriaCopyWithImpl<Categoria>(this as Categoria, _$identity);
 
-  /// Serializes this Categoria to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Categoria&&(identical(other.id, id) || other.id == id)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.descripcion, descripcion) || other.descripcion == descripcion)&&(identical(other.imagenUrl, imagenUrl) || other.imagenUrl == imagenUrl)&&(identical(other.activa, activa) || other.activa == activa)&&(identical(other.categoriaPadreId, categoriaPadreId) || other.categoriaPadreId == categoriaPadreId)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Categoria&&(identical(other.id, id) || other.id == id)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.descripcion, descripcion) || other.descripcion == descripcion)&&(identical(other.imagenUrl, imagenUrl) || other.imagenUrl == imagenUrl)&&(identical(other.activa, activa) || other.activa == activa)&&(identical(other.categoriaPadreId, categoriaPadreId) || other.categoriaPadreId == categoriaPadreId)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion)&&(identical(other.fechaActualizacion, fechaActualizacion) || other.fechaActualizacion == fechaActualizacion));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,nombre,descripcion,imagenUrl,activa,categoriaPadreId,fechaCreacion);
+int get hashCode => Object.hash(runtimeType,id,nombre,descripcion,imagenUrl,activa,categoriaPadreId,fechaCreacion,fechaActualizacion);
 
 @override
 String toString() {
-  return 'Categoria(id: $id, nombre: $nombre, descripcion: $descripcion, imagenUrl: $imagenUrl, activa: $activa, categoriaPadreId: $categoriaPadreId, fechaCreacion: $fechaCreacion)';
+  return 'Categoria(id: $id, nombre: $nombre, descripcion: $descripcion, imagenUrl: $imagenUrl, activa: $activa, categoriaPadreId: $categoriaPadreId, fechaCreacion: $fechaCreacion, fechaActualizacion: $fechaActualizacion)';
 }
 
 
@@ -49,7 +45,7 @@ abstract mixin class $CategoriaCopyWith<$Res>  {
   factory $CategoriaCopyWith(Categoria value, $Res Function(Categoria) _then) = _$CategoriaCopyWithImpl;
 @useResult
 $Res call({
- String id, String nombre, String? descripcion, String? imagenUrl, bool activa, String? categoriaPadreId, DateTime fechaCreacion
+ String id, String nombre, String? descripcion, String? imagenUrl, bool activa, String? categoriaPadreId, DateTime fechaCreacion, DateTime? fechaActualizacion
 });
 
 
@@ -66,7 +62,7 @@ class _$CategoriaCopyWithImpl<$Res>
 
 /// Create a copy of Categoria
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? nombre = null,Object? descripcion = freezed,Object? imagenUrl = freezed,Object? activa = null,Object? categoriaPadreId = freezed,Object? fechaCreacion = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? nombre = null,Object? descripcion = freezed,Object? imagenUrl = freezed,Object? activa = null,Object? categoriaPadreId = freezed,Object? fechaCreacion = null,Object? fechaActualizacion = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,nombre: null == nombre ? _self.nombre : nombre // ignore: cast_nullable_to_non_nullable
@@ -75,7 +71,8 @@ as String?,imagenUrl: freezed == imagenUrl ? _self.imagenUrl : imagenUrl // igno
 as String?,activa: null == activa ? _self.activa : activa // ignore: cast_nullable_to_non_nullable
 as bool,categoriaPadreId: freezed == categoriaPadreId ? _self.categoriaPadreId : categoriaPadreId // ignore: cast_nullable_to_non_nullable
 as String?,fechaCreacion: null == fechaCreacion ? _self.fechaCreacion : fechaCreacion // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,fechaActualizacion: freezed == fechaActualizacion ? _self.fechaActualizacion : fechaActualizacion // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -160,10 +157,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String nombre,  String? descripcion,  String? imagenUrl,  bool activa,  String? categoriaPadreId,  DateTime fechaCreacion)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String nombre,  String? descripcion,  String? imagenUrl,  bool activa,  String? categoriaPadreId,  DateTime fechaCreacion,  DateTime? fechaActualizacion)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Categoria() when $default != null:
-return $default(_that.id,_that.nombre,_that.descripcion,_that.imagenUrl,_that.activa,_that.categoriaPadreId,_that.fechaCreacion);case _:
+return $default(_that.id,_that.nombre,_that.descripcion,_that.imagenUrl,_that.activa,_that.categoriaPadreId,_that.fechaCreacion,_that.fechaActualizacion);case _:
   return orElse();
 
 }
@@ -181,10 +178,10 @@ return $default(_that.id,_that.nombre,_that.descripcion,_that.imagenUrl,_that.ac
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String nombre,  String? descripcion,  String? imagenUrl,  bool activa,  String? categoriaPadreId,  DateTime fechaCreacion)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String nombre,  String? descripcion,  String? imagenUrl,  bool activa,  String? categoriaPadreId,  DateTime fechaCreacion,  DateTime? fechaActualizacion)  $default,) {final _that = this;
 switch (_that) {
 case _Categoria():
-return $default(_that.id,_that.nombre,_that.descripcion,_that.imagenUrl,_that.activa,_that.categoriaPadreId,_that.fechaCreacion);case _:
+return $default(_that.id,_that.nombre,_that.descripcion,_that.imagenUrl,_that.activa,_that.categoriaPadreId,_that.fechaCreacion,_that.fechaActualizacion);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +198,10 @@ return $default(_that.id,_that.nombre,_that.descripcion,_that.imagenUrl,_that.ac
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String nombre,  String? descripcion,  String? imagenUrl,  bool activa,  String? categoriaPadreId,  DateTime fechaCreacion)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String nombre,  String? descripcion,  String? imagenUrl,  bool activa,  String? categoriaPadreId,  DateTime fechaCreacion,  DateTime? fechaActualizacion)?  $default,) {final _that = this;
 switch (_that) {
 case _Categoria() when $default != null:
-return $default(_that.id,_that.nombre,_that.descripcion,_that.imagenUrl,_that.activa,_that.categoriaPadreId,_that.fechaCreacion);case _:
+return $default(_that.id,_that.nombre,_that.descripcion,_that.imagenUrl,_that.activa,_that.categoriaPadreId,_that.fechaCreacion,_that.fechaActualizacion);case _:
   return null;
 
 }
@@ -213,11 +210,11 @@ return $default(_that.id,_that.nombre,_that.descripcion,_that.imagenUrl,_that.ac
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _Categoria implements Categoria {
-  const _Categoria({required this.id, required this.nombre, this.descripcion, this.imagenUrl, required this.activa, this.categoriaPadreId, required this.fechaCreacion});
-  factory _Categoria.fromJson(Map<String, dynamic> json) => _$CategoriaFromJson(json);
+  const _Categoria({required this.id, required this.nombre, this.descripcion, this.imagenUrl, required this.activa, this.categoriaPadreId, required this.fechaCreacion, this.fechaActualizacion});
+  
 
 @override final  String id;
 @override final  String nombre;
@@ -225,8 +222,8 @@ class _Categoria implements Categoria {
 @override final  String? imagenUrl;
 @override final  bool activa;
 @override final  String? categoriaPadreId;
-// para subcategorías
 @override final  DateTime fechaCreacion;
+@override final  DateTime? fechaActualizacion;
 
 /// Create a copy of Categoria
 /// with the given fields replaced by the non-null parameter values.
@@ -234,23 +231,20 @@ class _Categoria implements Categoria {
 @pragma('vm:prefer-inline')
 _$CategoriaCopyWith<_Categoria> get copyWith => __$CategoriaCopyWithImpl<_Categoria>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$CategoriaToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Categoria&&(identical(other.id, id) || other.id == id)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.descripcion, descripcion) || other.descripcion == descripcion)&&(identical(other.imagenUrl, imagenUrl) || other.imagenUrl == imagenUrl)&&(identical(other.activa, activa) || other.activa == activa)&&(identical(other.categoriaPadreId, categoriaPadreId) || other.categoriaPadreId == categoriaPadreId)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Categoria&&(identical(other.id, id) || other.id == id)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.descripcion, descripcion) || other.descripcion == descripcion)&&(identical(other.imagenUrl, imagenUrl) || other.imagenUrl == imagenUrl)&&(identical(other.activa, activa) || other.activa == activa)&&(identical(other.categoriaPadreId, categoriaPadreId) || other.categoriaPadreId == categoriaPadreId)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion)&&(identical(other.fechaActualizacion, fechaActualizacion) || other.fechaActualizacion == fechaActualizacion));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,nombre,descripcion,imagenUrl,activa,categoriaPadreId,fechaCreacion);
+int get hashCode => Object.hash(runtimeType,id,nombre,descripcion,imagenUrl,activa,categoriaPadreId,fechaCreacion,fechaActualizacion);
 
 @override
 String toString() {
-  return 'Categoria(id: $id, nombre: $nombre, descripcion: $descripcion, imagenUrl: $imagenUrl, activa: $activa, categoriaPadreId: $categoriaPadreId, fechaCreacion: $fechaCreacion)';
+  return 'Categoria(id: $id, nombre: $nombre, descripcion: $descripcion, imagenUrl: $imagenUrl, activa: $activa, categoriaPadreId: $categoriaPadreId, fechaCreacion: $fechaCreacion, fechaActualizacion: $fechaActualizacion)';
 }
 
 
@@ -261,7 +255,7 @@ abstract mixin class _$CategoriaCopyWith<$Res> implements $CategoriaCopyWith<$Re
   factory _$CategoriaCopyWith(_Categoria value, $Res Function(_Categoria) _then) = __$CategoriaCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String nombre, String? descripcion, String? imagenUrl, bool activa, String? categoriaPadreId, DateTime fechaCreacion
+ String id, String nombre, String? descripcion, String? imagenUrl, bool activa, String? categoriaPadreId, DateTime fechaCreacion, DateTime? fechaActualizacion
 });
 
 
@@ -278,7 +272,7 @@ class __$CategoriaCopyWithImpl<$Res>
 
 /// Create a copy of Categoria
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? nombre = null,Object? descripcion = freezed,Object? imagenUrl = freezed,Object? activa = null,Object? categoriaPadreId = freezed,Object? fechaCreacion = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? nombre = null,Object? descripcion = freezed,Object? imagenUrl = freezed,Object? activa = null,Object? categoriaPadreId = freezed,Object? fechaCreacion = null,Object? fechaActualizacion = freezed,}) {
   return _then(_Categoria(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,nombre: null == nombre ? _self.nombre : nombre // ignore: cast_nullable_to_non_nullable
@@ -287,7 +281,8 @@ as String?,imagenUrl: freezed == imagenUrl ? _self.imagenUrl : imagenUrl // igno
 as String?,activa: null == activa ? _self.activa : activa // ignore: cast_nullable_to_non_nullable
 as bool,categoriaPadreId: freezed == categoriaPadreId ? _self.categoriaPadreId : categoriaPadreId // ignore: cast_nullable_to_non_nullable
 as String?,fechaCreacion: null == fechaCreacion ? _self.fechaCreacion : fechaCreacion // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,fechaActualizacion: freezed == fechaActualizacion ? _self.fechaActualizacion : fechaActualizacion // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'categoria.freezed.dart';
-part 'categoria.g.dart';
 
 @freezed
 abstract class Categoria with _$Categoria {
@@ -11,12 +10,9 @@ abstract class Categoria with _$Categoria {
     String? descripcion,
     String? imagenUrl,
     required bool activa,
-
-    String? categoriaPadreId, // para subcategorías
-
+    String? categoriaPadreId,
     required DateTime fechaCreacion,
+    DateTime? fechaActualizacion,
   }) = _Categoria;
-
-  factory Categoria.fromJson(Map<String, dynamic> json) =>
-      _$CategoriaFromJson(json);
+  // ← Sin fromJson, sin @JsonKey, sin .g.dart
 }

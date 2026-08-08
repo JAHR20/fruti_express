@@ -1,6 +1,9 @@
+import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/enums/estado_pedido.dart';
+import 'package:fruti_express_jahr_admin/features/pedidos/domain/use_cases/confirmar_entrega_params.dart';
+import 'package:fruti_express_jahr_admin/features/pedidos/domain/use_cases/crear_pedido_params.dart';
 
 abstract class PedidoRepository {
   // --- 🔍 CONSULTAS (One-shot) ---
@@ -11,7 +14,7 @@ abstract class PedidoRepository {
     required EstadoPedido estado,
   });
 
-  ResultTask<Pedido> crear(Pedido pedido);
+  ResultTask<Pedido> crear(CrearPedidoParams params);
 
   ResultTask<List<Pedido>> obtenerPorUsuario(String usuarioId);
 
@@ -36,4 +39,9 @@ abstract class PedidoRepository {
   // --- 📡 TIEMPO REAL ---
   /// Imprescindible para el Dashboard: ver pedidos nuevos al instante.
   ResultStream<List<Pedido>> watchPorSucursal(String sucursalId);
+
+  ResultStream<List<Pedido>> watchPorRepartidor(String repartidorId);
+
+  // En PedidoRepository
+  ResultTask<Unit> confirmarEntrega(ConfirmarEntregaParams params);
 }

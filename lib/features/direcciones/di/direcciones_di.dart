@@ -1,3 +1,4 @@
+import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 // Data Sources
@@ -20,15 +21,9 @@ void initDirecciones(GetIt sl) {
 
   // Obtener direcciones de un usuario específico
   sl.registerLazySingleton(() => ObtenerDireccionesUseCase(sl()));
-
-  // Gestión de direcciones (CRUD)
-  // Nota: Si CrearDireccion necesita validar al usuario,
-  // puedes pasarle usuarioRepository: sl() igual que hicimos en productos.
   sl.registerLazySingleton(() => CrearDireccionUseCase(sl()));
   sl.registerLazySingleton(() => ActualizarDireccionUseCase(sl()));
   sl.registerLazySingleton(() => EliminarDireccionUseCase(sl()));
-
-  // Regla de negocio: Solo puede haber una dirección predeterminada
   sl.registerLazySingleton(() => EstablecerDireccionPrincipalUseCase(sl()));
 
   // --- 🤝 REPOSITORIO (Repository) ---
@@ -39,5 +34,17 @@ void initDirecciones(GetIt sl) {
   // --- 🛰️ FUENTE DE DATOS (Data Source) ---
   sl.registerLazySingleton<DireccionRemoteDatasource>(
     () => DireccionRemoteDatasourceImpl(sl()),
+  );
+
+  //
+
+  sl.registerFactory<DireccionesCubit>(
+    () => DireccionesCubit(
+      obtenerDirecciones: ObtenerDireccionesUseCase(sl()),
+      crearDireccion: CrearDireccionUseCase(sl()),
+      actualizarDireccion: ActualizarDireccionUseCase(sl()),
+      eliminarDireccion: EliminarDireccionUseCase(sl()),
+      establecerPrincipal: EstablecerDireccionPrincipalUseCase(sl()),
+    ),
   );
 }

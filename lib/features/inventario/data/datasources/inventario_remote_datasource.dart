@@ -1,19 +1,27 @@
-import 'package:fruti_express_jahr_admin/features/inventario/domain/entities/inventario.dart';
+import 'package:fruti_express_jahr_admin/features/inventario/data/models/inventario_model.dart';
 
 abstract class InventarioRemoteDatasource {
   /// Busca el stock de un producto específico en una sucursal.
-  Future<Inventario?> obtener({
+  Future<InventarioModel?> obtener({
     required String productoId,
     required String sucursalId,
   });
 
   /// Crea o actualiza el registro (Upsert).
-  Future<Inventario> actualizar(Inventario inventario);
+  Future<InventarioModel> actualizar(InventarioModel model);
 
   /// Trae todo el inventario de una sucursal para la vista de gestión.
-  Future<List<Inventario>> obtenerPorSucursal(String sucursalId);
+  Future<List<InventarioModel>> obtenerPorSucursal(String sucursalId);
 
-  Future<Inventario> crear(Inventario inventario);
-  Future<List<Inventario>> obtenerPorProducto(String productoId);
-  Stream<List<Inventario>> watchPorSucursal(String sucursalId);
+  Future<InventarioModel> crear(InventarioModel model);
+  Future<List<InventarioModel>> obtenerPorProducto(String productoId);
+  Stream<List<InventarioModel>> watchPorSucursal(String sucursalId);
+
+  Future<void> ajustarStockAtomicamente({
+    required String productoId,
+    required String sucursalId,
+    required int cantidadCambio,
+  });
+
+  Future<int> obtenerStockActual(String productoId, String sucursalId);
 }

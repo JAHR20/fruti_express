@@ -4,9 +4,11 @@ part 'failures.freezed.dart';
 
 @freezed
 class Failure with _$Failure {
+  
+  const Failure._(); // Constructor privado para usar métodos personalizados si es necesario
+
   // --- 🌐 ERRORES TÉCNICOS ---
 
-  /// Error cuando el servidor responde con un error (500, 404, etc) o Firebase falla.
   const factory Failure.server(String message) = ServerFailure;
 
   /// Error de conexión a internet.
@@ -39,4 +41,17 @@ class Failure with _$Failure {
 
   /// Específico para Validación de Entradas: "El precio no puede ser negativo", "Dirección inválida".
   const factory Failure.validation(String message) = ValidationFailure;
+
+  String get errorMessage => when(
+        server: (message) => message,
+        network: () => 'No hay conexión a internet. Revisa tu red.',
+        cache: () => 'Error al acceder a los datos locales.',
+        unauthorized: (message) => message,
+        notFound: (message) => message,
+        alreadyExists: (message) => message,
+        insufficientStock: (message) => message,
+        invalidState: (message) => message,
+        validation: (message) => message,
+      );
+      
 }

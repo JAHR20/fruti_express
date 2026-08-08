@@ -3,9 +3,9 @@ import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/core/utils/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/data/datasources/categoria_remote_datasource.dart';
+import 'package:fruti_express_jahr_admin/features/categorias/data/models/categoria_model.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/entities/categoria.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/repositories/categoria_repositorie.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class CategoriaRepositoryImpl
     with SupabaseHandleException
@@ -15,50 +15,45 @@ class CategoriaRepositoryImpl
   CategoriaRepositoryImpl(this.remoteDatasource);
 
   @override
-  ResultTask<List<Categoria>> obtenerTodas() => TaskEither.tryCatch(
-    () async => await remoteDatasource.obtenerTodas(),
-    handleException,
-  );
+  ResultTask<List<Categoria>> obtenerTodas() => TaskEither.tryCatch(() async {
+    final models = await remoteDatasource.obtenerTodas();
+    return models.map((m) => m.toDomain()).toList(); // ← mapeo
+  }, handleException);
 
   @override
-  ResultTask<Categoria> obtenerPorId(String id) =>
+  ResultTask<List<Categoria>> obtenerActivas() => TaskEither.tryCatch(() async {
+    final models = await remoteDatasource.obtenerActivas();
+    return models.map((m) => m.toDomain()).toList();
+  }, handleException);
+
+  @override
+  ResultTask<Categoria?> obtenerPorId(String id) =>
       TaskEither.tryCatch(() async {
-        final res = await remoteDatasource.obtenerPorId(id);
-        if (res == null) {
-          throw const PostgrestException(
-            message: 'Categoría no encontrada',
-            code: 'PGRST116',
-          );
-        }
-        return res;
+        final model = await remoteDatasource.obtenerPorId(id);
+        return model?.toDomain(); // ← mapeo nullable
       }, handleException);
 
   @override
-  ResultTask<Categoria> obtenerPorNombre(String nombre) =>
+  ResultTask<Categoria?> obtenerPorNombre(String nombre) =>
       TaskEither.tryCatch(() async {
-        final res = await remoteDatasource.obtenerPorNombre(nombre);
-        if (res == null) {
-          throw const PostgrestException(
-            message: 'Categoría no encontrada',
-            code: 'PGRST116',
-          );
-        }
-        return res;
+        final model = await remoteDatasource.obtenerPorNombre(nombre);
+        return model?.toDomain(); // ← mapeo nullable
       }, handleException);
 
   @override
   ResultTask<List<Categoria>> obtenerPorCategoriaPadre(String? padreId) =>
-      TaskEither.tryCatch(
-        () async => await remoteDatasource.obtenerPorPadre(padreId),
-        handleException,
-      );
+      TaskEither.tryCatch(() async {
+        final models = await remoteDatasource.obtenerPorPadre(padreId);
+        return models.map((m) => m.toDomain()).toList(); // ← mapeo
+      }, handleException);
 
   @override
   ResultStream<List<Categoria>> watchTodas() {
     return remoteDatasource
         .watchTodas()
         .map<Either<Failure, List<Categoria>>>(
-          (categorias) => Right(categorias),
+          (models) =>
+              Right(models.map((m) => m.toDomain()).toList()), // ← mapeo
         )
         .handleError(
           (error) => Left(handleException(error, StackTrace.current)),
@@ -66,20 +61,29 @@ class CategoriaRepositoryImpl
   }
 
   @override
-  ResultTask<Categoria> crear(Categoria categoria) => TaskEither.tryCatch(
-    () async => await remoteDatasource.crear(categoria),
-    handleException,
-  );
+  ResultTask<Categoria> crear(Categoria categoria) =>
+      TaskEither.tryCatch(() async {
+        final model = CategoriaModelX.fromDomain(
+          categoria,
+        ); // ← Categoria → Model
+        final created = await remoteDatasource.crear(model);
+        return created.toDomain(); // ← Model → Categoria
+      }, handleException);
 
   @override
-  ResultTask<Categoria> actualizar(Categoria categoria) => TaskEither.tryCatch(
-    () async => await remoteDatasource.actualizar(categoria),
-    handleException,
-  );
+  ResultTask<Categoria> actualizar(Categoria categoria) =>
+      TaskEither.tryCatch(() async {
+        final model = CategoriaModelX.fromDomain(
+          categoria,
+        ); // ← Categoria → Model
+        final updated = await remoteDatasource.actualizar(model);
+        return updated.toDomain(); // ← Model → Categoria
+      }, handleException);
 
   @override
-  ResultTask<Unit> desactivar(String id) => TaskEither.tryCatch(() async {
-    await remoteDatasource.desactivar(id);
-    return unit;
-  }, handleException);
+  ResultTask<Unit> cambiarEstado(String id, bool nuevoEstado) =>
+      TaskEither.tryCatch(() async {
+        await remoteDatasource.cambiarEstado(id, nuevoEstado);
+        return unit;
+      }, handleException);
 }

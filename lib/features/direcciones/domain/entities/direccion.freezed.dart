@@ -11,33 +11,30 @@ part of 'direccion.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$Direccion {
 
- String get id; String get usuarioId; String get alias; String get calle; String get numExt; String? get numInt; String get colonia; String get codigoPostal; String get municipio; String get estado; String get pais; String? get referencias; bool get esPrincipal; DateTime get fechaCreacion;
+ String get id; String get usuarioId; String get alias; String get calle; String get numExt; String? get numInt; String get colonia; String get codigoPostal; String get municipio; String get estado; String? get referencias; bool get esPrincipal; DateTime get fechaCreacion; DateTime? get updatedAT; double get latitud; double get longitud;
 /// Create a copy of Direccion
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $DireccionCopyWith<Direccion> get copyWith => _$DireccionCopyWithImpl<Direccion>(this as Direccion, _$identity);
 
-  /// Serializes this Direccion to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Direccion&&(identical(other.id, id) || other.id == id)&&(identical(other.usuarioId, usuarioId) || other.usuarioId == usuarioId)&&(identical(other.alias, alias) || other.alias == alias)&&(identical(other.calle, calle) || other.calle == calle)&&(identical(other.numExt, numExt) || other.numExt == numExt)&&(identical(other.numInt, numInt) || other.numInt == numInt)&&(identical(other.colonia, colonia) || other.colonia == colonia)&&(identical(other.codigoPostal, codigoPostal) || other.codigoPostal == codigoPostal)&&(identical(other.municipio, municipio) || other.municipio == municipio)&&(identical(other.estado, estado) || other.estado == estado)&&(identical(other.pais, pais) || other.pais == pais)&&(identical(other.referencias, referencias) || other.referencias == referencias)&&(identical(other.esPrincipal, esPrincipal) || other.esPrincipal == esPrincipal)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Direccion&&(identical(other.id, id) || other.id == id)&&(identical(other.usuarioId, usuarioId) || other.usuarioId == usuarioId)&&(identical(other.alias, alias) || other.alias == alias)&&(identical(other.calle, calle) || other.calle == calle)&&(identical(other.numExt, numExt) || other.numExt == numExt)&&(identical(other.numInt, numInt) || other.numInt == numInt)&&(identical(other.colonia, colonia) || other.colonia == colonia)&&(identical(other.codigoPostal, codigoPostal) || other.codigoPostal == codigoPostal)&&(identical(other.municipio, municipio) || other.municipio == municipio)&&(identical(other.estado, estado) || other.estado == estado)&&(identical(other.referencias, referencias) || other.referencias == referencias)&&(identical(other.esPrincipal, esPrincipal) || other.esPrincipal == esPrincipal)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion)&&(identical(other.updatedAT, updatedAT) || other.updatedAT == updatedAT)&&(identical(other.latitud, latitud) || other.latitud == latitud)&&(identical(other.longitud, longitud) || other.longitud == longitud));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,usuarioId,alias,calle,numExt,numInt,colonia,codigoPostal,municipio,estado,pais,referencias,esPrincipal,fechaCreacion);
+int get hashCode => Object.hash(runtimeType,id,usuarioId,alias,calle,numExt,numInt,colonia,codigoPostal,municipio,estado,referencias,esPrincipal,fechaCreacion,updatedAT,latitud,longitud);
 
 @override
 String toString() {
-  return 'Direccion(id: $id, usuarioId: $usuarioId, alias: $alias, calle: $calle, numExt: $numExt, numInt: $numInt, colonia: $colonia, codigoPostal: $codigoPostal, municipio: $municipio, estado: $estado, pais: $pais, referencias: $referencias, esPrincipal: $esPrincipal, fechaCreacion: $fechaCreacion)';
+  return 'Direccion(id: $id, usuarioId: $usuarioId, alias: $alias, calle: $calle, numExt: $numExt, numInt: $numInt, colonia: $colonia, codigoPostal: $codigoPostal, municipio: $municipio, estado: $estado, referencias: $referencias, esPrincipal: $esPrincipal, fechaCreacion: $fechaCreacion, updatedAT: $updatedAT, latitud: $latitud, longitud: $longitud)';
 }
 
 
@@ -48,7 +45,7 @@ abstract mixin class $DireccionCopyWith<$Res>  {
   factory $DireccionCopyWith(Direccion value, $Res Function(Direccion) _then) = _$DireccionCopyWithImpl;
 @useResult
 $Res call({
- String id, String usuarioId, String alias, String calle, String numExt, String? numInt, String colonia, String codigoPostal, String municipio, String estado, String pais, String? referencias, bool esPrincipal, DateTime fechaCreacion
+ String id, String usuarioId, String alias, String calle, String numExt, String? numInt, String colonia, String codigoPostal, String municipio, String estado, String? referencias, bool esPrincipal, DateTime fechaCreacion, DateTime? updatedAT, double latitud, double longitud
 });
 
 
@@ -65,7 +62,7 @@ class _$DireccionCopyWithImpl<$Res>
 
 /// Create a copy of Direccion
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? usuarioId = null,Object? alias = null,Object? calle = null,Object? numExt = null,Object? numInt = freezed,Object? colonia = null,Object? codigoPostal = null,Object? municipio = null,Object? estado = null,Object? pais = null,Object? referencias = freezed,Object? esPrincipal = null,Object? fechaCreacion = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? usuarioId = null,Object? alias = null,Object? calle = null,Object? numExt = null,Object? numInt = freezed,Object? colonia = null,Object? codigoPostal = null,Object? municipio = null,Object? estado = null,Object? referencias = freezed,Object? esPrincipal = null,Object? fechaCreacion = null,Object? updatedAT = freezed,Object? latitud = null,Object? longitud = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,usuarioId: null == usuarioId ? _self.usuarioId : usuarioId // ignore: cast_nullable_to_non_nullable
@@ -77,11 +74,13 @@ as String?,colonia: null == colonia ? _self.colonia : colonia // ignore: cast_nu
 as String,codigoPostal: null == codigoPostal ? _self.codigoPostal : codigoPostal // ignore: cast_nullable_to_non_nullable
 as String,municipio: null == municipio ? _self.municipio : municipio // ignore: cast_nullable_to_non_nullable
 as String,estado: null == estado ? _self.estado : estado // ignore: cast_nullable_to_non_nullable
-as String,pais: null == pais ? _self.pais : pais // ignore: cast_nullable_to_non_nullable
 as String,referencias: freezed == referencias ? _self.referencias : referencias // ignore: cast_nullable_to_non_nullable
 as String?,esPrincipal: null == esPrincipal ? _self.esPrincipal : esPrincipal // ignore: cast_nullable_to_non_nullable
 as bool,fechaCreacion: null == fechaCreacion ? _self.fechaCreacion : fechaCreacion // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,updatedAT: freezed == updatedAT ? _self.updatedAT : updatedAT // ignore: cast_nullable_to_non_nullable
+as DateTime?,latitud: null == latitud ? _self.latitud : latitud // ignore: cast_nullable_to_non_nullable
+as double,longitud: null == longitud ? _self.longitud : longitud // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 
@@ -166,10 +165,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String usuarioId,  String alias,  String calle,  String numExt,  String? numInt,  String colonia,  String codigoPostal,  String municipio,  String estado,  String pais,  String? referencias,  bool esPrincipal,  DateTime fechaCreacion)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String usuarioId,  String alias,  String calle,  String numExt,  String? numInt,  String colonia,  String codigoPostal,  String municipio,  String estado,  String? referencias,  bool esPrincipal,  DateTime fechaCreacion,  DateTime? updatedAT,  double latitud,  double longitud)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Direccion() when $default != null:
-return $default(_that.id,_that.usuarioId,_that.alias,_that.calle,_that.numExt,_that.numInt,_that.colonia,_that.codigoPostal,_that.municipio,_that.estado,_that.pais,_that.referencias,_that.esPrincipal,_that.fechaCreacion);case _:
+return $default(_that.id,_that.usuarioId,_that.alias,_that.calle,_that.numExt,_that.numInt,_that.colonia,_that.codigoPostal,_that.municipio,_that.estado,_that.referencias,_that.esPrincipal,_that.fechaCreacion,_that.updatedAT,_that.latitud,_that.longitud);case _:
   return orElse();
 
 }
@@ -187,10 +186,10 @@ return $default(_that.id,_that.usuarioId,_that.alias,_that.calle,_that.numExt,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String usuarioId,  String alias,  String calle,  String numExt,  String? numInt,  String colonia,  String codigoPostal,  String municipio,  String estado,  String pais,  String? referencias,  bool esPrincipal,  DateTime fechaCreacion)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String usuarioId,  String alias,  String calle,  String numExt,  String? numInt,  String colonia,  String codigoPostal,  String municipio,  String estado,  String? referencias,  bool esPrincipal,  DateTime fechaCreacion,  DateTime? updatedAT,  double latitud,  double longitud)  $default,) {final _that = this;
 switch (_that) {
 case _Direccion():
-return $default(_that.id,_that.usuarioId,_that.alias,_that.calle,_that.numExt,_that.numInt,_that.colonia,_that.codigoPostal,_that.municipio,_that.estado,_that.pais,_that.referencias,_that.esPrincipal,_that.fechaCreacion);case _:
+return $default(_that.id,_that.usuarioId,_that.alias,_that.calle,_that.numExt,_that.numInt,_that.colonia,_that.codigoPostal,_that.municipio,_that.estado,_that.referencias,_that.esPrincipal,_that.fechaCreacion,_that.updatedAT,_that.latitud,_that.longitud);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -207,10 +206,10 @@ return $default(_that.id,_that.usuarioId,_that.alias,_that.calle,_that.numExt,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String usuarioId,  String alias,  String calle,  String numExt,  String? numInt,  String colonia,  String codigoPostal,  String municipio,  String estado,  String pais,  String? referencias,  bool esPrincipal,  DateTime fechaCreacion)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String usuarioId,  String alias,  String calle,  String numExt,  String? numInt,  String colonia,  String codigoPostal,  String municipio,  String estado,  String? referencias,  bool esPrincipal,  DateTime fechaCreacion,  DateTime? updatedAT,  double latitud,  double longitud)?  $default,) {final _that = this;
 switch (_that) {
 case _Direccion() when $default != null:
-return $default(_that.id,_that.usuarioId,_that.alias,_that.calle,_that.numExt,_that.numInt,_that.colonia,_that.codigoPostal,_that.municipio,_that.estado,_that.pais,_that.referencias,_that.esPrincipal,_that.fechaCreacion);case _:
+return $default(_that.id,_that.usuarioId,_that.alias,_that.calle,_that.numExt,_that.numInt,_that.colonia,_that.codigoPostal,_that.municipio,_that.estado,_that.referencias,_that.esPrincipal,_that.fechaCreacion,_that.updatedAT,_that.latitud,_that.longitud);case _:
   return null;
 
 }
@@ -219,11 +218,11 @@ return $default(_that.id,_that.usuarioId,_that.alias,_that.calle,_that.numExt,_t
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _Direccion implements Direccion {
-  const _Direccion({required this.id, required this.usuarioId, required this.alias, required this.calle, required this.numExt, this.numInt, required this.colonia, required this.codigoPostal, required this.municipio, required this.estado, required this.pais, this.referencias, this.esPrincipal = false, required this.fechaCreacion});
-  factory _Direccion.fromJson(Map<String, dynamic> json) => _$DireccionFromJson(json);
+  const _Direccion({required this.id, required this.usuarioId, required this.alias, required this.calle, required this.numExt, this.numInt, required this.colonia, required this.codigoPostal, required this.municipio, required this.estado, this.referencias, this.esPrincipal = false, required this.fechaCreacion, this.updatedAT, required this.latitud, required this.longitud});
+  
 
 @override final  String id;
 @override final  String usuarioId;
@@ -235,10 +234,12 @@ class _Direccion implements Direccion {
 @override final  String codigoPostal;
 @override final  String municipio;
 @override final  String estado;
-@override final  String pais;
 @override final  String? referencias;
 @override@JsonKey() final  bool esPrincipal;
 @override final  DateTime fechaCreacion;
+@override final  DateTime? updatedAT;
+@override final  double latitud;
+@override final  double longitud;
 
 /// Create a copy of Direccion
 /// with the given fields replaced by the non-null parameter values.
@@ -246,23 +247,20 @@ class _Direccion implements Direccion {
 @pragma('vm:prefer-inline')
 _$DireccionCopyWith<_Direccion> get copyWith => __$DireccionCopyWithImpl<_Direccion>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$DireccionToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Direccion&&(identical(other.id, id) || other.id == id)&&(identical(other.usuarioId, usuarioId) || other.usuarioId == usuarioId)&&(identical(other.alias, alias) || other.alias == alias)&&(identical(other.calle, calle) || other.calle == calle)&&(identical(other.numExt, numExt) || other.numExt == numExt)&&(identical(other.numInt, numInt) || other.numInt == numInt)&&(identical(other.colonia, colonia) || other.colonia == colonia)&&(identical(other.codigoPostal, codigoPostal) || other.codigoPostal == codigoPostal)&&(identical(other.municipio, municipio) || other.municipio == municipio)&&(identical(other.estado, estado) || other.estado == estado)&&(identical(other.pais, pais) || other.pais == pais)&&(identical(other.referencias, referencias) || other.referencias == referencias)&&(identical(other.esPrincipal, esPrincipal) || other.esPrincipal == esPrincipal)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Direccion&&(identical(other.id, id) || other.id == id)&&(identical(other.usuarioId, usuarioId) || other.usuarioId == usuarioId)&&(identical(other.alias, alias) || other.alias == alias)&&(identical(other.calle, calle) || other.calle == calle)&&(identical(other.numExt, numExt) || other.numExt == numExt)&&(identical(other.numInt, numInt) || other.numInt == numInt)&&(identical(other.colonia, colonia) || other.colonia == colonia)&&(identical(other.codigoPostal, codigoPostal) || other.codigoPostal == codigoPostal)&&(identical(other.municipio, municipio) || other.municipio == municipio)&&(identical(other.estado, estado) || other.estado == estado)&&(identical(other.referencias, referencias) || other.referencias == referencias)&&(identical(other.esPrincipal, esPrincipal) || other.esPrincipal == esPrincipal)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion)&&(identical(other.updatedAT, updatedAT) || other.updatedAT == updatedAT)&&(identical(other.latitud, latitud) || other.latitud == latitud)&&(identical(other.longitud, longitud) || other.longitud == longitud));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,usuarioId,alias,calle,numExt,numInt,colonia,codigoPostal,municipio,estado,pais,referencias,esPrincipal,fechaCreacion);
+int get hashCode => Object.hash(runtimeType,id,usuarioId,alias,calle,numExt,numInt,colonia,codigoPostal,municipio,estado,referencias,esPrincipal,fechaCreacion,updatedAT,latitud,longitud);
 
 @override
 String toString() {
-  return 'Direccion(id: $id, usuarioId: $usuarioId, alias: $alias, calle: $calle, numExt: $numExt, numInt: $numInt, colonia: $colonia, codigoPostal: $codigoPostal, municipio: $municipio, estado: $estado, pais: $pais, referencias: $referencias, esPrincipal: $esPrincipal, fechaCreacion: $fechaCreacion)';
+  return 'Direccion(id: $id, usuarioId: $usuarioId, alias: $alias, calle: $calle, numExt: $numExt, numInt: $numInt, colonia: $colonia, codigoPostal: $codigoPostal, municipio: $municipio, estado: $estado, referencias: $referencias, esPrincipal: $esPrincipal, fechaCreacion: $fechaCreacion, updatedAT: $updatedAT, latitud: $latitud, longitud: $longitud)';
 }
 
 
@@ -273,7 +271,7 @@ abstract mixin class _$DireccionCopyWith<$Res> implements $DireccionCopyWith<$Re
   factory _$DireccionCopyWith(_Direccion value, $Res Function(_Direccion) _then) = __$DireccionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String usuarioId, String alias, String calle, String numExt, String? numInt, String colonia, String codigoPostal, String municipio, String estado, String pais, String? referencias, bool esPrincipal, DateTime fechaCreacion
+ String id, String usuarioId, String alias, String calle, String numExt, String? numInt, String colonia, String codigoPostal, String municipio, String estado, String? referencias, bool esPrincipal, DateTime fechaCreacion, DateTime? updatedAT, double latitud, double longitud
 });
 
 
@@ -290,7 +288,7 @@ class __$DireccionCopyWithImpl<$Res>
 
 /// Create a copy of Direccion
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? usuarioId = null,Object? alias = null,Object? calle = null,Object? numExt = null,Object? numInt = freezed,Object? colonia = null,Object? codigoPostal = null,Object? municipio = null,Object? estado = null,Object? pais = null,Object? referencias = freezed,Object? esPrincipal = null,Object? fechaCreacion = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? usuarioId = null,Object? alias = null,Object? calle = null,Object? numExt = null,Object? numInt = freezed,Object? colonia = null,Object? codigoPostal = null,Object? municipio = null,Object? estado = null,Object? referencias = freezed,Object? esPrincipal = null,Object? fechaCreacion = null,Object? updatedAT = freezed,Object? latitud = null,Object? longitud = null,}) {
   return _then(_Direccion(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,usuarioId: null == usuarioId ? _self.usuarioId : usuarioId // ignore: cast_nullable_to_non_nullable
@@ -302,11 +300,13 @@ as String?,colonia: null == colonia ? _self.colonia : colonia // ignore: cast_nu
 as String,codigoPostal: null == codigoPostal ? _self.codigoPostal : codigoPostal // ignore: cast_nullable_to_non_nullable
 as String,municipio: null == municipio ? _self.municipio : municipio // ignore: cast_nullable_to_non_nullable
 as String,estado: null == estado ? _self.estado : estado // ignore: cast_nullable_to_non_nullable
-as String,pais: null == pais ? _self.pais : pais // ignore: cast_nullable_to_non_nullable
 as String,referencias: freezed == referencias ? _self.referencias : referencias // ignore: cast_nullable_to_non_nullable
 as String?,esPrincipal: null == esPrincipal ? _self.esPrincipal : esPrincipal // ignore: cast_nullable_to_non_nullable
 as bool,fechaCreacion: null == fechaCreacion ? _self.fechaCreacion : fechaCreacion // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,updatedAT: freezed == updatedAT ? _self.updatedAT : updatedAT // ignore: cast_nullable_to_non_nullable
+as DateTime?,latitud: null == latitud ? _self.latitud : latitud // ignore: cast_nullable_to_non_nullable
+as double,longitud: null == longitud ? _self.longitud : longitud // ignore: cast_nullable_to_non_nullable
+as double,
   ));
 }
 

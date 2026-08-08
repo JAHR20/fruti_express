@@ -46,8 +46,8 @@ class LiberarReserva {
 
       // 5️⃣ Actualizar contadores (Solo liberamos la reserva lógica)
       final actualizado = inventario.copyWith(
-        cantidadReservada: inventario.cantidadReservada - cantidad,
-        ultimaActualizacion: DateTime.now(),
+        stockReservado: inventario.stockReservado - cantidad,
+        fechaActualizacion: DateTime.now(),
       );
 
       // 6️⃣ Persistencia
@@ -75,11 +75,11 @@ class LiberarReserva {
         );
 
   ResultTask<Unit> _validarReservaDisponible(Inventario inv, int liberar) =>
-      inv.cantidadReservada >= liberar
+      inv.stockReservado >= liberar
       ? TaskEither.right(unit)
       : TaskEither.left(
           Failure.validation(
-            'Inconsistencia: Intentas liberar $liberar, pero solo hay ${inv.cantidadReservada} reservadas.',
+            'Inconsistencia: Intentas liberar $liberar, pero solo hay ${inv.stockReservado} reservadas.',
           ),
         );
 }

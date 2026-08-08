@@ -6,12 +6,13 @@ abstract class CategoriaRepository {
   // --- ✍️ ESCRITURA ---
   ResultTask<Categoria> crear(Categoria categoria);
   ResultTask<Categoria> actualizar(Categoria categoria);
-  ResultTask<Unit> desactivar(String id);
+  ResultTask<Unit> cambiarEstado(String id, bool nuevoEstado);
 
   // --- 🔍 CONSULTAS ---
   ResultTask<Categoria?> obtenerPorId(String id);
   ResultTask<Categoria?> obtenerPorNombre(String nombre);
   ResultTask<List<Categoria>> obtenerTodas();
+  ResultTask<List<Categoria>> obtenerActivas();
   ResultTask<List<Categoria>> obtenerPorCategoriaPadre(String padreId);
 
   // --- 📡 REACTIVIDAD ---

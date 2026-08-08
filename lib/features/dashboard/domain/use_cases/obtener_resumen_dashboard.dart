@@ -28,7 +28,7 @@ class ObtenerResumenDashboard {
       // 2️⃣ Disparar todas las consultas en paralelo (Velocidad máxima 🚀)
       // Ejecutamos el .run() de cada TaskEither para que empiecen a trabajar YA.
       final futures = await Future.wait([
-        repository.contarPorEstado(idLimpio, EstadoPedido.pendiente).run(),
+        repository.contarPorEstado(idLimpio, EstadoPedido.pagoPendiente).run(),
         repository.contarPorEstado(idLimpio, EstadoPedido.enPreparacion).run(),
         repository.contarPorEstado(idLimpio, EstadoPedido.enCamino).run(),
         repository.obtenerVentasDelDia(idLimpio).run(),

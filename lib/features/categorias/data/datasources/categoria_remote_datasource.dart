@@ -1,12 +1,13 @@
-import 'package:fruti_express_jahr_admin/features/categorias/domain/entities/categoria.dart';
+import 'package:fruti_express_jahr_admin/features/categorias/data/models/categoria_model.dart';
 
 abstract class CategoriaRemoteDataSource {
-  Future<List<Categoria>> obtenerTodas();
-  Future<Categoria?> obtenerPorId(String id);
-  Future<Categoria?> obtenerPorNombre(String nombre);
-  Future<List<Categoria>> obtenerPorPadre(String? padreId);
-  Stream<List<Categoria>> watchTodas();
-  Future<Categoria> crear(Categoria categoria);
-  Future<Categoria> actualizar(Categoria categoria);
-  Future<void> desactivar(String id); // Soft delete
+  Future<List<CategoriaModel>> obtenerTodas();
+  Future<List<CategoriaModel>> obtenerActivas();
+  Future<CategoriaModel?> obtenerPorId(String id);
+  Future<CategoriaModel?> obtenerPorNombre(String nombre);
+  Future<List<CategoriaModel>> obtenerPorPadre(String? padreId);
+  Stream<List<CategoriaModel>> watchTodas();
+  Future<CategoriaModel> crear(CategoriaModel model);
+  Future<CategoriaModel> actualizar(CategoriaModel model);
+  Future<void> cambiarEstado(String id, bool nuevoEstado);
 }

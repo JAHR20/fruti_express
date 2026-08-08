@@ -14,12 +14,19 @@ class CrearSucursal {
   ResultTask<Sucursal> ejecutar({
     required Perfil usuarioActual,
     required String nombre,
-    required String direccion,
+    required String calle,
+    required String numeroExterior,
+    required String codigoPostal,
+    required String colonia,
+    required String municipio,
+    required String estado,
+    required double? latitud,
+    required double? longitud,
   }) {
     final nombreTrim = nombre.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Permisos: Solo el Super Admin crea sucursales
+      // 1️⃣ Seguridad y validaciones previas...
       if (!usuarioActual.esAdmin) {
         return await $(
           TaskEither.left(
@@ -30,18 +37,29 @@ class CrearSucursal {
         );
       }
 
-      // 2️⃣ Validación de entrada
-      if (nombreTrim.isEmpty || direccion.trim().isEmpty) {
+      if (nombreTrim.isEmpty ||
+          calle.trim().isEmpty ||
+          numeroExterior.trim().isEmpty ||
+          codigoPostal.trim().isEmpty ||
+          colonia.trim().isEmpty ||
+          municipio.trim().isEmpty ||
+          estado.trim().isEmpty
+          ) {
         return await $(
           TaskEither.left(
-            const Failure.validation(
-              "El nombre y la dirección son obligatorios",
-            ),
+            const Failure.validation("Faltan datos obligatorios"),
           ),
         );
       }
 
-      // 3️⃣ Validar nombre único para evitar confusión operativa
+      if (latitud == null || longitud == null) {
+        return await $(
+          TaskEither.left(
+            const Failure.validation("Las coordenadas de ubicación son obligatorias para los envíos."),
+          ),
+        );
+      }
+
       final existente = await $(repository.obtenerPorNombre(nombreTrim));
       if (existente != null) {
         return await $(
@@ -53,16 +71,27 @@ class CrearSucursal {
         );
       }
 
-      // 4️⃣ Construcción de la entidad
+      // 2️⃣ Construimos la entidad (pura, sin los códigos)
       final nuevaSucursal = Sucursal(
-        id: '', // Se genera en la DB
+        id: '',
         nombre: nombreTrim,
-        direccion: direccion.trim(),
+        calle: calle.trim(),
+        numExterior: numeroExterior.trim(),
+        codigoPostal: codigoPostal.trim(),
+        colonia: colonia.trim(),
+        municipio: municipio.trim(),
+        estado: estado.trim(),
         activa: true,
         fechaCreacion: DateTime.now(),
+        latitud: latitud,
+        longitud: longitud,
       );
 
-      return await $(repository.crear(nuevaSucursal));
+      // 3️⃣ Guardamos la Sucursal (Paso 1 en DB)
+      final sucursalCreada = await $(repository.crear(nuevaSucursal));
+
+      // Devolvemos la entidad ya lista al Cubit
+      return sucursalCreada;
     });
   }
 }

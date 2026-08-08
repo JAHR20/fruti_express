@@ -14,6 +14,7 @@ class EditarSucursal {
   ResultTask<Sucursal> ejecutar({
     required Perfil usuarioActual,
     required Sucursal sucursalModificada,
+    required List<String> codigosPostales,
   }) {
     return TaskEither.Do(($) async {
       // 1️⃣ Seguridad
@@ -35,8 +36,23 @@ class EditarSucursal {
         );
       }
 
+      if (sucursalModificada.latitud == null ||
+          sucursalModificada.longitud == null) {
+        return await $(
+          TaskEither.left(
+            const Failure.validation(
+              "Las coordenadas de ubicación son obligatorias para los envíos.",
+            ),
+          ),
+        );
+      }
+
       // 3️⃣ Persistencia
-      return await $(repository.actualizar(sucursalModificada));
+      final sucursalActualizada = await $(
+        repository.actualizar(sucursalModificada),
+      );
+
+      return sucursalActualizada;
     });
   }
 }

@@ -1,7 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'direccion.freezed.dart';
-part 'direccion.g.dart';
 
 @freezed
 abstract class Direccion with _$Direccion {
@@ -16,12 +15,13 @@ abstract class Direccion with _$Direccion {
     required String codigoPostal,
     required String municipio,
     required String estado,
-    required String pais,
     String? referencias,
     @Default(false) bool esPrincipal,
     required DateTime fechaCreacion,
-  }) = _Direccion;
+    DateTime? updatedAT,
 
-  factory Direccion.fromJson(Map<String, dynamic> json) =>
-      _$DireccionFromJson(json);
+    required double latitud,
+    required double longitud,
+  }) = _Direccion;
+  // ← Sin fromJson, sin .g.dart
 }

@@ -9,11 +9,13 @@ extension PermisosUsuario on Perfil {
 
   bool get esStaff => esAdmin || esEncargado;
 
-  bool get puedeGestionarCatalogo => esStaff;
+  bool get puedeGestionarCatalogo => esAdmin;
 
   bool get puedeGestionarInventario => esStaff;
 
   bool get puedeGestionarPedidos => esStaff;
+
+  bool get puedeGestionarBanners => esStaff;
 
   bool get puedeCrearSucursal => esAdmin;
 

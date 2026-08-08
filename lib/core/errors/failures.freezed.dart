@@ -222,8 +222,8 @@ return validation(_that.message);case _:
 /// @nodoc
 
 
-class ServerFailure implements Failure {
-  const ServerFailure(this.message);
+class ServerFailure extends Failure {
+  const ServerFailure(this.message): super._();
   
 
  final  String message;
@@ -288,8 +288,8 @@ as String,
 /// @nodoc
 
 
-class NetworkFailure implements Failure {
-  const NetworkFailure();
+class NetworkFailure extends Failure {
+  const NetworkFailure(): super._();
   
 
 
@@ -320,8 +320,8 @@ String toString() {
 /// @nodoc
 
 
-class CacheFailure implements Failure {
-  const CacheFailure();
+class CacheFailure extends Failure {
+  const CacheFailure(): super._();
   
 
 
@@ -352,8 +352,8 @@ String toString() {
 /// @nodoc
 
 
-class UnauthorizedFailure implements Failure {
-  const UnauthorizedFailure(this.message);
+class UnauthorizedFailure extends Failure {
+  const UnauthorizedFailure(this.message): super._();
   
 
  final  String message;
@@ -418,8 +418,8 @@ as String,
 /// @nodoc
 
 
-class NotFoundFailure implements Failure {
-  const NotFoundFailure(this.message);
+class NotFoundFailure extends Failure {
+  const NotFoundFailure(this.message): super._();
   
 
  final  String message;
@@ -484,8 +484,8 @@ as String,
 /// @nodoc
 
 
-class AlreadyExistsFailure implements Failure {
-  const AlreadyExistsFailure(this.message);
+class AlreadyExistsFailure extends Failure {
+  const AlreadyExistsFailure(this.message): super._();
   
 
  final  String message;
@@ -550,8 +550,8 @@ as String,
 /// @nodoc
 
 
-class InsufficientStockFailure implements Failure {
-  const InsufficientStockFailure(this.message);
+class InsufficientStockFailure extends Failure {
+  const InsufficientStockFailure(this.message): super._();
   
 
  final  String message;
@@ -616,8 +616,8 @@ as String,
 /// @nodoc
 
 
-class InvalidStateFailure implements Failure {
-  const InvalidStateFailure(this.message);
+class InvalidStateFailure extends Failure {
+  const InvalidStateFailure(this.message): super._();
   
 
  final  String message;
@@ -682,8 +682,8 @@ as String,
 /// @nodoc
 
 
-class ValidationFailure implements Failure {
-  const ValidationFailure(this.message);
+class ValidationFailure extends Failure {
+  const ValidationFailure(this.message): super._();
   
 
  final  String message;

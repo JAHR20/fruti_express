@@ -11,33 +11,30 @@ part of 'perfil.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$Perfil {
 
- String get id; String get nombre; String get email; bool get activo; String? get telefono; TipoUsuario get rol; String? get sucursalId; String? get avatarUrl; DateTime get fechaCreacion;
+ String get id; String get nombre; String get apellidoPaterno; String? get apellidoMaterno; String? get alias; String get email; bool get activo; String? get telefono; TipoUsuario get rol; String? get sucursalId; String? get avatarUrl; DateTime get fechaCreacion;
 /// Create a copy of Perfil
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $PerfilCopyWith<Perfil> get copyWith => _$PerfilCopyWithImpl<Perfil>(this as Perfil, _$identity);
 
-  /// Serializes this Perfil to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Perfil&&(identical(other.id, id) || other.id == id)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.email, email) || other.email == email)&&(identical(other.activo, activo) || other.activo == activo)&&(identical(other.telefono, telefono) || other.telefono == telefono)&&(identical(other.rol, rol) || other.rol == rol)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Perfil&&(identical(other.id, id) || other.id == id)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.apellidoPaterno, apellidoPaterno) || other.apellidoPaterno == apellidoPaterno)&&(identical(other.apellidoMaterno, apellidoMaterno) || other.apellidoMaterno == apellidoMaterno)&&(identical(other.alias, alias) || other.alias == alias)&&(identical(other.email, email) || other.email == email)&&(identical(other.activo, activo) || other.activo == activo)&&(identical(other.telefono, telefono) || other.telefono == telefono)&&(identical(other.rol, rol) || other.rol == rol)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,nombre,email,activo,telefono,rol,sucursalId,avatarUrl,fechaCreacion);
+int get hashCode => Object.hash(runtimeType,id,nombre,apellidoPaterno,apellidoMaterno,alias,email,activo,telefono,rol,sucursalId,avatarUrl,fechaCreacion);
 
 @override
 String toString() {
-  return 'Perfil(id: $id, nombre: $nombre, email: $email, activo: $activo, telefono: $telefono, rol: $rol, sucursalId: $sucursalId, avatarUrl: $avatarUrl, fechaCreacion: $fechaCreacion)';
+  return 'Perfil(id: $id, nombre: $nombre, apellidoPaterno: $apellidoPaterno, apellidoMaterno: $apellidoMaterno, alias: $alias, email: $email, activo: $activo, telefono: $telefono, rol: $rol, sucursalId: $sucursalId, avatarUrl: $avatarUrl, fechaCreacion: $fechaCreacion)';
 }
 
 
@@ -48,7 +45,7 @@ abstract mixin class $PerfilCopyWith<$Res>  {
   factory $PerfilCopyWith(Perfil value, $Res Function(Perfil) _then) = _$PerfilCopyWithImpl;
 @useResult
 $Res call({
- String id, String nombre, String email, bool activo, String? telefono, TipoUsuario rol, String? sucursalId, String? avatarUrl, DateTime fechaCreacion
+ String id, String nombre, String apellidoPaterno, String? apellidoMaterno, String? alias, String email, bool activo, String? telefono, TipoUsuario rol, String? sucursalId, String? avatarUrl, DateTime fechaCreacion
 });
 
 
@@ -65,11 +62,14 @@ class _$PerfilCopyWithImpl<$Res>
 
 /// Create a copy of Perfil
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? nombre = null,Object? email = null,Object? activo = null,Object? telefono = freezed,Object? rol = null,Object? sucursalId = freezed,Object? avatarUrl = freezed,Object? fechaCreacion = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? nombre = null,Object? apellidoPaterno = null,Object? apellidoMaterno = freezed,Object? alias = freezed,Object? email = null,Object? activo = null,Object? telefono = freezed,Object? rol = null,Object? sucursalId = freezed,Object? avatarUrl = freezed,Object? fechaCreacion = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,nombre: null == nombre ? _self.nombre : nombre // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,apellidoPaterno: null == apellidoPaterno ? _self.apellidoPaterno : apellidoPaterno // ignore: cast_nullable_to_non_nullable
+as String,apellidoMaterno: freezed == apellidoMaterno ? _self.apellidoMaterno : apellidoMaterno // ignore: cast_nullable_to_non_nullable
+as String?,alias: freezed == alias ? _self.alias : alias // ignore: cast_nullable_to_non_nullable
+as String?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,activo: null == activo ? _self.activo : activo // ignore: cast_nullable_to_non_nullable
 as bool,telefono: freezed == telefono ? _self.telefono : telefono // ignore: cast_nullable_to_non_nullable
 as String?,rol: null == rol ? _self.rol : rol // ignore: cast_nullable_to_non_nullable
@@ -161,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String nombre,  String email,  bool activo,  String? telefono,  TipoUsuario rol,  String? sucursalId,  String? avatarUrl,  DateTime fechaCreacion)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String nombre,  String apellidoPaterno,  String? apellidoMaterno,  String? alias,  String email,  bool activo,  String? telefono,  TipoUsuario rol,  String? sucursalId,  String? avatarUrl,  DateTime fechaCreacion)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Perfil() when $default != null:
-return $default(_that.id,_that.nombre,_that.email,_that.activo,_that.telefono,_that.rol,_that.sucursalId,_that.avatarUrl,_that.fechaCreacion);case _:
+return $default(_that.id,_that.nombre,_that.apellidoPaterno,_that.apellidoMaterno,_that.alias,_that.email,_that.activo,_that.telefono,_that.rol,_that.sucursalId,_that.avatarUrl,_that.fechaCreacion);case _:
   return orElse();
 
 }
@@ -182,10 +182,10 @@ return $default(_that.id,_that.nombre,_that.email,_that.activo,_that.telefono,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String nombre,  String email,  bool activo,  String? telefono,  TipoUsuario rol,  String? sucursalId,  String? avatarUrl,  DateTime fechaCreacion)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String nombre,  String apellidoPaterno,  String? apellidoMaterno,  String? alias,  String email,  bool activo,  String? telefono,  TipoUsuario rol,  String? sucursalId,  String? avatarUrl,  DateTime fechaCreacion)  $default,) {final _that = this;
 switch (_that) {
 case _Perfil():
-return $default(_that.id,_that.nombre,_that.email,_that.activo,_that.telefono,_that.rol,_that.sucursalId,_that.avatarUrl,_that.fechaCreacion);case _:
+return $default(_that.id,_that.nombre,_that.apellidoPaterno,_that.apellidoMaterno,_that.alias,_that.email,_that.activo,_that.telefono,_that.rol,_that.sucursalId,_that.avatarUrl,_that.fechaCreacion);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +202,10 @@ return $default(_that.id,_that.nombre,_that.email,_that.activo,_that.telefono,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String nombre,  String email,  bool activo,  String? telefono,  TipoUsuario rol,  String? sucursalId,  String? avatarUrl,  DateTime fechaCreacion)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String nombre,  String apellidoPaterno,  String? apellidoMaterno,  String? alias,  String email,  bool activo,  String? telefono,  TipoUsuario rol,  String? sucursalId,  String? avatarUrl,  DateTime fechaCreacion)?  $default,) {final _that = this;
 switch (_that) {
 case _Perfil() when $default != null:
-return $default(_that.id,_that.nombre,_that.email,_that.activo,_that.telefono,_that.rol,_that.sucursalId,_that.avatarUrl,_that.fechaCreacion);case _:
+return $default(_that.id,_that.nombre,_that.apellidoPaterno,_that.apellidoMaterno,_that.alias,_that.email,_that.activo,_that.telefono,_that.rol,_that.sucursalId,_that.avatarUrl,_that.fechaCreacion);case _:
   return null;
 
 }
@@ -214,14 +214,17 @@ return $default(_that.id,_that.nombre,_that.email,_that.activo,_that.telefono,_t
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _Perfil implements Perfil {
-  const _Perfil({required this.id, required this.nombre, required this.email, required this.activo, this.telefono, required this.rol, this.sucursalId, this.avatarUrl, required this.fechaCreacion});
-  factory _Perfil.fromJson(Map<String, dynamic> json) => _$PerfilFromJson(json);
+  const _Perfil({required this.id, required this.nombre, required this.apellidoPaterno, this.apellidoMaterno, this.alias, required this.email, required this.activo, this.telefono, required this.rol, this.sucursalId, this.avatarUrl, required this.fechaCreacion});
+  
 
 @override final  String id;
 @override final  String nombre;
+@override final  String apellidoPaterno;
+@override final  String? apellidoMaterno;
+@override final  String? alias;
 @override final  String email;
 @override final  bool activo;
 @override final  String? telefono;
@@ -236,23 +239,20 @@ class _Perfil implements Perfil {
 @pragma('vm:prefer-inline')
 _$PerfilCopyWith<_Perfil> get copyWith => __$PerfilCopyWithImpl<_Perfil>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$PerfilToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Perfil&&(identical(other.id, id) || other.id == id)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.email, email) || other.email == email)&&(identical(other.activo, activo) || other.activo == activo)&&(identical(other.telefono, telefono) || other.telefono == telefono)&&(identical(other.rol, rol) || other.rol == rol)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Perfil&&(identical(other.id, id) || other.id == id)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.apellidoPaterno, apellidoPaterno) || other.apellidoPaterno == apellidoPaterno)&&(identical(other.apellidoMaterno, apellidoMaterno) || other.apellidoMaterno == apellidoMaterno)&&(identical(other.alias, alias) || other.alias == alias)&&(identical(other.email, email) || other.email == email)&&(identical(other.activo, activo) || other.activo == activo)&&(identical(other.telefono, telefono) || other.telefono == telefono)&&(identical(other.rol, rol) || other.rol == rol)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.avatarUrl, avatarUrl) || other.avatarUrl == avatarUrl)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,nombre,email,activo,telefono,rol,sucursalId,avatarUrl,fechaCreacion);
+int get hashCode => Object.hash(runtimeType,id,nombre,apellidoPaterno,apellidoMaterno,alias,email,activo,telefono,rol,sucursalId,avatarUrl,fechaCreacion);
 
 @override
 String toString() {
-  return 'Perfil(id: $id, nombre: $nombre, email: $email, activo: $activo, telefono: $telefono, rol: $rol, sucursalId: $sucursalId, avatarUrl: $avatarUrl, fechaCreacion: $fechaCreacion)';
+  return 'Perfil(id: $id, nombre: $nombre, apellidoPaterno: $apellidoPaterno, apellidoMaterno: $apellidoMaterno, alias: $alias, email: $email, activo: $activo, telefono: $telefono, rol: $rol, sucursalId: $sucursalId, avatarUrl: $avatarUrl, fechaCreacion: $fechaCreacion)';
 }
 
 
@@ -263,7 +263,7 @@ abstract mixin class _$PerfilCopyWith<$Res> implements $PerfilCopyWith<$Res> {
   factory _$PerfilCopyWith(_Perfil value, $Res Function(_Perfil) _then) = __$PerfilCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String nombre, String email, bool activo, String? telefono, TipoUsuario rol, String? sucursalId, String? avatarUrl, DateTime fechaCreacion
+ String id, String nombre, String apellidoPaterno, String? apellidoMaterno, String? alias, String email, bool activo, String? telefono, TipoUsuario rol, String? sucursalId, String? avatarUrl, DateTime fechaCreacion
 });
 
 
@@ -280,11 +280,14 @@ class __$PerfilCopyWithImpl<$Res>
 
 /// Create a copy of Perfil
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? nombre = null,Object? email = null,Object? activo = null,Object? telefono = freezed,Object? rol = null,Object? sucursalId = freezed,Object? avatarUrl = freezed,Object? fechaCreacion = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? nombre = null,Object? apellidoPaterno = null,Object? apellidoMaterno = freezed,Object? alias = freezed,Object? email = null,Object? activo = null,Object? telefono = freezed,Object? rol = null,Object? sucursalId = freezed,Object? avatarUrl = freezed,Object? fechaCreacion = null,}) {
   return _then(_Perfil(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,nombre: null == nombre ? _self.nombre : nombre // ignore: cast_nullable_to_non_nullable
-as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
+as String,apellidoPaterno: null == apellidoPaterno ? _self.apellidoPaterno : apellidoPaterno // ignore: cast_nullable_to_non_nullable
+as String,apellidoMaterno: freezed == apellidoMaterno ? _self.apellidoMaterno : apellidoMaterno // ignore: cast_nullable_to_non_nullable
+as String?,alias: freezed == alias ? _self.alias : alias // ignore: cast_nullable_to_non_nullable
+as String?,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,activo: null == activo ? _self.activo : activo // ignore: cast_nullable_to_non_nullable
 as bool,telefono: freezed == telefono ? _self.telefono : telefono // ignore: cast_nullable_to_non_nullable
 as String?,rol: null == rol ? _self.rol : rol // ignore: cast_nullable_to_non_nullable

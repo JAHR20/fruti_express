@@ -46,9 +46,9 @@ class ConfirmarStock {
 
       // 5️⃣ Transformación Atómica (Doble resta)
       final actualizado = inventario.copyWith(
-        cantidadDisponible: inventario.cantidadDisponible - cantidad,
-        cantidadReservada: inventario.cantidadReservada - cantidad,
-        ultimaActualizacion: DateTime.now(),
+        stockDisponible: inventario.stockDisponible - cantidad,
+        stockReservado: inventario.stockReservado - cantidad,
+        fechaActualizacion: DateTime.now(),
       );
 
       // 6️⃣ Persistencia
@@ -76,11 +76,11 @@ class ConfirmarStock {
         );
 
   ResultTask<Unit> _validarReservaSuficiente(Inventario inv, int confirmado) =>
-      inv.cantidadReservada >= confirmado
+      inv.stockReservado >= confirmado
       ? TaskEither.right(unit)
       : TaskEither.left(
           Failure.validation(
-            'Inconsistencia: Intentas confirmar $confirmado, pero solo hay ${inv.cantidadReservada} reservadas.',
+            'Inconsistencia: Intentas confirmar $confirmado, pero solo hay ${inv.stockReservado} reservadas.',
           ),
         );
 }

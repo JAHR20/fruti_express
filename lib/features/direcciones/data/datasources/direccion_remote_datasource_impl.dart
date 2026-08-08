@@ -1,40 +1,46 @@
+import 'package:fruti_express_jahr_admin/features/direcciones/data/models/direccion_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'direccion_remote_datasource.dart';
-import '../../domain/entities/direccion.dart';
 
 class DireccionRemoteDatasourceImpl implements DireccionRemoteDatasource {
   final SupabaseClient supabase;
   DireccionRemoteDatasourceImpl(this.supabase);
 
   @override
-  Future<List<Direccion>> obtenerPorUsuario(String usuarioId) async {
+  Future<List<DireccionModel>> obtenerPorUsuario(String usuarioId) async {
     final response = await supabase
         .from('direcciones')
         .select()
         .eq('usuario_id', usuarioId)
         .order('es_principal', ascending: false);
-    return (response as List).map((json) => Direccion.fromJson(json)).toList();
+    return (response as List)
+        .map((json) => DireccionModel.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<Direccion> crear(Direccion direccion) async {
+  Future<DireccionModel> crear(DireccionModel model) async {
+    final datos = model.toJson();
+    datos.remove('id');
+    datos.remove('updated_at');
+    datos.remove('fecha_creacion');
     final response = await supabase
         .from('direcciones')
-        .insert(direccion.toJson())
+        .insert(datos)
         .select()
         .single();
-    return Direccion.fromJson(response);
+    return DireccionModel.fromJson(response);
   }
 
   @override
-  Future<Direccion> actualizar(Direccion direccion) async {
+  Future<DireccionModel> actualizar(DireccionModel model) async {
     final response = await supabase
         .from('direcciones')
-        .update(direccion.toJson())
-        .eq('id', direccion.id)
+        .update(model.toJson())
+        .eq('id', model.id)
         .select()
         .single();
-    return Direccion.fromJson(response);
+    return DireccionModel.fromJson(response);
   }
 
   @override

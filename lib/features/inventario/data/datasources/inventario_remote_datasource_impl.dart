@@ -1,6 +1,6 @@
+import 'package:fruti_express_jahr_admin/features/inventario/data/models/inventario_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'inventario_remote_datasource.dart';
-import '../../domain/entities/inventario.dart';
 
 class InventarioRemoteDatasourceImpl implements InventarioRemoteDatasource {
   final SupabaseClient supabase;
@@ -8,68 +8,96 @@ class InventarioRemoteDatasourceImpl implements InventarioRemoteDatasource {
   InventarioRemoteDatasourceImpl(this.supabase);
 
   @override
-  Future<Inventario> crear(Inventario inventario) async {
+  Future<InventarioModel> crear(InventarioModel model) async {
     final response = await supabase
-        .from('inventarios')
-        .insert(inventario.toJson())
+        .from('inventario')
+        .insert(model.toJson())
         .select()
         .single();
-    return Inventario.fromJson(response);
+    return InventarioModel.fromJson(response);
   }
 
   @override
-  Future<List<Inventario>> obtenerPorProducto(String productoId) async {
+  Future<List<InventarioModel>> obtenerPorProducto(String productoId) async {
     final response = await supabase
-        .from('inventarios')
+        .from('inventario')
         .select()
         .eq('producto_id', productoId);
-    return (response as List).map((json) => Inventario.fromJson(json)).toList();
+    return (response as List).map((json) => InventarioModel.fromJson(json)).toList();
   }
 
   @override
-  Stream<List<Inventario>> watchPorSucursal(String sucursalId) {
+  Stream<List<InventarioModel>> watchPorSucursal(String sucursalId) {
     return supabase
-        .from('inventarios')
+        .from('inventario')
         .stream(primaryKey: ['id'])
         .eq('sucursal_id', sucursalId)
-        .map((data) => data.map((json) => Inventario.fromJson(json)).toList());
+        .map((data) => data.map((json) => InventarioModel.fromJson(json)).toList());
   }
 
   @override
-  Future<Inventario?> obtener({
+  Future<InventarioModel?> obtener({
     required String productoId,
     required String sucursalId,
   }) async {
     final response = await supabase
-        .from('inventarios')
+        .from('inventario')
         .select()
         .eq('producto_id', productoId)
         .eq('sucursal_id', sucursalId)
         .maybeSingle();
 
-    return response != null ? Inventario.fromJson(response) : null;
+    return response != null ? InventarioModel.fromJson(response) : null;
   }
 
   @override
-  Future<Inventario> actualizar(Inventario inventario) async {
+  Future<InventarioModel> actualizar(InventarioModel model) async {
     // .upsert() detecta si ya existe el par producto/sucursal.
     // Si existe, hace UPDATE; si no, hace INSERT.
     final response = await supabase
-        .from('inventarios')
-        .upsert(inventario.toJson())
+        .from('inventario')
+        .upsert(model.toJson())
         .select()
         .single();
 
-    return Inventario.fromJson(response);
+    return InventarioModel.fromJson(response);
   }
 
   @override
-  Future<List<Inventario>> obtenerPorSucursal(String sucursalId) async {
+  Future<List<InventarioModel>> obtenerPorSucursal(String sucursalId) async {
     final response = await supabase
-        .from('inventarios')
+        .from('inventario')
         .select()
         .eq('sucursal_id', sucursalId);
 
-    return (response as List).map((json) => Inventario.fromJson(json)).toList();
+    return (response as List).map((json) => InventarioModel.fromJson(json)).toList();
+  }
+
+  @override
+  Future<void> ajustarStockAtomicamente({
+    required String productoId,
+    required String sucursalId,
+    required int cantidadCambio,
+  }) async {
+    await supabase.rpc(
+      'ajustar_stock_inventario',
+      params: {
+        'p_producto_id': productoId,
+        'p_sucursal_id': sucursalId,
+        'p_cantidad_cambio': cantidadCambio,
+      },
+    );
+  }
+
+  @override
+  Future<int> obtenerStockActual(String productoId, String sucursalId) async {
+    final response = await supabase
+        .from('inventario')
+        .select('stock_disponible')
+        .eq('producto_id', productoId)
+        .eq('sucursal_id', sucursalId)
+        .maybeSingle();
+
+    return response?['stock_disponible'] ?? 0;
   }
 }

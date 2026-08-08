@@ -11,33 +11,30 @@ part of 'producto.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$Producto {
 
- String? get id; String get categoriaId; String get nombre; String? get descripcion; int get precioActual; int? get precioComparacion; UnidadMedida get unidadMedida; String? get imagenUrl; bool get isActive; DateTime get fechaCreacion;
+ String? get id; String get categoriaId; String get nombre; String? get descripcion; int get precioActual; int? get precioComparacion; UnidadMedida get unidadMedida; String? get imagenUrl; bool get isActive; DateTime get fechaCreacion; DateTime? get updatedAt; int get stock;
 /// Create a copy of Producto
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $ProductoCopyWith<Producto> get copyWith => _$ProductoCopyWithImpl<Producto>(this as Producto, _$identity);
 
-  /// Serializes this Producto to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Producto&&(identical(other.id, id) || other.id == id)&&(identical(other.categoriaId, categoriaId) || other.categoriaId == categoriaId)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.descripcion, descripcion) || other.descripcion == descripcion)&&(identical(other.precioActual, precioActual) || other.precioActual == precioActual)&&(identical(other.precioComparacion, precioComparacion) || other.precioComparacion == precioComparacion)&&(identical(other.unidadMedida, unidadMedida) || other.unidadMedida == unidadMedida)&&(identical(other.imagenUrl, imagenUrl) || other.imagenUrl == imagenUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Producto&&(identical(other.id, id) || other.id == id)&&(identical(other.categoriaId, categoriaId) || other.categoriaId == categoriaId)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.descripcion, descripcion) || other.descripcion == descripcion)&&(identical(other.precioActual, precioActual) || other.precioActual == precioActual)&&(identical(other.precioComparacion, precioComparacion) || other.precioComparacion == precioComparacion)&&(identical(other.unidadMedida, unidadMedida) || other.unidadMedida == unidadMedida)&&(identical(other.imagenUrl, imagenUrl) || other.imagenUrl == imagenUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.stock, stock) || other.stock == stock));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,categoriaId,nombre,descripcion,precioActual,precioComparacion,unidadMedida,imagenUrl,isActive,fechaCreacion);
+int get hashCode => Object.hash(runtimeType,id,categoriaId,nombre,descripcion,precioActual,precioComparacion,unidadMedida,imagenUrl,isActive,fechaCreacion,updatedAt,stock);
 
 @override
 String toString() {
-  return 'Producto(id: $id, categoriaId: $categoriaId, nombre: $nombre, descripcion: $descripcion, precioActual: $precioActual, precioComparacion: $precioComparacion, unidadMedida: $unidadMedida, imagenUrl: $imagenUrl, isActive: $isActive, fechaCreacion: $fechaCreacion)';
+  return 'Producto(id: $id, categoriaId: $categoriaId, nombre: $nombre, descripcion: $descripcion, precioActual: $precioActual, precioComparacion: $precioComparacion, unidadMedida: $unidadMedida, imagenUrl: $imagenUrl, isActive: $isActive, fechaCreacion: $fechaCreacion, updatedAt: $updatedAt, stock: $stock)';
 }
 
 
@@ -48,7 +45,7 @@ abstract mixin class $ProductoCopyWith<$Res>  {
   factory $ProductoCopyWith(Producto value, $Res Function(Producto) _then) = _$ProductoCopyWithImpl;
 @useResult
 $Res call({
- String? id, String categoriaId, String nombre, String? descripcion, int precioActual, int? precioComparacion, UnidadMedida unidadMedida, String? imagenUrl, bool isActive, DateTime fechaCreacion
+ String? id, String categoriaId, String nombre, String? descripcion, int precioActual, int? precioComparacion, UnidadMedida unidadMedida, String? imagenUrl, bool isActive, DateTime fechaCreacion, DateTime? updatedAt, int stock
 });
 
 
@@ -65,7 +62,7 @@ class _$ProductoCopyWithImpl<$Res>
 
 /// Create a copy of Producto
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? categoriaId = null,Object? nombre = null,Object? descripcion = freezed,Object? precioActual = null,Object? precioComparacion = freezed,Object? unidadMedida = null,Object? imagenUrl = freezed,Object? isActive = null,Object? fechaCreacion = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? categoriaId = null,Object? nombre = null,Object? descripcion = freezed,Object? precioActual = null,Object? precioComparacion = freezed,Object? unidadMedida = null,Object? imagenUrl = freezed,Object? isActive = null,Object? fechaCreacion = null,Object? updatedAt = freezed,Object? stock = null,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,categoriaId: null == categoriaId ? _self.categoriaId : categoriaId // ignore: cast_nullable_to_non_nullable
@@ -77,7 +74,9 @@ as int?,unidadMedida: null == unidadMedida ? _self.unidadMedida : unidadMedida /
 as UnidadMedida,imagenUrl: freezed == imagenUrl ? _self.imagenUrl : imagenUrl // ignore: cast_nullable_to_non_nullable
 as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,fechaCreacion: null == fechaCreacion ? _self.fechaCreacion : fechaCreacion // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,stock: null == stock ? _self.stock : stock // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -162,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String categoriaId,  String nombre,  String? descripcion,  int precioActual,  int? precioComparacion,  UnidadMedida unidadMedida,  String? imagenUrl,  bool isActive,  DateTime fechaCreacion)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? id,  String categoriaId,  String nombre,  String? descripcion,  int precioActual,  int? precioComparacion,  UnidadMedida unidadMedida,  String? imagenUrl,  bool isActive,  DateTime fechaCreacion,  DateTime? updatedAt,  int stock)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Producto() when $default != null:
-return $default(_that.id,_that.categoriaId,_that.nombre,_that.descripcion,_that.precioActual,_that.precioComparacion,_that.unidadMedida,_that.imagenUrl,_that.isActive,_that.fechaCreacion);case _:
+return $default(_that.id,_that.categoriaId,_that.nombre,_that.descripcion,_that.precioActual,_that.precioComparacion,_that.unidadMedida,_that.imagenUrl,_that.isActive,_that.fechaCreacion,_that.updatedAt,_that.stock);case _:
   return orElse();
 
 }
@@ -183,10 +182,10 @@ return $default(_that.id,_that.categoriaId,_that.nombre,_that.descripcion,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String categoriaId,  String nombre,  String? descripcion,  int precioActual,  int? precioComparacion,  UnidadMedida unidadMedida,  String? imagenUrl,  bool isActive,  DateTime fechaCreacion)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? id,  String categoriaId,  String nombre,  String? descripcion,  int precioActual,  int? precioComparacion,  UnidadMedida unidadMedida,  String? imagenUrl,  bool isActive,  DateTime fechaCreacion,  DateTime? updatedAt,  int stock)  $default,) {final _that = this;
 switch (_that) {
 case _Producto():
-return $default(_that.id,_that.categoriaId,_that.nombre,_that.descripcion,_that.precioActual,_that.precioComparacion,_that.unidadMedida,_that.imagenUrl,_that.isActive,_that.fechaCreacion);case _:
+return $default(_that.id,_that.categoriaId,_that.nombre,_that.descripcion,_that.precioActual,_that.precioComparacion,_that.unidadMedida,_that.imagenUrl,_that.isActive,_that.fechaCreacion,_that.updatedAt,_that.stock);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -203,10 +202,10 @@ return $default(_that.id,_that.categoriaId,_that.nombre,_that.descripcion,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String categoriaId,  String nombre,  String? descripcion,  int precioActual,  int? precioComparacion,  UnidadMedida unidadMedida,  String? imagenUrl,  bool isActive,  DateTime fechaCreacion)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? id,  String categoriaId,  String nombre,  String? descripcion,  int precioActual,  int? precioComparacion,  UnidadMedida unidadMedida,  String? imagenUrl,  bool isActive,  DateTime fechaCreacion,  DateTime? updatedAt,  int stock)?  $default,) {final _that = this;
 switch (_that) {
 case _Producto() when $default != null:
-return $default(_that.id,_that.categoriaId,_that.nombre,_that.descripcion,_that.precioActual,_that.precioComparacion,_that.unidadMedida,_that.imagenUrl,_that.isActive,_that.fechaCreacion);case _:
+return $default(_that.id,_that.categoriaId,_that.nombre,_that.descripcion,_that.precioActual,_that.precioComparacion,_that.unidadMedida,_that.imagenUrl,_that.isActive,_that.fechaCreacion,_that.updatedAt,_that.stock);case _:
   return null;
 
 }
@@ -215,11 +214,11 @@ return $default(_that.id,_that.categoriaId,_that.nombre,_that.descripcion,_that.
 }
 
 /// @nodoc
-@JsonSerializable()
 
-class _Producto implements Producto {
-  const _Producto({this.id, required this.categoriaId, required this.nombre, this.descripcion, required this.precioActual, this.precioComparacion, required this.unidadMedida, this.imagenUrl, required this.isActive, required this.fechaCreacion});
-  factory _Producto.fromJson(Map<String, dynamic> json) => _$ProductoFromJson(json);
+
+class _Producto extends Producto {
+  const _Producto({this.id, required this.categoriaId, required this.nombre, this.descripcion, required this.precioActual, this.precioComparacion, required this.unidadMedida, this.imagenUrl, required this.isActive, required this.fechaCreacion, this.updatedAt, this.stock = 0}): super._();
+  
 
 @override final  String? id;
 @override final  String categoriaId;
@@ -231,6 +230,8 @@ class _Producto implements Producto {
 @override final  String? imagenUrl;
 @override final  bool isActive;
 @override final  DateTime fechaCreacion;
+@override final  DateTime? updatedAt;
+@override@JsonKey() final  int stock;
 
 /// Create a copy of Producto
 /// with the given fields replaced by the non-null parameter values.
@@ -238,23 +239,20 @@ class _Producto implements Producto {
 @pragma('vm:prefer-inline')
 _$ProductoCopyWith<_Producto> get copyWith => __$ProductoCopyWithImpl<_Producto>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$ProductoToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Producto&&(identical(other.id, id) || other.id == id)&&(identical(other.categoriaId, categoriaId) || other.categoriaId == categoriaId)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.descripcion, descripcion) || other.descripcion == descripcion)&&(identical(other.precioActual, precioActual) || other.precioActual == precioActual)&&(identical(other.precioComparacion, precioComparacion) || other.precioComparacion == precioComparacion)&&(identical(other.unidadMedida, unidadMedida) || other.unidadMedida == unidadMedida)&&(identical(other.imagenUrl, imagenUrl) || other.imagenUrl == imagenUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Producto&&(identical(other.id, id) || other.id == id)&&(identical(other.categoriaId, categoriaId) || other.categoriaId == categoriaId)&&(identical(other.nombre, nombre) || other.nombre == nombre)&&(identical(other.descripcion, descripcion) || other.descripcion == descripcion)&&(identical(other.precioActual, precioActual) || other.precioActual == precioActual)&&(identical(other.precioComparacion, precioComparacion) || other.precioComparacion == precioComparacion)&&(identical(other.unidadMedida, unidadMedida) || other.unidadMedida == unidadMedida)&&(identical(other.imagenUrl, imagenUrl) || other.imagenUrl == imagenUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.fechaCreacion, fechaCreacion) || other.fechaCreacion == fechaCreacion)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt)&&(identical(other.stock, stock) || other.stock == stock));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,categoriaId,nombre,descripcion,precioActual,precioComparacion,unidadMedida,imagenUrl,isActive,fechaCreacion);
+int get hashCode => Object.hash(runtimeType,id,categoriaId,nombre,descripcion,precioActual,precioComparacion,unidadMedida,imagenUrl,isActive,fechaCreacion,updatedAt,stock);
 
 @override
 String toString() {
-  return 'Producto(id: $id, categoriaId: $categoriaId, nombre: $nombre, descripcion: $descripcion, precioActual: $precioActual, precioComparacion: $precioComparacion, unidadMedida: $unidadMedida, imagenUrl: $imagenUrl, isActive: $isActive, fechaCreacion: $fechaCreacion)';
+  return 'Producto(id: $id, categoriaId: $categoriaId, nombre: $nombre, descripcion: $descripcion, precioActual: $precioActual, precioComparacion: $precioComparacion, unidadMedida: $unidadMedida, imagenUrl: $imagenUrl, isActive: $isActive, fechaCreacion: $fechaCreacion, updatedAt: $updatedAt, stock: $stock)';
 }
 
 
@@ -265,7 +263,7 @@ abstract mixin class _$ProductoCopyWith<$Res> implements $ProductoCopyWith<$Res>
   factory _$ProductoCopyWith(_Producto value, $Res Function(_Producto) _then) = __$ProductoCopyWithImpl;
 @override @useResult
 $Res call({
- String? id, String categoriaId, String nombre, String? descripcion, int precioActual, int? precioComparacion, UnidadMedida unidadMedida, String? imagenUrl, bool isActive, DateTime fechaCreacion
+ String? id, String categoriaId, String nombre, String? descripcion, int precioActual, int? precioComparacion, UnidadMedida unidadMedida, String? imagenUrl, bool isActive, DateTime fechaCreacion, DateTime? updatedAt, int stock
 });
 
 
@@ -282,7 +280,7 @@ class __$ProductoCopyWithImpl<$Res>
 
 /// Create a copy of Producto
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? categoriaId = null,Object? nombre = null,Object? descripcion = freezed,Object? precioActual = null,Object? precioComparacion = freezed,Object? unidadMedida = null,Object? imagenUrl = freezed,Object? isActive = null,Object? fechaCreacion = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? categoriaId = null,Object? nombre = null,Object? descripcion = freezed,Object? precioActual = null,Object? precioComparacion = freezed,Object? unidadMedida = null,Object? imagenUrl = freezed,Object? isActive = null,Object? fechaCreacion = null,Object? updatedAt = freezed,Object? stock = null,}) {
   return _then(_Producto(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String?,categoriaId: null == categoriaId ? _self.categoriaId : categoriaId // ignore: cast_nullable_to_non_nullable
@@ -294,7 +292,9 @@ as int?,unidadMedida: null == unidadMedida ? _self.unidadMedida : unidadMedida /
 as UnidadMedida,imagenUrl: freezed == imagenUrl ? _self.imagenUrl : imagenUrl // ignore: cast_nullable_to_non_nullable
 as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,fechaCreacion: null == fechaCreacion ? _self.fechaCreacion : fechaCreacion // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,updatedAt: freezed == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,stock: null == stock ? _self.stock : stock // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

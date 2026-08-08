@@ -1,3 +1,7 @@
+import 'package:fruti_express_jahr_admin/features/productos/domain/use_cases/buscar_productos.dart';
+import 'package:fruti_express_jahr_admin/features/productos/domain/use_cases/obtener_productos_por_sucursal.dart';
+import 'package:fruti_express_jahr_admin/features/productos/domain/use_cases/subir_imagen_producto.dart';
+import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 // Data Sources
@@ -32,6 +36,9 @@ void initProductos(GetIt sl) {
     () => ActualizarProducto(repository: sl(), categoriaRepository: sl()),
   );
   sl.registerLazySingleton(() => CambiarEstadoProducto(repository: sl()));
+  sl.registerLazySingleton(() => SubirImagenProducto(repository: sl()));
+  sl.registerLazySingleton(() => BuscarProductos(repository:  sl()));
+  sl.registerLazySingleton(() => ObtenerProductosPorSucursal(repository: sl()));
 
   // --- 🤝 REPOSITORIO (Repository) ---
   sl.registerLazySingleton<ProductoRepository>(
@@ -41,5 +48,20 @@ void initProductos(GetIt sl) {
   // --- 🛰️ FUENTE DE DATOS (Data Source) ---
   sl.registerLazySingleton<ProductoRemoteDatasource>(
     () => ProductoRemoteDatasourceImpl(sl()),
+  );
+
+  sl.registerFactory<ProductosCubit>(
+    () => ProductosCubit(
+      actualizarProductoUseCase: sl(),
+      cambiarEstadoProductoUseCase: sl(),
+      crearProductoUseCase: sl(),
+      obtenerProductoPorIdUseCase: sl(),
+      obtenerProductoPorNombreUseCase: sl(),
+      obtenerProductosPorCategoriaUseCase: sl(),
+      obtenerTodosProductosUseCase: sl(),
+      subirImagenProductoUseCase: sl(),
+      buscarProductosUsecase: sl(),
+      obtenerProductosPorSucursalUseCase: sl(),
+    ),
   );
 }

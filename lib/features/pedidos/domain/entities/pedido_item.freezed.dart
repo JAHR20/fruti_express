@@ -11,33 +11,30 @@ part of 'pedido_item.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$PedidoItem {
 
- String get id; String get pedidoId; String get productoId; String get nombreProductoSnapshot; int get cantidad; int get precioUnitarioSnapshot;
+ String get id; String get pedidoId; String get productoId; String get nombreProductoSnapshot; int get cantidad; int get precioUnitarioSnapshot; UnidadMedida? get unidadMedida;
 /// Create a copy of PedidoItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
 $PedidoItemCopyWith<PedidoItem> get copyWith => _$PedidoItemCopyWithImpl<PedidoItem>(this as PedidoItem, _$identity);
 
-  /// Serializes this PedidoItem to a JSON map.
-  Map<String, dynamic> toJson();
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PedidoItem&&(identical(other.id, id) || other.id == id)&&(identical(other.pedidoId, pedidoId) || other.pedidoId == pedidoId)&&(identical(other.productoId, productoId) || other.productoId == productoId)&&(identical(other.nombreProductoSnapshot, nombreProductoSnapshot) || other.nombreProductoSnapshot == nombreProductoSnapshot)&&(identical(other.cantidad, cantidad) || other.cantidad == cantidad)&&(identical(other.precioUnitarioSnapshot, precioUnitarioSnapshot) || other.precioUnitarioSnapshot == precioUnitarioSnapshot));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PedidoItem&&(identical(other.id, id) || other.id == id)&&(identical(other.pedidoId, pedidoId) || other.pedidoId == pedidoId)&&(identical(other.productoId, productoId) || other.productoId == productoId)&&(identical(other.nombreProductoSnapshot, nombreProductoSnapshot) || other.nombreProductoSnapshot == nombreProductoSnapshot)&&(identical(other.cantidad, cantidad) || other.cantidad == cantidad)&&(identical(other.precioUnitarioSnapshot, precioUnitarioSnapshot) || other.precioUnitarioSnapshot == precioUnitarioSnapshot)&&(identical(other.unidadMedida, unidadMedida) || other.unidadMedida == unidadMedida));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,pedidoId,productoId,nombreProductoSnapshot,cantidad,precioUnitarioSnapshot);
+int get hashCode => Object.hash(runtimeType,id,pedidoId,productoId,nombreProductoSnapshot,cantidad,precioUnitarioSnapshot,unidadMedida);
 
 @override
 String toString() {
-  return 'PedidoItem(id: $id, pedidoId: $pedidoId, productoId: $productoId, nombreProductoSnapshot: $nombreProductoSnapshot, cantidad: $cantidad, precioUnitarioSnapshot: $precioUnitarioSnapshot)';
+  return 'PedidoItem(id: $id, pedidoId: $pedidoId, productoId: $productoId, nombreProductoSnapshot: $nombreProductoSnapshot, cantidad: $cantidad, precioUnitarioSnapshot: $precioUnitarioSnapshot, unidadMedida: $unidadMedida)';
 }
 
 
@@ -48,7 +45,7 @@ abstract mixin class $PedidoItemCopyWith<$Res>  {
   factory $PedidoItemCopyWith(PedidoItem value, $Res Function(PedidoItem) _then) = _$PedidoItemCopyWithImpl;
 @useResult
 $Res call({
- String id, String pedidoId, String productoId, String nombreProductoSnapshot, int cantidad, int precioUnitarioSnapshot
+ String id, String pedidoId, String productoId, String nombreProductoSnapshot, int cantidad, int precioUnitarioSnapshot, UnidadMedida? unidadMedida
 });
 
 
@@ -65,7 +62,7 @@ class _$PedidoItemCopyWithImpl<$Res>
 
 /// Create a copy of PedidoItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? pedidoId = null,Object? productoId = null,Object? nombreProductoSnapshot = null,Object? cantidad = null,Object? precioUnitarioSnapshot = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? pedidoId = null,Object? productoId = null,Object? nombreProductoSnapshot = null,Object? cantidad = null,Object? precioUnitarioSnapshot = null,Object? unidadMedida = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,pedidoId: null == pedidoId ? _self.pedidoId : pedidoId // ignore: cast_nullable_to_non_nullable
@@ -73,7 +70,8 @@ as String,productoId: null == productoId ? _self.productoId : productoId // igno
 as String,nombreProductoSnapshot: null == nombreProductoSnapshot ? _self.nombreProductoSnapshot : nombreProductoSnapshot // ignore: cast_nullable_to_non_nullable
 as String,cantidad: null == cantidad ? _self.cantidad : cantidad // ignore: cast_nullable_to_non_nullable
 as int,precioUnitarioSnapshot: null == precioUnitarioSnapshot ? _self.precioUnitarioSnapshot : precioUnitarioSnapshot // ignore: cast_nullable_to_non_nullable
-as int,
+as int,unidadMedida: freezed == unidadMedida ? _self.unidadMedida : unidadMedida // ignore: cast_nullable_to_non_nullable
+as UnidadMedida?,
   ));
 }
 
@@ -158,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String pedidoId,  String productoId,  String nombreProductoSnapshot,  int cantidad,  int precioUnitarioSnapshot)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String pedidoId,  String productoId,  String nombreProductoSnapshot,  int cantidad,  int precioUnitarioSnapshot,  UnidadMedida? unidadMedida)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PedidoItem() when $default != null:
-return $default(_that.id,_that.pedidoId,_that.productoId,_that.nombreProductoSnapshot,_that.cantidad,_that.precioUnitarioSnapshot);case _:
+return $default(_that.id,_that.pedidoId,_that.productoId,_that.nombreProductoSnapshot,_that.cantidad,_that.precioUnitarioSnapshot,_that.unidadMedida);case _:
   return orElse();
 
 }
@@ -179,10 +177,10 @@ return $default(_that.id,_that.pedidoId,_that.productoId,_that.nombreProductoSna
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String pedidoId,  String productoId,  String nombreProductoSnapshot,  int cantidad,  int precioUnitarioSnapshot)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String pedidoId,  String productoId,  String nombreProductoSnapshot,  int cantidad,  int precioUnitarioSnapshot,  UnidadMedida? unidadMedida)  $default,) {final _that = this;
 switch (_that) {
 case _PedidoItem():
-return $default(_that.id,_that.pedidoId,_that.productoId,_that.nombreProductoSnapshot,_that.cantidad,_that.precioUnitarioSnapshot);case _:
+return $default(_that.id,_that.pedidoId,_that.productoId,_that.nombreProductoSnapshot,_that.cantidad,_that.precioUnitarioSnapshot,_that.unidadMedida);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -199,10 +197,10 @@ return $default(_that.id,_that.pedidoId,_that.productoId,_that.nombreProductoSna
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String pedidoId,  String productoId,  String nombreProductoSnapshot,  int cantidad,  int precioUnitarioSnapshot)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String pedidoId,  String productoId,  String nombreProductoSnapshot,  int cantidad,  int precioUnitarioSnapshot,  UnidadMedida? unidadMedida)?  $default,) {final _that = this;
 switch (_that) {
 case _PedidoItem() when $default != null:
-return $default(_that.id,_that.pedidoId,_that.productoId,_that.nombreProductoSnapshot,_that.cantidad,_that.precioUnitarioSnapshot);case _:
+return $default(_that.id,_that.pedidoId,_that.productoId,_that.nombreProductoSnapshot,_that.cantidad,_that.precioUnitarioSnapshot,_that.unidadMedida);case _:
   return null;
 
 }
@@ -211,11 +209,11 @@ return $default(_that.id,_that.pedidoId,_that.productoId,_that.nombreProductoSna
 }
 
 /// @nodoc
-@JsonSerializable()
+
 
 class _PedidoItem implements PedidoItem {
-  const _PedidoItem({required this.id, required this.pedidoId, required this.productoId, required this.nombreProductoSnapshot, required this.cantidad, required this.precioUnitarioSnapshot});
-  factory _PedidoItem.fromJson(Map<String, dynamic> json) => _$PedidoItemFromJson(json);
+  const _PedidoItem({required this.id, required this.pedidoId, required this.productoId, required this.nombreProductoSnapshot, required this.cantidad, required this.precioUnitarioSnapshot, this.unidadMedida});
+  
 
 @override final  String id;
 @override final  String pedidoId;
@@ -223,6 +221,7 @@ class _PedidoItem implements PedidoItem {
 @override final  String nombreProductoSnapshot;
 @override final  int cantidad;
 @override final  int precioUnitarioSnapshot;
+@override final  UnidadMedida? unidadMedida;
 
 /// Create a copy of PedidoItem
 /// with the given fields replaced by the non-null parameter values.
@@ -230,23 +229,20 @@ class _PedidoItem implements PedidoItem {
 @pragma('vm:prefer-inline')
 _$PedidoItemCopyWith<_PedidoItem> get copyWith => __$PedidoItemCopyWithImpl<_PedidoItem>(this, _$identity);
 
-@override
-Map<String, dynamic> toJson() {
-  return _$PedidoItemToJson(this, );
-}
+
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PedidoItem&&(identical(other.id, id) || other.id == id)&&(identical(other.pedidoId, pedidoId) || other.pedidoId == pedidoId)&&(identical(other.productoId, productoId) || other.productoId == productoId)&&(identical(other.nombreProductoSnapshot, nombreProductoSnapshot) || other.nombreProductoSnapshot == nombreProductoSnapshot)&&(identical(other.cantidad, cantidad) || other.cantidad == cantidad)&&(identical(other.precioUnitarioSnapshot, precioUnitarioSnapshot) || other.precioUnitarioSnapshot == precioUnitarioSnapshot));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PedidoItem&&(identical(other.id, id) || other.id == id)&&(identical(other.pedidoId, pedidoId) || other.pedidoId == pedidoId)&&(identical(other.productoId, productoId) || other.productoId == productoId)&&(identical(other.nombreProductoSnapshot, nombreProductoSnapshot) || other.nombreProductoSnapshot == nombreProductoSnapshot)&&(identical(other.cantidad, cantidad) || other.cantidad == cantidad)&&(identical(other.precioUnitarioSnapshot, precioUnitarioSnapshot) || other.precioUnitarioSnapshot == precioUnitarioSnapshot)&&(identical(other.unidadMedida, unidadMedida) || other.unidadMedida == unidadMedida));
 }
 
-@JsonKey(includeFromJson: false, includeToJson: false)
+
 @override
-int get hashCode => Object.hash(runtimeType,id,pedidoId,productoId,nombreProductoSnapshot,cantidad,precioUnitarioSnapshot);
+int get hashCode => Object.hash(runtimeType,id,pedidoId,productoId,nombreProductoSnapshot,cantidad,precioUnitarioSnapshot,unidadMedida);
 
 @override
 String toString() {
-  return 'PedidoItem(id: $id, pedidoId: $pedidoId, productoId: $productoId, nombreProductoSnapshot: $nombreProductoSnapshot, cantidad: $cantidad, precioUnitarioSnapshot: $precioUnitarioSnapshot)';
+  return 'PedidoItem(id: $id, pedidoId: $pedidoId, productoId: $productoId, nombreProductoSnapshot: $nombreProductoSnapshot, cantidad: $cantidad, precioUnitarioSnapshot: $precioUnitarioSnapshot, unidadMedida: $unidadMedida)';
 }
 
 
@@ -257,7 +253,7 @@ abstract mixin class _$PedidoItemCopyWith<$Res> implements $PedidoItemCopyWith<$
   factory _$PedidoItemCopyWith(_PedidoItem value, $Res Function(_PedidoItem) _then) = __$PedidoItemCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String pedidoId, String productoId, String nombreProductoSnapshot, int cantidad, int precioUnitarioSnapshot
+ String id, String pedidoId, String productoId, String nombreProductoSnapshot, int cantidad, int precioUnitarioSnapshot, UnidadMedida? unidadMedida
 });
 
 
@@ -274,7 +270,7 @@ class __$PedidoItemCopyWithImpl<$Res>
 
 /// Create a copy of PedidoItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? pedidoId = null,Object? productoId = null,Object? nombreProductoSnapshot = null,Object? cantidad = null,Object? precioUnitarioSnapshot = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? pedidoId = null,Object? productoId = null,Object? nombreProductoSnapshot = null,Object? cantidad = null,Object? precioUnitarioSnapshot = null,Object? unidadMedida = freezed,}) {
   return _then(_PedidoItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,pedidoId: null == pedidoId ? _self.pedidoId : pedidoId // ignore: cast_nullable_to_non_nullable
@@ -282,7 +278,8 @@ as String,productoId: null == productoId ? _self.productoId : productoId // igno
 as String,nombreProductoSnapshot: null == nombreProductoSnapshot ? _self.nombreProductoSnapshot : nombreProductoSnapshot // ignore: cast_nullable_to_non_nullable
 as String,cantidad: null == cantidad ? _self.cantidad : cantidad // ignore: cast_nullable_to_non_nullable
 as int,precioUnitarioSnapshot: null == precioUnitarioSnapshot ? _self.precioUnitarioSnapshot : precioUnitarioSnapshot // ignore: cast_nullable_to_non_nullable
-as int,
+as int,unidadMedida: freezed == unidadMedida ? _self.unidadMedida : unidadMedida // ignore: cast_nullable_to_non_nullable
+as UnidadMedida?,
   ));
 }
 

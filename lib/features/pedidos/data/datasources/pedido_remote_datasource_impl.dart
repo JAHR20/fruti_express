@@ -1,6 +1,7 @@
+import 'package:fruti_express_jahr_admin/features/pedidos/data/models/pedido_model.dart';
+import 'package:fruti_express_jahr_admin/features/pedidos/domain/enums/estado_pedido.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'pedido_remote_datasource.dart';
-import '../../domain/entities/pedido.dart';
 
 class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
   final SupabaseClient supabase;
@@ -8,77 +9,120 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
   PedidoRemoteDatasourceImpl(this.supabase);
 
   @override
-  @override
-  Future<Pedido> crear(Pedido pedido) async {
-    // 1. Preparamos el mapa del pedido (sin los detalles todavía)
-    final pedidoMap = pedido.toJson();
-    pedidoMap.remove(
-      'detalles_pedido',
-    ); // Quitamos la lista para evitar error de columna
+  Future<PedidoModel> crear(PedidoModel model) async {
+    // 1. Preparamos los mapas (sin preocuparnos por el clienteId o los UUIDs vacíos)
+    final pedidoMap = model.toJson();
+    pedidoMap.remove('items'); // Limpiamos para evitar ruido
 
-    // 2. Insertamos la cabecera en la tabla 'pedidos'
-    final pedidoResponse = await supabase
-        .from('pedidos')
-        .insert(pedidoMap)
-        .select()
-        .single();
+    // Asumiendo que tu modelo tiene una propiedad 'items' o 'detalles'
+    final itemsList = model.items.map((item) => item.toJson()).toList();
 
-    final String nuevoPedidoId = pedidoResponse['id'];
+    print('🚨 ITEMS ENVIADOS A SUPABASE: $itemsList');
 
-    // 3. Si hay detalles, los insertamos vinculándolos al ID recién creado
-    if (pedido.items.isNotEmpty) {
-      final detallesParaInsertar = pedido.items.map((detalle) {
-        final map = detalle.toJson();
-        map['pedido_id'] = nuevoPedidoId; // Forzamos la relación
-        return map;
-      }).toList();
+    // 2. 🚀 LLAMAMOS A LA FUNCIÓN CON PASE VIP EN LUGAR DE INSERTAR DIRECTO
+    final response = await supabase.rpc(
+      'crear_pedido_completo',
+      params: {'pedido_data': pedidoMap, 'items_data': itemsList},
+    );
 
-      await supabase.from('detalles_pedido').insert(detallesParaInsertar);
+    // 3. La función nos devuelve el UUID real que generó Supabase
+    final String nuevoPedidoId = response.toString();
+
+    // 4. Retornamos el pedido completo consultándolo de nuevo (como ya lo hacías)
+    final resultado = await obtenerPorId(nuevoPedidoId);
+
+    if (resultado == null) {
+      throw const PostgrestException(
+        message: 'Error al recuperar el pedido creado',
+      );
     }
 
-    // 4. Retornamos el pedido completo (con sus detalles) volviéndolo a consultar
-    // Así nos aseguramos de traer los datos calculados por la DB (fechas, etc.)
-    final resultado = await obtenerPorId(nuevoPedidoId);
-    return resultado!;
+    return resultado;
   }
 
-  @override
-  Future<List<Pedido>> obtenerPorUsuario(String usuarioId) async {
+  Future<List<PedidoModel>> obtenerPorUsuario(String usuarioId) async {
     final response = await supabase
         .from('pedidos')
         .select('*, detalles_pedido(*)')
-        .eq(
-          'usuario_id',
-          usuarioId,
-        ) // Filtro de seguridad por el ID del cliente
+        .eq('cliente_id', usuarioId)
         .order('fecha_creacion', ascending: false);
 
-    return (response as List).map((json) => Pedido.fromJson(json)).toList();
+    final pedidos = (response as List)
+        .map((json) => PedidoModel.fromJson(json))
+        .toList();
+
+    final pedidosActivosIds = pedidos
+        .where(
+          (p) =>
+              p.estado != EstadoPedido.entregado &&
+              p.estado != EstadoPedido.cancelado,
+        )
+        .map((p) => p.id)
+        .toList();
+
+    print('📦 pedidos activos: ${pedidosActivosIds.length}'); // ← agrega
+
+    if (pedidosActivosIds.isEmpty) return pedidos;
+
+    final codigos = await supabase
+        .from('pedido_confirmacion')
+        .select('pedido_id, codigo')
+        .inFilter('pedido_id', pedidosActivosIds);
+
+    print('🔑 códigos encontrados: ${codigos}'); // ← agrega
+
+    final codigosPorPedido = {
+      for (final c in codigos as List)
+        c['pedido_id'] as String: c['codigo'] as String,
+    };
+
+    print('🗺️ mapa códigos: $codigosPorPedido'); // ← agrega
+
+    return pedidos.map((p) {
+      final codigo = codigosPorPedido[p.id];
+      print('✅ pedido ${p.id.substring(0, 8)} → código: $codigo'); // ← agrega
+      return codigo != null ? p.copyWith(codigoConfirmacion: codigo) : p;
+    }).toList();
   }
 
   @override
-  Future<List<Pedido>> obtenerTodos() async {
+  Future<String?> obtenerCodigoConfirmacion(String pedidoId) async {
+    final response = await supabase
+        .from('pedido_confirmacion')
+        .select('codigo')
+        .eq('pedido_id', pedidoId)
+        .maybeSingle();
+
+    return response?['codigo'] as String?;
+  }
+
+  @override
+  Future<List<PedidoModel>> obtenerTodos() async {
     final response = await supabase
         .from('pedidos')
         .select('*, detalles_pedido(*)') // Traemos la relación completa
         .order('fecha_creacion', ascending: false);
 
-    return (response as List).map((json) => Pedido.fromJson(json)).toList();
+    return (response as List)
+        .map((json) => PedidoModel.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<List<Pedido>> obtenerPorSucursal(String sucursalId) async {
+  Future<List<PedidoModel>> obtenerPorSucursal(String sucursalId) async {
     final response = await supabase
         .from('pedidos')
         .select('*, detalles_pedido(*)')
         .eq('sucursal_id', sucursalId)
         .order('fecha_creacion', ascending: false);
 
-    return (response as List).map((json) => Pedido.fromJson(json)).toList();
+    return (response as List)
+        .map((json) => PedidoModel.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<List<Pedido>> obtenerPorEstado(
+  Future<List<PedidoModel>> obtenerPorEstado(
     String sucursalId,
     String estado,
   ) async {
@@ -89,22 +133,24 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
         .eq('estado', estado)
         .order('fecha_creacion', ascending: false);
 
-    return (response as List).map((json) => Pedido.fromJson(json)).toList();
+    return (response as List)
+        .map((json) => PedidoModel.fromJson(json))
+        .toList();
   }
 
   @override
-  Future<Pedido?> obtenerPorId(String id) async {
+  Future<PedidoModel?> obtenerPorId(String id) async {
     final response = await supabase
         .from('pedidos')
         .select('*, detalles_pedido(*)')
         .eq('id', id)
         .maybeSingle();
 
-    return response != null ? Pedido.fromJson(response) : null;
+    return response != null ? PedidoModel.fromJson(response) : null;
   }
 
   @override
-  Future<Pedido> actualizarEstado(String id, String nuevoEstado) async {
+  Future<PedidoModel> actualizarEstado(String id, String nuevoEstado) async {
     final response = await supabase
         .from('pedidos')
         .update({'estado': nuevoEstado})
@@ -112,7 +158,7 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
         .select('*, detalles_pedido(*)')
         .single();
 
-    return Pedido.fromJson(response);
+    return PedidoModel.fromJson(response);
   }
 
   @override
@@ -141,24 +187,27 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
   }
 
   @override
-  Future<Pedido> asignarRepartidor(String pedidoId, String repartidorId) async {
+  Future<PedidoModel> asignarRepartidor(
+    String pedidoId,
+    String repartidorId,
+  ) async {
     final response = await supabase
         .from('pedidos')
         .update({'repartidor_id': repartidorId})
         .eq('id', pedidoId)
         .select('*, detalles_pedido(*)')
         .single();
-    return Pedido.fromJson(response);
+    return PedidoModel.fromJson(response);
   }
 
   @override
-  Stream<List<Pedido>> watchPorSucursal(String sucursalId) {
+  Stream<List<PedidoModel>> watchPorSucursal(String sucursalId) {
     return supabase
         .from('pedidos')
         .stream(primaryKey: ['id'])
         .eq('sucursal_id', sucursalId)
         .order('fecha_creacion')
-        .map((data) => data.map((json) => Pedido.fromJson(json)).toList());
+        .map((data) => data.map((json) => PedidoModel.fromJson(json)).toList());
   }
 
   @override
@@ -183,5 +232,31 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
 
     // Lo convertimos a int para cumplir con tu contrato de Dominio
     return totalVendido.toInt();
+  }
+
+  @override
+  Stream<List<PedidoModel>> watchPorRepartidor(String repartidorId) {
+    return supabase
+        .from('pedidos')
+        .stream(primaryKey: ['id'])
+        .eq('repartidor_id', repartidorId)
+        .order('fecha_creacion', ascending: false)
+        .map((data) => data.map((json) => PedidoModel.fromJson(json)).toList());
+  }
+
+  @override
+  Future<void> confirmarEntrega({
+    required String pedidoId,
+    String? codigoConfirmacion,
+    String? urlEvidencia,
+  }) async {
+    await supabase.rpc(
+      'confirmar_entrega',
+      params: {
+        'p_pedido_id': pedidoId,
+        'p_codigo': codigoConfirmacion,
+        'p_url_evidencia': urlEvidencia,
+      },
+    );
   }
 }

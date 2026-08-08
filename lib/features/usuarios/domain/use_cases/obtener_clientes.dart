@@ -2,6 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
+import 'package:fruti_express_jahr_admin/features/usuarios/domain/enums/tipo_usuario.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/extensions/perfil_permisos_extension.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/repositories/usuario_repository.dart';
 
@@ -28,7 +29,14 @@ class ObtenerClientes {
       if (usuarioActual.esAdmin) {
         // Nota: Aquí se asume que el repositorio tiene un método para filtrar solo clientes
         // o se puede usar obtenerTodos() y filtrar por rol si el volumen es bajo.
-        return await $(repository.obtenerTodos());
+        final todosLosUsuarios = await $(repository.obtenerTodos());
+        
+        // 2. Filtramos usando la magia de Dart para quedarnos solo con los clientes
+        final soloClientes = todosLosUsuarios
+            .where((usuario) => usuario.rol == TipoUsuario.cliente)
+            .toList();
+
+        return soloClientes;
       }
 
       // 🟡 3. Caso: Encargado -> Solo ve clientes que han comprado en su propia sucursal

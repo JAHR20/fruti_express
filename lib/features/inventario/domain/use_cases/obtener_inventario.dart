@@ -4,10 +4,10 @@ import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/entities/inventario.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/repositories/inventario_repository.dart';
 
-class ObtenerInventario {
+class ObtenerInventarioPorProducto {
   final InventarioRepository repository;
 
-  ObtenerInventario(this.repository);
+  ObtenerInventarioPorProducto(this.repository);
 
   /// Obtiene el estado detallado de inventario de un producto en una sucursal.
   ResultTask<Inventario> ejecutar({
