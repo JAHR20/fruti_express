@@ -1,5 +1,3 @@
-// features/dashboard/presentation/widgets/perfil_opcion_tile.dart
-
 import 'package:flutter/material.dart';
 
 class PerfilOpcionTile extends StatelessWidget {
@@ -54,8 +52,6 @@ class PerfilOpcionTile extends StatelessWidget {
     );
   }
 }
-
-// ─── Separador de sección ─────────────────────────────────────────────────────
 
 class PerfilSeccionTitulo extends StatelessWidget {
   final String titulo;

@@ -14,30 +14,74 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DireccionesState {
 
-
+ List<Direccion> get direcciones; bool get isLoading;/// ID de la dirección que está siendo creada/actualizada/eliminada.
+ String? get direccionProcesandoId;/// ID de la dirección que se está marcando como principal.
+ String? get direccionPrincipalProcesandoId;/// Error al cargar la lista completa.
+ String? get errorMessage;/// Error producido durante una operación puntual.
+ String? get operacionError;/// Indica que una operación puntual terminó correctamente.
+ bool get operacionExitosa;/// Usuario cuyas direcciones están actualmente cargadas.
+ String? get usuarioId;
+/// Create a copy of DireccionesState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$DireccionesStateCopyWith<DireccionesState> get copyWith => _$DireccionesStateCopyWithImpl<DireccionesState>(this as DireccionesState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DireccionesState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DireccionesState&&const DeepCollectionEquality().equals(other.direcciones, direcciones)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.direccionProcesandoId, direccionProcesandoId) || other.direccionProcesandoId == direccionProcesandoId)&&(identical(other.direccionPrincipalProcesandoId, direccionPrincipalProcesandoId) || other.direccionPrincipalProcesandoId == direccionPrincipalProcesandoId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.operacionError, operacionError) || other.operacionError == operacionError)&&(identical(other.operacionExitosa, operacionExitosa) || other.operacionExitosa == operacionExitosa)&&(identical(other.usuarioId, usuarioId) || other.usuarioId == usuarioId));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(direcciones),isLoading,direccionProcesandoId,direccionPrincipalProcesandoId,errorMessage,operacionError,operacionExitosa,usuarioId);
 
 @override
 String toString() {
-  return 'DireccionesState()';
+  return 'DireccionesState(direcciones: $direcciones, isLoading: $isLoading, direccionProcesandoId: $direccionProcesandoId, direccionPrincipalProcesandoId: $direccionPrincipalProcesandoId, errorMessage: $errorMessage, operacionError: $operacionError, operacionExitosa: $operacionExitosa, usuarioId: $usuarioId)';
 }
 
 
 }
 
 /// @nodoc
-class $DireccionesStateCopyWith<$Res>  {
-$DireccionesStateCopyWith(DireccionesState _, $Res Function(DireccionesState) __);
+abstract mixin class $DireccionesStateCopyWith<$Res>  {
+  factory $DireccionesStateCopyWith(DireccionesState value, $Res Function(DireccionesState) _then) = _$DireccionesStateCopyWithImpl;
+@useResult
+$Res call({
+ List<Direccion> direcciones, bool isLoading, String? direccionProcesandoId, String? direccionPrincipalProcesandoId, String? errorMessage, String? operacionError, bool operacionExitosa, String? usuarioId
+});
+
+
+
+
+}
+/// @nodoc
+class _$DireccionesStateCopyWithImpl<$Res>
+    implements $DireccionesStateCopyWith<$Res> {
+  _$DireccionesStateCopyWithImpl(this._self, this._then);
+
+  final DireccionesState _self;
+  final $Res Function(DireccionesState) _then;
+
+/// Create a copy of DireccionesState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? direcciones = null,Object? isLoading = null,Object? direccionProcesandoId = freezed,Object? direccionPrincipalProcesandoId = freezed,Object? errorMessage = freezed,Object? operacionError = freezed,Object? operacionExitosa = null,Object? usuarioId = freezed,}) {
+  return _then(_self.copyWith(
+direcciones: null == direcciones ? _self.direcciones : direcciones // ignore: cast_nullable_to_non_nullable
+as List<Direccion>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,direccionProcesandoId: freezed == direccionProcesandoId ? _self.direccionProcesandoId : direccionProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,direccionPrincipalProcesandoId: freezed == direccionPrincipalProcesandoId ? _self.direccionPrincipalProcesandoId : direccionPrincipalProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,operacionError: freezed == operacionError ? _self.operacionError : operacionError // ignore: cast_nullable_to_non_nullable
+as String?,operacionExitosa: null == operacionExitosa ? _self.operacionExitosa : operacionExitosa // ignore: cast_nullable_to_non_nullable
+as bool,usuarioId: freezed == usuarioId ? _self.usuarioId : usuarioId // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
 }
 
 
@@ -55,14 +99,11 @@ extension DireccionesStatePatterns on DireccionesState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Loaded value)?  loaded,TResult Function( _Error value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _DireccionesState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _Error() when error != null:
-return error(_that);case _:
+case _DireccionesState() when $default != null:
+return $default(_that);case _:
   return orElse();
 
 }
@@ -80,14 +121,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Loaded value)  loaded,required TResult Function( _Error value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _DireccionesState value)  $default,){
 final _that = this;
 switch (_that) {
-case _Initial():
-return initial(_that);case _Loading():
-return loading(_that);case _Loaded():
-return loaded(_that);case _Error():
-return error(_that);case _:
+case _DireccionesState():
+return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -104,14 +142,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Loaded value)?  loaded,TResult? Function( _Error value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _DireccionesState value)?  $default,){
 final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _Error() when error != null:
-return error(_that);case _:
+case _DireccionesState() when $default != null:
+return $default(_that);case _:
   return null;
 
 }
@@ -128,13 +163,10 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Direccion> direcciones)?  loaded,TResult Function( String mensaje)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Direccion> direcciones,  bool isLoading,  String? direccionProcesandoId,  String? direccionPrincipalProcesandoId,  String? errorMessage,  String? operacionError,  bool operacionExitosa,  String? usuarioId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial();case _Loading() when loading != null:
-return loading();case _Loaded() when loaded != null:
-return loaded(_that.direcciones);case _Error() when error != null:
-return error(_that.mensaje);case _:
+case _DireccionesState() when $default != null:
+return $default(_that.direcciones,_that.isLoading,_that.direccionProcesandoId,_that.direccionPrincipalProcesandoId,_that.errorMessage,_that.operacionError,_that.operacionExitosa,_that.usuarioId);case _:
   return orElse();
 
 }
@@ -152,13 +184,10 @@ return error(_that.mensaje);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Direccion> direcciones)  loaded,required TResult Function( String mensaje)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Direccion> direcciones,  bool isLoading,  String? direccionProcesandoId,  String? direccionPrincipalProcesandoId,  String? errorMessage,  String? operacionError,  bool operacionExitosa,  String? usuarioId)  $default,) {final _that = this;
 switch (_that) {
-case _Initial():
-return initial();case _Loading():
-return loading();case _Loaded():
-return loaded(_that.direcciones);case _Error():
-return error(_that.mensaje);case _:
+case _DireccionesState():
+return $default(_that.direcciones,_that.isLoading,_that.direccionProcesandoId,_that.direccionPrincipalProcesandoId,_that.errorMessage,_that.operacionError,_that.operacionExitosa,_that.usuarioId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +204,10 @@ return error(_that.mensaje);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Direccion> direcciones)?  loaded,TResult? Function( String mensaje)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Direccion> direcciones,  bool isLoading,  String? direccionProcesandoId,  String? direccionPrincipalProcesandoId,  String? errorMessage,  String? operacionError,  bool operacionExitosa,  String? usuarioId)?  $default,) {final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial();case _Loading() when loading != null:
-return loading();case _Loaded() when loaded != null:
-return loaded(_that.direcciones);case _Error() when error != null:
-return error(_that.mensaje);case _:
+case _DireccionesState() when $default != null:
+return $default(_that.direcciones,_that.isLoading,_that.direccionProcesandoId,_that.direccionPrincipalProcesandoId,_that.errorMessage,_that.operacionError,_that.operacionExitosa,_that.usuarioId);case _:
   return null;
 
 }
@@ -192,113 +218,62 @@ return error(_that.mensaje);case _:
 /// @nodoc
 
 
-class _Initial extends DireccionesState {
-  const _Initial(): super._();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'DireccionesState.initial()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class _Loading extends DireccionesState {
-  const _Loading(): super._();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loading);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'DireccionesState.loading()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class _Loaded extends DireccionesState {
-  const _Loaded(final  List<Direccion> direcciones): _direcciones = direcciones,super._();
+class _DireccionesState implements DireccionesState {
+  const _DireccionesState({final  List<Direccion> direcciones = const <Direccion>[], this.isLoading = false, this.direccionProcesandoId, this.direccionPrincipalProcesandoId, this.errorMessage, this.operacionError, this.operacionExitosa = false, this.usuarioId}): _direcciones = direcciones;
   
 
  final  List<Direccion> _direcciones;
- List<Direccion> get direcciones {
+@override@JsonKey() List<Direccion> get direcciones {
   if (_direcciones is EqualUnmodifiableListView) return _direcciones;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_direcciones);
 }
 
+@override@JsonKey() final  bool isLoading;
+/// ID de la dirección que está siendo creada/actualizada/eliminada.
+@override final  String? direccionProcesandoId;
+/// ID de la dirección que se está marcando como principal.
+@override final  String? direccionPrincipalProcesandoId;
+/// Error al cargar la lista completa.
+@override final  String? errorMessage;
+/// Error producido durante una operación puntual.
+@override final  String? operacionError;
+/// Indica que una operación puntual terminó correctamente.
+@override@JsonKey() final  bool operacionExitosa;
+/// Usuario cuyas direcciones están actualmente cargadas.
+@override final  String? usuarioId;
 
 /// Create a copy of DireccionesState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _$identity);
+_$DireccionesStateCopyWith<_DireccionesState> get copyWith => __$DireccionesStateCopyWithImpl<_DireccionesState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._direcciones, _direcciones));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DireccionesState&&const DeepCollectionEquality().equals(other._direcciones, _direcciones)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.direccionProcesandoId, direccionProcesandoId) || other.direccionProcesandoId == direccionProcesandoId)&&(identical(other.direccionPrincipalProcesandoId, direccionPrincipalProcesandoId) || other.direccionPrincipalProcesandoId == direccionPrincipalProcesandoId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.operacionError, operacionError) || other.operacionError == operacionError)&&(identical(other.operacionExitosa, operacionExitosa) || other.operacionExitosa == operacionExitosa)&&(identical(other.usuarioId, usuarioId) || other.usuarioId == usuarioId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_direcciones));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_direcciones),isLoading,direccionProcesandoId,direccionPrincipalProcesandoId,errorMessage,operacionError,operacionExitosa,usuarioId);
 
 @override
 String toString() {
-  return 'DireccionesState.loaded(direcciones: $direcciones)';
+  return 'DireccionesState(direcciones: $direcciones, isLoading: $isLoading, direccionProcesandoId: $direccionProcesandoId, direccionPrincipalProcesandoId: $direccionPrincipalProcesandoId, errorMessage: $errorMessage, operacionError: $operacionError, operacionExitosa: $operacionExitosa, usuarioId: $usuarioId)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$LoadedCopyWith<$Res> implements $DireccionesStateCopyWith<$Res> {
-  factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
-@useResult
+abstract mixin class _$DireccionesStateCopyWith<$Res> implements $DireccionesStateCopyWith<$Res> {
+  factory _$DireccionesStateCopyWith(_DireccionesState value, $Res Function(_DireccionesState) _then) = __$DireccionesStateCopyWithImpl;
+@override @useResult
 $Res call({
- List<Direccion> direcciones
+ List<Direccion> direcciones, bool isLoading, String? direccionProcesandoId, String? direccionPrincipalProcesandoId, String? errorMessage, String? operacionError, bool operacionExitosa, String? usuarioId
 });
 
 
@@ -306,85 +281,26 @@ $Res call({
 
 }
 /// @nodoc
-class __$LoadedCopyWithImpl<$Res>
-    implements _$LoadedCopyWith<$Res> {
-  __$LoadedCopyWithImpl(this._self, this._then);
+class __$DireccionesStateCopyWithImpl<$Res>
+    implements _$DireccionesStateCopyWith<$Res> {
+  __$DireccionesStateCopyWithImpl(this._self, this._then);
 
-  final _Loaded _self;
-  final $Res Function(_Loaded) _then;
-
-/// Create a copy of DireccionesState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? direcciones = null,}) {
-  return _then(_Loaded(
-null == direcciones ? _self._direcciones : direcciones // ignore: cast_nullable_to_non_nullable
-as List<Direccion>,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class _Error extends DireccionesState {
-  const _Error(this.mensaje): super._();
-  
-
- final  String mensaje;
+  final _DireccionesState _self;
+  final $Res Function(_DireccionesState) _then;
 
 /// Create a copy of DireccionesState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$ErrorCopyWith<_Error> get copyWith => __$ErrorCopyWithImpl<_Error>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Error&&(identical(other.mensaje, mensaje) || other.mensaje == mensaje));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,mensaje);
-
-@override
-String toString() {
-  return 'DireccionesState.error(mensaje: $mensaje)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$ErrorCopyWith<$Res> implements $DireccionesStateCopyWith<$Res> {
-  factory _$ErrorCopyWith(_Error value, $Res Function(_Error) _then) = __$ErrorCopyWithImpl;
-@useResult
-$Res call({
- String mensaje
-});
-
-
-
-
-}
-/// @nodoc
-class __$ErrorCopyWithImpl<$Res>
-    implements _$ErrorCopyWith<$Res> {
-  __$ErrorCopyWithImpl(this._self, this._then);
-
-  final _Error _self;
-  final $Res Function(_Error) _then;
-
-/// Create a copy of DireccionesState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? mensaje = null,}) {
-  return _then(_Error(
-null == mensaje ? _self.mensaje : mensaje // ignore: cast_nullable_to_non_nullable
-as String,
+@override @pragma('vm:prefer-inline') $Res call({Object? direcciones = null,Object? isLoading = null,Object? direccionProcesandoId = freezed,Object? direccionPrincipalProcesandoId = freezed,Object? errorMessage = freezed,Object? operacionError = freezed,Object? operacionExitosa = null,Object? usuarioId = freezed,}) {
+  return _then(_DireccionesState(
+direcciones: null == direcciones ? _self._direcciones : direcciones // ignore: cast_nullable_to_non_nullable
+as List<Direccion>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,direccionProcesandoId: freezed == direccionProcesandoId ? _self.direccionProcesandoId : direccionProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,direccionPrincipalProcesandoId: freezed == direccionPrincipalProcesandoId ? _self.direccionPrincipalProcesandoId : direccionPrincipalProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,operacionError: freezed == operacionError ? _self.operacionError : operacionError // ignore: cast_nullable_to_non_nullable
+as String?,operacionExitosa: null == operacionExitosa ? _self.operacionExitosa : operacionExitosa // ignore: cast_nullable_to_non_nullable
+as bool,usuarioId: freezed == usuarioId ? _self.usuarioId : usuarioId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

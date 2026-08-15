@@ -1,11 +1,6 @@
-// features/usuarios/presentation/widgets/formulario_perfil.dart
-
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
 
-/// Formulario reutilizable para editar perfil.
-/// Usado por repartidor, encargado, admin y cliente.
-/// No tiene lógica de negocio — solo captura y valida datos.
 class FormularioPerfil extends StatefulWidget {
   final Perfil perfil;
   final bool cargando;
@@ -78,7 +73,6 @@ class _FormularioPerfilState extends State<FormularioPerfil> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ─── Nombre ───────────────────────────────────────────────────────
           _Campo(
             controlador: _nombreCtrl,
             etiqueta: 'Nombre',
@@ -87,8 +81,6 @@ class _FormularioPerfilState extends State<FormularioPerfil> {
                 v == null || v.trim().isEmpty ? 'El nombre es requerido' : null,
           ),
           const SizedBox(height: 16),
-
-          // ─── Apellido Paterno ─────────────────────────────────────────────
           _Campo(
             controlador: _apellidoPaternoCtrl,
             etiqueta: 'Apellido Paterno',
@@ -98,46 +90,36 @@ class _FormularioPerfilState extends State<FormularioPerfil> {
                 : null,
           ),
           const SizedBox(height: 16),
-
-          // ─── Apellido Materno (opcional) ──────────────────────────────────
           _Campo(
             controlador: _apellidoMaternoCtrl,
             etiqueta: 'Apellido Materno (opcional)',
             icono: Icons.person_outline,
           ),
           const SizedBox(height: 16),
-
-          // ─── Alias (opcional) ─────────────────────────────────────────────
           _Campo(
             controlador: _aliasCtrl,
             etiqueta: 'Alias (opcional)',
             icono: Icons.badge_outlined,
           ),
           const SizedBox(height: 16),
-
-          // ─── Teléfono ─────────────────────────────────────────────────────
           _Campo(
             controlador: _telefonoCtrl,
             etiqueta: 'Teléfono',
             icono: Icons.phone_outlined,
             teclado: TextInputType.phone,
             validar: (v) {
-              if (v == null || v.trim().isEmpty) return null; // opcional
+              if (v == null || v.trim().isEmpty) return null;
               if (v.trim().length != 10) return 'Ingresa 10 dígitos';
               return null;
             },
           ),
           const SizedBox(height: 8),
-
-          // ─── Email (solo lectura) ─────────────────────────────────────────
           _CampoReadOnly(
             valor: widget.perfil.email,
             etiqueta: 'Correo electrónico',
             icono: Icons.email_outlined,
           ),
           const SizedBox(height: 32),
-
-          // ─── Botón guardar ────────────────────────────────────────────────
           SizedBox(
             width: double.infinity,
             height: 50,
@@ -164,8 +146,6 @@ class _FormularioPerfilState extends State<FormularioPerfil> {
     );
   }
 }
-
-// ─── Subwidgets ───────────────────────────────────────────────────────────────
 
 class _Campo extends StatelessWidget {
   final TextEditingController controlador;

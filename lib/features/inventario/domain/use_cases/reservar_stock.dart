@@ -12,19 +12,16 @@ class ReservarStock {
   ReservarStock(this.repository);
 
   ResultTask<Inventario> ejecutar({
-    required Perfil usuarioActual, // 🛡️ Seguridad integrada
+    required Perfil usuarioActual,
     required String productoId,
     required String sucursalId,
     required int cantidad,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación de entrada
       await $(_validarCantidad(cantidad));
 
-      // 2️⃣ Seguridad (Opcional pero recomendado para consistencia)
       await $(_validarPermisos(usuarioActual, sucursalId));
 
-      // 3️⃣ Obtener el estado actual del inventario
       final inventario = await $(
         repository.obtener(productoId: productoId, sucursalId: sucursalId),
       );
@@ -39,21 +36,16 @@ class ReservarStock {
         );
       }
 
-      // 4️⃣ 🧠 Lógica de Stock Real (Disponibilidad comprometida)
       await $(_validarStockSuficiente(inventario, cantidad));
 
-      // 5️⃣ Actualizar reserva (Inmutabilidad)
       final actualizado = inventario.copyWith(
         stockReservado: inventario.stockReservado + cantidad,
         fechaActualizacion: DateTime.now(),
       );
 
-      // 6️⃣ Persistencia
       return await $(repository.actualizar(actualizado));
     });
   }
-
-  // --- 🧩 MICRO-PASOS DE LÓGICA ---
 
   ResultTask<Unit> _validarCantidad(int cant) => cant > 0
       ? TaskEither.right(unit)

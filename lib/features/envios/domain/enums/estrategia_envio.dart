@@ -1,6 +1,6 @@
 enum EstrategiaEnvio {
-  haversine,    // ← activa ahora
-  codigoPostal, // ← futura
-  geocerca,     // ← futura
+  haversine,   
+  codigoPostal, 
+  geocerca,
   hibrida
 }

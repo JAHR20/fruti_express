@@ -4,12 +4,14 @@ import 'package:fruti_express_jahr_admin/features/inventario/domain/entities/inv
 part 'inventario_state.freezed.dart';
 
 @freezed
-class InventarioState with _$InventarioState {
-  const factory InventarioState.initial() = InventarioInitial;
-  const factory InventarioState.loading() = InventarioLoading;
-  const factory InventarioState.loaded(
-    List<Inventario> inventario, {
-    String? actualizandoProductoId,
-  }) = InventarioLoaded;
-  const factory InventarioState.error(String message) = InventarioError;
+abstract class InventarioState with _$InventarioState {
+  const factory InventarioState({
+    @Default([]) List<Inventario> inventario,
+    @Default(false) bool isLoading,
+    String? productoProcesandoId,
+    String? errorMessage,
+    String? operacionError,
+    @Default(false) bool operacionExitosa,
+    String? sucursalId,
+  }) = _InventarioState;
 }

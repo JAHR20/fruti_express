@@ -19,7 +19,6 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
   @override
   void initState() {
     super.initState();
-    // 1️⃣ Al abrir la pantalla, le decimos al Cubit que descargue las tarifas
     context.read<EnvioAdminCubit>().cargarDatos(widget.sucursalId);
   }
 
@@ -59,8 +58,6 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
               ),
             );
           }
-
-          // 2️⃣ La lista de precios actual
           return ListView.builder(
             padding: const EdgeInsets.all(16),
             itemCount: state.tarifas.length,
@@ -83,15 +80,12 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
           );
         },
       ),
-      // 3️⃣ Botón flotante para agregar nueva tarifa
       floatingActionButton: FloatingActionButton(
         onPressed: () => _mostrarFormularioTarifa(context),
         child: const Icon(Icons.add),
       ),
     );
   }
-
-  // --- MÉTODOS DE LA UI ---
 
   void _confirmarEliminacion(BuildContext context, String tarifaId) {
     showDialog(
@@ -123,8 +117,7 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
   }
 
   void _mostrarFormularioTarifa(BuildContext context) {
-    final nombreCtrl =
-        TextEditingController(); // 🌟 NUEVO: Controlador para el nombre
+    final nombreCtrl = TextEditingController();
     final minCtrl = TextEditingController();
     final maxCtrl = TextEditingController();
     final costoCtrl = TextEditingController();
@@ -148,7 +141,6 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
             ),
             const SizedBox(height: 16),
 
-            // 🌟 NUEVO: Campo para el nombre de la tarifa
             TextField(
               controller: nombreCtrl,
               decoration: const InputDecoration(
@@ -194,20 +186,17 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
                   final authState = context.read<AuthCubit>().state;
                   if (authState is! AuthAuthenticated) return;
 
-                  // 🌟 Agregamos los campos obligatorios a la entidad
                   final tarifa = TarifaEnvio(
-                    id: '', // Supabase generará el UUID real
+                    id: '',
                     sucursalId: widget.sucursalId,
                     nombre: nombreCtrl.text.isEmpty
                         ? 'Tarifa Estándar'
-                        : nombreCtrl.text, // 👈 Nombre
+                        : nombreCtrl.text,
                     distanciaMinKm: double.tryParse(minCtrl.text) ?? 0,
                     distanciaMaxKm: double.tryParse(maxCtrl.text) ?? 0,
-                    costo:
-                        int.tryParse(costoCtrl.text) ??
-                        0, // 👈 Convertido a int
-                    activa: true, // 👈 Siempre activa al crearla
-                    fechaCreacion: DateTime.now(), // 👈 Fecha actual
+                    costo: int.tryParse(costoCtrl.text) ?? 0,
+                    activa: true,
+                    fechaCreacion: DateTime.now(),
                   );
 
                   context.read<EnvioAdminCubit>().guardarTarifa(

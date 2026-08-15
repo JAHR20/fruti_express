@@ -10,9 +10,6 @@ class ObtenerStockActual {
 
   ResultTask<int> ejecutar(String productoId, String sucursalId) =>
       TaskEither.Do(($) async {
-        
-        // 🌟 1. VALIDACIÓN: Producto ID
-        // Si viene vacío, cortamos la ejecución y regresamos el Failure al instante
         final idProductoValido = await $(
           TaskEither.fromPredicate(
             productoId,
@@ -21,7 +18,6 @@ class ObtenerStockActual {
           ),
         );
 
-        // 🌟 2. VALIDACIÓN: Sucursal ID
         final idSucursalValido = await $(
           TaskEither.fromPredicate(
             sucursalId,
@@ -30,13 +26,10 @@ class ObtenerStockActual {
           ),
         );
 
-        // 🌟 3. EJECUCIÓN
-        // Si pasó las validaciones, ahora sí disparamos la petición a la BD
         final stock = await $(
           _repository.obtenerStockActual(idProductoValido, idSucursalValido)
         );
 
-        // Retornamos el resultado exitoso
         return stock;
       });
 }

@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/core/utils/supabase_handle_exception.dart';
+import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/data/datasources/pedido_remote_datasource.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/data/models/pedido_model.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';

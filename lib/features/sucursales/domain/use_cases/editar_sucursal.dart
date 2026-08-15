@@ -14,10 +14,9 @@ class EditarSucursal {
   ResultTask<Sucursal> ejecutar({
     required Perfil usuarioActual,
     required Sucursal sucursalModificada,
-    required List<String> codigosPostales,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Seguridad
+      // Seguridad
       if (!usuarioActual.esAdmin) {
         return await $(
           TaskEither.left(
@@ -28,7 +27,7 @@ class EditarSucursal {
         );
       }
 
-      // 2️⃣ Verificar existencia
+      // se verifica la existencia
       final original = await $(repository.obtenerPorId(sucursalModificada.id));
       if (original == null) {
         return await $(
@@ -47,7 +46,6 @@ class EditarSucursal {
         );
       }
 
-      // 3️⃣ Persistencia
       final sucursalActualizada = await $(
         repository.actualizar(sucursalModificada),
       );

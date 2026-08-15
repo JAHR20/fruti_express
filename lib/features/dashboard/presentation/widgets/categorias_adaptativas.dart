@@ -13,7 +13,6 @@ class CategoriasAdaptativas extends StatelessWidget {
     required this.onTap,
   });
 
-  // 🌟 Umbral: 4 o menos -> lista alargada. Más de 4 -> grid 2 columnas
   static const int _umbralLista = 4;
 
   @override

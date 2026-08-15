@@ -1,15 +1,10 @@
+import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/editar_perfil_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/usuarios_cubit.dart';
 import 'package:get_it/get_it.dart';
-
-// Data Sources
 import '../data/datasources/usuario_remote_datasource.dart';
 import '../data/datasources/usuario_remote_datasource_impl.dart';
-
-// Repositories
 import '../domain/repositories/usuario_repository.dart';
 import '../data/repositories_impl/usuario_repository_impl.dart';
-
-// Use Cases
 import '../domain/use_cases/actualizar_perfil.dart';
 import '../domain/use_cases/cambiar_estado_usuario.dart';
 import '../domain/use_cases/cambiar_rol_usuario.dart';
@@ -22,37 +17,33 @@ import '../domain/use_cases/existe_encargado_en_sucursal.dart';
 import '../domain/use_cases/contar_admins_activos.dart';
 
 void initUsuarios(GetIt sl) {
-  // --- 🧠 CASOS DE USO (Use Cases) ---
-  // Listados y Búsqueda
+  // --- CASOS DE USO ---
   sl.registerLazySingleton(() => ObtenerUsuarios(sl()));
   sl.registerLazySingleton(() => ObtenerClientes(sl()));
   sl.registerLazySingleton(() => ObtenerRepartidores(sl()));
   sl.registerLazySingleton(() => BuscarUsuarios(sl()));
   sl.registerLazySingleton(() => ObtenerUsuarioPorId(sl()));
 
-  // Gestión de Perfil y Roles
   sl.registerLazySingleton(() => ActualizarPerfil(sl()));
   sl.registerLazySingleton(() => CambiarRolUsuario(sl()));
   sl.registerLazySingleton(() => CambiarEstadoUsuario(sl()));
 
-  // Reglas de Negocio y Seguridad
   sl.registerLazySingleton(() => ExisteEncargadoEnSucursal(sl()));
   sl.registerLazySingleton(() => ContarAdminsActivos(sl()));
 
-  // --- 🤝 REPOSITORIO (Repository) ---
+  // --- REPOSITORIO ---
   sl.registerLazySingleton<UsuarioRepository>(
     () => UsuarioRepositoryImpl(sl()),
   );
 
-  // --- 🛰️ FUENTE DE DATOS (Data Source) ---
+  // --- DATA SOURCES ---
   sl.registerLazySingleton<UsuarioRemoteDatasource>(
     () => UsuarioRemoteDatasourceImpl(sl()),
   );
 
-  // --- 🧑‍💼 CUBIT (Cubit) ---
+  // --- CUBITS ---
   sl.registerFactory<UsuariosCubit>(
     () => UsuariosCubit(
-      actualizarPerfilUseCase: sl(),
       buscarUsuariosUseCase: sl(),
       cambiarEstadoUsuarioUseCase: sl(),
       cambiarRolUseCase: sl(),
@@ -62,6 +53,12 @@ void initUsuarios(GetIt sl) {
       obtenerRepartidoresUseCase: sl(),
       obtenerUsuarioPorIdUseCase: sl(),
       obtenerUsuariosUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory<EditarPerfilCubit>(
+    () => EditarPerfilCubit(
+      actualizarPerfil: sl(),
     ),
   );
 }

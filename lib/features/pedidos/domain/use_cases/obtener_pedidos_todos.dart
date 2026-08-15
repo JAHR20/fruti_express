@@ -11,10 +11,8 @@ class ObtenerTodosLosPedidos {
 
   ObtenerTodosLosPedidos(this.repository);
 
-  /// Obtiene la lista global de pedidos si el usuario tiene permisos de Admin.
   ResultTask<List<Pedido>> ejecutar(Perfil usuarioActual) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación de Seguridad (Solo Admins)
       if (!usuarioActual.esAdmin) {
         return await $(
           TaskEither.left(
@@ -24,9 +22,6 @@ class ObtenerTodosLosPedidos {
           ),
         );
       }
-
-      // 2️⃣ Delegación al Repositorio
-      // Obtenemos la "foto completa" del negocio.
       return await $(repository.obtenerTodos());
     });
   }

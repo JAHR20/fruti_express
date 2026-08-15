@@ -39,7 +39,6 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
   }
 
   Future<void> _confirmar() async {
-    // Cliente presente → validar código
     if (_modo == _ModoEntrega.clientePresente) {
       if (!_formKey.currentState!.validate()) return;
 
@@ -51,8 +50,6 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
           );
       return;
     }
-
-    // Cliente ausente → solo foto obligatoria
     if (_rutaFoto == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -66,7 +63,7 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
     Navigator.of(context).pop();
     await context.read<PedidosRepartidorCubit>().confirmarEntrega(
           pedidoId: widget.pedido.id,
-          codigoConfirmacion: null, // ← sin código
+          codigoConfirmacion: null,
           rutaFoto: _rutaFoto,
         );
   }
@@ -92,7 +89,6 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ─── Handle ───────────────────────────────────────────────
                 Center(
                   child: Container(
                     width: 40,
@@ -104,8 +100,6 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
                     ),
                   ),
                 ),
-
-                // ─── Título ───────────────────────────────────────────────
                 const Text(
                   'Confirmar Entrega',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
@@ -116,8 +110,6 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
                   style: TextStyle(color: Colors.grey.shade600),
                 ),
                 const SizedBox(height: 20),
-
-                // ─── Selector modo ────────────────────────────────────────
                 Row(
                   children: [
                     Expanded(
@@ -144,8 +136,6 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
                   ],
                 ),
                 const SizedBox(height: 20),
-
-                // ─── Cliente presente → código ────────────────────────────
                 if (_modo == _ModoEntrega.clientePresente) ...[
                   const Text(
                     'Pide al cliente su código de confirmación',
@@ -176,8 +166,6 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
                     },
                   ),
                 ],
-
-                // ─── Cliente ausente → solo foto ──────────────────────────
                 if (_modo == _ModoEntrega.clienteAusente) ...[
                   const Text(
                     'Toma una foto como evidencia de entrega',
@@ -236,10 +224,7 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
                     ),
                   ),
                 ],
-
                 const SizedBox(height: 24),
-
-                // ─── Botón confirmar ──────────────────────────────────────
                 SizedBox(
                   width: double.infinity,
                   height: 50,
@@ -262,8 +247,6 @@ class _ConfirmarEntregaSheetState extends State<ConfirmarEntregaSheet> {
       );
   }
 }
-
-// ─── Subwidgets ───────────────────────────────────────────────────────────────
 
 class _SelectorModo extends StatelessWidget {
   final IconData icono;

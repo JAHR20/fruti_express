@@ -15,7 +15,6 @@ class EliminarTarifaEnvioUseCase {
     required String tarifaId,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Seguridad: Validar rol
       if (!usuarioActual.esAdmin) {
         return await $(
           TaskEither.left(
@@ -25,8 +24,6 @@ class EliminarTarifaEnvioUseCase {
           ),
         );
       }
-
-      // 2️⃣ Eliminamos la tarifa
       await $(repository.eliminarTarifa(tarifaId));
 
       return unit;

@@ -1,3 +1,4 @@
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/entities/configuracion_envio.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/use_cases/obtener_configuracion_envio.dart';
@@ -10,25 +11,26 @@ class EnvioClienteCubit extends Cubit<EnvioClienteState> {
 
   EnvioClienteCubit({
     required ObtenerConfiguracionEnvioUseCase obtenerConfiguracion,
-  })  : _obtenerConfiguracion = obtenerConfiguracion,
-        super(const EnvioClienteState());
+  }) : _obtenerConfiguracion = obtenerConfiguracion,
+       super(const EnvioClienteState());
 
-  /// Descarga las configuraciones de todas las sucursales activas
-  Future<void> cargarConfiguracionesDeSucursales(List<Sucursal> sucursales) async {
+  Future<void> cargarConfiguracionesDeSucursales(
+    List<Sucursal> sucursales,
+  ) async {
     if (sucursales.isEmpty) return;
 
     emit(state.copyWith(isLoading: true, error: null));
 
-    List<ConfiguracionEnvio> configuracionesDescargadas = [];
+    final List<ConfiguracionEnvio> configuracionesDescargadas = [];
+    String? ultimoError;
 
-    // Iteramos sobre cada sucursal para traer su propia regla de envíos
     for (var sucursal in sucursales) {
+
       final result = await _obtenerConfiguracion(sucursal.id).run();
 
       result.fold(
         (failure) {
-          // Si una falla, no detenemos el proceso, solo imprimimos el error
-          print('⚠️ Error al cargar config de la sucursal ${sucursal.id}: ${failure.errorMessage}');
+          ultimoError = failure.errorMessage;
         },
         (config) {
           if (config != null) {
@@ -37,11 +39,12 @@ class EnvioClienteCubit extends Cubit<EnvioClienteState> {
         },
       );
     }
-
-    // 🌟 Guardamos todas las configuraciones exitosas en el estado
-    emit(state.copyWith(
-      isLoading: false,
-      configuraciones: configuracionesDescargadas,
-    ));
+    emit(
+      state.copyWith(
+        isLoading: false,
+        configuraciones: configuracionesDescargadas,
+        error: ultimoError,
+      ),
+    );
   }
 }

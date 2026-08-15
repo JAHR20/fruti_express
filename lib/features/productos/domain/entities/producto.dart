@@ -24,7 +24,6 @@ abstract class Producto with _$Producto {
   bool get tieneDescuento => 
       precioComparacion != null && precioComparacion! > precioActual;
       
-  /// Calcula el porcentaje exacto de descuento para los badges
   int get porcentajeDescuento {
     if (!tieneDescuento) return 0;
     

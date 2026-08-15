@@ -1,9 +1,11 @@
 import 'package:fruti_express_jahr_admin/features/sucursales/data/repositories/sucursal_repository_impl.dart';
+import 'package:fruti_express_jahr_admin/features/sucursales/domain/use_cases/actualizar_cobertura_sucursal.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/domain/use_cases/cambiar_estado_sucursal.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/domain/use_cases/editar_sucursal.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/domain/use_cases/obtener_cobertura.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/formulario_sucursal_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/sucursales/domain/use_cases/obtener_ubicacion_por_codigo_postal.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/wizard_sucursal_cubit.dart';
 import 'package:get_it/get_it.dart';
 import '../data/datasources/sucursal_remote_datasource.dart';
 import '../data/datasources/sucursal_remote_datasource_impl.dart';
@@ -18,6 +20,8 @@ void initSucursales(GetIt sl) {
   sl.registerLazySingleton(() => CambiarEstadoSucursal(sl()));
   sl.registerLazySingleton(() => EditarSucursal(sl()));
   sl.registerLazySingleton(() => ObtenerCobertura(sl()));
+  sl.registerLazySingleton(() => ActualizarCoberturaSucursal(sl()));
+  sl.registerLazySingleton(()=> ObtenerUbicacionPorCodigoPostal(sl()));
 
   // --- REPOSITORIO ---
   sl.registerLazySingleton<SucursalRepository>(
@@ -29,20 +33,24 @@ void initSucursales(GetIt sl) {
     () => SucursalRemoteDatasourceImpl(sl()),
   );
 
-  // --- CUBIT ---
+  // --- CUBITS ---
   sl.registerFactory<SucursalCubit>(
     () => SucursalCubit(
       obtenerSucursalesUseCase: sl(),
       cambiarEstadoSucursalUseCase: sl(),
+      obtenerSucursalesConEnvioConfiguradoUseCase: sl(),
     ),
   );
 
-  sl.registerFactory<FormularioSucursalCubit>(
-    () => FormularioSucursalCubit(
+  sl.registerFactory<WizardSucursalCubit>(
+    () => WizardSucursalCubit(
       crearSucursalUseCase: sl(),
       editarSucursalUseCase: sl(),
       obtenerCoberturaUseCase: sl(),
-      postaliService: sl(),
+      obtenerUbicacionPorCodigoPostalUseCase: sl(),
+      actualizarCoberturaSucursalUseCase: sl(),
+      guardarConfiguracionEnvioUseCase: sl(),
+      obtenerConfiguracionEnvioUseCase: sl()
     ),
   );
 }

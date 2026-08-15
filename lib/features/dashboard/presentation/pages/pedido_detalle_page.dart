@@ -1,5 +1,3 @@
-// features/pedidos/presentation/pages/pedido_detalle_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/core/utils/formato_moneda.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';
@@ -36,17 +34,14 @@ class PedidoDetallePage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── Estado actual ────────────────────────────────────────────
             _SeccionEstado(pedido: pedido),
             const SizedBox(height: 16),
 
-            // ─── Timeline ─────────────────────────────────────────────────
             if (pedido.estado != EstadoPedido.cancelado) ...[
               _TimelinePedido(estadoActual: pedido.estado),
               const SizedBox(height: 16),
             ],
 
-            // ─── Dirección ────────────────────────────────────────────────
             _SeccionCard(
               titulo: 'Dirección de entrega',
               icono: Icons.location_on_outlined,
@@ -57,7 +52,6 @@ class PedidoDetallePage extends StatelessWidget {
             ),
             const SizedBox(height: 12),
 
-            // ─── Items ────────────────────────────────────────────────────
             _SeccionCard(
               titulo: 'Productos',
               icono: Icons.shopping_bag_outlined,
@@ -70,13 +64,11 @@ class PedidoDetallePage extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            // 🌟 Consumimos las propiedades calculadas desde el Dominio
                             '${item.cantidadFormateada} x ${item.nombreProductoSnapshot}',
                             style: const TextStyle(fontSize: 14),
                           ),
                         ),
                         Text(
-                          // 🌟 Usamos el subtotal que la extensión ya calculó
                           FormatoMoneda.formatear(item.subtotalCalculado),
                           style: const TextStyle(
                             fontSize: 14,
@@ -90,8 +82,6 @@ class PedidoDetallePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-
-            // ─── Desglose de costos ───────────────────────────────────────
             _SeccionCard(
               titulo: 'Resumen de pago',
               icono: Icons.receipt_outlined,
@@ -124,14 +114,11 @@ class PedidoDetallePage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-
-            // ─── Código de confirmación ───────────────────────────────────
             if (estaActivo && pedido.codigoConfirmacion != null) ...[
               _CodigoConfirmacion(codigo: pedido.codigoConfirmacion!),
               const SizedBox(height: 12),
             ],
 
-            // ─── Fechas ───────────────────────────────────────────────────
             _SeccionCard(
               titulo: 'Información del pedido',
               icono: Icons.info_outline,
@@ -175,8 +162,6 @@ class PedidoDetallePage extends StatelessWidget {
     return '${local.day} de ${meses[local.month - 1]} de ${local.year}';
   }
 }
-
-// ─── Sección estado actual ────────────────────────────────────────────────────
 
 class _SeccionEstado extends StatelessWidget {
   final Pedido pedido;
@@ -243,10 +228,6 @@ class _SeccionEstado extends StatelessWidget {
   };
 }
 
-// ─── Timeline ─────────────────────────────────────────────────────────────────
-
-// ─── Timeline ─────────────────────────────────────────────────────────────────
-
 class _TimelinePedido extends StatelessWidget {
   final EstadoPedido estadoActual;
 
@@ -286,7 +267,6 @@ class _TimelinePedido extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            // 🌟 1. Obligamos a que todos los elementos se alineen desde arriba (Techo)
             crossAxisAlignment: CrossAxisAlignment.start,
             children: List.generate(_pasos.length * 2 - 1, (i) {
               if (i.isOdd) {
@@ -294,7 +274,6 @@ class _TimelinePedido extends StatelessWidget {
                 final pasoIndex = i ~/ 2;
                 final completado = pasoIndex < _indiceActual;
                 return Expanded(
-                  // 🌟 2. Caja invisible de 32px para alinear la línea al centro del círculo
                   child: SizedBox(
                     height: 32,
                     child: Center(
@@ -309,7 +288,6 @@ class _TimelinePedido extends StatelessWidget {
                 );
               }
 
-              // Círculo del paso
               final pasoIndex = i ~/ 2;
               final paso = _pasos[pasoIndex];
               final completado = pasoIndex <= _indiceActual;
@@ -317,7 +295,6 @@ class _TimelinePedido extends StatelessWidget {
 
               return Column(
                 children: [
-                  // 🌟 3. Caja invisible de 32px para que los círculos no salten
                   SizedBox(
                     height: 32,
                     child: Center(
@@ -350,10 +327,8 @@ class _TimelinePedido extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  // 🌟 Envolvemos el texto en una caja de altura fija
                   SizedBox(
-                    height:
-                        28, // Suficiente espacio para 2 líneas de texto miniatura
+                    height: 28,
                     child: Text(
                       paso.etiqueta,
                       textAlign: TextAlign.center,
@@ -377,8 +352,6 @@ class _TimelinePedido extends StatelessWidget {
     );
   }
 }
-
-// ─── Código de confirmación ───────────────────────────────────────────────────
 
 class _CodigoConfirmacion extends StatefulWidget {
   final String codigo;
@@ -448,8 +421,6 @@ class _CodigoConfirmacionState extends State<_CodigoConfirmacion> {
     );
   }
 }
-
-// ─── Subwidgets reutilizables ─────────────────────────────────────────────────
 
 class _SeccionCard extends StatelessWidget {
   final String titulo;

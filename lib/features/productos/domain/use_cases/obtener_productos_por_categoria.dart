@@ -9,7 +9,6 @@ class ObtenerProductosPorCategoria {
 
   ObtenerProductosPorCategoria({required this.repository});
 
-  // 🌟 Ahora pedimos ambos IDs
   ResultTask<List<Producto>> ejecutar(String categoriaId, String sucursalId) {
     final idLimpio = categoriaId.trim();
     final sucursalLimpia = sucursalId.trim();

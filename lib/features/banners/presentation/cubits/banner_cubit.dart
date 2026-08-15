@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/actualizar_banner.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/cambiar_estado_banner.dart';
@@ -8,7 +9,9 @@ import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/crear
 import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/eliminar_banner.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/obtener_banners_activos.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/obtener_todos_los_banners.dart';
+
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
+
 import 'banner_state.dart';
 
 class BannerCubit extends Cubit<BannerState> {
@@ -26,67 +29,147 @@ class BannerCubit extends Cubit<BannerState> {
     required ActualizarBanner actualizarBanner,
     required CambiarEstadoBanner cambiarEstadoBanner,
     required EliminarBanner eliminarBanner,
-  })  : _obtenerBannersActivosUseCase = obtenerBannersActivos,
-        _obtenerTodosLosBannersUseCase = obtenerTodosLosBanners,
-        _crearBannerUseCase = crearBanner,
-        _actualizarBannerUseCase = actualizarBanner,
-        _cambiarEstadoBannerUseCase = cambiarEstadoBanner,
-        _eliminarBannerUseCase = eliminarBanner,
-        super(const BannerState.initial());
+  }) : _obtenerBannersActivosUseCase = obtenerBannersActivos,
+       _obtenerTodosLosBannersUseCase = obtenerTodosLosBanners,
+       _crearBannerUseCase = crearBanner,
+       _actualizarBannerUseCase = actualizarBanner,
+       _cambiarEstadoBannerUseCase = cambiarEstadoBanner,
+       _eliminarBannerUseCase = eliminarBanner,
+       super(const BannerState());
 
-  // --- 🔍 CONSULTAS ---
-
-  /// Para la UI del cliente — no requiere usuario
   Future<void> cargarBannersActivos() async {
-    emit(const BannerState.loading());
+    emit(
+      state.copyWith(isLoading: true, errorMessage: null, operacionError: null),
+    );
+
     final result = await _obtenerBannersActivosUseCase.ejecutar().run();
+
     result.fold(
-      (failure) => emit(BannerState.error(failure.errorMessage)),
-      (banners) => emit(BannerState.loaded(banners)),
+      (failure) {
+        emit(
+          state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+        );
+      },
+      (banners) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            banners: banners,
+            errorMessage: null,
+          ),
+        );
+      },
     );
   }
 
-  /// Para el panel admin — requiere usuario con permisos
   Future<void> cargarTodosLosBanners({required Perfil usuarioActual}) async {
-    emit(const BannerState.loading());
+    emit(
+      state.copyWith(isLoading: true, errorMessage: null, operacionError: null),
+    );
+
     final result = await _obtenerTodosLosBannersUseCase
         .ejecutar(usuarioActual: usuarioActual)
         .run();
+
     result.fold(
-      (failure) => emit(BannerState.error(failure.errorMessage)),
-      (banners) => emit(BannerState.loaded(banners)),
+      (failure) {
+        emit(
+          state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+        );
+      },
+      (banners) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            banners: banners,
+            errorMessage: null,
+          ),
+        );
+      },
     );
   }
-
-  // --- ✍️ ESCRITURA ---
 
   Future<void> crearBanner({
     required Perfil usuarioActual,
     required Banner banner,
-    File? imagenArchivo
+    File? imagenArchivo,
   }) async {
-    emit(const BannerState.loading());
+    emit(state.copyWith(operacionError: null, operacionExitosa: false));
+
     final result = await _crearBannerUseCase
-        .ejecutar(usuarioActual: usuarioActual, banner: banner, imagenArchivo: imagenArchivo)
+        .ejecutar(
+          usuarioActual: usuarioActual,
+          banner: banner,
+          imagenArchivo: imagenArchivo,
+        )
         .run();
+
     result.fold(
-      (failure) => emit(BannerState.error(failure.errorMessage)),
-      (_) => cargarTodosLosBanners(usuarioActual: usuarioActual), // ← recarga la lista
+      (failure) {
+        emit(
+          state.copyWith(
+            operacionError: failure.errorMessage,
+            operacionExitosa: false,
+          ),
+        );
+      },
+      (_) {
+        emit(state.copyWith(operacionError: null, operacionExitosa: true));
+
+        cargarTodosLosBanners(usuarioActual: usuarioActual);
+      },
     );
   }
 
   Future<void> actualizarBanner({
     required Perfil usuarioActual,
     required Banner banner,
-    File? imagenArchivo
+    File? imagenArchivo,
   }) async {
-    emit(const BannerState.loading());
+    emit(
+      state.copyWith(
+        bannerProcesandoId: banner.id,
+        operacionError: null,
+        operacionExitosa: false,
+      ),
+    );
+
     final result = await _actualizarBannerUseCase
-        .ejecutar(usuarioActual: usuarioActual, banner: banner, imagenArchivo: imagenArchivo)
+        .ejecutar(
+          usuarioActual: usuarioActual,
+          banner: banner,
+          imagenArchivo: imagenArchivo,
+        )
         .run();
+
     result.fold(
-      (failure) => emit(BannerState.error(failure.errorMessage)),
-      (_) => cargarTodosLosBanners(usuarioActual: usuarioActual),
+      (failure) {
+        emit(
+          state.copyWith(
+            bannerProcesandoId: null,
+            operacionError: failure.errorMessage,
+            operacionExitosa: false,
+          ),
+        );
+      },
+      (bannerActualizado) {
+        final nuevosBanners = state.banners.map((bannerActual) {
+          if (bannerActual.id == bannerActualizado.id) {
+            return bannerActualizado;
+          }
+
+          return bannerActual;
+        }).toList();
+
+        emit(
+          state.copyWith(
+            banners: nuevosBanners,
+            bannerProcesandoId: null,
+            operacionError: null,
+            operacionExitosa: true,
+          ),
+        );
+      },
     );
   }
 
@@ -95,12 +178,46 @@ class BannerCubit extends Cubit<BannerState> {
     required String id,
     required bool activo,
   }) async {
+    emit(
+      state.copyWith(
+        bannerProcesandoId: id,
+        operacionError: null,
+        operacionExitosa: false,
+      ),
+    );
+
     final result = await _cambiarEstadoBannerUseCase
         .ejecutar(usuarioActual: usuarioActual, id: id, activo: activo)
         .run();
+
     result.fold(
-      (failure) => emit(BannerState.error(failure.errorMessage)),
-      (_) => cargarTodosLosBanners(usuarioActual: usuarioActual),
+      (failure) {
+        emit(
+          state.copyWith(
+            bannerProcesandoId: null,
+            operacionError: failure.errorMessage,
+            operacionExitosa: false,
+          ),
+        );
+      },
+      (_) {
+        final nuevosBanners = state.banners.map((banner) {
+          if (banner.id == id) {
+            return banner.copyWith(activo: activo);
+          }
+
+          return banner;
+        }).toList();
+
+        emit(
+          state.copyWith(
+            banners: nuevosBanners,
+            bannerProcesandoId: null,
+            operacionError: null,
+            operacionExitosa: true,
+          ),
+        );
+      },
     );
   }
 
@@ -108,12 +225,46 @@ class BannerCubit extends Cubit<BannerState> {
     required Perfil usuarioActual,
     required String id,
   }) async {
+    emit(
+      state.copyWith(
+        bannerProcesandoId: id,
+        operacionError: null,
+        operacionExitosa: false,
+      ),
+    );
+
     final result = await _eliminarBannerUseCase
         .ejecutar(usuarioActual: usuarioActual, id: id)
         .run();
+
     result.fold(
-      (failure) => emit(BannerState.error(failure.errorMessage)),
-      (_) => cargarTodosLosBanners(usuarioActual: usuarioActual),
+      (failure) {
+        emit(
+          state.copyWith(
+            bannerProcesandoId: null,
+            operacionError: failure.errorMessage,
+            operacionExitosa: false,
+          ),
+        );
+      },
+      (_) {
+        final nuevosBanners = state.banners
+            .where((banner) => banner.id != id)
+            .toList();
+
+        emit(
+          state.copyWith(
+            banners: nuevosBanners,
+            bannerProcesandoId: null,
+            operacionError: null,
+            operacionExitosa: true,
+          ),
+        );
+      },
     );
+  }
+
+  void limpiarResultadoOperacion() {
+    emit(state.copyWith(operacionError: null, operacionExitosa: false));
   }
 }

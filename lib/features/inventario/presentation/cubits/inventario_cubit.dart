@@ -1,7 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
-
-// 🌟 Importamos los casos de uso que acabas de refactorizar
 import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/obtener_inventario_por_sucursal.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/aumentar_stock.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/use_cases/reducir_stock.dart';
@@ -17,16 +15,42 @@ class InventarioCubit extends Cubit<InventarioState> {
     required ObtenerInventarioPorSucursal obtenerInventarioPorSucursalUseCase,
     required AumentarStock aumentarStockUseCase,
     required ReducirStock reducirStockUseCase,
-  }) : _reducirStockUseCase = reducirStockUseCase, _aumentarStockUseCase = aumentarStockUseCase, _obtenerInventarioPorSucursalUseCase = obtenerInventarioPorSucursalUseCase, super(InventarioInitial());
+  }) : _obtenerInventarioPorSucursalUseCase =
+           obtenerInventarioPorSucursalUseCase,
+       _aumentarStockUseCase = aumentarStockUseCase,
+       _reducirStockUseCase = reducirStockUseCase,
+       super(const InventarioState());
 
-  // --- 🔍 CONSULTAR LA LISTA ---
   Future<void> cargarInventario(String sucursalId) async {
-    emit(const InventarioState.loading());
-    final resultado = await _obtenerInventarioPorSucursalUseCase.ejecutar(sucursalId: sucursalId).run();
-    
+    emit(
+      state.copyWith(
+        isLoading: true,
+        errorMessage: null,
+        operacionError: null,
+        sucursalId: sucursalId,
+      ),
+    );
+
+    final resultado = await _obtenerInventarioPorSucursalUseCase
+        .ejecutar(sucursalId: sucursalId)
+        .run();
+
     resultado.fold(
-      (failure) => emit(InventarioState.error(failure.errorMessage)),
-      (lista) => emit(InventarioState.loaded(lista)),
+      (failure) {
+        emit(
+          state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+        );
+      },
+      (inventario) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            inventario: inventario,
+            errorMessage: null,
+            sucursalId: sucursalId,
+          ),
+        );
+      },
     );
   }
 
@@ -37,35 +61,64 @@ class InventarioCubit extends Cubit<InventarioState> {
     required int cantidad,
     required bool esAumento,
   }) async {
-    // 🌟 USAMOS EL PATTERN MATCHING DE FREEZED
-    state.maybeWhen(
-      loaded: (inventario, _) {
-        // Emitimos el mismo estado pero cambiando SOLO el ID de carga
-        emit(InventarioState.loaded(inventario, actualizandoProductoId: productoId));
-      },
-      orElse: () {},
+    emit(
+      state.copyWith(
+        productoProcesandoId: productoId,
+        operacionError: null,
+        operacionExitosa: false,
+      ),
     );
 
-    final resultado = esAumento 
-        ? await _aumentarStockUseCase.ejecutar(
-            usuarioActual: usuarioActual,
-            productoId: productoId,
-            sucursalId: sucursalId,
-            cantidad: cantidad,
-          ).run()
-        : await _reducirStockUseCase.ejecutar(
-            usuarioActual: usuarioActual,
-            productoId: productoId,
-            sucursalId: sucursalId,
-            cantidad: cantidad,
-          ).run();
+    final resultado = esAumento
+        ? await _aumentarStockUseCase
+              .ejecutar(
+                usuarioActual: usuarioActual,
+                productoId: productoId,
+                sucursalId: sucursalId,
+                cantidad: cantidad,
+              )
+              .run()
+        : await _reducirStockUseCase
+              .ejecutar(
+                usuarioActual: usuarioActual,
+                productoId: productoId,
+                sucursalId: sucursalId,
+                cantidad: cantidad,
+              )
+              .run();
 
-    resultado.fold(
-      (failure) {
-        emit(InventarioState.error(failure.errorMessage));
-        cargarInventario(sucursalId);
+    await resultado.fold(
+      (failure) async {
+        emit(
+          state.copyWith(
+            productoProcesandoId: null,
+            operacionError: failure.errorMessage,
+            operacionExitosa: false,
+          ),
+        );
       },
-      (_) => cargarInventario(sucursalId),
+
+      (_) async {
+        emit(
+          state.copyWith(
+            productoProcesandoId: null,
+            operacionError: null,
+            operacionExitosa: true,
+          ),
+        );
+
+        await cargarInventario(sucursalId);
+
+        emit(state.copyWith(operacionExitosa: false));
+      },
     );
+  }
+
+  void limpiarErrorOperacion() {
+    emit(state.copyWith(operacionError: null));
+  }
+
+  void limpiarError() {
+    emit(state.copyWith(errorMessage: null));
   }
 }

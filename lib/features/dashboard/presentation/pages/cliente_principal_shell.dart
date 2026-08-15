@@ -31,9 +31,7 @@ class ClientePrincipalShell extends StatelessWidget {
         child: SizedBox(
           height: kBottomNavigationBarHeight,
           child: Row(
-            // 🌟 1. Quitamos el spaceAround, ya no lo necesitamos
             children: [
-              // 🌟 2. Envolvemos cada pestaña en un Expanded
               Expanded(
                 child: _NavIcon(
                   label: 'Inicio',
@@ -53,7 +51,6 @@ class ClientePrincipalShell extends StatelessWidget {
                 ),
               ),
 
-              // 🌟 3. El hueco del centro se queda con su medida fija (puedes subirlo a 64 si el FAB queda muy apretado)
               const SizedBox(width: 48),
 
               Expanded(
@@ -111,16 +108,14 @@ class _NavIcon extends StatelessWidget {
           children: [
             Icon(
               estaSeleccionado ? iconoActivo : iconoBase,
-              size:
-                  26, // Lo bajamos un poquito de 28 a 24 para hacerle espacio al texto
+              size: 26,
               color: color,
             ),
-            const SizedBox(height: 2), // Un pequeñísimo espacio de separación
+            const SizedBox(height: 2),
             Text(
               label,
               style: TextStyle(
-                fontSize:
-                    12, // Letra chiquita típica de las barras de navegación
+                fontSize: 12,
                 color: color,
                 fontWeight: estaSeleccionado
                     ? FontWeight.bold

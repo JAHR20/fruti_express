@@ -196,7 +196,6 @@ class _DialogoFormularioProductoState extends State<DialogoFormularioProducto> {
               TextFormField(
                 controller: _nombreController,
                 decoration: const InputDecoration(labelText: 'Nombre del Producto'),
-                // 🌟 USAMOS TUS VALIDADORES: Compositor para nombre de producto
                 validator: Validators.compose([
                   Validators.required('el nombre del producto'),
                   Validators.minLength(3, 'El nombre'),
@@ -237,7 +236,6 @@ class _DialogoFormularioProductoState extends State<DialogoFormularioProducto> {
                       controller: _precioNormalController,
                       decoration: const InputDecoration(labelText: 'Precio Normal', prefixText: '\$ '),
                       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      // 🌟 USAMOS TUS VALIDADORES: Número positivo
                       validator: Validators.positiveNumber,
                     ),
                   ),
@@ -248,7 +246,6 @@ class _DialogoFormularioProductoState extends State<DialogoFormularioProducto> {
                       decoration: const InputDecoration(labelText: 'Unidad de Venta'),
                       initialValue: _unidadSeleccionada, 
                       items: UnidadMedida.values.map((unidad) {
-                        // 🌟 Usamos la extensión de UI limpia
                         return DropdownMenuItem(value: unidad, child: Text(unidad.nombreUI));
                       }).toList(),
                       onChanged: (val) => setState(() => _unidadSeleccionada = val!),

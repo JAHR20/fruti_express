@@ -4,9 +4,12 @@ import 'package:fruti_express_jahr_admin/features/sucursales/domain/entities/suc
 part 'sucursal_state.freezed.dart';
 
 @freezed
-class SucursalState with _$SucursalState {
-  const factory SucursalState.initial() = SucursalInitial;
-  const factory SucursalState.loading() = SucursalLoading;
-  const factory SucursalState.loaded(List<Sucursal> sucursales) = SucursalLoaded;
-  const factory SucursalState.error(String message) = SucursalError;
+abstract class SucursalState with _$SucursalState {
+  const factory SucursalState({
+    @Default([]) List<Sucursal> sucursales,
+    @Default(false) bool isLoading,
+    String? errorMessage,
+    String? sucursalProcesandoId, 
+    @Default(<String>{}) Set<String> sucursalesConEnvioConfigurado,
+  }) = _SucursalState;
 }

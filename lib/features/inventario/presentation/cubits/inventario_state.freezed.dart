@@ -14,30 +14,67 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$InventarioState {
 
-
+ List<Inventario> get inventario; bool get isLoading; String? get productoProcesandoId; String? get errorMessage; String? get operacionError; bool get operacionExitosa; String? get sucursalId;
+/// Create a copy of InventarioState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$InventarioStateCopyWith<InventarioState> get copyWith => _$InventarioStateCopyWithImpl<InventarioState>(this as InventarioState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InventarioState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InventarioState&&const DeepCollectionEquality().equals(other.inventario, inventario)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.productoProcesandoId, productoProcesandoId) || other.productoProcesandoId == productoProcesandoId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.operacionError, operacionError) || other.operacionError == operacionError)&&(identical(other.operacionExitosa, operacionExitosa) || other.operacionExitosa == operacionExitosa)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(inventario),isLoading,productoProcesandoId,errorMessage,operacionError,operacionExitosa,sucursalId);
 
 @override
 String toString() {
-  return 'InventarioState()';
+  return 'InventarioState(inventario: $inventario, isLoading: $isLoading, productoProcesandoId: $productoProcesandoId, errorMessage: $errorMessage, operacionError: $operacionError, operacionExitosa: $operacionExitosa, sucursalId: $sucursalId)';
 }
 
 
 }
 
 /// @nodoc
-class $InventarioStateCopyWith<$Res>  {
-$InventarioStateCopyWith(InventarioState _, $Res Function(InventarioState) __);
+abstract mixin class $InventarioStateCopyWith<$Res>  {
+  factory $InventarioStateCopyWith(InventarioState value, $Res Function(InventarioState) _then) = _$InventarioStateCopyWithImpl;
+@useResult
+$Res call({
+ List<Inventario> inventario, bool isLoading, String? productoProcesandoId, String? errorMessage, String? operacionError, bool operacionExitosa, String? sucursalId
+});
+
+
+
+
+}
+/// @nodoc
+class _$InventarioStateCopyWithImpl<$Res>
+    implements $InventarioStateCopyWith<$Res> {
+  _$InventarioStateCopyWithImpl(this._self, this._then);
+
+  final InventarioState _self;
+  final $Res Function(InventarioState) _then;
+
+/// Create a copy of InventarioState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? inventario = null,Object? isLoading = null,Object? productoProcesandoId = freezed,Object? errorMessage = freezed,Object? operacionError = freezed,Object? operacionExitosa = null,Object? sucursalId = freezed,}) {
+  return _then(_self.copyWith(
+inventario: null == inventario ? _self.inventario : inventario // ignore: cast_nullable_to_non_nullable
+as List<Inventario>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,productoProcesandoId: freezed == productoProcesandoId ? _self.productoProcesandoId : productoProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,operacionError: freezed == operacionError ? _self.operacionError : operacionError // ignore: cast_nullable_to_non_nullable
+as String?,operacionExitosa: null == operacionExitosa ? _self.operacionExitosa : operacionExitosa // ignore: cast_nullable_to_non_nullable
+as bool,sucursalId: freezed == sucursalId ? _self.sucursalId : sucursalId // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
 }
 
 
@@ -55,14 +92,11 @@ extension InventarioStatePatterns on InventarioState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( InventarioInitial value)?  initial,TResult Function( InventarioLoading value)?  loading,TResult Function( InventarioLoaded value)?  loaded,TResult Function( InventarioError value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _InventarioState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case InventarioInitial() when initial != null:
-return initial(_that);case InventarioLoading() when loading != null:
-return loading(_that);case InventarioLoaded() when loaded != null:
-return loaded(_that);case InventarioError() when error != null:
-return error(_that);case _:
+case _InventarioState() when $default != null:
+return $default(_that);case _:
   return orElse();
 
 }
@@ -80,14 +114,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( InventarioInitial value)  initial,required TResult Function( InventarioLoading value)  loading,required TResult Function( InventarioLoaded value)  loaded,required TResult Function( InventarioError value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _InventarioState value)  $default,){
 final _that = this;
 switch (_that) {
-case InventarioInitial():
-return initial(_that);case InventarioLoading():
-return loading(_that);case InventarioLoaded():
-return loaded(_that);case InventarioError():
-return error(_that);case _:
+case _InventarioState():
+return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -104,14 +135,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( InventarioInitial value)?  initial,TResult? Function( InventarioLoading value)?  loading,TResult? Function( InventarioLoaded value)?  loaded,TResult? Function( InventarioError value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _InventarioState value)?  $default,){
 final _that = this;
 switch (_that) {
-case InventarioInitial() when initial != null:
-return initial(_that);case InventarioLoading() when loading != null:
-return loading(_that);case InventarioLoaded() when loaded != null:
-return loaded(_that);case InventarioError() when error != null:
-return error(_that);case _:
+case _InventarioState() when $default != null:
+return $default(_that);case _:
   return null;
 
 }
@@ -128,13 +156,10 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Inventario> inventario,  String? actualizandoProductoId)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Inventario> inventario,  bool isLoading,  String? productoProcesandoId,  String? errorMessage,  String? operacionError,  bool operacionExitosa,  String? sucursalId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case InventarioInitial() when initial != null:
-return initial();case InventarioLoading() when loading != null:
-return loading();case InventarioLoaded() when loaded != null:
-return loaded(_that.inventario,_that.actualizandoProductoId);case InventarioError() when error != null:
-return error(_that.message);case _:
+case _InventarioState() when $default != null:
+return $default(_that.inventario,_that.isLoading,_that.productoProcesandoId,_that.errorMessage,_that.operacionError,_that.operacionExitosa,_that.sucursalId);case _:
   return orElse();
 
 }
@@ -152,13 +177,10 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Inventario> inventario,  String? actualizandoProductoId)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Inventario> inventario,  bool isLoading,  String? productoProcesandoId,  String? errorMessage,  String? operacionError,  bool operacionExitosa,  String? sucursalId)  $default,) {final _that = this;
 switch (_that) {
-case InventarioInitial():
-return initial();case InventarioLoading():
-return loading();case InventarioLoaded():
-return loaded(_that.inventario,_that.actualizandoProductoId);case InventarioError():
-return error(_that.message);case _:
+case _InventarioState():
+return $default(_that.inventario,_that.isLoading,_that.productoProcesandoId,_that.errorMessage,_that.operacionError,_that.operacionExitosa,_that.sucursalId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +197,10 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Inventario> inventario,  String? actualizandoProductoId)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Inventario> inventario,  bool isLoading,  String? productoProcesandoId,  String? errorMessage,  String? operacionError,  bool operacionExitosa,  String? sucursalId)?  $default,) {final _that = this;
 switch (_that) {
-case InventarioInitial() when initial != null:
-return initial();case InventarioLoading() when loading != null:
-return loading();case InventarioLoaded() when loaded != null:
-return loaded(_that.inventario,_that.actualizandoProductoId);case InventarioError() when error != null:
-return error(_that.message);case _:
+case _InventarioState() when $default != null:
+return $default(_that.inventario,_that.isLoading,_that.productoProcesandoId,_that.errorMessage,_that.operacionError,_that.operacionExitosa,_that.sucursalId);case _:
   return null;
 
 }
@@ -192,114 +211,55 @@ return error(_that.message);case _:
 /// @nodoc
 
 
-class InventarioInitial implements InventarioState {
-  const InventarioInitial();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InventarioInitial);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'InventarioState.initial()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class InventarioLoading implements InventarioState {
-  const InventarioLoading();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InventarioLoading);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'InventarioState.loading()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class InventarioLoaded implements InventarioState {
-  const InventarioLoaded(final  List<Inventario> inventario, {this.actualizandoProductoId}): _inventario = inventario;
+class _InventarioState implements InventarioState {
+  const _InventarioState({final  List<Inventario> inventario = const [], this.isLoading = false, this.productoProcesandoId, this.errorMessage, this.operacionError, this.operacionExitosa = false, this.sucursalId}): _inventario = inventario;
   
 
  final  List<Inventario> _inventario;
- List<Inventario> get inventario {
+@override@JsonKey() List<Inventario> get inventario {
   if (_inventario is EqualUnmodifiableListView) return _inventario;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_inventario);
 }
 
- final  String? actualizandoProductoId;
+@override@JsonKey() final  bool isLoading;
+@override final  String? productoProcesandoId;
+@override final  String? errorMessage;
+@override final  String? operacionError;
+@override@JsonKey() final  bool operacionExitosa;
+@override final  String? sucursalId;
 
 /// Create a copy of InventarioState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$InventarioLoadedCopyWith<InventarioLoaded> get copyWith => _$InventarioLoadedCopyWithImpl<InventarioLoaded>(this, _$identity);
+_$InventarioStateCopyWith<_InventarioState> get copyWith => __$InventarioStateCopyWithImpl<_InventarioState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InventarioLoaded&&const DeepCollectionEquality().equals(other._inventario, _inventario)&&(identical(other.actualizandoProductoId, actualizandoProductoId) || other.actualizandoProductoId == actualizandoProductoId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _InventarioState&&const DeepCollectionEquality().equals(other._inventario, _inventario)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.productoProcesandoId, productoProcesandoId) || other.productoProcesandoId == productoProcesandoId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.operacionError, operacionError) || other.operacionError == operacionError)&&(identical(other.operacionExitosa, operacionExitosa) || other.operacionExitosa == operacionExitosa)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_inventario),actualizandoProductoId);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_inventario),isLoading,productoProcesandoId,errorMessage,operacionError,operacionExitosa,sucursalId);
 
 @override
 String toString() {
-  return 'InventarioState.loaded(inventario: $inventario, actualizandoProductoId: $actualizandoProductoId)';
+  return 'InventarioState(inventario: $inventario, isLoading: $isLoading, productoProcesandoId: $productoProcesandoId, errorMessage: $errorMessage, operacionError: $operacionError, operacionExitosa: $operacionExitosa, sucursalId: $sucursalId)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $InventarioLoadedCopyWith<$Res> implements $InventarioStateCopyWith<$Res> {
-  factory $InventarioLoadedCopyWith(InventarioLoaded value, $Res Function(InventarioLoaded) _then) = _$InventarioLoadedCopyWithImpl;
-@useResult
+abstract mixin class _$InventarioStateCopyWith<$Res> implements $InventarioStateCopyWith<$Res> {
+  factory _$InventarioStateCopyWith(_InventarioState value, $Res Function(_InventarioState) _then) = __$InventarioStateCopyWithImpl;
+@override @useResult
 $Res call({
- List<Inventario> inventario, String? actualizandoProductoId
+ List<Inventario> inventario, bool isLoading, String? productoProcesandoId, String? errorMessage, String? operacionError, bool operacionExitosa, String? sucursalId
 });
 
 
@@ -307,86 +267,25 @@ $Res call({
 
 }
 /// @nodoc
-class _$InventarioLoadedCopyWithImpl<$Res>
-    implements $InventarioLoadedCopyWith<$Res> {
-  _$InventarioLoadedCopyWithImpl(this._self, this._then);
+class __$InventarioStateCopyWithImpl<$Res>
+    implements _$InventarioStateCopyWith<$Res> {
+  __$InventarioStateCopyWithImpl(this._self, this._then);
 
-  final InventarioLoaded _self;
-  final $Res Function(InventarioLoaded) _then;
+  final _InventarioState _self;
+  final $Res Function(_InventarioState) _then;
 
 /// Create a copy of InventarioState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? inventario = null,Object? actualizandoProductoId = freezed,}) {
-  return _then(InventarioLoaded(
-null == inventario ? _self._inventario : inventario // ignore: cast_nullable_to_non_nullable
-as List<Inventario>,actualizandoProductoId: freezed == actualizandoProductoId ? _self.actualizandoProductoId : actualizandoProductoId // ignore: cast_nullable_to_non_nullable
+@override @pragma('vm:prefer-inline') $Res call({Object? inventario = null,Object? isLoading = null,Object? productoProcesandoId = freezed,Object? errorMessage = freezed,Object? operacionError = freezed,Object? operacionExitosa = null,Object? sucursalId = freezed,}) {
+  return _then(_InventarioState(
+inventario: null == inventario ? _self._inventario : inventario // ignore: cast_nullable_to_non_nullable
+as List<Inventario>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,productoProcesandoId: freezed == productoProcesandoId ? _self.productoProcesandoId : productoProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,operacionError: freezed == operacionError ? _self.operacionError : operacionError // ignore: cast_nullable_to_non_nullable
+as String?,operacionExitosa: null == operacionExitosa ? _self.operacionExitosa : operacionExitosa // ignore: cast_nullable_to_non_nullable
+as bool,sucursalId: freezed == sucursalId ? _self.sucursalId : sucursalId // ignore: cast_nullable_to_non_nullable
 as String?,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class InventarioError implements InventarioState {
-  const InventarioError(this.message);
-  
-
- final  String message;
-
-/// Create a copy of InventarioState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$InventarioErrorCopyWith<InventarioError> get copyWith => _$InventarioErrorCopyWithImpl<InventarioError>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is InventarioError&&(identical(other.message, message) || other.message == message));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,message);
-
-@override
-String toString() {
-  return 'InventarioState.error(message: $message)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $InventarioErrorCopyWith<$Res> implements $InventarioStateCopyWith<$Res> {
-  factory $InventarioErrorCopyWith(InventarioError value, $Res Function(InventarioError) _then) = _$InventarioErrorCopyWithImpl;
-@useResult
-$Res call({
- String message
-});
-
-
-
-
-}
-/// @nodoc
-class _$InventarioErrorCopyWithImpl<$Res>
-    implements $InventarioErrorCopyWith<$Res> {
-  _$InventarioErrorCopyWithImpl(this._self, this._then);
-
-  final InventarioError _self;
-  final $Res Function(InventarioError) _then;
-
-/// Create a copy of InventarioState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(InventarioError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
   ));
 }
 

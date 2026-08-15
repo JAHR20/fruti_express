@@ -6,8 +6,7 @@ import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/
 import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_state.dart';
 
 class BusquedaPage extends StatefulWidget {
-  // 🌟 1. Pedimos la sucursal activa en el constructor
-  final String sucursalId; 
+  final String sucursalId;
 
   const BusquedaPage({super.key, required this.sucursalId});
 
@@ -18,7 +17,7 @@ class BusquedaPage extends StatefulWidget {
 class _BusquedaPageState extends State<BusquedaPage> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
-  Timer? _debounce; 
+  Timer? _debounce;
 
   @override
   void initState() {
@@ -30,20 +29,19 @@ class _BusquedaPageState extends State<BusquedaPage> {
 
   @override
   void dispose() {
-    _debounce?.cancel(); 
+    _debounce?.cancel();
     _controller.dispose();
     _focusNode.dispose();
     super.dispose();
   }
 
   void _onSearchChanged(String valor) {
-    setState(() {}); 
+    setState(() {});
 
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (mounted && valor.trim().isNotEmpty) {
-        // 🚀 2. ¡La magia! Pasamos el texto Y el ID de la sucursal que guardamos arriba
         context.read<ProductosCubit>().buscar(valor.trim(), widget.sucursalId);
       }
     });
@@ -52,7 +50,7 @@ class _BusquedaPageState extends State<BusquedaPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, 
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -78,7 +76,7 @@ class _BusquedaPageState extends State<BusquedaPage> {
                   )
                 : null,
           ),
-          onChanged: _onSearchChanged, 
+          onChanged: _onSearchChanged,
         ),
       ),
       body: _controller.text.isEmpty
@@ -96,41 +94,44 @@ class _BusquedaPageState extends State<BusquedaPage> {
               ),
             )
           : SingleChildScrollView(
-            child: BlocBuilder<ProductosCubit, ProductosState>(
-              builder: (context, state) {
-                return state.when(
-                  initial: () => const SizedBox.shrink(),
-                  loading: () => const Padding(
-                    padding: EdgeInsets.only(top: 50.0),
-                    child: Center(
-                      child: CircularProgressIndicator(color: Color(0xFFF9A826)),
-                    ),
-                  ),
-                  error: (message) => Center(
-                    child: Text(
-                      message, 
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                  ),
-                  loaded: (productos, _, __) {
-                    if (productos.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.only(top: 50.0),
-                        child: Center(
-                          child: Text(
-                            'No encontramos productos con ese nombre 😥',
-                            style: TextStyle(color: Colors.grey),
-                          ),
+              child: BlocBuilder<ProductosCubit, ProductosState>(
+                builder: (context, state) {
+                  if (state.isLoading) {
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 50.0),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: Color(0xFFF9A826),
                         ),
-                      );
-                    }
-                    
-                    return const CuadriculaProductos(); 
-                  },
-                );
-              },
+                      ),
+                    );
+                  }
+
+                  if (state.errorMessage != null) {
+                    return Center(
+                      child: Text(
+                        state.errorMessage!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+
+                  if (state.productos.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 50.0),
+                      child: Center(
+                        child: Text(
+                          'No encontramos productos con ese nombre 😥',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                      ),
+                    );
+                  }
+
+                  return const CuadriculaProductos();
+                },
+              ),
             ),
-          ),
     );
   }
 }

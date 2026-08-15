@@ -8,15 +8,11 @@ import '../repositories/usuario_repository.dart';
 class ExisteEncargadoEnSucursal {
   final UsuarioRepository repository;
   ExisteEncargadoEnSucursal(this.repository);
-
-  /// Verifica si una sucursal tiene jefe.
-  /// 🛡️ Solo permitido para Administradores.
   ResultTask<bool> ejecutar({
     required Perfil solicitante,
     required String sucursalId,
   }) {
     return TaskEither.Do(($) async {
-      // 1. Validación de seguridad
       if (!solicitante.esAdmin) {
         return await $(
           TaskEither<Failure, bool>.left(
@@ -27,7 +23,6 @@ class ExisteEncargadoEnSucursal {
         );
       }
 
-      // 2. Validación de datos
       if (sucursalId.trim().isEmpty) {
         return await $(
           TaskEither<Failure, bool>.left(
@@ -38,7 +33,6 @@ class ExisteEncargadoEnSucursal {
         );
       }
 
-      // 3. Consulta al repositorio
       return await $(repository.existeEncargadoEnSucursal(sucursalId));
     });
   }

@@ -14,7 +14,8 @@ class EliminarBanner {
     required String id,
   }) {
     return TaskEither.Do(($) async {
-      if (!usuarioActual.esAdmin) { // ← solo Admin puede eliminar
+      // validamos que solo el admin pueda Eliminar el banner
+      if (!usuarioActual.esAdmin) {
         return await $(TaskEither.left(
           const Failure.unauthorized("Solo el administrador puede eliminar banners."),
         ));

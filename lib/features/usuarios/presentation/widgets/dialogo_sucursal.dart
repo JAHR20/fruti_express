@@ -38,41 +38,49 @@ class _DialogoSucursalState extends State<DialogoSucursal> {
         ),
         content: BlocBuilder<SucursalCubit, SucursalState>(
           builder: (context, state) {
-            return state.when(
-              initial: () => const SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
-              loading: () => const SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
-              error: (message) => Text('Error: $message', style: const TextStyle(color: Colors.red)),
-              loaded: (sucursalesReales) {
-                if (sucursalesReales.isEmpty) {
-                  return const Text('No hay sucursales registradas.');
-                }
+            if (state.isLoading && state.sucursales.isEmpty) {
+              return const SizedBox(
+                height: 100,
+                child: Center(child: CircularProgressIndicator()),
+              );
+            }
+            if (state.errorMessage != null && state.sucursales.isEmpty) {
+              return Text(
+                'Error: ${state.errorMessage}',
+                style: const TextStyle(color: Colors.red),
+              );
+            }
+            final sucursalesReales = state.sucursales;
 
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Selecciona a qué sucursal pertenecerá este usuario:'),
-                    const SizedBox(height: 16),
-                    DropdownButtonFormField<String>(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'Sucursal',
-                        prefixIcon: Icon(Icons.storefront),
-                      ),
-                      initialValue: sucursalSeleccionadaId,
-                      items: sucursalesReales.map((sucursal) {
-                        return DropdownMenuItem<String>(
-                          value: sucursal.id,
-                          child: Text(sucursal.nombre),
-                        );
-                      }).toList(),
-                      onChanged: (String? nuevoValor) {
-                        setState(() => sucursalSeleccionadaId = nuevoValor);
-                      },
-                    ),
-                  ],
-                );
-              },
+            if (sucursalesReales.isEmpty) {
+              return const Text('No hay sucursales registradas.');
+            }
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Selecciona a qué sucursal pertenecerá este usuario:',
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Sucursal',
+                    prefixIcon: Icon(Icons.storefront),
+                  ),
+                  initialValue: sucursalSeleccionadaId,
+                  items: sucursalesReales.map((sucursal) {
+                    return DropdownMenuItem<String>(
+                      value: sucursal.id,
+                      child: Text(sucursal.nombre),
+                    );
+                  }).toList(),
+                  onChanged: (String? nuevoValor) {
+                    setState(() => sucursalSeleccionadaId = nuevoValor);
+                  },
+                ),
+              ],
             );
           },
         ),
@@ -83,16 +91,20 @@ class _DialogoSucursalState extends State<DialogoSucursal> {
           ),
           BlocBuilder<SucursalCubit, SucursalState>(
             builder: (context, state) {
-              // 🌟 Usamos maybeWhen para verificar si estamos en Loaded
-              final bool bloqueado = !state.maybeWhen(loaded: (_) => true, orElse: () => false) || 
-                                     sucursalSeleccionadaId == null;
-              
+              final bool bloqueado =
+                  state.sucursales.isEmpty || sucursalSeleccionadaId == null;
+
               return ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1E3A8A)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF1E3A8A),
+                ),
                 onPressed: bloqueado
                     ? null
                     : () => Navigator.of(context).pop(sucursalSeleccionadaId),
-                child: const Text('Confirmar', style: TextStyle(color: Colors.white)),
+                child: const Text(
+                  'Confirmar',
+                  style: TextStyle(color: Colors.white),
+                ),
               );
             },
           ),

@@ -7,7 +7,7 @@ part 'envio_cliente_state.freezed.dart';
 abstract class EnvioClienteState with _$EnvioClienteState {
   const factory EnvioClienteState({
     @Default(false) bool isLoading,
-    @Default([]) List<ConfiguracionEnvio> configuraciones, // 🌟 La lista completa
+    @Default([]) List<ConfiguracionEnvio> configuraciones, 
     String? error,
   }) = _EnvioClienteState;
 }

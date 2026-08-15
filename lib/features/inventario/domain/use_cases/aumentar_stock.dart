@@ -17,11 +17,8 @@ class AumentarStock with InventarioValidations {
     required int cantidad,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Usamos las validaciones de tu mixin de forma súper limpia
       await $(validarCantidad(cantidad));
       await $(validarPermisos(usuarioActual, sucursalId));
-
-      // 2️⃣ Mandamos la orden atómica a la Base de Datos (en positivo)
       return await $(repository.ajustarStockAtomicamente(
         productoId: productoId,
         sucursalId: sucursalId,

@@ -1,25 +1,19 @@
-// features/pedidos/presentation/pages/repartidor_resumen_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/core/utils/formato_moneda.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/enums/estado_pedido.dart';
 
-/// Página de resumen del día para el repartidor.
-/// Calcula métricas desde los pedidos ya en memoria — sin llamadas extra a BD.
 class RepartidorResumenPage extends StatelessWidget {
   final List<Pedido> pedidos;
 
   const RepartidorResumenPage({super.key, required this.pedidos});
-
-  // ─── Cálculos en memoria ──────────────────────────────────────────────────
 
   List<Pedido> get _entregadosHoy {
   final hoy = DateTime.now().toLocal();
 
   return pedidos.where((p) {
     if (p.estado != EstadoPedido.entregado) return false;
-    final fecha = p.fechaEntrega?.toLocal(); // ← convierte a hora local
+    final fecha = p.fechaEntrega?.toLocal();
     if (fecha == null) return false;
     return fecha.year == hoy.year &&
            fecha.month == hoy.month &&
@@ -54,7 +48,6 @@ class RepartidorResumenPage extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // ─── Tarjetas de métricas ─────────────────────────────────────
           Row(
             children: [
               Expanded(
@@ -87,7 +80,6 @@ class RepartidorResumenPage extends StatelessWidget {
           ),
           const SizedBox(height: 32),
 
-          // ─── Lista de entregas del día ────────────────────────────────
           if (entregados.isNotEmpty) ...[
             const Text(
               'Entregas completadas',
@@ -126,8 +118,6 @@ class RepartidorResumenPage extends StatelessWidget {
     return '${now.day} de ${meses[now.month - 1]} de ${now.year}';
   }
 }
-
-// ─── Subwidgets ───────────────────────────────────────────────────────────────
 
 class _TarjetaMetrica extends StatelessWidget {
   final IconData icono;

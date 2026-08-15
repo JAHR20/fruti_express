@@ -16,7 +16,6 @@ class GuardarTarifaEnvioUseCase {
     required TarifaEnvio tarifa,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Seguridad: Validar rol
       if (!usuarioActual.esAdmin) {
         return await $(
           TaskEither.left(
@@ -26,8 +25,6 @@ class GuardarTarifaEnvioUseCase {
           ),
         );
       }
-
-      // 2️⃣ Validaciones de negocio críticas
       if (tarifa.distanciaMinKm >= tarifa.distanciaMaxKm) {
         return await $(
           TaskEither.left(
@@ -46,7 +43,6 @@ class GuardarTarifaEnvioUseCase {
         );
       }
 
-      // 3️⃣ Guardamos la tarifa
       await $(repository.guardarTarifa(tarifa));
 
       return unit;

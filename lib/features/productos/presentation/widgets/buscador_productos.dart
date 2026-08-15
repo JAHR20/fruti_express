@@ -14,10 +14,8 @@ class _BuscadorProductosState extends State<BuscadorProductos> {
   Timer? _debounce;
 
   void _onSearchChanged(String query) {
-    // Si el usuario sigue escribiendo, cancelamos el temporizador anterior
     if (_debounce?.isActive ?? false) _debounce!.cancel();
 
-    // Esperamos 500 milisegundos antes de disparar la búsqueda
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (query.trim().isNotEmpty) {
         context.read<ProductosCubit>().buscarProductoPorNombre(query);

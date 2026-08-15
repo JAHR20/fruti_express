@@ -46,7 +46,6 @@ class SelectorChipsCpWidget extends StatelessWidget {
                 selectedColor: Colors.blue.withValues(alpha: 0.3),
                 checkmarkColor: Colors.blue.shade900,
                 onSelected: (bool nuevoValor) {
-                  // 🌟 Avisamos hacia afuera qué chip se tocó
                   onToggle(cp, nuevoValor);
                 },
               );

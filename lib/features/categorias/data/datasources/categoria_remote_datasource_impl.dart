@@ -54,7 +54,6 @@ class CategoriaRemoteDataSourceImpl implements CategoriaRemoteDataSource {
 
   @override
   Future<List<CategoriaModel>> obtenerPorPadre(String? padreId) async {
-    // Si padreId es nulo, buscamos las categorías raíz
     final query = supabase.from('categorias').select();
     final response = padreId == null
         ? await query.isFilter('categoria_padre_id', null)
@@ -79,13 +78,7 @@ class CategoriaRemoteDataSourceImpl implements CategoriaRemoteDataSource {
   @override
   Future<CategoriaModel> crear(CategoriaModel model) async {
     final mapaDatos = model.toJson();
-
-    // 🚨 2. ELIMINAMOS las llaves que no queremos enviar.
-    // Al quitar el 'id', Supabase dirá: "Ah, no me mandó ID, yo le genero uno nuevo"
     mapaDatos.remove('id');
-
-    // Opcional: Si quieres que Supabase maneje las fechas automáticamente por defecto,
-    // también puedes removerlas del insert inicial.
     mapaDatos.remove('fecha_actualizacion');
     final response = await supabase
         .from('categorias')
@@ -127,8 +120,7 @@ class CategoriaRemoteDataSourceImpl implements CategoriaRemoteDataSource {
     await supabase
         .from('categorias')
         .update({
-          'is_active':
-              nuevoEstado, // Asegúrate de calcular el nuevo estado antes de esta línea
+          'is_active': nuevoEstado,
           'fecha_actualizacion': DateTime.now().toIso8601String(),
         })
         .eq('id', id);

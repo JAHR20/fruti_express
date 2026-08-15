@@ -83,61 +83,48 @@ class SucursalRemoteDatasourceImpl implements SucursalRemoteDatasource {
     return SucursalModel.fromJson(response);
   }
 
-  // --- 📡 NUEVOS MÉTODOS DE COBERTURA (Actualizados para BD Relacional) ---
-
   @override
   Future<List<String>> obtenerCobertura(String sucursalId) async {
-    // Vamos a la nueva tabla y traemos solo los C.P. de esta sucursal
     final response = await supabase
         .from('sucursal_cobertura')
         .select('codigo_postal')
         .eq('sucursal_id', sucursalId);
-
-    // Mapeamos la lista de mapas [{'codigo_postal': '96700'}, ...] a una lista de Strings
     return (response as List)
         .map((row) => row['codigo_postal'] as String)
         .toList();
   }
 
   @override
-  Future<void> guardarCobertura({
+  Future<SucursalModel?> obtenerPorCodigoPostal(String codigoPostal) async {
+    final response = await supabase
+        .from('sucursal_cobertura')
+        .select('sucursales(*)')
+        .eq('codigo_postal', codigoPostal)
+        .maybeSingle();
+
+    if (response == null || response['sucursales'] == null) {
+      return null;
+    }
+
+    return SucursalModel.fromJson(response['sucursales']);
+  }
+
+  @override
+  Future<void> actualizarCobertura({
     required String sucursalId,
     required List<String> codigosPostales,
   }) async {
-    // 1. Primero borramos la cobertura anterior de esta sucursal para evitar duplicados
     await supabase
         .from('sucursal_cobertura')
         .delete()
         .eq('sucursal_id', sucursalId);
 
-    // 2. Si la lista nueva no está vacía, insertamos los nuevos registros
     if (codigosPostales.isNotEmpty) {
-      final insertData = codigosPostales
+      final listaInsert = codigosPostales
           .map((cp) => {'sucursal_id': sucursalId, 'codigo_postal': cp})
           .toList();
 
-      await supabase.from('sucursal_cobertura').insert(insertData);
+      await supabase.from('sucursal_cobertura').insert(listaInsert);
     }
-  }
-
-  @override
-  Future<SucursalModel?> obtenerPorCodigoPostal(String codigoPostal) async {
-    // 🌟 Magia relacional de Supabase: Buscamos en la tabla de cobertura
-    // y hacemos un JOIN automático para traernos toda la info de la sucursal
-    final response = await supabase
-        .from('sucursal_cobertura')
-        .select(
-          'sucursales(*)',
-        ) // Trae la fila completa de la tabla 'sucursales'
-        .eq('codigo_postal', codigoPostal)
-        .maybeSingle();
-
-    // Si no hay cobertura, o por alguna razón el join falla
-    if (response == null || response['sucursales'] == null) {
-      return null;
-    }
-
-    // Convertimos el JSON anidado al modelo de Sucursal
-    return SucursalModel.fromJson(response['sucursales']);
   }
 }

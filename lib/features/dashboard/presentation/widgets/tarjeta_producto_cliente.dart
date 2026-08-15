@@ -4,8 +4,7 @@ import 'package:fruti_express_jahr_admin/core/utils/formateador_unidades.dart';
 import 'package:fruti_express_jahr_admin/core/utils/formato_moneda.dart';
 import 'package:fruti_express_jahr_admin/features/carrito/domain/entities/carrito_item.dart';
 import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_state.dart';
-import 'package:fruti_express_jahr_admin/features/dashboard/presentation/widgets/SelectorCantidadDialog.dart';
+import 'package:fruti_express_jahr_admin/features/dashboard/presentation/widgets/selector_cantida_dialog.dart';
 import 'package:fruti_express_jahr_admin/features/productos/domain/entities/producto.dart';
 import 'package:fruti_express_jahr_admin/features/productos/domain/enums/unidad_medida_producto.dart';
 import 'package:fruti_express_jahr_admin/features/productos/domain/enums/unidad_medida_ui.dart';
@@ -38,11 +37,9 @@ class TarjetaProductoCliente extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // IMAGEN DEL PRODUCTO
                 Expanded(
                   child: SizedBox(
-                    width:
-                        double.infinity, // Que ocupe todo el ancho disponible
+                    width: double.infinity,
                     child: ClipRRect(
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(16),
@@ -50,23 +47,14 @@ class TarjetaProductoCliente extends StatelessWidget {
                       ),
                       child: Image.network(
                         producto.imagenUrl!,
-                        fit: BoxFit
-                            .cover, // 🌟 Corta los bordes feos y llena el espacio
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
                 ),
                 const SizedBox(height: 8),
-
-                // 🛡️ Envolvemos todo en este Padding para que NADA se meta debajo del botón
-                // Reemplaza la parte del texto en tu tarjeta por esto:
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    12,
-                    12,
-                    12,
-                    16,
-                  ), // Más aire alrededor
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -101,7 +89,7 @@ class TarjetaProductoCliente extends StatelessWidget {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      const SizedBox(height: 8), // 🌟 ESPACIO ANTES DEL PRECIO
+                      const SizedBox(height: 8),
                       Text(
                         producto.precioActual.formatoMoneda,
                         style: const TextStyle(
@@ -141,8 +129,6 @@ class TarjetaProductoCliente extends StatelessWidget {
                 ),
               ),
             ),
-
-          // 🛒 BOTÓN DE AGREGAR AL CARRITO
           Positioned(
             bottom: 0,
             right: 0,
@@ -181,13 +167,10 @@ class TarjetaProductoCliente extends StatelessWidget {
                           cantidadFinal = gramosElegidos;
                         }
 
-                        // Extraemos las cosas del context antes de los 'awaits' largos
+                        if (!context.mounted) return;
                         final carritoCubit = context.read<CarritoCubit>();
                         final stateCarrito = carritoCubit.state;
-                        final sucursalActiva = stateCarrito.maybeMap(
-                          loaded: (s) => s.sucursalId ?? '',
-                          orElse: () => '',
-                        );
+                        final sucursalActiva = stateCarrito.sucursalId ?? '';
 
                         final nuevoItem = CarritoItem(
                           productoId: producto.id!,
@@ -198,15 +181,12 @@ class TarjetaProductoCliente extends StatelessWidget {
                           unidadMedida: producto.unidadMedida,
                           sucursalId: sucursalActiva,
                         );
-
-                        // 🌟 CORRECCIÓN MAESTRA: Esperamos la respuesta de la validación
                         final error = await carritoCubit.agregarProducto(
                           nuevoItem,
                         );
 
                         if (context.mounted) {
                           if (error != null) {
-                            // 🔴 NO HAY STOCK: Mostramos el error
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(error),
@@ -214,7 +194,6 @@ class TarjetaProductoCliente extends StatelessWidget {
                               ),
                             );
                           } else {
-                            // 🟢 SÍ HAY STOCK: Mostramos éxito
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(

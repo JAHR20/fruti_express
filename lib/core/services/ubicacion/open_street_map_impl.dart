@@ -30,10 +30,10 @@ class OpenStreetMapServiceImpl implements UbicacionService {
     required double lat2,
     required double lon2,
   }) {
-    const distance = Distance(); // Herramienta de latlong2
+    const distance = Distance(); 
 
     final metros = distance(LatLng(lat1, lon1), LatLng(lat2, lon2));
 
-    return metros / 1000.0; // Convertimos a kilómetros y lo devolvemos
+    return metros / 1000.0; 
   }
 }

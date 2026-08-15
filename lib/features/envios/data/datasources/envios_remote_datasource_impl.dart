@@ -10,37 +10,32 @@ class EnviosRemoteDatasourceImpl implements EnviosRemoteDatasource {
   EnviosRemoteDatasourceImpl(this._supabaseClient);
 
   @override
-  Future<ConfiguracionEnvioModel?> obtenerConfiguracion(String sucursalId) async {
+  Future<ConfiguracionEnvioModel?> obtenerConfiguracion(
+    String sucursalId,
+  ) async {
     try {
-      // 🌟 1. Traemos SOLO la configuración (sin el Join que causa el error)
       final response = await _supabaseClient
           .from('configuracion_envio')
-          .select() 
+          .select()
           .eq('sucursal_id', sucursalId)
           .maybeSingle();
 
       if (response == null) {
-        return null; // Sucursal nueva, no hay problema
+        return null;
       }
 
-      // 🌟 2. Traemos los Códigos Postales por separado
       final coberturaResponse = await _supabaseClient
           .from('sucursal_cobertura')
           .select('codigo_postal')
           .eq('sucursal_id', sucursalId);
 
-      // 🌟 3. Armamos el mapa "engañando" a tu modelo para que crea que vinieron juntos
       final datosCompletos = Map<String, dynamic>.from(response);
       datosCompletos['sucursal_cobertura'] = coberturaResponse;
 
-      // ¡Tu modelo lo procesará perfectamente!
       return ConfiguracionEnvioModel.fromSupabase(datosCompletos);
-      
     } on PostgrestException catch (e) {
       throw ServerFailure(e.message);
-    } catch (e, stacktrace) {
-      print('💀 ERROR AL LEER CONFIGURACIÓN: $e');
-      print('📍 STACKTRACE: $stacktrace');
+    } catch (e) {
       throw ServerFailure('Error al obtener la configuración');
     }
   }
@@ -49,17 +44,11 @@ class EnviosRemoteDatasourceImpl implements EnviosRemoteDatasource {
   Future<List<TarifaEnvioModel>> obtenerTarifas(String sucursalId) async {
     try {
       final response = await _supabaseClient
-          .from('tarifas_envio') // Nombre exacto de tu tabla SQL
+          .from('tarifas_envio')
           .select()
           .eq('sucursal_id', sucursalId)
-          .eq(
-            'activa',
-            true,
-          ) // Solo traemos las tarifas activas por seguridad extra
-          .order(
-            'distancia_min_km',
-            ascending: true,
-          ); // Ordenamos de menor a mayor distancia
+          .eq('activa', true)
+          .order('distancia_min_km', ascending: true);
 
       return response.map((json) => TarifaEnvioModel.fromJson(json)).toList();
     } on PostgrestException catch (e) {
@@ -82,11 +71,8 @@ class EnviosRemoteDatasourceImpl implements EnviosRemoteDatasource {
         },
       );
     } on PostgrestException catch (e) {
-      print('🔥 ERROR DE SUPABASE: ${e.message} \nDETALLES: ${e.details} \nHINT: ${e.hint}');
       throw ServerFailure(e.message);
-    } catch (e, stacktrace) {
-      print('💀 ERROR DE DART: $e'); 
-      print('📍 STACKTRACE: $stacktrace');
+    } catch (e) {
       throw ServerFailure('Error al guardar la configuración de envío');
     }
   }
@@ -115,5 +101,14 @@ class EnviosRemoteDatasourceImpl implements EnviosRemoteDatasource {
     } catch (e) {
       throw ServerFailure('Error al eliminar la tarifa');
     }
+  }
+
+  @override
+  Future<Set<String>> obtenerSucursalesConEnvioConfigurado() async {
+    final data = await _supabaseClient
+        .from('configuracion_envio')
+        .select('sucursal_id');
+
+    return (data as List).map((row) => row['sucursal_id'] as String).toSet();
   }
 }

@@ -1,5 +1,3 @@
-// features/pedidos/presentation/pages/repartidor_pedidos_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';
@@ -9,8 +7,6 @@ import 'package:fruti_express_jahr_admin/features/pedidos/presentation/cubits/pe
 import 'package:fruti_express_jahr_admin/features/pedidos/presentation/widgets/confirmar_entrega_sheet.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/presentation/widgets/pedido_card_repartidor.dart';
 
-/// Página de tabs de pedidos del repartidor.
-/// Responsabilidad única: mostrar y filtrar pedidos por estado.
 class RepartidorPedidosPage extends StatefulWidget {
   final List<Pedido> pedidos;
   final String? pedidoEnAccion;
@@ -100,7 +96,6 @@ class _RepartidorPedidosPageState extends State<RepartidorPedidosPage>
                             ),
                             useSafeArea: true,
                             builder: (ctx) => Padding(
-                              // ← este padding empuja el sheet sobre el teclado
                               padding: EdgeInsets.only(
                                 bottom: MediaQuery.of(ctx).viewInsets.bottom,
                               ),

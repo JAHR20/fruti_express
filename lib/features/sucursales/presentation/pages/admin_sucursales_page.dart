@@ -7,9 +7,7 @@ import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_
 import 'package:fruti_express_jahr_admin/features/sucursales/domain/entities/sucursal.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_state.dart';
-
 import 'package:go_router/go_router.dart';
-
 import '../widgets/sucursal_list_tile.dart';
 
 class AdminSucursalesPage extends StatefulWidget {
@@ -35,14 +33,20 @@ class _AdminSucursalesPageState extends State<AdminSucursalesPage> {
     _cargarDatos();
   }
 
+  void _abrirWizardEdicion(Sucursal sucursal, int pasoInicial) async {
+    await context.pushNamed(
+      AppRouter.adminSucursalesNueva,
+      extra: {'sucursal': sucursal, 'pasoInicial': pasoInicial},
+    );
+    _cargarDatos();
+  }
+
   void _abrirPantallaTarifas(String sucursalId) {
     context.pushNamed(
       AppRouter.adminSucursalesTarifasName,
       pathParameters: {'id': sucursalId},
     );
   }
-
-
 
   void _mostrarDialogoEstado(BuildContext context, Sucursal sucursal) {
     final authState = context.read<AuthCubit>().state;
@@ -85,91 +89,109 @@ class _AdminSucursalesPageState extends State<AdminSucursalesPage> {
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: const Text('Nueva Sucursal'),
-        onPressed: () => _abrirWizardCreacion(), // 🌟 AHORA LLAMA AL WIZARD
+        onPressed: () => _abrirWizardCreacion(),
       ),
 
       body: BlocConsumer<SucursalCubit, SucursalState>(
+        listenWhen: (previous, current) =>
+            previous.errorMessage != current.errorMessage,
         listener: (context, state) {
-          if (state is SucursalError &&
+          if (state.errorMessage != null &&
               ModalRoute.of(context)?.isCurrent == true) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(state.errorMessage!),
                 backgroundColor: Colors.red,
               ),
             );
           }
         },
         builder: (context, state) {
-          return state.when(
-            initial: () => const Center(
+          if (state.isLoading && state.sucursales.isEmpty) {
+            return const Center(
               child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
-            ),
-            loading: () => const Center(
-              child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
-            ),
-            error: (message) => Center(child: Text('Error: $message')),
-            loaded: (lista) {
-              if (lista.isEmpty) {
-                return const Center(
-                  child: Text('No hay sucursales registradas.'),
+            );
+          }
+
+          if (state.errorMessage != null && state.sucursales.isEmpty) {
+            return Center(child: Text('Error: ${state.errorMessage}'));
+          }
+
+          final lista = state.sucursales;
+          if (lista.isEmpty) {
+            return const Center(child: Text('No hay sucursales registradas.'));
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView.builder(
+              itemCount: lista.length,
+              itemBuilder: (context, index) {
+                final sucursal = lista[index];
+                final tieneEnvioConfigurado = state
+                    .sucursalesConEnvioConfigurado
+                    .contains(sucursal.id);
+                return Column(
+                  children: [
+                    SucursalListTile(
+                      sucursal: sucursal,
+                      onEdit: () => _abrirWizardEdicion(sucursal, 0),
+                      onCambiarEstado: () =>
+                          _mostrarDialogoEstado(context, sucursal),
+                    ),
+
+                    if (!tieneEnvioConfigurado)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.warning_amber_rounded,
+                              color: Colors.orange,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            const Expanded(
+                              child: Text(
+                                'Falta configurar cobertura y envío',
+                                style: TextStyle(
+                                  color: Colors.orange,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => _abrirWizardEdicion(sucursal, 1),
+                              child: const Text('Completar'),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    TextButton.icon(
+                      onPressed: () => _abrirPantallaTarifas(sucursal.id),
+                      icon: const Icon(Icons.two_wheeler, color: Colors.green),
+                      label: const Text(
+                        'Configurar Precios de Envío',
+                        style: TextStyle(color: Colors.green),
+                      ),
+                    ),
+                    const Divider(),
+                    TextButton.icon(
+                      onPressed: () => _abrirWizardEdicion(sucursal, 1),
+                      icon: const Icon(Icons.map, color: Colors.blue),
+                      label: const Text(
+                        'Configurar Cobertura (Mapa y C.P.)',
+                        style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ],
                 );
-              }
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ListView.builder(
-                  itemCount: lista.length,
-                  itemBuilder: (context, index) {
-                    final sucursal = lista[index];
-                    return Column(
-                      children: [
-                        SucursalListTile(
-                          sucursal: sucursal,
-                          onEdit: () {
-                            context.pushNamed(
-                              AppRouter
-                                  .adminSucursalesNueva, // O el nombre de ruta que uses
-                              extra: {
-                                'sucursal': sucursal, // Le pasamos toda la info
-                                'pasoInicial':
-                                    0, // 🌟 Empezamos en el Paso 1 (Datos Básicos)
-                              },
-                            );
-                          },
-                          onCambiarEstado: () =>
-                              _mostrarDialogoEstado(context, sucursal),
-                        ),
-                        TextButton.icon(
-                          onPressed: () => _abrirPantallaTarifas(sucursal.id),
-                          icon: const Icon(
-                            Icons.two_wheeler,
-                            color: Colors.green,
-                          ),
-                          label: const Text(
-                            'Configurar Precios de Envío',
-                            style: TextStyle(color: Colors.green),
-                          ),
-                        ),
-                        const Divider(),
-                        TextButton.icon(
-                          onPressed: () {
-                            context.pushNamed(
-                              AppRouter.adminSucursalesNueva,
-                              extra: {'sucursal': sucursal, 'pasoInicial': 1},
-                            );
-                          },
-                          icon: const Icon(Icons.map, color: Colors.blue),
-                          label: const Text(
-                            'Configurar Cobertura (Mapa y C.P.)',
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              );
-            },
+              },
+            ),
           );
         },
       ),

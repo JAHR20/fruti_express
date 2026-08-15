@@ -41,7 +41,6 @@ class SucursalListTile extends StatelessWidget {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🌟 LE PASAMOS LA DIRECCIÓN YA FORMATEADA
             Text(
               direccionCompleta,
               style: TextStyle(color: Colors.grey.shade600, fontSize: 13),

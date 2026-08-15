@@ -21,23 +21,18 @@ class CrearCategoria {
     final nombreTrim = nombre.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación de Permisos (Fail Fast)
       await $(_validarPermisos(usuarioActual));
 
-      // 2️⃣ Validación de Entrada
       await $(_validarNombreEntrada(nombreTrim));
 
-      // 3️⃣ Regla de Negocio: Evitar nombres duplicados
       await $(_validarNombreUnico(nombreTrim));
 
-      // 4️⃣ Regla de Negocio: Validar existencia de Categoría Padre (si aplica)
       if (categoriaPadreId != null) {
         await $(_validarExistenciaPadre(categoriaPadreId));
       }
 
-      // 5️⃣ Construcción e Inserción
       final nuevaCategoria = Categoria(
-        id: '', // Se generará en la capa de datos
+        id: '',
         nombre: nombreTrim,
         descripcion: descripcion,
         imagenUrl: imagenUrl,
@@ -49,8 +44,6 @@ class CrearCategoria {
       return await $(repository.crear(nuevaCategoria));
     });
   }
-
-  // --- 🧩 MICRO-PASOS BLINDADOS ---
 
   ResultTask<Unit> _validarPermisos(Perfil usuario) =>
       usuario.puedeCrearCategoria()

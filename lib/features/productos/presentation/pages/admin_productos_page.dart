@@ -5,7 +5,6 @@ import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_
 import 'package:fruti_express_jahr_admin/features/categorias/domain/entities/categoria.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/presentation/cubits/categoria_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/presentation/cubits/categoria_state.dart';
-
 import 'package:fruti_express_jahr_admin/features/productos/domain/entities/producto.dart';
 import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_state.dart';
@@ -20,80 +19,125 @@ class AdminProductosPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authState = context.read<AuthCubit>().state as AuthAuthenticated;
+    final authState = context.read<AuthCubit>().state;
+
+    if (authState is! AuthAuthenticated) {
+      return const SizedBox.shrink();
+    }
+
     final usuarioActual = authState.perfil;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
+
       body: Column(
         children: [
           const BuscadorProductos(),
 
           Expanded(
-            child: BlocBuilder<ProductosCubit, ProductosState>(
+            child: BlocConsumer<ProductosCubit, ProductosState>(
+              listenWhen: (previous, current) =>
+                  previous.errorMessage != current.errorMessage ||
+                  previous.operacionError != current.operacionError ||
+                  previous.operacionExitosa != current.operacionExitosa,
+
+              listener: (context, state) {
+                if (state.errorMessage != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.errorMessage!),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+
+                if (state.operacionError != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.operacionError!),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+
+                if (state.operacionExitosa) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Operación realizada correctamente.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
+              },
+
               builder: (context, state) {
-                // 🌟 Pattern Matching exhaustivo con 'when'
-                return state.when(
-                  initial: () => const SizedBox.shrink(),
-                  loading: () => const Center(
+                if (state.isLoading && state.productos.isEmpty) {
+                  return const Center(
                     child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
-                  ),
-                  error: (message) => Center(
+                  );
+                }
+
+                if (state.errorMessage != null && state.productos.isEmpty) {
+                  return Center(
                     child: Text(
-                      message,
+                      state.errorMessage!,
                       style: const TextStyle(color: Colors.red, fontSize: 16),
                     ),
-                  ),
-                  loaded: (productos, productoDetalle, categoriaIdActual) {
-                    if (productos.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          'El catálogo está vacío.\n¡Agrega tu primer producto!',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 16, color: Colors.grey),
-                        ),
-                      );
-                    }
+                  );
+                }
 
-                    return ListView.builder(
-                      itemCount: productos.length,
-                      itemBuilder: (context, index) {
-                        final producto = productos[index];
+                if (state.productos.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'El catálogo está vacío.\n'
+                      '¡Agrega tu primer producto!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
+                    ),
+                  );
+                }
 
-                        return TarjetaProducto(
+                return ListView.builder(
+                  itemCount: state.productos.length,
+                  itemBuilder: (context, index) {
+                    final producto = state.productos[index];
+
+                    return TarjetaProducto(
+                      producto: producto,
+
+                      esAdminOEncargado: usuarioActual.puedeGestionarCatalogo,
+
+                      estaActualizando:
+                          state.productoProcesandoId == producto.id,
+
+                      onEstadoCambiado: (nuevoEstado) {
+                        context.read<ProductosCubit>().cambiarEstadoProducto(
+                          usuarioActual: usuarioActual,
+                          productoId: producto.id ?? '',
+                          nuevoEstado: nuevoEstado,
+                        );
+                      },
+
+                      onEditar: () {
+                        final categoriaState = context
+                            .read<CategoriaCubit>()
+                            .state;
+
+                        if (categoriaState.isLoading ||
+                            categoriaState.errorMessage != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Cargando categorías...'),
+                            ),
+                          );
+                          return;
+                        }
+
+                        _mostrarFormularioProducto(
+                          context,
+                          usuarioActual,
+                          categoriaState.categorias,
                           producto: producto,
-                          esAdminOEncargado:
-                              usuarioActual.puedeGestionarCatalogo,
-                          onEstadoCambiado: (nuevoEstado) {
-                            context
-                                .read<ProductosCubit>()
-                                .cambiarEstadoProducto(
-                                  usuarioActual: usuarioActual,
-                                  productoId: producto.id ?? '',
-                                  nuevoEstado: nuevoEstado,
-                                );
-                          },
-                          onEditar: () {
-                            // 🌟 Usamos maybeWhen para obtener las categorías si están cargadas
-                            final catState = context
-                                .read<CategoriaCubit>()
-                                .state;
-                            catState.maybeWhen(
-                              loaded: (categorias) =>
-                                  _mostrarFormularioProducto(
-                                    context,
-                                    usuarioActual,
-                                    categorias,
-                                    producto: producto,
-                                  ),
-                              orElse: () =>
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text('Cargando categorías...'),
-                                    ),
-                                  ),
-                            );
-                          },
                         );
                       },
                     );
@@ -104,22 +148,27 @@ class AdminProductosPage extends StatelessWidget {
           ),
         ],
       ),
-
       floatingActionButton: usuarioActual.puedeGestionarCatalogo
           ? BlocBuilder<CategoriaCubit, CategoriaState>(
-              builder: (context, catState) {
-                // 🌟 Aquí también usamos maybeWhen
-                return catState.maybeWhen(
-                  loaded: (categorias) => FloatingActionButton(
-                    backgroundColor: const Color(0xFF1E3A8A),
-                    onPressed: () => _mostrarFormularioProducto(
+              builder: (context, categoriaState) {
+                final categoriasListas =
+                    !categoriaState.isLoading &&
+                    categoriaState.errorMessage == null;
+
+                if (!categoriasListas) {
+                  return const SizedBox.shrink();
+                }
+
+                return FloatingActionButton(
+                  backgroundColor: const Color(0xFF1E3A8A),
+                  onPressed: () {
+                    _mostrarFormularioProducto(
                       context,
                       usuarioActual,
-                      categorias,
-                    ),
-                    child: const Icon(Icons.add, color: Colors.white),
-                  ),
-                  orElse: () => const SizedBox.shrink(),
+                      categoriaState.categorias,
+                    );
+                  },
+                  child: const Icon(Icons.add, color: Colors.white),
                 );
               },
             )
@@ -138,19 +187,35 @@ class AdminProductosPage extends StatelessWidget {
       builder: (dialogContext) {
         return BlocProvider.value(
           value: context.read<ProductosCubit>(),
+
           child: BlocConsumer<ProductosCubit, ProductosState>(
+            listenWhen: (previous, current) =>
+                previous.operacionError != current.operacionError ||
+                previous.operacionExitosa != current.operacionExitosa,
+
             listener: (ctx, state) {
-              state.maybeWhen(
-                loaded: (_,_,_) => Navigator.pop(ctx),
-                error: (msg) => ScaffoldMessenger.of(ctx).showSnackBar(SnackBar(content: Text(msg))),
-                orElse: () {},
-              );
+              if (state.operacionError != null) {
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(
+                    content: Text(state.operacionError!),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+
+              if (state.operacionExitosa) {
+                Navigator.pop(ctx);
+              }
             },
+
             builder: (ctx, state) {
               return DialogoFormularioProducto(
                 categoriasDisponibles: categorias,
+
                 productoAEditar: producto,
-                guardando: state.maybeWhen(loading: () => true, orElse: () => false),
+
+                guardando: state.isLoading,
+
                 onGuardar:
                     (nombre, desc, catId, precio, precioComp, unidad, img) {
                       if (producto == null) {
@@ -167,7 +232,7 @@ class AdminProductosPage extends StatelessWidget {
                       } else {
                         ctx.read<ProductosCubit>().actualizarProducto(
                           usuarioActual: usuarioActual,
-                          productoId: producto.id ?? "",
+                          productoId: producto.id ?? '',
                           nombre: nombre,
                           descripcion: desc,
                           categoriaId: catId,

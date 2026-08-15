@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/core/utils/supabase_handle_exception.dart';
+import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/data/datasources/categoria_remote_datasource.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/data/models/categoria_model.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/entities/categoria.dart';

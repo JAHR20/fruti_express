@@ -11,8 +11,7 @@ class FormatoMoneda {
       _formato.format(centavos / 100);
 }
 
-// 🌟 LA MEJORA PRO: Una extensión sobre la clase int
 extension IntMonedaX on int {
-  /// Convierte automáticamente este número (en centavos) a texto de moneda.
+  /// Convierte automáticamente este número que viene en centavos a texto de moneda.
   String get formatoMoneda => FormatoMoneda.formatear(this);
 }

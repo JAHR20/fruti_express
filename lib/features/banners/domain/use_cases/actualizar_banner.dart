@@ -26,7 +26,7 @@ class ActualizarBanner {
 
       String? imageUrlFinal = banner.imagenUrl;
 
-      // 2. Si el usuario seleccionó una imagen nueva, la subimos
+      // 2. Validar si el usuario seleccionó una imagen nueva, la subimos
       if (imagenArchivo != null) {
         final extensionReal = imagenArchivo.path.split('.').last.toLowerCase();
         final nombreUnico = 'banner_${DateTime.now().millisecondsSinceEpoch}.$extensionReal';

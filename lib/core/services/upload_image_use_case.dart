@@ -6,7 +6,6 @@ class UploadImageUseCase {
   UploadImageUseCase(this.repository);
 
   Future<String?> execute(File file) async {
-    // Aquí podrías validar tamaño de imagen, formato, etc.
     return await repository.uploadImage(file);
   }
 }

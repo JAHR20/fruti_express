@@ -1,23 +1,19 @@
-// features/usuarios/presentation/pages/editar_perfil_page.dart
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/usuarios_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/usuarios_state.dart';
+import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/editar_perfil_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/editar_perfil_state.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/presentation/widgets/formulario_perfil.dart';
 
-/// Página genérica de edición de perfil.
-/// Reutilizable para cualquier rol — repartidor, encargado, admin, cliente.
 class EditarPerfilPage extends StatelessWidget {
   const EditarPerfilPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final solicitante =
-        (context.read<AuthCubit>().state as AuthAuthenticated).perfil;
+    final solicitante = (context.read<AuthCubit>().state as AuthAuthenticated).perfil;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -29,11 +25,10 @@ class EditarPerfilPage extends StatelessWidget {
         backgroundColor: const Color(0xFF1E3A8A),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: BlocConsumer<UsuariosCubit, UsuariosState>(
+      body: BlocConsumer<EditarPerfilCubit, EditarPerfilState>(
         listener: (context, state) {
-          state.maybeWhen(
-            // ✅ Actualización exitosa
-            loaded: (_) {
+          state.whenOrNull(
+            success: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Perfil actualizado correctamente'),
@@ -47,12 +42,11 @@ class EditarPerfilPage extends StatelessWidget {
                 SnackBar(content: Text(msg), backgroundColor: Colors.red),
               );
             },
-            orElse: () {},
           );
         },
         builder: (context, state) {
           final cargando = state.maybeWhen(
-            loading: () => true,
+            saving: () => true,
             orElse: () => false,
           );
 
@@ -60,16 +54,13 @@ class EditarPerfilPage extends StatelessWidget {
             padding: const EdgeInsets.all(24),
             child: Column(
               children: [
-                // ─── Avatar ───────────────────────────────────────────────
                 _Avatar(perfil: solicitante),
                 const SizedBox(height: 32),
-
-                // ─── Formulario ───────────────────────────────────────────
                 FormularioPerfil(
                   perfil: solicitante,
                   cargando: cargando,
                   onGuardar: (perfilActualizado) {
-                    context.read<UsuariosCubit>().actualizarPerfil(
+                    context.read<EditarPerfilCubit>().actualizarPerfil(
                           usuarioActual: solicitante,
                           perfilAEditar: perfilActualizado,
                         );
@@ -94,7 +85,7 @@ class _Avatar extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 48,
-          backgroundColor: const Color(0xFF1E3A8A).withValues(alpha: 0.1),
+          backgroundColor: const Color(0xFF1E3A8A).withValues(alpha: 0.1), 
           backgroundImage: perfil.avatarUrl != null
               ? NetworkImage(perfil.avatarUrl!)
               : null,

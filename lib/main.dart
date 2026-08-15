@@ -7,13 +7,10 @@ import 'package:fruti_express_jahr_admin/core/di/injection_container.dart'
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/envio_cliente_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
-  //WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
     url: dotenv.get('SUPABASE_URL'),
@@ -35,23 +32,12 @@ class MyApp extends StatelessWidget {
           lazy: false,
         ),
         BlocProvider(
-          create: (_) => di.sl<CarritoCubit>()..cargarCarrito(), 
+          create: (_) => di.sl<CarritoCubit>()..cargarCarrito(),
           lazy: false,
         ),
-        BlocProvider(
-          create: (_) => di.sl<SucursalCubit>()..cargarSucursales(),
-          lazy: false,
-        ),
-        BlocProvider(
-          create: (_) => di.sl<DireccionesCubit>(),
-        ),
-        BlocProvider(
-          create: (_) => di.sl<EnvioClienteCubit>(),
-        ),
-        BlocProvider(
-         create: (_) => di.sl<ProductosCubit>(),
-        ),
-        
+        BlocProvider(create: (_) => di.sl<DireccionesCubit>()),
+
+        BlocProvider(create: (_) => di.sl<ProductosCubit>()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

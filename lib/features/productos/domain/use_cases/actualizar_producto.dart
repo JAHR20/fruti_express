@@ -32,25 +32,25 @@ class ActualizarProducto {
     final nombreTrim = nombre.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validaciones Iniciales (Síncronas)
+      // Validaciones Iniciales
       await $(_validarPermisos(usuario));
       await $(_validarPrecios(precioActual, precioComparacion));
 
-      // 2️⃣ Obtener el producto actual para comparar cambios
+      // Obtener el producto actual para comparar cambios
       // Si no existe, el repo ya devuelve Left(Failure.notFound) y el $ detiene todo.
       final existente = await $(repository.obtenerPorId(productoId));
 
-      // 3️⃣ Validar Categoría (SOLO si cambió)
+      // Validar Categoría (SOLO si cambió)
       if (existente.categoriaId != categoriaId) {
         await $(_validarNuevaCategoria(categoriaId));
       }
 
-      // 4️⃣ Validar Nombre duplicado (SOLO si cambió)
+      // Validar Nombre duplicado (SOLO si cambió)
       if (existente.nombre != nombreTrim) {
         await $(_validarNuevoNombre(nombreTrim));
       }
 
-      // 5️⃣ Crear copia con datos actualizados
+      // Crear copia con datos actualizados
       final actualizado = existente.copyWith(
         categoriaId: categoriaId,
         nombre: nombreTrim,
@@ -62,12 +62,10 @@ class ActualizarProducto {
         isActive: isActive,
       );
 
-      // 6️⃣ Persistir cambios
+      // Persistir cambios
       return await $(repository.actualizar(actualizado));
     });
   }
-
-  // --- 🧩 MICRO-PASOS BLINDADOS ---
 
   ResultTask<Unit> _validarPermisos(Perfil u) => u.puedeGestionarCatalogo
       ? TaskEither.right(unit)

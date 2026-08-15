@@ -10,7 +10,7 @@ class PrimaryAuthButton extends StatelessWidget {
     super.key,
     required this.text,
     required this.onPressed,
-    this.backgroundColor = const Color(0xFF2C2C4E), // Gris oscuro por defecto
+    this.backgroundColor = const Color(0xFF2C2C4E),
     this.textColor = Colors.white,
   });
 

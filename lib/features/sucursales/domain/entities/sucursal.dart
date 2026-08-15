@@ -19,5 +19,4 @@ abstract class Sucursal with _$Sucursal {
     required DateTime fechaCreacion,
     DateTime? fechaActualizacion,
   }) = _Sucursal;
-  // ← Sin fromJson, sin @JsonKey, sin .g.dart
 }

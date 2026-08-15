@@ -9,12 +9,10 @@ class ObtenerPedidosSucursal {
 
   ObtenerPedidosSucursal(this.repository);
 
-  /// Obtiene todos los pedidos vinculados a una sucursal específica.
   ResultTask<List<Pedido>> ejecutar(String sucursalId) {
     final idLimpio = sucursalId.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación Fail-Fast (Síncrona)
       if (idLimpio.isEmpty) {
         return await $(
           TaskEither.left(
@@ -24,10 +22,6 @@ class ObtenerPedidosSucursal {
           ),
         );
       }
-
-      // 2️⃣ Delegación al Repositorio
-      // El operador $ extrae la lista o propaga el fallo automáticamente.
-      // Si el repositorio falla (ej. error de Firebase), el Left subirá hasta la UI.
       return await $(repository.obtenerPorSucursal(idLimpio));
     });
   }

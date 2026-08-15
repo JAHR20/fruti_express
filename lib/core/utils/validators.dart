@@ -40,7 +40,7 @@ class Validators {
     return null;
   }
 
-  // --- VALIDACIONES COMPUESTAS (Fábricas) ---
+  // --- VALIDACIONES COMPUESTAS 
 
   static String? Function(String?) required([String? fieldName]) {
     return (String? value) {
@@ -131,7 +131,6 @@ class Validators {
     return null;
   }
 
-  /// Valida la longitud mínima SOLO si el usuario decidió escribir algo (Ideal para campos opcionales)
   static String? Function(String?) optionalMinLength(int length, [String? customMessage]) {
     return (String? value) {
       if (value == null || value.trim().isEmpty) return null;
@@ -142,10 +141,8 @@ class Validators {
     };
   }
 
-  // --- VALIDACIÓN DE COLOR HEXADECIMAL ---
   static String? hexColor(String? value) {
     if (value == null || value.trim().isEmpty) return 'Por favor ingresa un color';
-    // Valida formatos como #FFF o #FFFFFF
     if (!RegExp(r'^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$').hasMatch(value.trim())) {
       return 'Código Hexadecimal inválido (ej. #E8F5E9)';
     }

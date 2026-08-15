@@ -1,8 +1,8 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:fruti_express_jahr_admin/core/errors/failures.dart'; // Tu clase de errores
+import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/repositories/inventario_repository.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart'; // Ajusta la ruta a tu entidad
+import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/repositories/pedido_repository.dart';
 import 'crear_pedido_params.dart';
 
@@ -31,7 +31,7 @@ class CrearPedidoUseCase {
         final pedidoCreado = await $(_pedidoRepository.crear(params));
 
         for (final item in params.items) {
-          final cantidadParaRestar = item.cantidad * -1; // Lo pasamos a negativo
+          final cantidadParaRestar = item.cantidad * -1;
           
           await $(_inventarioRepository.ajustarStockAtomicamente(
             productoId: item.productoId,

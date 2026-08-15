@@ -11,32 +11,23 @@ class CambiarEstadoUsuario {
   CambiarEstadoUsuario(this.repository);
 
   ResultTask<Perfil> ejecutar({
-    required Perfil usuarioActual, // El administrador que opera
-    required String usuarioId, // El ID del usuario a modificar
-    required bool activar, // El nuevo estado deseado
+    required Perfil usuarioActual,
+    required String usuarioId,
+    required bool activar, 
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Obtener el usuario objetivo
-      // Si no existe, el repo devuelve Left(Failure.notFound) y el $ corta aquí.
       final usuarioTarget = await $(repository.obtenerPorId(usuarioId));
 
-      // 2️⃣ Validar Permisos (Lógica de Dominio)
-      // Usamos la extensión que ya tienes definida.
       await $(_validarPermisos(usuarioActual, usuarioTarget));
 
-      // 3️⃣ Validar Redundancia de Estado
-      // No activamos a quien ya está activo, ni desactivamos a quien ya no lo está.
+      // Validar Redundancia de Estado, no activamos a quien ya está activo, ni desactivamos a quien ya no lo está.
       await $(_validarCambioEstado(usuarioTarget, activar));
 
-      // 4️⃣ Crear copia con el nuevo estado
       final actualizado = usuarioTarget.copyWith(activo: activar);
 
-      // 5️⃣ Persistir cambios
       return await $(repository.actualizar(actualizado));
     });
   }
-
-  // --- 🧩 MICRO-PASOS ---
 
   ResultTask<Unit> _validarPermisos(Perfil actor, Perfil target) =>
       actor.puedeDesactivarReactivarUsuario(target)

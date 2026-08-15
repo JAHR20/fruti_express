@@ -8,6 +8,7 @@ class TarjetaProducto extends StatelessWidget {
   final bool esAdminOEncargado;
   final Function(bool) onEstadoCambiado;
   final VoidCallback onEditar;
+  final bool estaActualizando;
 
   const TarjetaProducto({
     super.key,
@@ -15,6 +16,7 @@ class TarjetaProducto extends StatelessWidget {
     required this.esAdminOEncargado,
     required this.onEstadoCambiado,
     required this.onEditar,
+    required this.estaActualizando,
   });
 
   @override
@@ -29,7 +31,7 @@ class TarjetaProducto extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              // 🖼️ Imagen del Producto con Badge
+              // 🖼️ Imagen
               Stack(
                 children: [
                   ClipRRect(
@@ -38,7 +40,9 @@ class TarjetaProducto extends StatelessWidget {
                       width: 70,
                       height: 70,
                       color: Colors.grey.shade200,
-                      child: producto.imagenUrl != null && producto.imagenUrl!.isNotEmpty
+                      child:
+                          producto.imagenUrl != null &&
+                              producto.imagenUrl!.isNotEmpty
                           ? Image.network(
                               producto.imagenUrl!,
                               fit: BoxFit.cover,
@@ -49,13 +53,16 @@ class TarjetaProducto extends StatelessWidget {
                             ),
                     ),
                   ),
-                  // 🌟 Llamamos directamente al getter de la entidad
+
                   if (producto.tieneDescuento)
                     Positioned(
                       top: 0,
                       left: 0,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.red.shade500,
                           borderRadius: const BorderRadius.only(
@@ -64,7 +71,6 @@ class TarjetaProducto extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          // 🌟 Consumimos el getter del porcentaje
                           '-${producto.porcentajeDescuento}%',
                           style: const TextStyle(
                             color: Colors.white,
@@ -76,28 +82,30 @@ class TarjetaProducto extends StatelessWidget {
                     ),
                 ],
               ),
+
               const SizedBox(width: 16),
 
-              // 📝 Información del Producto
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       producto.nombre,
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
+
                     const SizedBox(height: 4),
 
-                    // 🌟 PRECIOS: Usando la mágica extensión .formatoMoneda
                     Wrap(
                       crossAxisAlignment: WrapCrossAlignment.end,
                       spacing: 6,
                       children: [
                         Text(
-                          // 🌟 Magia pura: int.formatoMoneda
                           producto.precioActual.formatoMoneda,
                           style: const TextStyle(
                             color: Colors.green,
@@ -105,9 +113,9 @@ class TarjetaProducto extends StatelessWidget {
                             fontSize: 15,
                           ),
                         ),
+
                         if (producto.tieneDescuento)
                           Text(
-                            // 🌟 Magia pura x2
                             producto.precioComparacion!.formatoMoneda,
                             style: TextStyle(
                               color: Colors.grey.shade500,
@@ -118,13 +126,16 @@ class TarjetaProducto extends StatelessWidget {
                       ],
                     ),
 
-                    // Unidad de medida
                     Text(
                       'Por ${producto.unidadMedida.nombreUI}',
-                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12),
+                      style: TextStyle(
+                        color: Colors.grey.shade600,
+                        fontSize: 12,
+                      ),
                     ),
-                    
-                    if (producto.descripcion != null && producto.descripcion!.isNotEmpty) ...[
+
+                    if (producto.descripcion != null &&
+                        producto.descripcion!.isNotEmpty) ...[
                       const SizedBox(height: 6),
                       Text(
                         producto.descripcion!,
@@ -141,18 +152,28 @@ class TarjetaProducto extends StatelessWidget {
                 ),
               ),
 
-              // ⚙️ Controles
               if (esAdminOEncargado)
                 Column(
                   children: [
-                    Switch(
-                      value: producto.isActive,
-                      activeThumbColor: Colors.green,
-                      onChanged: onEstadoCambiado,
-                    ),
+                    if (estaActualizando)
+                      const SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    else
+                      Switch(
+                        value: producto.isActive,
+                        activeThumbColor: Colors.green,
+                        onChanged: onEstadoCambiado,
+                      ),
+
                     IconButton(
-                      icon: const Icon(Icons.edit_outlined, color: Color(0xFF1E3A8A)),
-                      onPressed: onEditar,
+                      icon: const Icon(
+                        Icons.edit_outlined,
+                        color: Color(0xFF1E3A8A),
+                      ),
+                      onPressed: estaActualizando ? null : onEditar,
                     ),
                   ],
                 ),

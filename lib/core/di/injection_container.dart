@@ -18,12 +18,10 @@ import 'package:fruti_express_jahr_admin/features/usuarios/di/usuarios_di.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-// sl = Service Locator (Localizador de Servicios)
 final sl = GetIt.instance;
 
 Future<void> init() async {
-  // --- 🛰️ 1. DEPENDENCIAS EXTERNAS ---
-  // Registramos el cliente de Supabase para que todos los DataSources puedan usarlo.
+  // --- DEPENDENCIAS EXTERNAS ---
   final supabaseClient = Supabase.instance.client;
   sl.registerLazySingleton(() => supabaseClient);
 
@@ -33,8 +31,7 @@ Future<void> init() async {
 
   sl.registerLazySingleton<PostaliService>(() => PostaliServiceImpl());
 
-  // --- 📦 2. REGISTRO DE FEATURES ---
-  // Aquí llamamos a los "sub-jefes" de cada carpeta.
+  // --- REGISTRO DE FEATURES ---
   initAuth(sl);
   initPedidos(sl);
   initDirecciones(sl);
@@ -47,6 +44,4 @@ Future<void> init() async {
   initBanners(sl);
   initEnvios(sl);
 
-  // Nota: Conforme crees más features (Inventario, Sucursales),
-  // solo tendrás que añadir una línea aquí.
 }

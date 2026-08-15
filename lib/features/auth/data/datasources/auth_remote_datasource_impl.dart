@@ -1,6 +1,5 @@
 import 'package:fruti_express_jahr_admin/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/data/models/perfil_model.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -26,7 +25,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     return await _traerPerfilDeBaseDeDatos(session.user.id);
   }
 
-  // Método privado para evitar repetir código
   Future<PerfilModel> _traerPerfilDeBaseDeDatos(String id) async {
     final data = await supabase.from('perfiles').select().eq('id', id).single();
 
@@ -46,8 +44,6 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     String? alias,
     required String telefono,
   }) async {
-    // 1. Registro en Supabase Auth pasando los metadatos.
-    // El Trigger de SQL leerá estos datos y creará el perfil automáticamente.
     final authRes = await supabase.auth.signUp(
       email: email,
       password: password,

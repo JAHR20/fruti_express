@@ -1,22 +1,21 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fruti_express_jahr_admin/core/services/storage/storage_service.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/crear_categoria.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/desactivar_categoria.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/editar_categoria.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/obtener_categorias.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/obtener_categorias_activas.dart';
+import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/subir_imagen_categoria_usecase.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/presentation/cubits/categoria_state.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CategoriaCubit extends Cubit<CategoriaState> {
-  // Asumiendo que inyectas tus Use Cases (Ajusta los nombres a los tuyos)
   final CrearCategoria _crearCategoriaUseCase;
   final CambiarEstadoCategoria _cambiarEstadoCategoriaUseCase;
   final EditarCategoria _editarCategoriaUseCase;
   final ObtenerCategorias _obtenerCategoriasUseCase;
   final ObtenerCategoriasActivas _obtenerCategoriasActivasUsecase;
-  final StorageService _storageService;
+  final SubirImagenCategoria _subirImagenCategoriaUseCase;
 
   CategoriaCubit({
     required CrearCategoria crearCategoriaUseCase,
@@ -24,43 +23,75 @@ class CategoriaCubit extends Cubit<CategoriaState> {
     required EditarCategoria editarCategoriaUseCase,
     required ObtenerCategorias obtenerCategoriasUseCase,
     required ObtenerCategoriasActivas obtenerCategoriasActivasUseCase,
-    required StorageService storageService,
-  }) : _storageService = storageService,
+    required SubirImagenCategoria subirImagenCategoriaUseCase,
+  }) : _subirImagenCategoriaUseCase = subirImagenCategoriaUseCase,
        _obtenerCategoriasUseCase = obtenerCategoriasUseCase,
        _editarCategoriaUseCase = editarCategoriaUseCase,
        _cambiarEstadoCategoriaUseCase = cambiarEstadoCategoriaUseCase,
        _crearCategoriaUseCase = crearCategoriaUseCase,
        _obtenerCategoriasActivasUsecase = obtenerCategoriasActivasUseCase,
-       super(const CategoriaState.initial());
+       super(const CategoriaState());
 
-  // 1. Obtener lista
+
   Future<void> cargarCategorias(Perfil usuarioActual) async {
-    emit(const CategoriaState.loading());
+    emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final result = await _obtenerCategoriasUseCase.ejecutar().run();
 
     result.fold(
-      (failure) => emit(CategoriaState.error(failure.errorMessage)),
-      (lista) => emit(CategoriaState.loaded(lista)),
+      (failure) {
+        emit(
+          state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+        );
+      },
+      (lista) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            categorias: lista,
+            errorMessage: null,
+          ),
+        );
+      },
     );
   }
+
 
   Future<void> cargarCategoriasActivas() async {
-    emit(const CategoriaState.loading());
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+
     final result = await _obtenerCategoriasActivasUsecase.ejecutar().run();
+
     result.fold(
-      (failure) => emit(CategoriaState.error(failure.errorMessage)),
-      (categorias) => emit(CategoriaState.loaded(categorias)),
+      (failure) {
+        emit(
+          state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+        );
+      },
+      (categorias) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            categorias: categorias,
+            errorMessage: null,
+          ),
+        );
+      },
     );
   }
 
-  // 3. Cambiar estado de una categoría
   Future<void> cambiarEstadoCategoria({
     required Perfil usuarioActual,
     required String categoriaId,
     required bool nuevoEstado,
   }) async {
-    emit(const CategoriaState.loading());
+    emit(
+      state.copyWith(
+        categoriaProcesandoId: categoriaId,
+        operacionError: null,
+        operacionExitosa: false,
+      ),
+    );
 
     final resultado = await _cambiarEstadoCategoriaUseCase
         .ejecutar(
@@ -71,8 +102,21 @@ class CategoriaCubit extends Cubit<CategoriaState> {
         .run();
 
     resultado.fold(
-      (failure) => emit(CategoriaState.error(failure.errorMessage)),
-      (_) => cargarCategorias(usuarioActual),
+      (failure) {
+        emit(
+          state.copyWith(
+            categoriaProcesandoId: null,
+            operacionError: failure.errorMessage,
+          ),
+        );
+      },
+      (_) async {
+        emit(
+          state.copyWith(categoriaProcesandoId: null, operacionExitosa: true),
+        );
+
+        await cargarCategorias(usuarioActual);
+      },
     );
   }
 
@@ -83,43 +127,66 @@ class CategoriaCubit extends Cubit<CategoriaState> {
     XFile? imagenSeleccionada,
     String? categoriaPadreId,
   }) async {
-    emit(const CategoriaState.loading());
+    emit(
+      state.copyWith(
+        guardandoOperacion: true,
+        operacionError: null,
+        operacionExitosa: false,
+      ),
+    );
 
-    try {
-      String? imagenUrlFinal;
-      if (imagenSeleccionada != null) {
-        final timestamp = DateTime.now().millisecondsSinceEpoch;
-        final nombreLimpio = nombre.replaceAll(' ', '_').toLowerCase();
-        final pathUnico = '${nombreLimpio}_$timestamp.jpg';
+    String? imagenUrlFinal;
 
-        imagenUrlFinal = await _storageService.uploadImage(
-          file: imagenSeleccionada,
-          bucketName: 'categorias',
-          pathName: pathUnico,
-        );
-      }
-      // Ejecutamos el caso de uso
-      final result = await _crearCategoriaUseCase
-          .ejecutar(
-            usuarioActual: usuarioActual,
-            nombre: nombre,
-            descripcion: descripcion,
-            imagenUrl: imagenUrlFinal,
-            categoriaPadreId: categoriaPadreId,
-          )
+    if (imagenSeleccionada != null) {
+      final uploadResult = await _subirImagenCategoriaUseCase
+          .ejecutar(archivo: imagenSeleccionada, identificadorUnico: nombre)
           .run();
 
-      result.fold(
-        (failure) => emit(CategoriaState.error(failure.errorMessage)),
-        (_) => cargarCategorias(usuarioActual),
+      final falloImagen = uploadResult.fold(
+        (failure) {
+          emit(
+            state.copyWith(
+              guardandoOperacion: false,
+              operacionError: 'Error al subir imagen: ${failure.errorMessage}',
+            ),
+          );
+          return true;
+        },
+        (url) {
+          imagenUrlFinal = url;
+          return false;
+        },
       );
-    } catch (e) {
-      emit(CategoriaError('Error al subir la imagen'));
-      return;
+
+      if (falloImagen) return;
     }
+
+    final result = await _crearCategoriaUseCase
+        .ejecutar(
+          usuarioActual: usuarioActual,
+          nombre: nombre,
+          descripcion: descripcion,
+          imagenUrl: imagenUrlFinal,
+          categoriaPadreId: categoriaPadreId,
+        )
+        .run();
+
+    result.fold(
+      (failure) {
+        emit(
+          state.copyWith(
+            guardandoOperacion: false,
+            operacionError: failure.errorMessage,
+          ),
+        );
+      },
+      (_) async {
+        emit(state.copyWith(guardandoOperacion: false, operacionExitosa: true));
+        await cargarCategorias(usuarioActual);
+      },
+    );
   }
 
-  // 📝 4. Editar Categoría
   Future<void> editarCategoria({
     required Perfil usuarioActual,
     required String categoriaId,
@@ -129,43 +196,73 @@ class CategoriaCubit extends Cubit<CategoriaState> {
     String? categoriaPadreId,
     bool? activa,
   }) async {
-    emit(const CategoriaState.loading());
+    emit(
+      state.copyWith(
+        categoriaProcesandoId: categoriaId,
+        operacionError: null,
+        operacionExitosa: false,
+      ),
+    );
 
-    try {
-      String? imageUrlFinal;
-      if (imagenSeleccionada != null) {
-        final nombreLimpio =
-            nombre?.replaceAll(' ', '_').toLowerCase() ?? 'cat';
-        final timestamp = DateTime.now().millisecondsSinceEpoch;
-        final pathUnico = '${nombreLimpio}_${categoriaId}_$timestamp';
+    String? imageUrlFinal;
 
-        imageUrlFinal = await _storageService.uploadImage(
-          file: imagenSeleccionada,
-          bucketName: 'categorias',
-          pathName: pathUnico,
-        );
-      }
+    if (imagenSeleccionada != null) {
+      final identificador = nombre ?? categoriaId;
 
-      final result = await _editarCategoriaUseCase
+      final uploadResult = await _subirImagenCategoriaUseCase
           .ejecutar(
-            usuarioActual: usuarioActual,
-            categoriaId: categoriaId,
-            nombre: nombre,
-            descripcion: descripcion,
-            imagenUrl: imageUrlFinal,
-            categoriaPadreId: categoriaPadreId,
-            activa: activa,
+            archivo: imagenSeleccionada,
+            identificadorUnico: identificador,
           )
           .run();
 
-      // 4. Manejamos el resultado funcional
-      result.fold(
-        (failure) => emit(CategoriaState.error(failure.errorMessage)),
-        (_) => cargarCategorias(usuarioActual),
+      final falloImagen = uploadResult.fold(
+        (failure) {
+          emit(
+            state.copyWith(
+              categoriaProcesandoId: null,
+              operacionError:
+                  'Error al actualizar la imagen: ${failure.errorMessage}',
+            ),
+          );
+          return true;
+        },
+        (url) {
+          imageUrlFinal = url;
+          return false;
+        },
       );
-    } catch (e) {
-      // 🚨 Capturamos si falla la subida a Supabase
-      emit(CategoriaError("Error al actualizar la imagen de la categoría: $e"));
+
+      if (falloImagen) return;
     }
+
+    final result = await _editarCategoriaUseCase
+        .ejecutar(
+          usuarioActual: usuarioActual,
+          categoriaId: categoriaId,
+          nombre: nombre,
+          descripcion: descripcion,
+          imagenUrl: imageUrlFinal,
+          categoriaPadreId: categoriaPadreId,
+          activa: activa,
+        )
+        .run();
+
+    result.fold(
+      (failure) {
+        emit(
+          state.copyWith(
+            categoriaProcesandoId: null,
+            operacionError: failure.errorMessage,
+          ),
+        );
+      },
+      (_) async {
+        emit(
+          state.copyWith(categoriaProcesandoId: null, operacionExitosa: true),
+        );
+        await cargarCategorias(usuarioActual);
+      },
+    );
   }
 }

@@ -10,9 +10,10 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void initCarrito(GetIt sl) async {
+
   final sharedPreferences = await SharedPreferences.getInstance();
 
-  // 2. Lo registramos globalmente para que cualquier feature pueda usarlo
+  // REGSITRO DE SHARED PREFERENCES
   sl.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
   // --- CASOS DE USO ---
@@ -20,18 +21,17 @@ void initCarrito(GetIt sl) async {
   sl.registerLazySingleton(() => ObtenerCarritoUseCase(sl()));
   sl.registerLazySingleton(() => VaciarCarritoUseCase(sl()));
 
-  // 3. Repositorio (Dominio -> Datos)
+  // --- REPOSITORIES ---
   sl.registerLazySingleton<CarritoRepository>(
     () => CarritoRepositoryImpl(localDataSource: sl()),
   );
 
-  // 4. Data Source (Datos)
-  // Aquí es donde ocurre la magia: le pedimos a GetIt (sl) que inyecte el SharedPreferences global
+  // --- DATA SOURCES ----
   sl.registerLazySingleton<CarritoLocalDatasource>(
     () => CarritoLocalDatasourceImpl(sharedPreferences: sl()),
   );
 
-  // --- CUBIT ---
+  // --- CUBITS ---
   sl.registerFactory<CarritoCubit>(
     () => CarritoCubit(
       obtenerCarrito: sl(),

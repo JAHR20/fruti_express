@@ -10,22 +10,22 @@ import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_
 import 'package:get_it/get_it.dart';
 
 void initAuth(GetIt sl) {
-  // --- 🧠 CASOS DE USO (Use Cases) ---
-  // Los registramos como LazySingletons porque no guardan estado, son puras acciones.
+  // --- CASOS DE USO ---
   sl.registerLazySingleton(() => LoginUseCase(sl()));
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
   sl.registerLazySingleton(() => LogoutUseCase(sl()));
   sl.registerLazySingleton(() => CheckAuthStatusUseCase(sl()));
 
-  // --- 🤝 REPOSITORIOS (Repositories) ---
+  // --- REPOSITORIOS ---
   // Registramos la Interfaz y le decimos que use la Implementación.
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl()));
 
-  // --- 🛰️ FUENTES DE DATOS (Data Sources) ---
+  // --- DATA SOURCES ---
   sl.registerLazySingleton<AuthRemoteDataSource>(
     () => AuthRemoteDataSourceImpl(sl()),
   );
 
+  // --- CUBITS ----
   sl.registerLazySingleton<AuthCubit>(() => AuthCubit(
     loginUseCase: sl(),
     registerUseCase: sl(),

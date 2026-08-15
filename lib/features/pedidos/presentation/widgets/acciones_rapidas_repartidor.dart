@@ -1,12 +1,10 @@
-// features/pedidos/presentation/widgets/acciones_rapidas_repartidor.dart
-
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/services/contacto_service.dart';
 
 class AccionesRapidasRepartidor extends StatelessWidget {
   final String telefono;
   final String direccion;
-  final ContactoService contactoService; // ← depende de abstracción, no impl
+  final ContactoService contactoService;
 
   const AccionesRapidasRepartidor({
     super.key,

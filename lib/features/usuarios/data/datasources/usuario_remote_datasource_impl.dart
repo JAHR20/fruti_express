@@ -4,8 +4,7 @@ import 'usuario_remote_datasource.dart';
 
 class UsuarioRemoteDatasourceImpl implements UsuarioRemoteDatasource {
   final SupabaseClient supabase;
-  static const String _table =
-      'perfiles'; // Variable para evitar errores de dedo
+  static const String _table = 'perfiles';
 
   UsuarioRemoteDatasourceImpl(this.supabase);
 
@@ -14,7 +13,7 @@ class UsuarioRemoteDatasourceImpl implements UsuarioRemoteDatasource {
     final response = await supabase.from(_table).select().order('nombre');
 
     return (response as List)
-        .map((json) => PerfilModel.fromJson(json)) // ← ahora sí el model
+        .map((json) => PerfilModel.fromJson(json))
         .toList();
   }
 
@@ -29,34 +28,31 @@ class UsuarioRemoteDatasourceImpl implements UsuarioRemoteDatasource {
     return response != null ? PerfilModel.fromJson(response) : null;
   }
 
-  // --- 🔍 NUEVOS MÉTODOS DE CONSULTA ---
-
   @override
   Future<List<PerfilModel>> buscarUsuarios(String query) async {
-    // 🕵️‍♂️ Filtro 'or' con 'ilike' para buscar en nombre O email (ignora mayúsculas)
     final response = await supabase
         .from(_table)
         .select()
         .or('nombre.ilike.%$query%,email.ilike.%$query%')
         .order('nombre');
 
-    return (response as List).map((json) => PerfilModel.fromJson(json)).toList();
+    return (response as List)
+        .map((json) => PerfilModel.fromJson(json))
+        .toList();
   }
 
   @override
   Future<List<PerfilModel>> obtenerRepartidores({String? sucursalId}) async {
     var query = supabase.from(_table).select().eq('rol', 'repartidor');
-
-    // 📍 Si viene sucursalId, filtramos, si no (Admin), traemos todos
     if (sucursalId != null) {
       query = query.eq('sucursal_id', sucursalId);
     }
 
     final response = await query.order('nombre');
-    return (response as List).map((json) => PerfilModel.fromJson(json)).toList();
+    return (response as List)
+        .map((json) => PerfilModel.fromJson(json))
+        .toList();
   }
-
-  // --- ✍️ ACTUALIZACIONES (Ahora devuelven el Perfil actualizado) ---
 
   @override
   Future<PerfilModel> actualizarPerfil(PerfilModel model) async {
@@ -64,14 +60,17 @@ class UsuarioRemoteDatasourceImpl implements UsuarioRemoteDatasource {
         .from(_table)
         .update(model.toJson())
         .eq('id', model.id)
-        .select() // 🔥 Vital para obtener el objeto actualizado
+        .select()
         .single();
 
     return PerfilModel.fromJson(response);
   }
 
   @override
-  Future<PerfilModel> cambiarRol({required String id, required String rol}) async {
+  Future<PerfilModel> cambiarRol({
+    required String id,
+    required String rol,
+  }) async {
     final response = await supabase
         .from(_table)
         .update({'rol': rol})
@@ -96,8 +95,6 @@ class UsuarioRemoteDatasourceImpl implements UsuarioRemoteDatasource {
 
     return PerfilModel.fromJson(response);
   }
-
-  // --- 📊 MÉTRICAS Y REGLAS ---
 
   @override
   Future<int> contarPorRolYEstado({
@@ -132,8 +129,10 @@ class UsuarioRemoteDatasourceImpl implements UsuarioRemoteDatasource {
         .from(_table)
         .select()
         .eq('sucursal_id', sucursalId)
-        .eq('rol', 'cliente'); // Generalmente los encargados gestionan clientes
+        .eq('rol', 'cliente');
 
-    return (response as List).map((json) => PerfilModel.fromJson(json)).toList();
+    return (response as List)
+        .map((json) => PerfilModel.fromJson(json))
+        .toList();
   }
 }

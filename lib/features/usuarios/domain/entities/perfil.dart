@@ -20,10 +20,8 @@ abstract class Perfil with _$Perfil {
     String? avatarUrl,
     required DateTime fechaCreacion,
   }) = _Perfil;
-  // ← Sin fromJson, sin @JsonKey, sin .g.dart
 }
 
-// En tu archivo de Perfil o en un archivo de extensiones
 extension PerfilFormatX on Perfil {
   String get nombreCompletoSnapshot {
     final materno = apellidoMaterno != null ? ' $apellidoMaterno' : '';
@@ -31,7 +29,6 @@ extension PerfilFormatX on Perfil {
   }
 }
 
-// En tu archivo de Direccion o en un archivo de extensiones
 extension DireccionFormatX on Direccion {
   String get formateadaSnapshot {
     final interior = (numInt != null && numInt!.isNotEmpty)

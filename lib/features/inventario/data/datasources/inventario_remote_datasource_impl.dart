@@ -52,8 +52,6 @@ class InventarioRemoteDatasourceImpl implements InventarioRemoteDatasource {
 
   @override
   Future<InventarioModel> actualizar(InventarioModel model) async {
-    // .upsert() detecta si ya existe el par producto/sucursal.
-    // Si existe, hace UPDATE; si no, hace INSERT.
     final response = await supabase
         .from('inventario')
         .upsert(model.toJson())

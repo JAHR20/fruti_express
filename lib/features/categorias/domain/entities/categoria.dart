@@ -14,5 +14,4 @@ abstract class Categoria with _$Categoria {
     required DateTime fechaCreacion,
     DateTime? fechaActualizacion,
   }) = _Categoria;
-  // ← Sin fromJson, sin @JsonKey, sin .g.dart
 }

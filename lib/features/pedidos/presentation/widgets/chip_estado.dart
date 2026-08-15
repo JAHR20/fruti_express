@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/enums/estado_pedido.dart';
 
-/// Chip reutilizable para mostrar el estado de un pedido.
-/// Usado tanto en [PedidoCardEncargado] como en [PedidoCardRepartidor].
 class EstadoChip extends StatelessWidget {
   final EstadoPedido estado;
 

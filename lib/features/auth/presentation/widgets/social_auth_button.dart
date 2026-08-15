@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class SocialAuthButton extends StatelessWidget {
   final String text;
-  final String iconPath; // Ruta del icono (ej. 'assets/icons/google.png')
+  final String iconPath;
   final Color textColor;
   final VoidCallback onPressed;
 
@@ -16,24 +16,22 @@ class SocialAuthButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded( // Expanded para que ocupen mitades iguales en un Row
+    return Expanded( 
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white,
-          foregroundColor: Colors.grey.shade200, // Color del ripple effect
+          foregroundColor: Colors.grey.shade200, 
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
-            side: BorderSide(color: Colors.grey.shade300), // Borde sutil
+            side: BorderSide(color: Colors.grey.shade300), 
           ),
           padding: const EdgeInsets.symmetric(vertical: 12),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Aquí puedes usar Image.asset si tienes los logos en PNG/SVG
-            // Reemplazo temporal con un Icon para que compile a la primera
             const Icon(Icons.circle, size: 20, color: Colors.grey), 
             const SizedBox(width: 8),
             Text(

@@ -3,21 +3,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/core/enums/modo_entrega.dart';
+import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/banner_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_state.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/domain/entities/direccion.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_state.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/presentation/widgets/direccion_card.dart';
-
-// 🌟 IMPORTAMOS EL COORDINADOR Y SU ESTADO
 import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/coordinador_cliente_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/coordinador_cliente_state.dart';
-
 import 'package:fruti_express_jahr_admin/features/dashboard/presentation/widgets/barra_busqueda.dart';
 import 'package:fruti_express_jahr_admin/features/dashboard/presentation/widgets/carrusel_ofertas.dart';
 import 'package:fruti_express_jahr_admin/features/dashboard/presentation/widgets/categorias_rapidas.dart';
 import 'package:fruti_express_jahr_admin/features/dashboard/presentation/widgets/cuadricula_productos.dart';
+import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/envio_cliente_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
 
 class InicioClienteView extends StatefulWidget {
@@ -36,6 +36,18 @@ class _InicioClienteViewState extends State<InicioClienteView> {
       if (authState is AuthAuthenticated) {
         context.read<DireccionesCubit>().cargarDirecciones(authState.perfil.id);
       }
+
+      context.read<BannerCubit>().cargarBannersActivos();
+
+      final coordinadorState = context.read<CoordinadorClienteCubit>().state;
+      coordinadorState.maybeWhen(
+        cambioExitoso: (sucursal, _) {
+          context.read<ProductosCubit>().cargarProductosPorSucursal(
+            sucursal.id,
+          );
+        },
+        orElse: () {},
+      );
     });
   }
 
@@ -48,14 +60,8 @@ class _InicioClienteViewState extends State<InicioClienteView> {
     );
     final carritoState = context.watch<CarritoCubit>().state;
 
-    final direccionActual = carritoState.maybeMap(
-      loaded: (s) => s.direccionSeleccionada,
-      orElse: () => null,
-    );
-    final modoEntrega = carritoState.maybeMap(
-      loaded: (s) => s.modoEntrega,
-      orElse: () => null,
-    );
+    final direccionActual = carritoState.direccionSeleccionada;
+    final modoEntrega = carritoState.modoEntrega;
 
     String textoUbicacion = modoEntrega == ModoEntrega.pickUp
         ? 'Recoger en Sucursal'
@@ -71,9 +77,15 @@ class _InicioClienteViewState extends State<InicioClienteView> {
             state.maybeWhen(
               procesando: () {},
               cambioExitoso: (sucursal, fueAutomatico) {
+                context.read<ProductosCubit>().cargarProductosPorSucursal(
+                  sucursal.id,
+                );
                 if (!fueAutomatico) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Ubicación actualizada'), backgroundColor: Colors.green),
+                    const SnackBar(
+                      content: Text('Ubicación actualizada'),
+                      backgroundColor: Colors.green,
+                    ),
                   );
                 }
               },
@@ -176,10 +188,10 @@ class _InicioClienteViewState extends State<InicioClienteView> {
     );
   }
 
-  // 🌟 MODAL ULTRA LIMPIO
   void _abrirSelectorDirecciones(BuildContext context) {
-    // Ya no necesitamos pedirle a la vista que lea las sucursales ni configuraciones
     final coordinador = context.read<CoordinadorClienteCubit>();
+    final sucursalCubit = context.read<SucursalCubit>();
+    final envioClienteCubit = context.read<EnvioClienteCubit>();
 
     showModalBottomSheet(
       context: context,
@@ -195,62 +207,71 @@ class _InicioClienteViewState extends State<InicioClienteView> {
           minChildSize: 0.4,
           expand: false,
           builder: (_, controller) {
-            return BlocBuilder<DireccionesCubit, DireccionesState>(
-              builder: (context, state) {
-                return state.maybeWhen(
-                  loading: () => const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
-                  ),
-                  loaded: (direcciones) {
-                    if (direcciones.isEmpty) {
-                      return const Center(
-                        child: Text('No tienes direcciones guardadas.'),
-                      );
-                    }
-                    return Column(
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(16.0),
-                          child: Text(
-                            'Mis Direcciones',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            controller: controller,
-                            itemCount: direcciones.length,
-                            itemBuilder: (context, index) {
-                              final direccion = direcciones[index];
-                              return DireccionCard(
-                                direccion: direccion,
-                                estaSeleccionada: context
-                                    .read<CarritoCubit>()
-                                    .state
-                                    .maybeMap(
-                                      loaded: (s) =>
-                                          s.direccionSeleccionada?.id ==
-                                          direccion.id,
-                                      orElse: () => false,
-                                    ),
-                                onTap: () {
-                                  Navigator.pop(modalContext);
-                                  // 🌟 100% DESACOPLADO. La vista solo dice "Cambia a esta dirección"
-                                  coordinador.cambiarDireccionManual(direccion);
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ],
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider.value(value: sucursalCubit),
+                BlocProvider.value(value: envioClienteCubit),
+              ],
+              child: BlocBuilder<DireccionesCubit, DireccionesState>(
+                builder: (context, state) {
+                  if (state.isLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF1E3A8A),
+                      ),
                     );
-                  },
-                  orElse: () => const SizedBox.shrink(),
-                );
-              },
+                  }
+
+                  if (state.direcciones.isEmpty) {
+                    return const Center(
+                      child: Text('No tienes direcciones guardadas.'),
+                    );
+                  }
+
+                  final direccionSeleccionadaId = context
+                      .watch<CarritoCubit>()
+                      .state
+                      .direccionSeleccionada
+                      ?.id;
+
+                  debugPrint(
+                    '🟠 Modal build: direccionSeleccionadaId = $direccionSeleccionadaId',
+                  );
+
+                  return Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          'Mis Direcciones',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          controller: controller,
+                          itemCount: state.direcciones.length,
+                          itemBuilder: (context, index) {
+                            final direccion = state.direcciones[index];
+                            return DireccionCard(
+                              direccion: direccion,
+                              estaSeleccionada:
+                                  direccionSeleccionadaId == direccion.id,
+                              onTap: () {
+                                Navigator.pop(modalContext);
+                                coordinador.cambiarDireccionManual(direccion);
+                              },
+                            );
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
             );
           },
         );
@@ -258,7 +279,6 @@ class _InicioClienteViewState extends State<InicioClienteView> {
     );
   }
 
-  // 🌟 RESTAURAMOS EL MODAL DE PICKUP QUE SE HABÍA BORRADO
   void _mostrarModalPickUpInicio(BuildContext context, Direccion direccion) {
     showModalBottomSheet(
       context: context,

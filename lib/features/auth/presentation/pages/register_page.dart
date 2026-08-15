@@ -67,7 +67,6 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF1E3A8A),
-      // 🛡️ ENVOLVEMOS EL BODY EN UN BLOCCONSUMER
       body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is AuthError) {
@@ -113,7 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               hintText: 'Ej. Juan',
                               controller: _nombreCtrl,
                               validator: Validators.name,
-                              enabled: !isLoading, // Bloquear input si está cargando
+                              enabled: !isLoading,
                             ),
                             const SizedBox(height: 16),
                             

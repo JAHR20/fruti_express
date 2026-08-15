@@ -14,30 +14,65 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$SucursalState {
 
-
+ List<Sucursal> get sucursales; bool get isLoading; String? get errorMessage; String? get sucursalProcesandoId; Set<String> get sucursalesConEnvioConfigurado;
+/// Create a copy of SucursalState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$SucursalStateCopyWith<SucursalState> get copyWith => _$SucursalStateCopyWithImpl<SucursalState>(this as SucursalState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SucursalState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SucursalState&&const DeepCollectionEquality().equals(other.sucursales, sucursales)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.sucursalProcesandoId, sucursalProcesandoId) || other.sucursalProcesandoId == sucursalProcesandoId)&&const DeepCollectionEquality().equals(other.sucursalesConEnvioConfigurado, sucursalesConEnvioConfigurado));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(sucursales),isLoading,errorMessage,sucursalProcesandoId,const DeepCollectionEquality().hash(sucursalesConEnvioConfigurado));
 
 @override
 String toString() {
-  return 'SucursalState()';
+  return 'SucursalState(sucursales: $sucursales, isLoading: $isLoading, errorMessage: $errorMessage, sucursalProcesandoId: $sucursalProcesandoId, sucursalesConEnvioConfigurado: $sucursalesConEnvioConfigurado)';
 }
 
 
 }
 
 /// @nodoc
-class $SucursalStateCopyWith<$Res>  {
-$SucursalStateCopyWith(SucursalState _, $Res Function(SucursalState) __);
+abstract mixin class $SucursalStateCopyWith<$Res>  {
+  factory $SucursalStateCopyWith(SucursalState value, $Res Function(SucursalState) _then) = _$SucursalStateCopyWithImpl;
+@useResult
+$Res call({
+ List<Sucursal> sucursales, bool isLoading, String? errorMessage, String? sucursalProcesandoId, Set<String> sucursalesConEnvioConfigurado
+});
+
+
+
+
+}
+/// @nodoc
+class _$SucursalStateCopyWithImpl<$Res>
+    implements $SucursalStateCopyWith<$Res> {
+  _$SucursalStateCopyWithImpl(this._self, this._then);
+
+  final SucursalState _self;
+  final $Res Function(SucursalState) _then;
+
+/// Create a copy of SucursalState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? sucursales = null,Object? isLoading = null,Object? errorMessage = freezed,Object? sucursalProcesandoId = freezed,Object? sucursalesConEnvioConfigurado = null,}) {
+  return _then(_self.copyWith(
+sucursales: null == sucursales ? _self.sucursales : sucursales // ignore: cast_nullable_to_non_nullable
+as List<Sucursal>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,sucursalProcesandoId: freezed == sucursalProcesandoId ? _self.sucursalProcesandoId : sucursalProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,sucursalesConEnvioConfigurado: null == sucursalesConEnvioConfigurado ? _self.sucursalesConEnvioConfigurado : sucursalesConEnvioConfigurado // ignore: cast_nullable_to_non_nullable
+as Set<String>,
+  ));
+}
+
 }
 
 
@@ -55,14 +90,11 @@ extension SucursalStatePatterns on SucursalState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( SucursalInitial value)?  initial,TResult Function( SucursalLoading value)?  loading,TResult Function( SucursalLoaded value)?  loaded,TResult Function( SucursalError value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _SucursalState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case SucursalInitial() when initial != null:
-return initial(_that);case SucursalLoading() when loading != null:
-return loading(_that);case SucursalLoaded() when loaded != null:
-return loaded(_that);case SucursalError() when error != null:
-return error(_that);case _:
+case _SucursalState() when $default != null:
+return $default(_that);case _:
   return orElse();
 
 }
@@ -80,14 +112,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( SucursalInitial value)  initial,required TResult Function( SucursalLoading value)  loading,required TResult Function( SucursalLoaded value)  loaded,required TResult Function( SucursalError value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _SucursalState value)  $default,){
 final _that = this;
 switch (_that) {
-case SucursalInitial():
-return initial(_that);case SucursalLoading():
-return loading(_that);case SucursalLoaded():
-return loaded(_that);case SucursalError():
-return error(_that);case _:
+case _SucursalState():
+return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -104,14 +133,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( SucursalInitial value)?  initial,TResult? Function( SucursalLoading value)?  loading,TResult? Function( SucursalLoaded value)?  loaded,TResult? Function( SucursalError value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _SucursalState value)?  $default,){
 final _that = this;
 switch (_that) {
-case SucursalInitial() when initial != null:
-return initial(_that);case SucursalLoading() when loading != null:
-return loading(_that);case SucursalLoaded() when loaded != null:
-return loaded(_that);case SucursalError() when error != null:
-return error(_that);case _:
+case _SucursalState() when $default != null:
+return $default(_that);case _:
   return null;
 
 }
@@ -128,13 +154,10 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Sucursal> sucursales)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Sucursal> sucursales,  bool isLoading,  String? errorMessage,  String? sucursalProcesandoId,  Set<String> sucursalesConEnvioConfigurado)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case SucursalInitial() when initial != null:
-return initial();case SucursalLoading() when loading != null:
-return loading();case SucursalLoaded() when loaded != null:
-return loaded(_that.sucursales);case SucursalError() when error != null:
-return error(_that.message);case _:
+case _SucursalState() when $default != null:
+return $default(_that.sucursales,_that.isLoading,_that.errorMessage,_that.sucursalProcesandoId,_that.sucursalesConEnvioConfigurado);case _:
   return orElse();
 
 }
@@ -152,13 +175,10 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Sucursal> sucursales)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Sucursal> sucursales,  bool isLoading,  String? errorMessage,  String? sucursalProcesandoId,  Set<String> sucursalesConEnvioConfigurado)  $default,) {final _that = this;
 switch (_that) {
-case SucursalInitial():
-return initial();case SucursalLoading():
-return loading();case SucursalLoaded():
-return loaded(_that.sucursales);case SucursalError():
-return error(_that.message);case _:
+case _SucursalState():
+return $default(_that.sucursales,_that.isLoading,_that.errorMessage,_that.sucursalProcesandoId,_that.sucursalesConEnvioConfigurado);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +195,10 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Sucursal> sucursales)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Sucursal> sucursales,  bool isLoading,  String? errorMessage,  String? sucursalProcesandoId,  Set<String> sucursalesConEnvioConfigurado)?  $default,) {final _that = this;
 switch (_that) {
-case SucursalInitial() when initial != null:
-return initial();case SucursalLoading() when loading != null:
-return loading();case SucursalLoaded() when loaded != null:
-return loaded(_that.sucursales);case SucursalError() when error != null:
-return error(_that.message);case _:
+case _SucursalState() when $default != null:
+return $default(_that.sucursales,_that.isLoading,_that.errorMessage,_that.sucursalProcesandoId,_that.sucursalesConEnvioConfigurado);case _:
   return null;
 
 }
@@ -192,113 +209,59 @@ return error(_that.message);case _:
 /// @nodoc
 
 
-class SucursalInitial implements SucursalState {
-  const SucursalInitial();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SucursalInitial);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'SucursalState.initial()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class SucursalLoading implements SucursalState {
-  const SucursalLoading();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SucursalLoading);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'SucursalState.loading()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class SucursalLoaded implements SucursalState {
-  const SucursalLoaded(final  List<Sucursal> sucursales): _sucursales = sucursales;
+class _SucursalState implements SucursalState {
+  const _SucursalState({final  List<Sucursal> sucursales = const [], this.isLoading = false, this.errorMessage, this.sucursalProcesandoId, final  Set<String> sucursalesConEnvioConfigurado = const <String>{}}): _sucursales = sucursales,_sucursalesConEnvioConfigurado = sucursalesConEnvioConfigurado;
   
 
  final  List<Sucursal> _sucursales;
- List<Sucursal> get sucursales {
+@override@JsonKey() List<Sucursal> get sucursales {
   if (_sucursales is EqualUnmodifiableListView) return _sucursales;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_sucursales);
 }
 
+@override@JsonKey() final  bool isLoading;
+@override final  String? errorMessage;
+@override final  String? sucursalProcesandoId;
+ final  Set<String> _sucursalesConEnvioConfigurado;
+@override@JsonKey() Set<String> get sucursalesConEnvioConfigurado {
+  if (_sucursalesConEnvioConfigurado is EqualUnmodifiableSetView) return _sucursalesConEnvioConfigurado;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableSetView(_sucursalesConEnvioConfigurado);
+}
+
 
 /// Create a copy of SucursalState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$SucursalLoadedCopyWith<SucursalLoaded> get copyWith => _$SucursalLoadedCopyWithImpl<SucursalLoaded>(this, _$identity);
+_$SucursalStateCopyWith<_SucursalState> get copyWith => __$SucursalStateCopyWithImpl<_SucursalState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SucursalLoaded&&const DeepCollectionEquality().equals(other._sucursales, _sucursales));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _SucursalState&&const DeepCollectionEquality().equals(other._sucursales, _sucursales)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.sucursalProcesandoId, sucursalProcesandoId) || other.sucursalProcesandoId == sucursalProcesandoId)&&const DeepCollectionEquality().equals(other._sucursalesConEnvioConfigurado, _sucursalesConEnvioConfigurado));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_sucursales));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_sucursales),isLoading,errorMessage,sucursalProcesandoId,const DeepCollectionEquality().hash(_sucursalesConEnvioConfigurado));
 
 @override
 String toString() {
-  return 'SucursalState.loaded(sucursales: $sucursales)';
+  return 'SucursalState(sucursales: $sucursales, isLoading: $isLoading, errorMessage: $errorMessage, sucursalProcesandoId: $sucursalProcesandoId, sucursalesConEnvioConfigurado: $sucursalesConEnvioConfigurado)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $SucursalLoadedCopyWith<$Res> implements $SucursalStateCopyWith<$Res> {
-  factory $SucursalLoadedCopyWith(SucursalLoaded value, $Res Function(SucursalLoaded) _then) = _$SucursalLoadedCopyWithImpl;
-@useResult
+abstract mixin class _$SucursalStateCopyWith<$Res> implements $SucursalStateCopyWith<$Res> {
+  factory _$SucursalStateCopyWith(_SucursalState value, $Res Function(_SucursalState) _then) = __$SucursalStateCopyWithImpl;
+@override @useResult
 $Res call({
- List<Sucursal> sucursales
+ List<Sucursal> sucursales, bool isLoading, String? errorMessage, String? sucursalProcesandoId, Set<String> sucursalesConEnvioConfigurado
 });
 
 
@@ -306,85 +269,23 @@ $Res call({
 
 }
 /// @nodoc
-class _$SucursalLoadedCopyWithImpl<$Res>
-    implements $SucursalLoadedCopyWith<$Res> {
-  _$SucursalLoadedCopyWithImpl(this._self, this._then);
+class __$SucursalStateCopyWithImpl<$Res>
+    implements _$SucursalStateCopyWith<$Res> {
+  __$SucursalStateCopyWithImpl(this._self, this._then);
 
-  final SucursalLoaded _self;
-  final $Res Function(SucursalLoaded) _then;
-
-/// Create a copy of SucursalState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? sucursales = null,}) {
-  return _then(SucursalLoaded(
-null == sucursales ? _self._sucursales : sucursales // ignore: cast_nullable_to_non_nullable
-as List<Sucursal>,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class SucursalError implements SucursalState {
-  const SucursalError(this.message);
-  
-
- final  String message;
+  final _SucursalState _self;
+  final $Res Function(_SucursalState) _then;
 
 /// Create a copy of SucursalState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$SucursalErrorCopyWith<SucursalError> get copyWith => _$SucursalErrorCopyWithImpl<SucursalError>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SucursalError&&(identical(other.message, message) || other.message == message));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,message);
-
-@override
-String toString() {
-  return 'SucursalState.error(message: $message)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $SucursalErrorCopyWith<$Res> implements $SucursalStateCopyWith<$Res> {
-  factory $SucursalErrorCopyWith(SucursalError value, $Res Function(SucursalError) _then) = _$SucursalErrorCopyWithImpl;
-@useResult
-$Res call({
- String message
-});
-
-
-
-
-}
-/// @nodoc
-class _$SucursalErrorCopyWithImpl<$Res>
-    implements $SucursalErrorCopyWith<$Res> {
-  _$SucursalErrorCopyWithImpl(this._self, this._then);
-
-  final SucursalError _self;
-  final $Res Function(SucursalError) _then;
-
-/// Create a copy of SucursalState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(SucursalError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+@override @pragma('vm:prefer-inline') $Res call({Object? sucursales = null,Object? isLoading = null,Object? errorMessage = freezed,Object? sucursalProcesandoId = freezed,Object? sucursalesConEnvioConfigurado = null,}) {
+  return _then(_SucursalState(
+sucursales: null == sucursales ? _self._sucursales : sucursales // ignore: cast_nullable_to_non_nullable
+as List<Sucursal>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,sucursalProcesandoId: freezed == sucursalProcesandoId ? _self.sucursalProcesandoId : sucursalProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,sucursalesConEnvioConfigurado: null == sucursalesConEnvioConfigurado ? _self._sucursalesConEnvioConfigurado : sucursalesConEnvioConfigurado // ignore: cast_nullable_to_non_nullable
+as Set<String>,
   ));
 }
 

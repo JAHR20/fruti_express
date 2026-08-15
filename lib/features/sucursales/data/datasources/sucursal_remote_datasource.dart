@@ -7,9 +7,8 @@ abstract class SucursalRemoteDatasource {
   Future<SucursalModel> actualizar(SucursalModel model);
   Future<SucursalModel?> obtenerPorNombre(String nombre);
   Stream<List<SucursalModel>> watchTodas();
-
   Future<List<String>> obtenerCobertura(String sucursalId);
-  Future<void> guardarCobertura({
+  Future<void> actualizarCobertura({
     required String sucursalId,
     required List<String> codigosPostales,
   });

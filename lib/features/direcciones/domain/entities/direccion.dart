@@ -23,5 +23,4 @@ abstract class Direccion with _$Direccion {
     required double latitud,
     required double longitud,
   }) = _Direccion;
-  // ← Sin fromJson, sin .g.dart
 }

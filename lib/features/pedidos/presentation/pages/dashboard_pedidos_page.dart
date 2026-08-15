@@ -27,11 +27,11 @@ class _DashboardPedidosPageState extends State<DashboardPedidosPage>
   late final PedidosEncargadoCubit _pedidosCubit;
 
   static const _tabs = [
-    (label: 'Nuevos',      estado: EstadoPedido.pagoPendiente),
+    (label: 'Nuevos', estado: EstadoPedido.pagoPendiente),
     (label: 'Confirmados', estado: EstadoPedido.confirmado),
-    (label: 'Preparando',  estado: EstadoPedido.enPreparacion),
-    (label: 'En Camino',   estado: EstadoPedido.enCamino),
-    (label: 'Entregados',  estado: EstadoPedido.entregado),
+    (label: 'Preparando', estado: EstadoPedido.enPreparacion),
+    (label: 'En Camino', estado: EstadoPedido.enCamino),
+    (label: 'Entregados', estado: EstadoPedido.entregado),
   ];
 
   @override
@@ -43,11 +43,10 @@ class _DashboardPedidosPageState extends State<DashboardPedidosPage>
     final usuarioActual =
         (context.read<AuthCubit>().state as AuthAuthenticated).perfil;
 
-    final esEncargado = usuarioActual.sucursalId != null &&
+    final esEncargado =
+        usuarioActual.sucursalId != null &&
         usuarioActual.sucursalId!.isNotEmpty;
 
-    // Encargado → inicia watch directo con su sucursal
-    // Admin → espera a que seleccione sucursal en el dropdown
     if (esEncargado) {
       _sucursalSeleccionadaId = usuarioActual.sucursalId;
       _pedidosCubit.iniciarWatch(usuarioActual.sucursalId!);
@@ -58,7 +57,7 @@ class _DashboardPedidosPageState extends State<DashboardPedidosPage>
 
   @override
   void dispose() {
-    _pedidosCubit.detenerWatch(); 
+    _pedidosCubit.detenerWatch();
     _tabController.dispose();
     super.dispose();
   }
@@ -88,8 +87,8 @@ class _DashboardPedidosPageState extends State<DashboardPedidosPage>
   Widget build(BuildContext context) {
     final usuarioActual =
         (context.read<AuthCubit>().state as AuthAuthenticated).perfil;
-    final esAdminGlobal = usuarioActual.sucursalId == null ||
-        usuarioActual.sucursalId!.isEmpty;
+    final esAdminGlobal =
+        usuarioActual.sucursalId == null || usuarioActual.sucursalId!.isEmpty;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -112,12 +111,10 @@ class _DashboardPedidosPageState extends State<DashboardPedidosPage>
       ),
       body: Column(
         children: [
-          // ─── Selector de sucursal (solo Admin) ───────────────────────────
           if (esAdminGlobal)
             Container(
               width: double.infinity,
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -130,64 +127,68 @@ class _DashboardPedidosPageState extends State<DashboardPedidosPage>
               ),
               child: BlocBuilder<SucursalCubit, SucursalState>(
                 builder: (context, state) {
-                  return state.maybeWhen(
-                    loading: () =>
-                        const Center(child: LinearProgressIndicator()),
-                    loaded: (sucursales) {
-                      if (sucursales.isEmpty) {
-                        return const Text('No hay sucursales registradas.',
-                            style: TextStyle(color: Colors.grey));
+                  if (state.isLoading && state.sucursales.isEmpty) {
+                    return const Center(child: LinearProgressIndicator());
+                  }
+
+                  final sucursales = state.sucursales;
+
+                  if (sucursales.isEmpty) {
+                    return const Text(
+                      'No hay sucursales registradas.',
+                      style: TextStyle(color: Colors.grey),
+                    );
+                  }
+
+                  return DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Selecciona una sucursal',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+                    initialValue: _sucursalSeleccionadaId,
+                    items: sucursales
+                        .map(
+                          (s) => DropdownMenuItem(
+                            value: s.id,
+                            child: Text(s.nombre),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (nuevoId) {
+                      if (nuevoId != null) {
+                        setState(() => _sucursalSeleccionadaId = nuevoId);
+                        // Reinicia el watch con la nueva sucursal
+                        context.read<PedidosEncargadoCubit>().iniciarWatch(
+                          nuevoId,
+                        );
                       }
-                      return DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          labelText: 'Selecciona una sucursal',
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8)),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
-                        ),
-                        initialValue: _sucursalSeleccionadaId,
-                        items: sucursales
-                            .map((s) => DropdownMenuItem(
-                                  value: s.id,
-                                  child: Text(s.nombre),
-                                ))
-                            .toList(),
-                        onChanged: (nuevoId) {
-                          if (nuevoId != null) {
-                            setState(
-                                () => _sucursalSeleccionadaId = nuevoId);
-                            // Reinicia el watch con la nueva sucursal
-                            context
-                                .read<PedidosEncargadoCubit>()
-                                .iniciarWatch(nuevoId);
-                          }
-                        },
-                      );
                     },
-                    orElse: () => const SizedBox.shrink(),
                   );
                 },
               ),
             ),
 
-          // ─── Tabs de pedidos ─────────────────────────────────────────────
           Expanded(
             child: BlocBuilder<PedidosEncargadoCubit, PedidosEncargadoState>(
               builder: (context, state) {
                 return state.when(
                   inicial: () => _SinSucursal(esAdmin: esAdminGlobal),
                   cargando: () => const Center(
-                    child:
-                        CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+                    child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
                   ),
                   error: (msg) => _ErrorView(
                     mensaje: msg,
                     onReintentar: () {
                       if (_sucursalSeleccionadaId != null) {
-                        context
-                            .read<PedidosEncargadoCubit>()
-                            .iniciarWatch(_sucursalSeleccionadaId!);
+                        context.read<PedidosEncargadoCubit>().iniciarWatch(
+                          _sucursalSeleccionadaId!,
+                        );
                       }
                     },
                   ),
@@ -223,8 +224,6 @@ class _DashboardPedidosPageState extends State<DashboardPedidosPage>
   }
 }
 
-// ─── TabViews ─────────────────────────────────────────────────────────────────
-
 class _TabViews extends StatelessWidget {
   final TabController tabController;
   final List<({String label, EstadoPedido estado})> tabs;
@@ -249,8 +248,7 @@ class _TabViews extends StatelessWidget {
     return TabBarView(
       controller: tabController,
       children: tabs.map((tab) {
-        final filtrados =
-            pedidos.where((p) => p.estado == tab.estado).toList();
+        final filtrados = pedidos.where((p) => p.estado == tab.estado).toList();
 
         if (filtrados.isEmpty) {
           return _EstadoVacio(estado: tab.estado);
@@ -274,8 +272,6 @@ class _TabViews extends StatelessWidget {
     );
   }
 }
-
-// ─── Vistas auxiliares ────────────────────────────────────────────────────────
 
 class _SinSucursal extends StatelessWidget {
   final bool esAdmin;

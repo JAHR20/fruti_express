@@ -27,6 +27,6 @@ abstract class Pedido with _$Pedido {
     DateTime? fechaEntrega,
     String? idempotencyKey,
     String? codigoConfirmacion,
-    required List<PedidoItem> items, // ← usa la entidad, no el model
+    required List<PedidoItem> items,
   }) = _Pedido;
 }

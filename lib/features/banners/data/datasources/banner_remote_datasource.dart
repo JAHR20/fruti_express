@@ -9,5 +9,5 @@ abstract class BannerRemoteDatasource {
   Future<BannerModel> actualizar(BannerModel model);
   Future<void> cambiarEstado(String id, bool activo);
   Future<void> eliminar(String id);
-  Future<String> subirImagen(File archivo, String nombreArchivo); // ← para subir imagen opcional
+  Future<String> subirImagen(File archivo, String nombreArchivo);
 }

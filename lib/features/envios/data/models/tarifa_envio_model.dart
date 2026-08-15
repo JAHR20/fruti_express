@@ -34,8 +34,6 @@ abstract class TarifaEnvioModel with _$TarifaEnvioModel {
       fechaCreacion: fechaCreacion,
     );
   }
-
-  // Convierte la Entidad pura (Dominio) en un Modelo (Data) para guardar en JSON
   factory TarifaEnvioModel.fromEntity(TarifaEnvio entity) {
     return TarifaEnvioModel(
       id: entity.id,

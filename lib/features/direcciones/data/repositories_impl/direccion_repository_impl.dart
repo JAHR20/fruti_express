@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/core/utils/supabase_handle_exception.dart';
+import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/data/models/direccion_model.dart';
 import '../datasources/direccion_remote_datasource.dart';
 import '../../domain/entities/direccion.dart';

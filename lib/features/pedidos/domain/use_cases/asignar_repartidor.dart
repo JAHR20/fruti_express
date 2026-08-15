@@ -18,20 +18,14 @@ class AsignarRepartidor {
     required String repartidorId,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Obtener el Pedido
-      // Si el pedido no existe, el repo devuelve Left y el $ corta aquí.
       final pedido = await $(pedidoRepository.obtenerPorId(pedidoId));
 
-      // 2️⃣ Obtener el Usuario (Repartidor)
       final repartidor = await $(usuarioRepository.obtenerPorId(repartidorId));
 
-      // 3️⃣ Validar Rol de Repartidor
       await $(_validarRolRepartidor(repartidor));
 
-      // 4️⃣ Validar Correspondencia de Sucursal
       await $(_validarSucursalMatch(repartidor, pedido));
 
-      // 5️⃣ Ejecutar Asignación Final
       return await $(
         pedidoRepository.asignarRepartidor(
           pedidoId: pedidoId,
@@ -40,8 +34,6 @@ class AsignarRepartidor {
       );
     });
   }
-
-  // --- 🧩 MICRO-PASOS DE VALIDACIÓN ---
 
   ResultTask<Unit> _validarRolRepartidor(Perfil usuario) =>
       usuario.rol == TipoUsuario.repartidor

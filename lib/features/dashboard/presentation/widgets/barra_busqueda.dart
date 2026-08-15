@@ -21,7 +21,7 @@ class BarraBusqueda extends StatelessWidget {
           suffixIcon: const Icon(
             Icons.mic_none,
             color: Colors.grey,
-          ), // Como en tu diseño de Hypermart
+          ),
           filled: true,
           fillColor: Colors.white,
           contentPadding: const EdgeInsets.symmetric(vertical: 0),

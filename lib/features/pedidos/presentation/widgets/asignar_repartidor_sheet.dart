@@ -67,9 +67,7 @@ class _AsignarRepartidorSheetState extends State<AsignarRepartidorSheet> {
             style: TextStyle(color: Colors.grey.shade600),
           ),
           const SizedBox(height: 20),
-
-          // ─── Lista de repartidores ────────────────────────────────────────
-          BlocBuilder<RepartidoresCubit, RepartidoresState>( // ← tipo correcto
+          BlocBuilder<RepartidoresCubit, RepartidoresState>(
             builder: (context, state) {
               return state.when(
                 inicial: () => const SizedBox.shrink(),

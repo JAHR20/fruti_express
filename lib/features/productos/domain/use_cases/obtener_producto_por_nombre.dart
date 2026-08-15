@@ -13,7 +13,6 @@ class ObtenerProductoPorNombre {
     final nombreTrim = nombre.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación de entrada (Fail Fast)
       if (nombreTrim.isEmpty) {
         return await $(
           TaskEither.left(
@@ -24,11 +23,7 @@ class ObtenerProductoPorNombre {
         );
       }
 
-      // 2️⃣ Llamada al repositorio
-      // El $ extrae el Producto? del TaskEither
       final producto = await $(repository.obtenerPorNombre(nombreTrim));
-
-      // 3️⃣ Validación de existencia (Semántica de Negocio)
 
       return producto;
     });

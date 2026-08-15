@@ -17,7 +17,7 @@ class CambiarEstadoSucursal {
     required bool nuevoEstado,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Seguridad: Solo el Super Admin puede desactivar sucursales
+      // Solo el Super Admin puede desactivar sucursales
       if (!usuarioActual.esAdmin) {
         return await $(
           TaskEither.left(
@@ -28,7 +28,7 @@ class CambiarEstadoSucursal {
         );
       }
 
-      // 2️⃣ Obtener la sucursal actual
+      // Obtener la sucursal actual
       final sucursal = await $(repository.obtenerPorId(sucursalId));
       if (sucursal == null) {
         return await $(
@@ -36,7 +36,7 @@ class CambiarEstadoSucursal {
         );
       }
 
-      // 3️⃣ Validación de Negocio: No desactivar algo ya desactivado
+      // Validación de Negocio, no se puede desactivar algo ya desactivado
       if (sucursal.activa == nuevoEstado) {
         return await $(
           TaskEither.left(
@@ -45,14 +45,8 @@ class CambiarEstadoSucursal {
         );
       }
 
-      // 💡 REGLA DE INTEGRIDAD (Opcional pero recomendada):
-      // Podrías verificar si hay pedidos "En Camino" antes de permitir desactivar.
-      // await $(_validarSinPedidosPendientes(sucursalId));
-
-      // 4️⃣ Aplicar el cambio (Inmutabilidad)
       final actualizada = sucursal.copyWith(activa: nuevoEstado);
 
-      // 5️⃣ Persistir
       return await $(repository.actualizar(actualizada));
     });
   }

@@ -30,7 +30,7 @@ class _TermsCheckboxState extends State<TermsCheckbox> {
                 widget.onChanged!(_isChecked);
               }
             },
-            activeColor: const Color(0xFF1E3A8A), // Azul oscuro
+            activeColor: const Color(0xFF1E3A8A),
           ),
         ),
         const SizedBox(width: 12),
@@ -45,14 +45,24 @@ class _TermsCheckboxState extends State<TermsCheckbox> {
               const SizedBox(height: 4),
               RichText(
                 text: const TextSpan(
-                  style: TextStyle(color: Colors.black54, fontSize: 12, height: 1.4),
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 12,
+                    height: 1.4,
+                  ),
                   children: [
                     TextSpan(text: 'I accept the '),
                     TextSpan(
                       text: 'terms and conditions',
-                      style: TextStyle(color: Color(0xFF1E3A8A), fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        color: Color(0xFF1E3A8A),
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    TextSpan(text: ' as well as the privacy policy of this application'),
+                    TextSpan(
+                      text:
+                          ' as well as the privacy policy of this application',
+                    ),
                   ],
                 ),
               ),

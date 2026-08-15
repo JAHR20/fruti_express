@@ -7,7 +7,6 @@ class ObtenerSucursales {
 
   ObtenerSucursales(this.repository);
 
-  /// Obtiene todas las sucursales registradas.
   ResultTask<List<Sucursal>> ejecutar() {
     return repository.obtenerTodas();
   }

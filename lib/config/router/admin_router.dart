@@ -10,6 +10,7 @@ import 'package:fruti_express_jahr_admin/features/auth/presentation/pages/login_
 import 'package:fruti_express_jahr_admin/features/auth/presentation/pages/register_page.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/banner_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/pages/admin_banners_page.dart';
+import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/carrito/presentation/pages/carrito_cliente_page.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/entities/categoria.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/presentation/cubits/categoria_cubit.dart';
@@ -27,6 +28,7 @@ import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubit
 import 'package:fruti_express_jahr_admin/features/direcciones/presentation/pages/mis_direcciones_page.dart';
 import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/coordinador_cliente_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/envio_admin_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/envio_cliente_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/presentation/cubits/inventario_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/presentation/pages/admin_inventario_page.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';
@@ -42,13 +44,14 @@ import 'package:fruti_express_jahr_admin/features/pedidos/presentation/pages/rep
 import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/productos/presentation/pages/admin_productos_page.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/domain/entities/sucursal.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/formulario_sucursal_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_state.dart';
+import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/wizard_sucursal_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/pages/admin_sucursales_page.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/pages/crear_sucursal_wizard_screen.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/pages/gestion_tarifas_screen.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/extensions/perfil_permisos_extension.dart';
+import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/editar_perfil_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/usuarios_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/presentation/pages/editar_perfil_page.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/presentation/pages/usuarios_page.dart';
@@ -152,7 +155,6 @@ class AppRouter {
           );
         },
       ),
-      // En tu app_router.dart
       GoRoute(
         path: carrito,
         builder: (context, state) {
@@ -186,17 +188,10 @@ class AppRouter {
             ],
             child: BlocListener<SucursalCubit, SucursalState>(
               listener: (context, state) {
-                state.maybeWhen(
-                  loaded: (sucursales) {
-                    if (sucursales.isNotEmpty) {
-                      final sucursalActivaId = sucursales.first.id;
-                      context.read<EnvioAdminCubit>().cargarDatos(
-                        sucursalActivaId,
-                      );
-                    }
-                  },
-                  orElse: () {},
-                );
+                if (state.sucursales.isNotEmpty) {
+                  final sucursalActivaId = state.sucursales.first.id;
+                  context.read<EnvioAdminCubit>().cargarDatos(sucursalActivaId);
+                }
               },
               child: const CheckoutPage(),
             ),
@@ -205,20 +200,18 @@ class AppRouter {
       ),
 
       GoRoute(
-        path: pedidoExitoso, // 🌟 Usamos la constante aquí
+        path: pedidoExitoso,
         builder: (context, state) {
-          // Extraemos el pedido que viene en la propiedad "extra"
           final pedido = state.extra as Pedido;
           return PedidoExitosoPage(pedido: pedido);
         },
       ),
 
       GoRoute(
-        path:
-            clienteEditarPerfil, // ⚠️ Cámbialo por tu variable si tienes una (ej. AppRouter.editarPerfil)
+        path: clienteEditarPerfil,
         builder: (context, state) {
           return BlocProvider(
-            create: (_) => sl<UsuariosCubit>(),
+            create: (_) => sl<EditarPerfilCubit>(),
             child: const EditarPerfilPage(),
           );
         },
@@ -242,17 +235,10 @@ class AppRouter {
             ],
             child: BlocListener<SucursalCubit, SucursalState>(
               listener: (context, state) {
-                state.maybeWhen(
-                  loaded: (sucursales) {
-                    if (sucursales.isNotEmpty) {
-                      final sucursalActivaId = sucursales.first.id;
-                      context.read<EnvioAdminCubit>().cargarDatos(
-                        sucursalActivaId,
-                      );
-                    }
-                  },
-                  orElse: () {},
-                );
+                if (state.sucursales.isNotEmpty) {
+                  final sucursalActivaId = state.sucursales.first.id;
+                  context.read<EnvioAdminCubit>().cargarDatos(sucursalActivaId);
+                }
               },
               child: MisDireccionesPage(usuarioId: perfil.id),
             ),
@@ -270,8 +256,13 @@ class AppRouter {
               GoRoute(
                 path: clienteInicio,
                 builder: (context, state) {
+                  debugPrint('🔵 clienteInicio builder ejecutado');
                   final usuarioActual =
                       (sl<AuthCubit>().state as AuthAuthenticated).perfil;
+                  final sucursalCubit = sl<SucursalCubit>()..cargarSucursales();
+                  final envioClienteCubit = sl<EnvioClienteCubit>();
+                  final carritoCubit = context.read<CarritoCubit>();
+                  final productosCubit = context.read<ProductosCubit>();
 
                   return MultiBlocProvider(
                     providers: [
@@ -284,9 +275,16 @@ class AppRouter {
                         create: (_) =>
                             sl<BannerCubit>()..cargarBannersActivos(),
                       ),
-                      // 🌟 INYECCIÓN LOCAL: Nace aquí, muere al salir de la pantalla
+                      BlocProvider.value(value: sucursalCubit),
+                      BlocProvider.value(value: envioClienteCubit),
                       BlocProvider(
-                        create: (_) => sl<CoordinadorClienteCubit>(),
+                        create: (_) => CoordinadorClienteCubit(
+                          carritoCubit: carritoCubit,
+                          productosCubit: productosCubit,
+                          sucursalCubit: sucursalCubit,
+                          envioClienteCubit: envioClienteCubit,
+                          direccionesCubit: sl(),
+                        ),
                         lazy: false,
                       ),
                     ],
@@ -299,7 +297,6 @@ class AppRouter {
 
           StatefulShellBranch(
             routes: [
-              // ✅ Corregido
               GoRoute(
                 path: clienteCategorias,
                 builder: (context, state) {
@@ -368,18 +365,12 @@ class AppRouter {
                 path: adminSucursalesNueva,
                 builder: (context, state) {
                   final extra = state.extra as Map<String, dynamic>?;
-
-                  // 🌟 2. Sacamos los valores de forma segura
-                  final sucursal =
-                      extra?['sucursal']
-                          as Sucursal?; // Nota: Asegúrate de importar tu entidad Sucursal
+                  final sucursal = extra?['sucursal'] as Sucursal?;
                   final pasoInicial = extra?['pasoInicial'] as int? ?? 0;
 
                   return MultiBlocProvider(
                     providers: [
-                      BlocProvider(
-                        create: (_) => sl<FormularioSucursalCubit>(),
-                      ),
+                      BlocProvider(create: (_) => sl<WizardSucursalCubit>()),
                       BlocProvider(create: (_) => sl<EnvioAdminCubit>()),
                     ],
                     child: CrearSucursalWizardScreen(

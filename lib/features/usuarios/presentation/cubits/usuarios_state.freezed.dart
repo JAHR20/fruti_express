@@ -14,30 +14,66 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UsuariosState {
 
-
+ List<Perfil> get usuarios; bool get isLoading; UsuariosTab get tab; String? get usuarioProcesandoId; String? get errorMessage; String get searchQuery;
+/// Create a copy of UsuariosState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$UsuariosStateCopyWith<UsuariosState> get copyWith => _$UsuariosStateCopyWithImpl<UsuariosState>(this as UsuariosState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UsuariosState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UsuariosState&&const DeepCollectionEquality().equals(other.usuarios, usuarios)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.tab, tab) || other.tab == tab)&&(identical(other.usuarioProcesandoId, usuarioProcesandoId) || other.usuarioProcesandoId == usuarioProcesandoId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(usuarios),isLoading,tab,usuarioProcesandoId,errorMessage,searchQuery);
 
 @override
 String toString() {
-  return 'UsuariosState()';
+  return 'UsuariosState(usuarios: $usuarios, isLoading: $isLoading, tab: $tab, usuarioProcesandoId: $usuarioProcesandoId, errorMessage: $errorMessage, searchQuery: $searchQuery)';
 }
 
 
 }
 
 /// @nodoc
-class $UsuariosStateCopyWith<$Res>  {
-$UsuariosStateCopyWith(UsuariosState _, $Res Function(UsuariosState) __);
+abstract mixin class $UsuariosStateCopyWith<$Res>  {
+  factory $UsuariosStateCopyWith(UsuariosState value, $Res Function(UsuariosState) _then) = _$UsuariosStateCopyWithImpl;
+@useResult
+$Res call({
+ List<Perfil> usuarios, bool isLoading, UsuariosTab tab, String? usuarioProcesandoId, String? errorMessage, String searchQuery
+});
+
+
+
+
+}
+/// @nodoc
+class _$UsuariosStateCopyWithImpl<$Res>
+    implements $UsuariosStateCopyWith<$Res> {
+  _$UsuariosStateCopyWithImpl(this._self, this._then);
+
+  final UsuariosState _self;
+  final $Res Function(UsuariosState) _then;
+
+/// Create a copy of UsuariosState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? usuarios = null,Object? isLoading = null,Object? tab = null,Object? usuarioProcesandoId = freezed,Object? errorMessage = freezed,Object? searchQuery = null,}) {
+  return _then(_self.copyWith(
+usuarios: null == usuarios ? _self.usuarios : usuarios // ignore: cast_nullable_to_non_nullable
+as List<Perfil>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,tab: null == tab ? _self.tab : tab // ignore: cast_nullable_to_non_nullable
+as UsuariosTab,usuarioProcesandoId: freezed == usuarioProcesandoId ? _self.usuarioProcesandoId : usuarioProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
 }
 
 
@@ -55,14 +91,11 @@ extension UsuariosStatePatterns on UsuariosState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( UsuariosInitial value)?  initial,TResult Function( UsuariosLoading value)?  loading,TResult Function( UsuariosLoaded value)?  loaded,TResult Function( UsuariosError value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _UsuariosState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case UsuariosInitial() when initial != null:
-return initial(_that);case UsuariosLoading() when loading != null:
-return loading(_that);case UsuariosLoaded() when loaded != null:
-return loaded(_that);case UsuariosError() when error != null:
-return error(_that);case _:
+case _UsuariosState() when $default != null:
+return $default(_that);case _:
   return orElse();
 
 }
@@ -80,14 +113,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( UsuariosInitial value)  initial,required TResult Function( UsuariosLoading value)  loading,required TResult Function( UsuariosLoaded value)  loaded,required TResult Function( UsuariosError value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _UsuariosState value)  $default,){
 final _that = this;
 switch (_that) {
-case UsuariosInitial():
-return initial(_that);case UsuariosLoading():
-return loading(_that);case UsuariosLoaded():
-return loaded(_that);case UsuariosError():
-return error(_that);case _:
+case _UsuariosState():
+return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -104,14 +134,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( UsuariosInitial value)?  initial,TResult? Function( UsuariosLoading value)?  loading,TResult? Function( UsuariosLoaded value)?  loaded,TResult? Function( UsuariosError value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _UsuariosState value)?  $default,){
 final _that = this;
 switch (_that) {
-case UsuariosInitial() when initial != null:
-return initial(_that);case UsuariosLoading() when loading != null:
-return loading(_that);case UsuariosLoaded() when loaded != null:
-return loaded(_that);case UsuariosError() when error != null:
-return error(_that);case _:
+case _UsuariosState() when $default != null:
+return $default(_that);case _:
   return null;
 
 }
@@ -128,13 +155,10 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Perfil> usuarios)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Perfil> usuarios,  bool isLoading,  UsuariosTab tab,  String? usuarioProcesandoId,  String? errorMessage,  String searchQuery)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case UsuariosInitial() when initial != null:
-return initial();case UsuariosLoading() when loading != null:
-return loading();case UsuariosLoaded() when loaded != null:
-return loaded(_that.usuarios);case UsuariosError() when error != null:
-return error(_that.message);case _:
+case _UsuariosState() when $default != null:
+return $default(_that.usuarios,_that.isLoading,_that.tab,_that.usuarioProcesandoId,_that.errorMessage,_that.searchQuery);case _:
   return orElse();
 
 }
@@ -152,13 +176,10 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Perfil> usuarios)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Perfil> usuarios,  bool isLoading,  UsuariosTab tab,  String? usuarioProcesandoId,  String? errorMessage,  String searchQuery)  $default,) {final _that = this;
 switch (_that) {
-case UsuariosInitial():
-return initial();case UsuariosLoading():
-return loading();case UsuariosLoaded():
-return loaded(_that.usuarios);case UsuariosError():
-return error(_that.message);case _:
+case _UsuariosState():
+return $default(_that.usuarios,_that.isLoading,_that.tab,_that.usuarioProcesandoId,_that.errorMessage,_that.searchQuery);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +196,10 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Perfil> usuarios)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Perfil> usuarios,  bool isLoading,  UsuariosTab tab,  String? usuarioProcesandoId,  String? errorMessage,  String searchQuery)?  $default,) {final _that = this;
 switch (_that) {
-case UsuariosInitial() when initial != null:
-return initial();case UsuariosLoading() when loading != null:
-return loading();case UsuariosLoaded() when loaded != null:
-return loaded(_that.usuarios);case UsuariosError() when error != null:
-return error(_that.message);case _:
+case _UsuariosState() when $default != null:
+return $default(_that.usuarios,_that.isLoading,_that.tab,_that.usuarioProcesandoId,_that.errorMessage,_that.searchQuery);case _:
   return null;
 
 }
@@ -192,113 +210,54 @@ return error(_that.message);case _:
 /// @nodoc
 
 
-class UsuariosInitial implements UsuariosState {
-  const UsuariosInitial();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UsuariosInitial);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'UsuariosState.initial()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class UsuariosLoading implements UsuariosState {
-  const UsuariosLoading();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UsuariosLoading);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'UsuariosState.loading()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class UsuariosLoaded implements UsuariosState {
-  const UsuariosLoaded(final  List<Perfil> usuarios): _usuarios = usuarios;
+class _UsuariosState implements UsuariosState {
+  const _UsuariosState({final  List<Perfil> usuarios = const [], this.isLoading = false, this.tab = UsuariosTab.todos, this.usuarioProcesandoId, this.errorMessage, this.searchQuery = ''}): _usuarios = usuarios;
   
 
  final  List<Perfil> _usuarios;
- List<Perfil> get usuarios {
+@override@JsonKey() List<Perfil> get usuarios {
   if (_usuarios is EqualUnmodifiableListView) return _usuarios;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_usuarios);
 }
 
+@override@JsonKey() final  bool isLoading;
+@override@JsonKey() final  UsuariosTab tab;
+@override final  String? usuarioProcesandoId;
+@override final  String? errorMessage;
+@override@JsonKey() final  String searchQuery;
 
 /// Create a copy of UsuariosState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$UsuariosLoadedCopyWith<UsuariosLoaded> get copyWith => _$UsuariosLoadedCopyWithImpl<UsuariosLoaded>(this, _$identity);
+_$UsuariosStateCopyWith<_UsuariosState> get copyWith => __$UsuariosStateCopyWithImpl<_UsuariosState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UsuariosLoaded&&const DeepCollectionEquality().equals(other._usuarios, _usuarios));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UsuariosState&&const DeepCollectionEquality().equals(other._usuarios, _usuarios)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.tab, tab) || other.tab == tab)&&(identical(other.usuarioProcesandoId, usuarioProcesandoId) || other.usuarioProcesandoId == usuarioProcesandoId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.searchQuery, searchQuery) || other.searchQuery == searchQuery));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_usuarios));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_usuarios),isLoading,tab,usuarioProcesandoId,errorMessage,searchQuery);
 
 @override
 String toString() {
-  return 'UsuariosState.loaded(usuarios: $usuarios)';
+  return 'UsuariosState(usuarios: $usuarios, isLoading: $isLoading, tab: $tab, usuarioProcesandoId: $usuarioProcesandoId, errorMessage: $errorMessage, searchQuery: $searchQuery)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $UsuariosLoadedCopyWith<$Res> implements $UsuariosStateCopyWith<$Res> {
-  factory $UsuariosLoadedCopyWith(UsuariosLoaded value, $Res Function(UsuariosLoaded) _then) = _$UsuariosLoadedCopyWithImpl;
-@useResult
+abstract mixin class _$UsuariosStateCopyWith<$Res> implements $UsuariosStateCopyWith<$Res> {
+  factory _$UsuariosStateCopyWith(_UsuariosState value, $Res Function(_UsuariosState) _then) = __$UsuariosStateCopyWithImpl;
+@override @useResult
 $Res call({
- List<Perfil> usuarios
+ List<Perfil> usuarios, bool isLoading, UsuariosTab tab, String? usuarioProcesandoId, String? errorMessage, String searchQuery
 });
 
 
@@ -306,84 +265,23 @@ $Res call({
 
 }
 /// @nodoc
-class _$UsuariosLoadedCopyWithImpl<$Res>
-    implements $UsuariosLoadedCopyWith<$Res> {
-  _$UsuariosLoadedCopyWithImpl(this._self, this._then);
+class __$UsuariosStateCopyWithImpl<$Res>
+    implements _$UsuariosStateCopyWith<$Res> {
+  __$UsuariosStateCopyWithImpl(this._self, this._then);
 
-  final UsuariosLoaded _self;
-  final $Res Function(UsuariosLoaded) _then;
-
-/// Create a copy of UsuariosState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? usuarios = null,}) {
-  return _then(UsuariosLoaded(
-null == usuarios ? _self._usuarios : usuarios // ignore: cast_nullable_to_non_nullable
-as List<Perfil>,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class UsuariosError implements UsuariosState {
-  const UsuariosError(this.message);
-  
-
- final  String message;
+  final _UsuariosState _self;
+  final $Res Function(_UsuariosState) _then;
 
 /// Create a copy of UsuariosState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$UsuariosErrorCopyWith<UsuariosError> get copyWith => _$UsuariosErrorCopyWithImpl<UsuariosError>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UsuariosError&&(identical(other.message, message) || other.message == message));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,message);
-
-@override
-String toString() {
-  return 'UsuariosState.error(message: $message)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $UsuariosErrorCopyWith<$Res> implements $UsuariosStateCopyWith<$Res> {
-  factory $UsuariosErrorCopyWith(UsuariosError value, $Res Function(UsuariosError) _then) = _$UsuariosErrorCopyWithImpl;
-@useResult
-$Res call({
- String message
-});
-
-
-
-
-}
-/// @nodoc
-class _$UsuariosErrorCopyWithImpl<$Res>
-    implements $UsuariosErrorCopyWith<$Res> {
-  _$UsuariosErrorCopyWithImpl(this._self, this._then);
-
-  final UsuariosError _self;
-  final $Res Function(UsuariosError) _then;
-
-/// Create a copy of UsuariosState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(UsuariosError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+@override @pragma('vm:prefer-inline') $Res call({Object? usuarios = null,Object? isLoading = null,Object? tab = null,Object? usuarioProcesandoId = freezed,Object? errorMessage = freezed,Object? searchQuery = null,}) {
+  return _then(_UsuariosState(
+usuarios: null == usuarios ? _self._usuarios : usuarios // ignore: cast_nullable_to_non_nullable
+as List<Perfil>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,tab: null == tab ? _self.tab : tab // ignore: cast_nullable_to_non_nullable
+as UsuariosTab,usuarioProcesandoId: freezed == usuarioProcesandoId ? _self.usuarioProcesandoId : usuarioProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,searchQuery: null == searchQuery ? _self.searchQuery : searchQuery // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

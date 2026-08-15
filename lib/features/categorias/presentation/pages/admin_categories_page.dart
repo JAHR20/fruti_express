@@ -5,8 +5,6 @@ import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/entities/categoria.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/presentation/cubits/categoria_state.dart';
-
-// Imports de tus widgets y cubits
 import '../cubits/categoria_cubit.dart';
 import '../widgets/categoria_list_tile.dart';
 import '../widgets/categoria_form_dialog.dart';
@@ -37,50 +35,51 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
     if (authState is! AuthAuthenticated) return;
 
     final perfil = authState.perfil;
-
-    // 🚨 NUEVO: 1. Capturamos el Cubit de la página ANTES de entrar al showDialog
     final categoriaCubit = context.read<CategoriaCubit>();
 
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (dialogContext) {
-        // 🌉 NUEVO: 2. Construimos el puente usando BlocProvider.value
         return BlocProvider.value(
-          value: categoriaCubit, // Le pasamos el Cubit que capturamos arriba
-          // Tu BlocConsumer original se queda igual, pero ahora envuelto por este puente
+          value: categoriaCubit,
           child: BlocConsumer<CategoriaCubit, CategoriaState>(
+            listenWhen: (previous, current) =>
+                previous.operacionError != current.operacionError ||
+                previous.operacionExitosa != current.operacionExitosa,
             listener: (context, state) {
-              state.maybeWhen(
-                error: (message) => ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(message), backgroundColor: Colors.red),
-                ),
-                loaded: (_) {
-                  Navigator.of(dialogContext).pop();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Guardado correctamente'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
-                },
-                orElse: () {},
-              );
+              if (state.operacionError != null) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(state.operacionError!),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+
+              if (state.operacionExitosa) {
+                Navigator.of(dialogContext).pop();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Guardado correctamente'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
             },
             builder: (context, state) {
               return CategoriaFormDialog(
                 categoriaAEditar: categoria,
-                isLoading: state.maybeWhen(
-                  loading: () => true,
-                  orElse: () => false,
-                ),
-                onSave: (nombre, descripcion, imagenUrl) {
+                isLoading:
+                    state.guardandoOperacion ||
+                    state.categoriaProcesandoId != null,
+                onSave: (nombre, descripcion, archivoImagen) {
                   if (categoria == null) {
                     context.read<CategoriaCubit>().crearCategoria(
                       usuarioActual: perfil,
                       nombre: nombre,
                       descripcion: descripcion,
-                      imagenSeleccionada: imagenUrl,
+                      imagenSeleccionada: archivoImagen,
                     );
                   } else {
                     context.read<CategoriaCubit>().editarCategoria(
@@ -88,7 +87,7 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
                       categoriaId: categoria.id,
                       nombre: nombre,
                       descripcion: descripcion,
-                      imagenSeleccionada: imagenUrl,
+                      imagenSeleccionada: archivoImagen,
                     );
                   }
                 },
@@ -139,45 +138,42 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
         foregroundColor: Colors.white,
         icon: const Icon(Icons.add),
         label: const Text('Añadir Categoría'),
-        onPressed: () => _mostrarModalFormulario(), // Modal para CREAR
+        onPressed: () => _mostrarModalFormulario(),
       ),
-
       body: BlocBuilder<CategoriaCubit, CategoriaState>(
         builder: (context, state) {
-          return state.when(
-            initial: () => const Center(
+          if (state.isLoading) {
+            return const Center(
               child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
-            ),
-            loading: () => const Center(
-              child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
-            ),
-            error: (message) => Center(
-              child: Text(message, style: const TextStyle(color: Colors.red)),
-            ),
-            loaded: (lista) {
-              if (lista.isEmpty) {
-                return const Center(
-                  child: Text('No hay categorías registradas.'),
-                );
-              }
+            );
+          }
 
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ListView.builder(
-                  itemCount: lista.length,
-                  itemBuilder: (context, index) {
-                    final categoria = lista[index];
-                    return CategoriaListTile(
-                      categoria: categoria,
-                      onEdit: () =>
-                          _mostrarModalFormulario(categoria: categoria),
-                      onDesactivar: () =>
-                          _mostrarDialogoEstado(context, categoria),
-                    );
-                  },
-                ),
-              );
-            },
+          if (state.errorMessage != null) {
+            return Center(
+              child: Text(
+                state.errorMessage!,
+                style: const TextStyle(color: Colors.red),
+              ),
+            );
+          }
+
+          if (state.categorias.isEmpty) {
+            return const Center(child: Text('No hay categorías registradas.'));
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ListView.builder(
+              itemCount: state.categorias.length,
+              itemBuilder: (context, index) {
+                final categoria = state.categorias[index];
+                return CategoriaListTile(
+                  categoria: categoria,
+                  onEdit: () => _mostrarModalFormulario(categoria: categoria),
+                  onDesactivar: () => _mostrarDialogoEstado(context, categoria),
+                );
+              },
+            ),
           );
         },
       ),

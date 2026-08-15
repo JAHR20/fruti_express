@@ -13,7 +13,7 @@ class AdminShellPage extends StatelessWidget {
     
     try {
       final itemActivo = menuAdminItems.firstWhere((item) => item.ruta == rutaActual);
-      return itemActivo.titulo; // Nomenclatura de punto
+      return itemActivo.titulo;
     } catch (e) {
       return 'Fruti Express Admin'; 
     }

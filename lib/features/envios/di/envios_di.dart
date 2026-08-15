@@ -15,6 +15,7 @@ import 'package:fruti_express_jahr_admin/features/envios/domain/use_cases/elimin
 import 'package:fruti_express_jahr_admin/features/envios/domain/use_cases/guardar_configuracion_envio.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/use_cases/guardar_tarifa_envio.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/use_cases/obtener_configuracion_envio.dart';
+import 'package:fruti_express_jahr_admin/features/envios/domain/use_cases/obtener_sucursales_con_envio_configurado.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/use_cases/obtener_tarifas_envio.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/use_cases/validar_cobertura_envio.dart';
 import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/coordinador_cliente_cubit.dart';
@@ -45,6 +46,7 @@ void initEnvios(GetIt sl) {
   sl.registerLazySingleton(() => GuardarConfiguracionEnvioUseCase(sl()));
   sl.registerLazySingleton(() => GuardarTarifaEnvioUseCase(sl()));
   sl.registerLazySingleton(() => EliminarTarifaEnvioUseCase(sl()));
+  sl.registerLazySingleton(() => ObtenerSucursalesConEnvioConfiguradoUseCase(sl()));
 
   // --- REPOSITORIO ---
   sl.registerLazySingleton<EnvioRepository>(() => EnvioRepositoryImpl(sl()));
@@ -54,7 +56,7 @@ void initEnvios(GetIt sl) {
     () => EnviosRemoteDatasourceImpl(sl()),
   );
 
-  // --- CUBIT ---
+  // --- CUBITS ---
   sl.registerFactory(
     () => EnvioAdminCubit(
       obtenerConfiguracion: sl(),

@@ -10,10 +10,9 @@ import 'pedido_state.dart';
 class PedidoCubit extends Cubit<PedidoState> {
   final CrearPedidoUseCase _crearPedidoUseCase;
 
-  PedidoCubit({
-    required CrearPedidoUseCase crearPedidoUseCase,
-  })  : _crearPedidoUseCase = crearPedidoUseCase,
-        super(const PedidoState.initial());
+  PedidoCubit({required CrearPedidoUseCase crearPedidoUseCase})
+    : _crearPedidoUseCase = crearPedidoUseCase,
+      super(const PedidoState.initial());
 
   Future<void> crearDesdeCarrito({
     required List<CarritoItem> items,
@@ -25,17 +24,16 @@ class PedidoCubit extends Cubit<PedidoState> {
   }) async {
     emit(const PedidoState.procesando());
 
-    // 🌟 Usamos el nuevo getter elegante del Dominio
     final String direccionSnapshotTexto = modoEntrega == ModoEntrega.pickUp
         ? 'Recoger en sucursal (Pick-Up)'
-        : (direccion != null 
-            ? direccion.formateadaSnapshot 
-            : 'Dirección no especificada');
+        : (direccion != null
+              ? direccion.formateadaSnapshot
+              : 'Dirección no especificada');
 
     final params = CrearPedidoParams(
       clienteId: perfil.id,
       sucursalId: sucursalId,
-      clienteNombreSnapshot: perfil.nombreCompletoSnapshot, // 🌟 Usamos el getter
+      clienteNombreSnapshot: perfil.nombreCompletoSnapshot,
       clienteTelefonoSnapshot: perfil.telefono ?? '',
       direccionSnapshot: direccionSnapshotTexto,
       subtotal: subtotal,
@@ -43,13 +41,17 @@ class PedidoCubit extends Cubit<PedidoState> {
       costoEnvio: 0,
       descuentosAplicados: 0,
       total: subtotal,
-      items: items.map((item) => CrearPedidoItemParams(
-        productoId: item.productoId,
-        nombreProductoSnapshot: item.nombre,
-        cantidad: item.cantidad,
-        precioUnitarioSnapshot: item.precioUnitario,
-        unidadMedida: item.unidadMedida,
-      )).toList(),
+      items: items
+          .map(
+            (item) => CrearPedidoItemParams(
+              productoId: item.productoId,
+              nombreProductoSnapshot: item.nombre,
+              cantidad: item.cantidad,
+              precioUnitarioSnapshot: item.precioUnitario,
+              unidadMedida: item.unidadMedida,
+            ),
+          )
+          .toList(),
     );
 
     final result = await _crearPedidoUseCase(params).run();

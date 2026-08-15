@@ -25,7 +25,6 @@ class PerfilHeader extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // ─── Avatar ───────────────────────────────────────────────────
           CircleAvatar(
             radius: 44,
             backgroundColor: Colors.white.withValues(alpha: 0.2),
@@ -44,8 +43,6 @@ class PerfilHeader extends StatelessWidget {
                 : null,
           ),
           const SizedBox(height: 12),
-
-          // ─── Nombre ───────────────────────────────────────────────────
           Text(
             nombreCompleto,
             style: const TextStyle(
@@ -55,8 +52,6 @@ class PerfilHeader extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-
-          // ─── Email ────────────────────────────────────────────────────
           Text(
             perfil.email,
             style: TextStyle(
@@ -64,8 +59,6 @@ class PerfilHeader extends StatelessWidget {
               fontSize: 14,
             ),
           ),
-
-          // ─── Alias (si tiene) ─────────────────────────────────────────
           if (perfil.alias != null) ...[
             const SizedBox(height: 4),
             Container(

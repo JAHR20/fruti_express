@@ -12,8 +12,6 @@ class CarritoRepositoryImpl implements CarritoRepository {
     try {
       return await localDataSource.obtenerCarrito();
     } catch (e) {
-      // 🛡️ Escudo: Si por alguna razón el archivo JSON en el teléfono se corrompió,
-      // no dejamos que la app explote, simplemente le damos un carrito limpio.
       return [];
     }
   }

@@ -8,25 +8,17 @@ class ObtenerInventarioPorProducto {
   final InventarioRepository repository;
 
   ObtenerInventarioPorProducto(this.repository);
-
-  /// Obtiene el estado detallado de inventario de un producto en una sucursal.
   ResultTask<Inventario> ejecutar({
     required String productoId,
     required String sucursalId,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación Fail-Fast
-      // Si los IDs vienen vacíos, ni siquiera molestamos al repositorio.
       await $(_validarInputs(productoId, sucursalId));
 
-      // 2️⃣ Llamada al Repositorio
-      // El operador $ extrae el Inventario? (nullable) del ResultTask.
       final inventario = await $(
         repository.obtener(productoId: productoId, sucursalId: sucursalId),
       );
 
-      // 3️⃣ Manejo Semántico del Nulo
-      // Si es nulo, lo mapeamos a un error de "No encontrado" específico.
       if (inventario == null) {
         return await $(
           TaskEither.left(
@@ -40,8 +32,6 @@ class ObtenerInventarioPorProducto {
       return inventario;
     });
   }
-
-  // --- 🧩 MICRO-PASOS ---
 
   ResultTask<Unit> _validarInputs(String pId, String sId) {
     if (pId.trim().isEmpty || sId.trim().isEmpty) {

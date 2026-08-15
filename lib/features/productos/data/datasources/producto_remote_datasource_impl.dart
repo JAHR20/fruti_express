@@ -56,8 +56,7 @@ class ProductoRemoteDatasourceImpl implements ProductoRemoteDatasource {
     final response = await supabase
         .from('productos')
         .select('*, inventario!inner(stock_disponible)')
-        .ilike('nombre', '%$query%') // Asumiendo que así buscas
-        // 🌟 Agregamos el candado de la sucursal
+        .ilike('nombre', '%$query%')
         .eq('inventario.sucursal_id', sucursalId);
 
     return (response as List).map((json) => ProductoModel.fromJson(json)).toList();
@@ -92,7 +91,6 @@ class ProductoRemoteDatasourceImpl implements ProductoRemoteDatasource {
 
   @override
   Future<void> eliminar(String id) async {
-    // Aplicamos la regla del elefante: Desactivar en lugar de borrar
     await supabase.from('productos').update({'activo': false}).eq('id', id);
   }
 
@@ -102,7 +100,6 @@ class ProductoRemoteDatasourceImpl implements ProductoRemoteDatasource {
         .from('productos')
         .select('*, inventario!inner(stock_disponible)')
         .eq('categoria_id', categoriaId)
-        // 🌟 Agregamos el candado de la sucursal
         .eq('inventario.sucursal_id', sucursalId);
 
     return (response as List).map((json) => ProductoModel.fromJson(json)).toList();

@@ -27,17 +27,17 @@ class CrearProducto {
     final nombreTrim = nombre.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validaciones de Reglas y Seguridad
+      // Validaciones de Reglas y Seguridad
       await $(_validarPermisos(usuario));
       await $(_validarPrecios(precioActual, precioComparacion));
 
-      // 2️⃣ Validaciones de Integridad (DB)
+      // Validaciones de Integridad (DB)
       await $(_validarCategoriaExistente(categoriaId));
       await $(_validarNombreUnico(nombreTrim));
 
-      // 3️⃣ Construcción de la Entidad
+      // Construcción de la Entidad
       final producto = Producto(
-        id: '', 
+        id: '',
         categoriaId: categoriaId,
         nombre: nombreTrim,
         descripcion: descripcion,
@@ -49,13 +49,11 @@ class CrearProducto {
         fechaCreacion: DateTime.now(),
       );
 
-      // 4️⃣ Persistencia
-      // Como crear devuelve ResultTask<Producto>, el $ extrae el Producto final
+      // Persistencia Como crear devuelve ResultTask<Producto>, el $ extrae el Producto final
       return await $(repository.crear(producto));
     });
   }
 
-  // --- 🧩 MICRO-PASOS ---
 
   ResultTask<Unit> _validarPermisos(Perfil u) => u.puedeGestionarCatalogo
       ? TaskEither.right(unit)

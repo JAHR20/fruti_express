@@ -10,9 +10,6 @@ class ConfirmarStock {
   final InventarioRepository repository;
 
   ConfirmarStock(this.repository);
-
-  /// Confirma la salida de stock previamente reservado.
-  /// Reduce tanto la disponibilidad física como la reserva lógica.
   ResultTask<Inventario> ejecutar({
     required Perfil usuarioActual,
     required String productoId,
@@ -20,13 +17,8 @@ class ConfirmarStock {
     required int cantidad,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación Fail-Fast
       await $(_validarCantidad(cantidad));
-
-      // 2️⃣ Seguridad de Capa de Dominio
       await $(_validarPermisos(usuarioActual, sucursalId));
-
-      // 3️⃣ Obtener el estado actual del inventario
       final inventario = await $(
         repository.obtener(productoId: productoId, sucursalId: sucursalId),
       );
@@ -41,22 +33,16 @@ class ConfirmarStock {
         );
       }
 
-      // 4️⃣ 🚨 Regla Crítica: Validar que la reserva cubra la confirmación
       await $(_validarReservaSuficiente(inventario, cantidad));
-
-      // 5️⃣ Transformación Atómica (Doble resta)
       final actualizado = inventario.copyWith(
         stockDisponible: inventario.stockDisponible - cantidad,
         stockReservado: inventario.stockReservado - cantidad,
         fechaActualizacion: DateTime.now(),
       );
-
-      // 6️⃣ Persistencia
       return await $(repository.actualizar(actualizado));
     });
   }
 
-  // --- 🧩 MICRO-PASOS DE LÓGICA ---
 
   ResultTask<Unit> _validarCantidad(int cant) => cant > 0
       ? TaskEither.right(unit)

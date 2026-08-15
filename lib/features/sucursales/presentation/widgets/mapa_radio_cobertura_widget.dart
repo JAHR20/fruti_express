@@ -37,7 +37,7 @@ class MapaRadioCoberturaWidget extends StatelessWidget {
               circles: [
                 CircleMarker(
                   point: centro,
-                  radius: radioKm * 1000, // 🌟 El widget hace la conversión a metros internamente
+                  radius: radioKm * 1000,
                   useRadiusInMeter: true,
                   color: Colors.blue.withValues(alpha: 0.2),
                   borderColor: Colors.blue,

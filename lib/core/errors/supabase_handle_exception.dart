@@ -40,7 +40,7 @@ mixin SupabaseHandleException {
 
     if (error is SocketException ||
         error.toString().contains('SocketException')) {
-      return const Failure.network(); // Llama a tu mensaje "No hay conexión..."
+      return const Failure.network(); 
     }
 
     return Failure.server("Error inesperado: $error");

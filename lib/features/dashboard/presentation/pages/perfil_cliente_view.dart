@@ -1,10 +1,7 @@
-// features/dashboard/presentation/pages/perfil_cliente_view.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/config/router/admin_router.dart';
-import 'package:go_router/go_router.dart'; // 🌟 1. Agregamos el import de GoRouter
-
+import 'package:go_router/go_router.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/features/dashboard/presentation/widgets/perfil_header.dart';
@@ -32,11 +29,8 @@ class PerfilClienteView extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ─── Header ───────────────────────────────────────────────────
             PerfilHeader(perfil: perfil),
             const SizedBox(height: 8),
-
-            // ─── Mi cuenta ────────────────────────────────────────────────
             const PerfilSeccionTitulo(titulo: 'Mi cuenta'),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -57,16 +51,14 @@ class PerfilClienteView extends StatelessWidget {
                     icono: Icons.person_outline,
                     titulo: 'Editar perfil',
                     subtitulo: 'Nombre, teléfono, alias',
-                    // 🌟 2. Navegación limpia para editar perfil
-                    onTap: () => context.push(AppRouter.clienteEditarPerfil), 
+                    onTap: () => context.push(AppRouter.clienteEditarPerfil),
                   ),
                   const Divider(height: 1, indent: 56),
-                  
+
                   PerfilOpcionTile(
                     icono: Icons.location_on_outlined,
                     titulo: 'Mis direcciones',
                     subtitulo: 'Agrega o edita tus direcciones',
-                    // 🌟 3. Navegación limpia para mis direcciones
                     onTap: () => context.push(AppRouter.clienteMisDirecciones),
                   ),
                 ],

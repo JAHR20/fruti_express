@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/core/utils/supabase_handle_exception.dart';
+import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/data/datasources/sucursal_remote_datasource.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/data/models/sucursal_model.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/domain/entities/sucursal.dart';
@@ -68,8 +68,6 @@ class SucursalRepositoryImpl
         );
   }
 
-  // --- 📡 NUEVOS MÉTODOS DE COBERTURA ---
-
   @override
   ResultTask<List<String>> obtenerCobertura(String sucursalId) =>
       TaskEither.tryCatch(
@@ -78,15 +76,15 @@ class SucursalRepositoryImpl
       );
 
   @override
-  ResultTask<Unit> guardarCobertura({
+  ResultTask<Unit> actualizarCobertura({
     required String sucursalId,
     required List<String> codigosPostales,
   }) => TaskEither.tryCatch(() async {
-    await remoteDatasource.guardarCobertura(
+    await remoteDatasource.actualizarCobertura(
       sucursalId: sucursalId,
       codigosPostales: codigosPostales,
     );
-    return unit; // 🌟 Retornamos Unit (vacío funcional) de fpdart
+    return unit;
   }, handleException);
 
   @override

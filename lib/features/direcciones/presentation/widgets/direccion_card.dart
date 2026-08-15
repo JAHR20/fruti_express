@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/domain/entities/sucursal.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_state.dart';
 import 'package:get_it/get_it.dart';
 import 'package:fruti_express_jahr_admin/core/services/ubicacion/ubicacion_service.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/domain/entities/direccion.dart';
-
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_cubit.dart';
-// 🌟 1. AHORA IMPORTAMOS EL DEL CLIENTE
 import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/envio_cliente_cubit.dart';
 
 class DireccionCard extends StatelessWidget {
@@ -25,42 +21,34 @@ class DireccionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final sucursalState = context.watch<SucursalCubit>().state;
-    
-    // 🌟 2. ESCUCHAMOS AL CUBIT DEL CLIENTE
     final envioState = context.watch<EnvioClienteCubit>().state;
-
-    final sucursales = sucursalState.maybeWhen(
-      loaded: (lista) => lista,
-      orElse: () => <Sucursal>[],
-    );
-
-    // 🌟 3. AHORA ES UNA LISTA PLURAL
+    final sucursales = sucursalState.sucursales;
     final configuraciones = envioState.configuraciones;
 
     bool tieneCobertura = false;
     String motivoSinCobertura = '';
-
-    // 🌟 4. NUEVA LÓGICA DE VALIDACIÓN MULTI-SUCURSAL
     if (sucursales.isNotEmpty && configuraciones.isNotEmpty) {
       double distanciaMinimaEncontrada = double.infinity;
       double radioDeLaSucursalMasCercana = 0.0;
       bool fueRechazadoPorCP = false;
 
       for (var sucursal in sucursales) {
-        // A) Buscamos la regla exacta de ESTA sucursal en específico
-        final configIndex = configuraciones.indexWhere((c) => c.sucursalId == sucursal.id);
-        if (configIndex == -1) continue; // Si por algo no tiene config, la saltamos
-
-        final configSucursal = configuraciones[configIndex];
-
-        // B) Validación de Código Postal Exclusiva de esta Sucursal
-        if (configSucursal.requerirValidacionCP &&
-            !configSucursal.codigosPostalesPermitidos.contains(direccion.codigoPostal)) {
-          fueRechazadoPorCP = true;
-          continue; // Esta sucursal no la cubre por C.P., intentamos con la siguiente
+        final configIndex = configuraciones.indexWhere(
+          (c) => c.sucursalId == sucursal.id,
+        );
+        if (configIndex == -1) {
+          continue;
         }
 
-        // C) Si pasó el C.P., calculamos la distancia contra el radio de ESTA sucursal
+        final configSucursal = configuraciones[configIndex];
+        if (configSucursal.requerirValidacionCP &&
+            !configSucursal.codigosPostalesPermitidos.contains(
+              direccion.codigoPostal,
+            )) {
+          fueRechazadoPorCP = true;
+          continue;
+        }
+
         if (sucursal.latitud != null && sucursal.longitud != null) {
           final distanciaKm = GetIt.I<UbicacionService>().calcularDistancia(
             lat1: sucursal.latitud!,
@@ -69,7 +57,6 @@ class DireccionCard extends StatelessWidget {
             lon2: direccion.longitud,
           );
 
-          // Guardamos la menor distancia por si ninguna llega, mostrar qué tan lejos se quedó
           if (distanciaKm < distanciaMinimaEncontrada) {
             distanciaMinimaEncontrada = distanciaKm;
             radioDeLaSucursalMasCercana = configSucursal.radioMaximoKm;
@@ -78,12 +65,11 @@ class DireccionCard extends StatelessWidget {
           if (distanciaKm <= configSucursal.radioMaximoKm) {
             tieneCobertura = true;
             motivoSinCobertura = '';
-            break; // ¡Bingo! Encontramos una sucursal que sí llega. Detenemos la búsqueda.
+            break;
           }
         }
       }
 
-      // Si terminó de revisar todas las sucursales y ninguna llegó:
       if (!tieneCobertura) {
         if (distanciaMinimaEncontrada != double.infinity) {
           motivoSinCobertura =
@@ -99,7 +85,6 @@ class DireccionCard extends StatelessWidget {
       motivoSinCobertura = 'Calculando zona...';
     }
 
-    // El resto de tu UI se queda exactamente igual, es brillante
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
@@ -114,7 +99,9 @@ class DireccionCard extends StatelessWidget {
             side: BorderSide(
               color: !tieneCobertura
                   ? Colors.red.shade300
-                  : (estaSeleccionada ? const Color(0xFF1E3A8A) : Colors.transparent),
+                  : (estaSeleccionada
+                        ? const Color(0xFF1E3A8A)
+                        : Colors.transparent),
               width: estaSeleccionada ? 2.0 : 1.5,
             ),
           ),
@@ -132,7 +119,9 @@ class DireccionCard extends StatelessWidget {
                           direccion.alias.toLowerCase().contains('casa')
                               ? Icons.home
                               : Icons.location_on,
-                          color: tieneCobertura ? const Color(0xFF1E3A8A) : Colors.grey,
+                          color: tieneCobertura
+                              ? const Color(0xFF1E3A8A)
+                              : Colors.grey,
                         ),
                         const SizedBox(width: 8),
                         Text(
@@ -146,14 +135,21 @@ class DireccionCard extends StatelessWidget {
                     ),
                     if (!tieneCobertura)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.red.shade50,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Row(
                           children: [
-                            Icon(Icons.block, size: 14, color: Colors.red.shade700),
+                            Icon(
+                              Icons.block,
+                              size: 14,
+                              color: Colors.red.shade700,
+                            ),
                             const SizedBox(width: 4),
                             Text(
                               motivoSinCobertura,
@@ -183,7 +179,8 @@ class DireccionCard extends StatelessWidget {
                   '${direccion.municipio}, ${direccion.estado}',
                   style: TextStyle(color: Colors.grey.shade700),
                 ),
-                if (direccion.referencias != null && direccion.referencias!.isNotEmpty) ...[
+                if (direccion.referencias != null &&
+                    direccion.referencias!.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(
                     'Ref: ${direccion.referencias}',

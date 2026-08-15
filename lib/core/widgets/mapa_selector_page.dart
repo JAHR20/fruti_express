@@ -53,7 +53,6 @@ class _MapaSelectorPageState extends State<MapaSelectorPage> {
               },
             ),
             children: [
-              // La capa base de OpenStreetMap (100% gratuita)
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.tuempresa.frutiexpressadmin', 
@@ -101,7 +100,7 @@ class _MapaSelectorPageState extends State<MapaSelectorPage> {
 
           Positioned(
             right: 16,
-            bottom: 80, // Margen para que no choque con el FAB central
+            bottom: 80, 
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

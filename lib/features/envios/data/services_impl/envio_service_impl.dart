@@ -3,11 +3,9 @@ import 'package:fruti_express_jahr_admin/features/envios/domain/entities/cotizac
 import 'package:fruti_express_jahr_admin/features/direcciones/domain/entities/direccion.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/entities/configuracion_envio.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/entities/tarifa_envio.dart';
-import 'package:fruti_express_jahr_admin/features/envios/domain/enums/motivo_noDisponible.dart';
+import 'package:fruti_express_jahr_admin/features/envios/domain/enums/motivo_nod_isponible.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/domain/entities/sucursal.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/services/envio_service.dart';
-
-// Importamos las estrategias
 import 'package:fruti_express_jahr_admin/features/envios/domain/strategies/distance_strategy.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/strategies/coverage_strategy.dart';
 import 'package:fruti_express_jahr_admin/features/envios/domain/strategies/pricing_strategy.dart';
@@ -46,7 +44,6 @@ class EnvioServiceImpl implements EnvioService {
       return const Left('Error crítico: La sucursal no tiene coordenadas GPS.');
     }
 
-    // 1. Delegamos el cálculo de distancia
     final distanciaKm = _distanceStrategy.calcularKm(
       lat1: sucursal.latitud!,
       lng1: sucursal.longitud!,
@@ -54,7 +51,6 @@ class EnvioServiceImpl implements EnvioService {
       lng2: direccion.longitud,
     );
 
-    // 2. Delegamos la validación de cobertura
     if (!_coverageStrategy.tieneCobertura(
       distanciaKm: distanciaKm,
       radioMaxKm: configuracion.radioMaximoKm,
@@ -68,15 +64,13 @@ class EnvioServiceImpl implements EnvioService {
       ));
     }
 
-    // 3. Delegamos el cálculo del precio
     final precioResult = _pricingStrategy.obtenerCosto(
       distanciaKm: distanciaKm,
       tarifas: tarifas,
     );
 
-    // Mapeamos el resultado de la estrategia de precios
     return precioResult.fold(
-      (error) => Left(error), // Ej: "No hay tarifa para la distancia de 8.5km"
+      (error) => Left(error),
       (costo) => Right(CotizacionEnvio(
         sucursalId: sucursal.id,
         disponible: true,

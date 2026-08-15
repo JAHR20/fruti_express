@@ -4,9 +4,14 @@ import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner
 part 'banner_state.freezed.dart';
 
 @freezed
-class BannerState with _$BannerState {
-  const factory BannerState.initial() = BannerInitial;
-  const factory BannerState.loading() = BannerLoading;
-  const factory BannerState.loaded(List<Banner> banners) = BannerLoaded;
-  const factory BannerState.error(String message) = BannerError;
+abstract class BannerState with _$BannerState {
+  const factory BannerState({
+    @Default(<Banner>[]) List<Banner> banners,
+    @Default(false) bool isLoading,
+    String? bannerProcesandoId,
+    String? errorMessage,
+    String? operacionError,
+    @Default(false) bool operacionExitosa,
+  }) = _BannerState;
+  const BannerState._(); 
 }

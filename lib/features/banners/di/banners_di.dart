@@ -12,14 +12,16 @@ import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/ba
 import 'package:get_it/get_it.dart';
 
 void initBanners(GetIt sl) async {
+
+  // --- DATA SOURCES
   sl.registerLazySingleton<BannerRemoteDatasource>(
-    () => BannerRemoteDatasourceImpl(sl()), // sl() inyecta el SupabaseClient
+    () => BannerRemoteDatasourceImpl(sl()),
   );
 
-  // 2. Repositories
+  // 2. --- REPOSITORIES ---
   sl.registerLazySingleton<BannerRepository>(() => BannerRepositoryImpl(sl()));
 
-  // 3. Use Cases (Ajusta los nombres a tus clases reales)
+  // 3. --- CASOS DE USO ---
   sl.registerLazySingleton(() => ObtenerBannersActivos(sl()));
   sl.registerLazySingleton(() => ObtenerTodosLosBanners(sl()));
   sl.registerLazySingleton(() => CrearBanner(sl()));
@@ -27,7 +29,7 @@ void initBanners(GetIt sl) async {
   sl.registerLazySingleton(() => CambiarEstadoBanner(sl()));
   sl.registerLazySingleton(() => EliminarBanner(sl()));
 
-  // 4. Cubits (Factory porque queremos instancias limpias cuando la UI lo requiera)
+ // --- CUBITS ---
   sl.registerFactory(
     () => BannerCubit(
       obtenerBannersActivos: sl(),

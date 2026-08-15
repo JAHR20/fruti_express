@@ -4,7 +4,6 @@ import 'package:fruti_express_jahr_admin/features/dashboard/presentation/widgets
 import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_state.dart';
 
-
 class CuadriculaProductos extends StatelessWidget {
   const CuadriculaProductos({super.key});
 
@@ -22,32 +21,50 @@ class CuadriculaProductos extends StatelessWidget {
         ),
         BlocBuilder<ProductosCubit, ProductosState>(
           builder: (context, state) {
-            return state.when(
-              initial: () => const Center(child: Padding(padding: EdgeInsets.all(32.0), child: CircularProgressIndicator())),
-              loading: () => const Center(child: Padding(padding: EdgeInsets.all(32.0), child: CircularProgressIndicator())),
-              error: (message) => Center(child: Padding(padding: const EdgeInsets.all(32.0), child: Text(message, style: const TextStyle(color: Colors.red)))),
-              loaded: (productos, _, __) {
-                if (productos.isEmpty) {
-                  return const Center(child: Padding(padding: EdgeInsets.all(32.0), child: Text('No hay productos disponibles')));
-                }
+            if (state.isLoading) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
 
-                return GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                  shrinkWrap: true, // 🌟 Necesario aquí porque está en el Inicio
-                  physics: const NeverScrollableScrollPhysics(), // 🌟 Necesario aquí
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2,
-                    childAspectRatio: 0.70,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
+            if (state.errorMessage != null) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Text(
+                    state.errorMessage!,
+                    style: const TextStyle(color: Colors.red),
                   ),
-                  itemCount: productos.length,
-                  itemBuilder: (context, index) {
-                    final producto = productos[index];
-                    // 🌟 MAGIA: Llamamos a tu widget reutilizable
-                    return TarjetaProductoCliente(producto: producto);
-                  },
-                );
+                ),
+              );
+            }
+
+            if (state.productos.isEmpty) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(32.0),
+                  child: Text('No hay productos disponibles'),
+                ),
+              );
+            }
+
+            return GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              shrinkWrap: true, 
+              physics: const NeverScrollableScrollPhysics(),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.70,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+              ),
+              itemCount: state.productos.length,
+              itemBuilder: (context, index) {
+                final producto = state.productos[index];
+                return TarjetaProductoCliente(producto: producto);
               },
             );
           },

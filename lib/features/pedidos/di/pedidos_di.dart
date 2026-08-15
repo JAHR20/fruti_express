@@ -22,7 +22,7 @@ import '../data/repositories_impl/pedido_repository_impl.dart';
 import '../domain/repositories/pedido_repository.dart';
 
 void initPedidos(GetIt sl) {
-  // --- 🧠 CASOS DE USO (Use Cases) ---
+  // --- CASOS DE USO ---
   sl.registerLazySingleton(() => ObtenerTodosLosPedidos(sl()));
   sl.registerLazySingleton(() => ObtenerPedidosPorEstado(sl()));
   sl.registerLazySingleton(() => ActualizarEstadoPedido(sl()));
@@ -31,21 +31,20 @@ void initPedidos(GetIt sl) {
   sl.registerLazySingleton(() => CrearPedidoUseCase(sl(), sl()));
   sl.registerLazySingleton(() => ObtenerPedidosUsuarioUseCase(sl()));
   sl.registerLazySingleton(() => ObtenerPedidosRepartidor(sl()));
-
   sl.registerLazySingleton(() => ConfirmarEntrega(sl()));
 
   //---- Services-----
   sl.registerLazySingleton<ContactoService>(() => ContactoServiceImpl());
 
-  // --- 🤝 REPOSITORIO (Repository) ---
+  // --- REPOSITORIO ---
   sl.registerLazySingleton<PedidoRepository>(() => PedidoRepositoryImpl(sl()));
 
-  // --- 🛰️ FUENTE DE DATOS (Data Source) ---
+  // --- DATA SOURCES ---
   sl.registerLazySingleton<PedidoRemoteDatasource>(
     () => PedidoRemoteDatasourceImpl(sl()),
   );
 
-  // --- cubit ------------
+  // --- CUBITS ------------
   sl.registerFactory<PedidoCubit>(
     () => PedidoCubit(crearPedidoUseCase: sl()),
   );

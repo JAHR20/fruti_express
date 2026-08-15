@@ -30,8 +30,6 @@ class CrearBanner {
       if (imagenArchivo != null) {
         final extensionReal = imagenArchivo.path.split('.').last.toLowerCase();
         final nombreUnico = 'banner_${DateTime.now().millisecondsSinceEpoch}.$extensionReal';
-
-        // El '$' extrae la URL automáticamente o detiene todo si hay error
         final url = await $(_repository.subirImagen(imagenArchivo, nombreUnico));
         imageUrlFinal = url;
       }

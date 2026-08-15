@@ -3,33 +3,29 @@ import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/de
 import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/editar_categoria.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/obtener_categorias.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/obtener_categorias_activas.dart';
+import 'package:fruti_express_jahr_admin/features/categorias/domain/use_cases/subir_imagen_categoria_usecase.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/presentation/cubits/categoria_cubit.dart';
 import 'package:get_it/get_it.dart';
-
-// Data Sources
 import '../data/datasources/categoria_remote_datasource.dart';
 import '../data/datasources/categoria_remote_datasource_impl.dart';
-
-// Repositories
 import '../data/repositories_impl/categoria_repository_impl.dart';
-
-// Use Cases
 import '../domain/use_cases/crear_categoria.dart';
 
 void initCategorias(GetIt sl) {
-  // --- CASOS DE USO (Use Cases) ---
+  // --- CASOS DE USO ---
   sl.registerLazySingleton(() => ObtenerCategorias(sl()));
   sl.registerLazySingleton(() => CrearCategoria(sl()));
   sl.registerLazySingleton(() => CambiarEstadoCategoria(sl()));
   sl.registerLazySingleton(() => EditarCategoria(sl()));
   sl.registerLazySingleton(() => ObtenerCategoriasActivas(sl()));
+  sl.registerLazySingleton(() => SubirImagenCategoria(sl()));
 
-  // --- REPOSITORIO (Repository) ---
+  // --- REPOSITORIO ---
   sl.registerLazySingleton<CategoriaRepository>(
     () => CategoriaRepositoryImpl(sl()),
   );
 
-  // --- FUENTE DE DATOS (Data Source) ---
+  // --- DATA SOURCE ---
   sl.registerLazySingleton<CategoriaRemoteDataSource>(
     () => CategoriaRemoteDataSourceImpl(sl()),
   );
@@ -41,6 +37,6 @@ void initCategorias(GetIt sl) {
     editarCategoriaUseCase: sl(),
     obtenerCategoriasUseCase: sl(),
     obtenerCategoriasActivasUseCase: sl(),
-    storageService: sl(),
+    subirImagenCategoriaUseCase: sl(),
   ));
 }

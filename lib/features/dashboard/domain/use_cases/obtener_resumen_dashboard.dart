@@ -24,9 +24,6 @@ class ObtenerResumenDashboard {
           ),
         );
       }
-
-      // 2️⃣ Disparar todas las consultas en paralelo (Velocidad máxima 🚀)
-      // Ejecutamos el .run() de cada TaskEither para que empiecen a trabajar YA.
       final futures = await Future.wait([
         repository.contarPorEstado(idLimpio, EstadoPedido.pagoPendiente).run(),
         repository.contarPorEstado(idLimpio, EstadoPedido.enPreparacion).run(),
@@ -35,16 +32,12 @@ class ObtenerResumenDashboard {
         repository.contarPedidosHoy(idLimpio).run(),
       ]);
 
-      // 3️⃣ Validar y extraer resultados con el operador $
-      // Usamos TaskEither.fromEither para volver al flujo funcional.
-      // Si alguno es Left, el $ detendrá todo y devolverá ese error.
       final pPendientes = await $(TaskEither.fromEither(futures[0]));
       final pPreparacion = await $(TaskEither.fromEither(futures[1]));
       final pCamino = await $(TaskEither.fromEither(futures[2]));
       final pVentas = await $(TaskEither.fromEither(futures[3]));
       final pTotal = await $(TaskEither.fromEither(futures[4]));
 
-      // 4️⃣ Construir el resumen (Solo llegamos aquí si todos fueron Right)
       return DashboardResumen(
         pedidosPendientes: pPendientes,
         pedidosEnPreparacion: pPreparacion,

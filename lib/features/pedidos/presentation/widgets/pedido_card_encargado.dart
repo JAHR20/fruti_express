@@ -55,8 +55,6 @@ class PedidoCardEncargado extends StatelessWidget {
   }
 }
 
-// ─── Subwidgets ───────────────────────────────────────────────────────────────
-
 class _Encabezado extends StatelessWidget {
   final Pedido pedido;
   const _Encabezado({required this.pedido});
@@ -207,7 +205,6 @@ class _Acciones extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Botón cancelar siempre visible (excepto entregado/cancelado)
         if (pedido.estado != EstadoPedido.entregado &&
             pedido.estado != EstadoPedido.cancelado)
           TextButton(
@@ -217,8 +214,7 @@ class _Acciones extends StatelessWidget {
           ),
 
         const Spacer(),
-
-        // Acción principal según estado
+        
         switch (pedido.estado) {
           EstadoPedido.pagoPendiente => FilledButton(
               onPressed: onConfirmar,

@@ -30,8 +30,6 @@ class PedidosRepartidorCubit extends Cubit<PedidosRepartidorState> {
        _storageService = storageService,
        super(const PedidosRepartidorState.inicial());
 
-  // ─── Watch ────────────────────────────────────────────────────────────────
-
   void iniciarWatch(String repartidorId) {
     emit(const PedidosRepartidorState.cargando());
     _subscription?.cancel();
@@ -48,8 +46,6 @@ class PedidosRepartidorCubit extends Cubit<PedidosRepartidorState> {
     _subscription?.cancel();
     _subscription = null;
   }
-
-  // ─── Salir a entregar ─────────────────────────────────────────────────────
 
   Future<void> salirAEntregar(String pedidoId) async {
     final actuales = _pedidosActuales();
@@ -78,8 +74,6 @@ class PedidosRepartidorCubit extends Cubit<PedidosRepartidorState> {
     );
   }
 
-  // ─── Confirmar entrega ────────────────────────────────────────────────────
-
   Future<void> confirmarEntrega({
     required String pedidoId,
     String? codigoConfirmacion,
@@ -89,14 +83,9 @@ class PedidosRepartidorCubit extends Cubit<PedidosRepartidorState> {
     if (actuales == null) return;
 
     emit(
-      PedidosRepartidorState.accionando(
-        // ← debe ser accionando, no errorConPedidos
-        pedidos: actuales,
-        pedidoId: pedidoId,
-      ),
+      PedidosRepartidorState.accionando(pedidos: actuales, pedidoId: pedidoId),
     );
 
-    // 1. Subir foto si hay (cliente ausente)
     String? urlEvidencia;
     if (rutaFoto != null) {
       try {
@@ -116,7 +105,6 @@ class PedidosRepartidorCubit extends Cubit<PedidosRepartidorState> {
       }
     }
 
-    // 2. Llamar RPC
     final result = await _confirmarEntrega(
       ConfirmarEntregaParams(
         pedidoId: pedidoId,
@@ -135,8 +123,6 @@ class PedidosRepartidorCubit extends Cubit<PedidosRepartidorState> {
       (_) => emit(PedidosRepartidorState.cargado(actuales)),
     );
   }
-
-  // ─── Helper ───────────────────────────────────────────────────────────────
 
   List<Pedido>? _pedidosActuales() {
     return state.maybeWhen(

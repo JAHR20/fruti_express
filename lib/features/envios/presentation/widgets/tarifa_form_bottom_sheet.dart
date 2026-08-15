@@ -57,8 +57,6 @@ class _TarifaFormBottomSheetState extends State<TarifaFormBottomSheet> {
       final minKm = double.parse(_minKmCtrl.text);
       final maxKm = double.parse(_maxKmCtrl.text);
 
-      // 🌟 Lo convertimos a entero para respetar tu Entidad (int costo)
-      // Usamos round() por si acaso el admin escribe "30.5", se redondea a 31
       final costo = double.parse(_costoCtrl.text).round();
 
       if (minKm >= maxKm) {
@@ -71,22 +69,17 @@ class _TarifaFormBottomSheetState extends State<TarifaFormBottomSheet> {
         return;
       }
 
-      // 🌟 Autogeneramos el nombre de la tarifa
       final nombreGenerado = 'Tarifa de $minKm a $maxKm km';
 
       final nuevaTarifa = TarifaEnvio(
         id: widget.tarifaAEditar?.id ?? '',
         sucursalId: widget.sucursalId,
-        nombre:
-            widget.tarifaAEditar?.nombre ??
-            nombreGenerado, // 👈 Aquí pasamos el nombre
+        nombre: widget.tarifaAEditar?.nombre ?? nombreGenerado,
         distanciaMinKm: minKm,
         distanciaMaxKm: maxKm,
         costo: costo,
         activa: widget.tarifaAEditar?.activa ?? true,
-        fechaCreacion:
-            widget.tarifaAEditar?.fechaCreacion ??
-            DateTime.now(), // 👈 Aquí la fecha
+        fechaCreacion: widget.tarifaAEditar?.fechaCreacion ?? DateTime.now(),
       );
 
       context.read<EnvioAdminCubit>().guardarTarifa(
@@ -101,7 +94,6 @@ class _TarifaFormBottomSheetState extends State<TarifaFormBottomSheet> {
     final esEdicion = widget.tarifaAEditar != null;
 
     return Padding(
-      // Padding dinámico para que el teclado no tape el formulario
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
         left: 24,
@@ -114,9 +106,7 @@ class _TarifaFormBottomSheetState extends State<TarifaFormBottomSheet> {
         listener: (context, state) {
           if (state.mensajeExito != null &&
               state.mensajeExito!.contains('Tarifa')) {
-            Navigator.of(
-              context,
-            ).pop(); // Cierra el modal al guardar la tarifa exitosamente
+            Navigator.of(context).pop();
           }
         },
         builder: (context, state) {
@@ -144,8 +134,6 @@ class _TarifaFormBottomSheetState extends State<TarifaFormBottomSheet> {
                   ],
                 ),
                 const SizedBox(height: 16),
-
-                // ─── RANGO DE KILÓMETROS ───
                 Row(
                   children: [
                     Expanded(
@@ -184,7 +172,6 @@ class _TarifaFormBottomSheetState extends State<TarifaFormBottomSheet> {
                 ),
                 const SizedBox(height: 16),
 
-                // ─── COSTO ───
                 TextFormField(
                   controller: _costoCtrl,
                   keyboardType: const TextInputType.numberWithOptions(
@@ -199,8 +186,6 @@ class _TarifaFormBottomSheetState extends State<TarifaFormBottomSheet> {
                       val == null || val.isEmpty ? 'Requerido' : null,
                 ),
                 const SizedBox(height: 32),
-
-                // ─── BOTÓN DE GUARDAR ───
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(

@@ -14,30 +14,69 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CategoriaState {
 
-
+ List<Categoria> get categorias; bool get isLoading; String? get errorMessage;// 🌟 Para crear/editar/cambiar estado — no tumba la lista completa
+ bool get guardandoOperacion; String? get operacionError; bool get operacionExitosa;// 🌟 Para saber qué categoría específica se está procesando
+ String? get categoriaProcesandoId;
+/// Create a copy of CategoriaState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CategoriaStateCopyWith<CategoriaState> get copyWith => _$CategoriaStateCopyWithImpl<CategoriaState>(this as CategoriaState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoriaState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoriaState&&const DeepCollectionEquality().equals(other.categorias, categorias)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.guardandoOperacion, guardandoOperacion) || other.guardandoOperacion == guardandoOperacion)&&(identical(other.operacionError, operacionError) || other.operacionError == operacionError)&&(identical(other.operacionExitosa, operacionExitosa) || other.operacionExitosa == operacionExitosa)&&(identical(other.categoriaProcesandoId, categoriaProcesandoId) || other.categoriaProcesandoId == categoriaProcesandoId));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(categorias),isLoading,errorMessage,guardandoOperacion,operacionError,operacionExitosa,categoriaProcesandoId);
 
 @override
 String toString() {
-  return 'CategoriaState()';
+  return 'CategoriaState(categorias: $categorias, isLoading: $isLoading, errorMessage: $errorMessage, guardandoOperacion: $guardandoOperacion, operacionError: $operacionError, operacionExitosa: $operacionExitosa, categoriaProcesandoId: $categoriaProcesandoId)';
 }
 
 
 }
 
 /// @nodoc
-class $CategoriaStateCopyWith<$Res>  {
-$CategoriaStateCopyWith(CategoriaState _, $Res Function(CategoriaState) __);
+abstract mixin class $CategoriaStateCopyWith<$Res>  {
+  factory $CategoriaStateCopyWith(CategoriaState value, $Res Function(CategoriaState) _then) = _$CategoriaStateCopyWithImpl;
+@useResult
+$Res call({
+ List<Categoria> categorias, bool isLoading, String? errorMessage, bool guardandoOperacion, String? operacionError, bool operacionExitosa, String? categoriaProcesandoId
+});
+
+
+
+
+}
+/// @nodoc
+class _$CategoriaStateCopyWithImpl<$Res>
+    implements $CategoriaStateCopyWith<$Res> {
+  _$CategoriaStateCopyWithImpl(this._self, this._then);
+
+  final CategoriaState _self;
+  final $Res Function(CategoriaState) _then;
+
+/// Create a copy of CategoriaState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? categorias = null,Object? isLoading = null,Object? errorMessage = freezed,Object? guardandoOperacion = null,Object? operacionError = freezed,Object? operacionExitosa = null,Object? categoriaProcesandoId = freezed,}) {
+  return _then(_self.copyWith(
+categorias: null == categorias ? _self.categorias : categorias // ignore: cast_nullable_to_non_nullable
+as List<Categoria>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,guardandoOperacion: null == guardandoOperacion ? _self.guardandoOperacion : guardandoOperacion // ignore: cast_nullable_to_non_nullable
+as bool,operacionError: freezed == operacionError ? _self.operacionError : operacionError // ignore: cast_nullable_to_non_nullable
+as String?,operacionExitosa: null == operacionExitosa ? _self.operacionExitosa : operacionExitosa // ignore: cast_nullable_to_non_nullable
+as bool,categoriaProcesandoId: freezed == categoriaProcesandoId ? _self.categoriaProcesandoId : categoriaProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,
+  ));
+}
+
 }
 
 
@@ -55,14 +94,11 @@ extension CategoriaStatePatterns on CategoriaState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( CategoriaInitial value)?  initial,TResult Function( CategoriaLoading value)?  loading,TResult Function( CategoriaLoaded value)?  loaded,TResult Function( CategoriaError value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CategoriaState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case CategoriaInitial() when initial != null:
-return initial(_that);case CategoriaLoading() when loading != null:
-return loading(_that);case CategoriaLoaded() when loaded != null:
-return loaded(_that);case CategoriaError() when error != null:
-return error(_that);case _:
+case _CategoriaState() when $default != null:
+return $default(_that);case _:
   return orElse();
 
 }
@@ -80,14 +116,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( CategoriaInitial value)  initial,required TResult Function( CategoriaLoading value)  loading,required TResult Function( CategoriaLoaded value)  loaded,required TResult Function( CategoriaError value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CategoriaState value)  $default,){
 final _that = this;
 switch (_that) {
-case CategoriaInitial():
-return initial(_that);case CategoriaLoading():
-return loading(_that);case CategoriaLoaded():
-return loaded(_that);case CategoriaError():
-return error(_that);case _:
+case _CategoriaState():
+return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -104,14 +137,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( CategoriaInitial value)?  initial,TResult? Function( CategoriaLoading value)?  loading,TResult? Function( CategoriaLoaded value)?  loaded,TResult? Function( CategoriaError value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CategoriaState value)?  $default,){
 final _that = this;
 switch (_that) {
-case CategoriaInitial() when initial != null:
-return initial(_that);case CategoriaLoading() when loading != null:
-return loading(_that);case CategoriaLoaded() when loaded != null:
-return loaded(_that);case CategoriaError() when error != null:
-return error(_that);case _:
+case _CategoriaState() when $default != null:
+return $default(_that);case _:
   return null;
 
 }
@@ -128,13 +158,10 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Categoria> categorias)?  loaded,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Categoria> categorias,  bool isLoading,  String? errorMessage,  bool guardandoOperacion,  String? operacionError,  bool operacionExitosa,  String? categoriaProcesandoId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case CategoriaInitial() when initial != null:
-return initial();case CategoriaLoading() when loading != null:
-return loading();case CategoriaLoaded() when loaded != null:
-return loaded(_that.categorias);case CategoriaError() when error != null:
-return error(_that.message);case _:
+case _CategoriaState() when $default != null:
+return $default(_that.categorias,_that.isLoading,_that.errorMessage,_that.guardandoOperacion,_that.operacionError,_that.operacionExitosa,_that.categoriaProcesandoId);case _:
   return orElse();
 
 }
@@ -152,13 +179,10 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Categoria> categorias)  loaded,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Categoria> categorias,  bool isLoading,  String? errorMessage,  bool guardandoOperacion,  String? operacionError,  bool operacionExitosa,  String? categoriaProcesandoId)  $default,) {final _that = this;
 switch (_that) {
-case CategoriaInitial():
-return initial();case CategoriaLoading():
-return loading();case CategoriaLoaded():
-return loaded(_that.categorias);case CategoriaError():
-return error(_that.message);case _:
+case _CategoriaState():
+return $default(_that.categorias,_that.isLoading,_that.errorMessage,_that.guardandoOperacion,_that.operacionError,_that.operacionExitosa,_that.categoriaProcesandoId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +199,10 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Categoria> categorias)?  loaded,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Categoria> categorias,  bool isLoading,  String? errorMessage,  bool guardandoOperacion,  String? operacionError,  bool operacionExitosa,  String? categoriaProcesandoId)?  $default,) {final _that = this;
 switch (_that) {
-case CategoriaInitial() when initial != null:
-return initial();case CategoriaLoading() when loading != null:
-return loading();case CategoriaLoaded() when loaded != null:
-return loaded(_that.categorias);case CategoriaError() when error != null:
-return error(_that.message);case _:
+case _CategoriaState() when $default != null:
+return $default(_that.categorias,_that.isLoading,_that.errorMessage,_that.guardandoOperacion,_that.operacionError,_that.operacionExitosa,_that.categoriaProcesandoId);case _:
   return null;
 
 }
@@ -192,113 +213,57 @@ return error(_that.message);case _:
 /// @nodoc
 
 
-class CategoriaInitial implements CategoriaState {
-  const CategoriaInitial();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoriaInitial);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'CategoriaState.initial()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class CategoriaLoading implements CategoriaState {
-  const CategoriaLoading();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoriaLoading);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'CategoriaState.loading()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class CategoriaLoaded implements CategoriaState {
-  const CategoriaLoaded(final  List<Categoria> categorias): _categorias = categorias;
+class _CategoriaState implements CategoriaState {
+  const _CategoriaState({final  List<Categoria> categorias = const <Categoria>[], this.isLoading = false, this.errorMessage, this.guardandoOperacion = false, this.operacionError, this.operacionExitosa = false, this.categoriaProcesandoId}): _categorias = categorias;
   
 
  final  List<Categoria> _categorias;
- List<Categoria> get categorias {
+@override@JsonKey() List<Categoria> get categorias {
   if (_categorias is EqualUnmodifiableListView) return _categorias;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_categorias);
 }
 
+@override@JsonKey() final  bool isLoading;
+@override final  String? errorMessage;
+// 🌟 Para crear/editar/cambiar estado — no tumba la lista completa
+@override@JsonKey() final  bool guardandoOperacion;
+@override final  String? operacionError;
+@override@JsonKey() final  bool operacionExitosa;
+// 🌟 Para saber qué categoría específica se está procesando
+@override final  String? categoriaProcesandoId;
 
 /// Create a copy of CategoriaState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-$CategoriaLoadedCopyWith<CategoriaLoaded> get copyWith => _$CategoriaLoadedCopyWithImpl<CategoriaLoaded>(this, _$identity);
+_$CategoriaStateCopyWith<_CategoriaState> get copyWith => __$CategoriaStateCopyWithImpl<_CategoriaState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoriaLoaded&&const DeepCollectionEquality().equals(other._categorias, _categorias));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CategoriaState&&const DeepCollectionEquality().equals(other._categorias, _categorias)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.guardandoOperacion, guardandoOperacion) || other.guardandoOperacion == guardandoOperacion)&&(identical(other.operacionError, operacionError) || other.operacionError == operacionError)&&(identical(other.operacionExitosa, operacionExitosa) || other.operacionExitosa == operacionExitosa)&&(identical(other.categoriaProcesandoId, categoriaProcesandoId) || other.categoriaProcesandoId == categoriaProcesandoId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_categorias));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_categorias),isLoading,errorMessage,guardandoOperacion,operacionError,operacionExitosa,categoriaProcesandoId);
 
 @override
 String toString() {
-  return 'CategoriaState.loaded(categorias: $categorias)';
+  return 'CategoriaState(categorias: $categorias, isLoading: $isLoading, errorMessage: $errorMessage, guardandoOperacion: $guardandoOperacion, operacionError: $operacionError, operacionExitosa: $operacionExitosa, categoriaProcesandoId: $categoriaProcesandoId)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $CategoriaLoadedCopyWith<$Res> implements $CategoriaStateCopyWith<$Res> {
-  factory $CategoriaLoadedCopyWith(CategoriaLoaded value, $Res Function(CategoriaLoaded) _then) = _$CategoriaLoadedCopyWithImpl;
-@useResult
+abstract mixin class _$CategoriaStateCopyWith<$Res> implements $CategoriaStateCopyWith<$Res> {
+  factory _$CategoriaStateCopyWith(_CategoriaState value, $Res Function(_CategoriaState) _then) = __$CategoriaStateCopyWithImpl;
+@override @useResult
 $Res call({
- List<Categoria> categorias
+ List<Categoria> categorias, bool isLoading, String? errorMessage, bool guardandoOperacion, String? operacionError, bool operacionExitosa, String? categoriaProcesandoId
 });
 
 
@@ -306,85 +271,25 @@ $Res call({
 
 }
 /// @nodoc
-class _$CategoriaLoadedCopyWithImpl<$Res>
-    implements $CategoriaLoadedCopyWith<$Res> {
-  _$CategoriaLoadedCopyWithImpl(this._self, this._then);
+class __$CategoriaStateCopyWithImpl<$Res>
+    implements _$CategoriaStateCopyWith<$Res> {
+  __$CategoriaStateCopyWithImpl(this._self, this._then);
 
-  final CategoriaLoaded _self;
-  final $Res Function(CategoriaLoaded) _then;
-
-/// Create a copy of CategoriaState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? categorias = null,}) {
-  return _then(CategoriaLoaded(
-null == categorias ? _self._categorias : categorias // ignore: cast_nullable_to_non_nullable
-as List<Categoria>,
-  ));
-}
-
-
-}
-
-/// @nodoc
-
-
-class CategoriaError implements CategoriaState {
-  const CategoriaError(this.message);
-  
-
- final  String message;
+  final _CategoriaState _self;
+  final $Res Function(_CategoriaState) _then;
 
 /// Create a copy of CategoriaState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-$CategoriaErrorCopyWith<CategoriaError> get copyWith => _$CategoriaErrorCopyWithImpl<CategoriaError>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CategoriaError&&(identical(other.message, message) || other.message == message));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,message);
-
-@override
-String toString() {
-  return 'CategoriaState.error(message: $message)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class $CategoriaErrorCopyWith<$Res> implements $CategoriaStateCopyWith<$Res> {
-  factory $CategoriaErrorCopyWith(CategoriaError value, $Res Function(CategoriaError) _then) = _$CategoriaErrorCopyWithImpl;
-@useResult
-$Res call({
- String message
-});
-
-
-
-
-}
-/// @nodoc
-class _$CategoriaErrorCopyWithImpl<$Res>
-    implements $CategoriaErrorCopyWith<$Res> {
-  _$CategoriaErrorCopyWithImpl(this._self, this._then);
-
-  final CategoriaError _self;
-  final $Res Function(CategoriaError) _then;
-
-/// Create a copy of CategoriaState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
-  return _then(CategoriaError(
-null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+@override @pragma('vm:prefer-inline') $Res call({Object? categorias = null,Object? isLoading = null,Object? errorMessage = freezed,Object? guardandoOperacion = null,Object? operacionError = freezed,Object? operacionExitosa = null,Object? categoriaProcesandoId = freezed,}) {
+  return _then(_CategoriaState(
+categorias: null == categorias ? _self._categorias : categorias // ignore: cast_nullable_to_non_nullable
+as List<Categoria>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,guardandoOperacion: null == guardandoOperacion ? _self.guardandoOperacion : guardandoOperacion // ignore: cast_nullable_to_non_nullable
+as bool,operacionError: freezed == operacionError ? _self.operacionError : operacionError // ignore: cast_nullable_to_non_nullable
+as String?,operacionExitosa: null == operacionExitosa ? _self.operacionExitosa : operacionExitosa // ignore: cast_nullable_to_non_nullable
+as bool,categoriaProcesandoId: freezed == categoriaProcesandoId ? _self.categoriaProcesandoId : categoriaProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

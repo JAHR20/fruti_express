@@ -7,4 +7,5 @@ abstract class EnviosRemoteDatasource {
   Future<void> guardarConfiguracion(ConfiguracionEnvioModel configuracion);
   Future<void> guardarTarifa(TarifaEnvioModel tarifa);
   Future<void> eliminarTarifa(String tarifaId);
+  Future<Set<String>> obtenerSucursalesConEnvioConfigurado();
 }

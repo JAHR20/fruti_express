@@ -12,10 +12,7 @@ class CarritoFab extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<CarritoCubit, CarritoState>(
       builder: (context, state) {
-        
-        // 🌟 Magia pura: Leemos la cantidad directamente del estado Freezed
         final cantidadArticulos = state.cantidadArticulos;
-
         return Badge(
           isLabelVisible: cantidadArticulos > 0,
           label: Text('$cantidadArticulos'),

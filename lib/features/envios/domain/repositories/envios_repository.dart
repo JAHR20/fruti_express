@@ -5,12 +5,10 @@ import 'package:fruti_express_jahr_admin/features/envios/domain/entities/tarifa_
 
 
 abstract class EnvioRepository {
-  // --- ⚙️ CONFIGURACIÓN ---
   ResultTask<ConfiguracionEnvio?> obtenerConfiguracion(String sucursalId);
   ResultTask<Unit> guardarConfiguracion(ConfiguracionEnvio configuracion);
-
-  // --- 💰 TARIFAS ---
   ResultTask<List<TarifaEnvio>> obtenerTarifas(String sucursalId);
+  ResultTask<Set<String>> obtenerSucursalesConEnvioConfigurado();
   ResultTask<Unit> guardarTarifa(TarifaEnvio tarifa);
   ResultTask<Unit> eliminarTarifa(String tarifaId);
 }

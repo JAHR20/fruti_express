@@ -26,7 +26,7 @@ class CrearSucursal {
     final nombreTrim = nombre.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Seguridad y validaciones previas...
+      // Seguridad y validaciones
       if (!usuarioActual.esAdmin) {
         return await $(
           TaskEither.left(
@@ -71,7 +71,7 @@ class CrearSucursal {
         );
       }
 
-      // 2️⃣ Construimos la entidad (pura, sin los códigos)
+      // se construye la entidad pura.
       final nuevaSucursal = Sucursal(
         id: '',
         nombre: nombreTrim,
@@ -87,10 +87,8 @@ class CrearSucursal {
         longitud: longitud,
       );
 
-      // 3️⃣ Guardamos la Sucursal (Paso 1 en DB)
       final sucursalCreada = await $(repository.crear(nuevaSucursal));
 
-      // Devolvemos la entidad ya lista al Cubit
       return sucursalCreada;
     });
   }

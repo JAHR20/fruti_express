@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/core/utils/supabase_handle_exception.dart';
+import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/productos/data/datasources/producto_remote_datasource.dart';
 import 'package:fruti_express_jahr_admin/features/productos/data/models/producto_model.dart';
 import 'package:fruti_express_jahr_admin/features/productos/domain/entities/producto.dart';
@@ -70,7 +69,6 @@ class ProductoRepositoryImpl
   ResultTask<List<Producto>> buscarProductos(String query, String sucursalId) =>
       TaskEither.tryCatch(() async {
         final models = await remoteDatasource.buscarProductos(query, sucursalId);
-        // Convertimos la lista de Modelos a lista de Entidades Puras
         return models.map((model) => model.toDomain()).toList();
       }, handleException);
 
@@ -111,7 +109,6 @@ class ProductoRepositoryImpl
   ResultTask<List<Producto>> obtenerPorSucursal(String sucursalId) =>
       TaskEither.tryCatch(() async {
         final models = await remoteDatasource.obtenerPorSucursal(sucursalId);
-        // Convertimos la lista de Modelos a lista de Entidades Puras
         return models.map((model) => model.toDomain()).toList();
       }, handleException);
 }

@@ -8,15 +8,13 @@ class BuscarProductos {
   final ProductoRepository repository;
 
   BuscarProductos({required this.repository});
-
-  // 🌟 Devuelve una LISTA de productos, recibe el texto y la sucursal
+  
   ResultTask<List<Producto>> ejecutar(String query, String sucursalId) {
     final queryLimpio = query.trim();
     final sucursalLimpia = sucursalId.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación de entrada (Fail Fast)
-      // Si el usuario presiona "buscar" sin escribir nada o falta la sucursal, lo frenamos.
+      // Validación de entrada Si el usuario presiona "buscar" sin escribir nada o falta la sucursal, lo frenamos.
       if (queryLimpio.isEmpty || sucursalLimpia.isEmpty) {
         return await $(
           TaskEither.left(
@@ -27,10 +25,10 @@ class BuscarProductos {
         );
       }
 
-      // 2️⃣ Llamada al repositorio enviando ambos parámetros limpios
+      // Llamada al repositorio enviando ambos parámetros limpios
       final productos = await $(repository.buscarProductos(queryLimpio, sucursalLimpia));
 
-      // 3️⃣ Éxito: Devolvemos la lista resultante
+      // Éxito: Devolvemos la lista resultante
       return productos;
     });
   }

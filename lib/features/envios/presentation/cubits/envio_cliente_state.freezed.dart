@@ -14,8 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EnvioClienteState {
 
- bool get isLoading; List<ConfiguracionEnvio> get configuraciones;// 🌟 La lista completa
- String? get error;
+ bool get isLoading; List<ConfiguracionEnvio> get configuraciones; String? get error;
 /// Create a copy of EnvioClienteState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -220,7 +219,6 @@ class _EnvioClienteState implements EnvioClienteState {
   return EqualUnmodifiableListView(_configuraciones);
 }
 
-// 🌟 La lista completa
 @override final  String? error;
 
 /// Create a copy of EnvioClienteState

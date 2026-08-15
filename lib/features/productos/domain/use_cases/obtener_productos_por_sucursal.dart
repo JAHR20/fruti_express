@@ -13,7 +13,6 @@ class ObtenerProductosPorSucursal {
     final sucursalLimpia = sucursalId.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación (Fail Fast)
       if (sucursalLimpia.isEmpty) {
         return await $(
           TaskEither.left(
@@ -22,7 +21,6 @@ class ObtenerProductosPorSucursal {
         );
       }
 
-      // 2️⃣ Llamada al repositorio
       final productos = await $(repository.obtenerPorSucursal(sucursalLimpia));
       return productos;
     });

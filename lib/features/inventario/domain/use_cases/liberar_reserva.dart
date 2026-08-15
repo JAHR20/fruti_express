@@ -11,8 +11,6 @@ class LiberarReserva {
 
   LiberarReserva(this.repository);
 
-  /// Libera una cantidad reservada, volviendo a poner el stock disponible
-  /// para otros pedidos. No afecta la disponibilidad física.
   ResultTask<Inventario> ejecutar({
     required Perfil usuarioActual,
     required String productoId,
@@ -20,13 +18,10 @@ class LiberarReserva {
     required int cantidad,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación Fail-Fast
       await $(_validarCantidad(cantidad));
 
-      // 2️⃣ Seguridad de Dominio
       await $(_validarPermisos(usuarioActual, sucursalId));
 
-      // 3️⃣ Obtener registro actual
       final inventario = await $(
         repository.obtener(productoId: productoId, sucursalId: sucursalId),
       );
@@ -41,21 +36,16 @@ class LiberarReserva {
         );
       }
 
-      // 4️⃣ 🛡️ Regla de Negocio: Validar que hay suficiente reserva para liberar
       await $(_validarReservaDisponible(inventario, cantidad));
 
-      // 5️⃣ Actualizar contadores (Solo liberamos la reserva lógica)
       final actualizado = inventario.copyWith(
         stockReservado: inventario.stockReservado - cantidad,
         fechaActualizacion: DateTime.now(),
       );
 
-      // 6️⃣ Persistencia
       return await $(repository.actualizar(actualizado));
     });
   }
-
-  // --- 🧩 MICRO-PASOS DE LÓGICA ---
 
   ResultTask<Unit> _validarCantidad(int cant) => cant > 0
       ? TaskEither.right(unit)

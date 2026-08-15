@@ -12,6 +12,6 @@ abstract class ProductoRemoteDatasource {
   Future<ProductoModel> crear(ProductoModel model);
   Future<ProductoModel> actualizar(ProductoModel model);
   Future<String> subirImagen(File archivo, String nombreArchivo);
-  Future<void> eliminar(String id); // Recordamos: Soft Delete (activa: false)
+  Future<void> eliminar(String id);
   Future<List<ProductoModel>> obtenerPorSucursal(String sucursalId);
 }

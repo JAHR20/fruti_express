@@ -1,5 +1,3 @@
-// features/pedidos/presentation/widgets/repartidor_drawer.dart
-
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/enums/seccion_repartidor.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
@@ -23,7 +21,6 @@ class RepartidorDrawer extends StatelessWidget {
     return Drawer(
       child: Column(
         children: [
-          // ─── Header ───────────────────────────────────────────────────────
           UserAccountsDrawerHeader(
             decoration: const BoxDecoration(color: Color(0xFF1E3A8A)),
             accountName: Text(
@@ -48,8 +45,6 @@ class RepartidorDrawer extends StatelessWidget {
                   : null,
             ),
           ),
-
-          // ─── Opciones ─────────────────────────────────────────────────────
           _OpcionDrawer(
             icono: Icons.delivery_dining,
             etiqueta: 'Mis Pedidos',
@@ -72,7 +67,6 @@ class RepartidorDrawer extends StatelessWidget {
           const Spacer(),
           const Divider(),
 
-          // ─── Cerrar sesión ────────────────────────────────────────────────
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
             title: const Text('Cerrar Sesión',

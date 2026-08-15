@@ -18,13 +18,13 @@ class CambiarRolUsuario {
     String? sucursalAsignadaId,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Obtener el usuario objetivo
+      // Obtener el usuario objetivo
       final usuarioTarget = await $(repository.obtenerPorId(usuarioId));
 
-      // 2️⃣ Regla Crítica: No dejar el sistema sin administradores
+      // regla Crítica: No dejar el sistema sin administradores
       await $(_validarUltimoAdmin(usuarioTarget, nuevoRol));
 
-      // 3️⃣ Construir y validar el nuevo perfil según el rol (Lógica compleja)
+      // Construir y validar el nuevo perfil según el rol (Lógica compleja)
       final perfilActualizado = await $(
         _procesarCambioRol(
           editor: usuarioActual,
@@ -34,14 +34,10 @@ class CambiarRolUsuario {
         ),
       );
 
-      // 4️⃣ Guardar cambios
       return await $(repository.actualizar(perfilActualizado));
     });
   }
 
-  // --- 🧩 MICRO-PASOS DE LÓGICA ---
-
-  /// Evita que el último admin activo pierda su rol
   ResultTask<Unit> _validarUltimoAdmin(Perfil target, TipoUsuario nuevoRol) {
     if (target.esAdmin && nuevoRol != TipoUsuario.admin) {
       return repository.contarAdminsActivos().flatMap(
@@ -57,7 +53,6 @@ class CambiarRolUsuario {
     return TaskEither.right(unit);
   }
 
-  /// Orquestador del cambio de rol con validaciones específicas
   ResultTask<Perfil> _procesarCambioRol({
     required Perfil editor,
     required Perfil target,
@@ -75,8 +70,6 @@ class CambiarRolUsuario {
         return _asignarRolBasico(editor, target, nuevoRol);
     }
   }
-
-  // --- 🔐 VALIDACIONES ESPECÍFICAS POR ROL ---
 
   ResultTask<Perfil> _asignarAdmin(Perfil editor, Perfil target) =>
       editor.esAdmin
@@ -103,7 +96,6 @@ class CambiarRolUsuario {
       );
     }
 
-    // Validación asíncrona: ¿Ya hay encargado?
     return repository
         .existeEncargadoEnSucursal(sucursalId)
         .flatMap(

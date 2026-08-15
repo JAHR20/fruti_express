@@ -13,7 +13,6 @@ class SubirImagenProducto {
     final nombreLimpio = nombreArchivo.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación (Fail Fast)
       if (nombreLimpio.isEmpty) {
         return await $(
           TaskEither.left(
@@ -21,8 +20,6 @@ class SubirImagenProducto {
           ),
         );
       }
-
-      // 2️⃣ Llamada al repositorio
       final url = await $(repository.subirImagen(archivo, nombreLimpio));
       return url;
     });

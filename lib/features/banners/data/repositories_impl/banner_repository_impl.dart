@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/core/utils/supabase_handle_exception.dart';
+import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/banners/data/datasources/banner_remote_datasource.dart';
 import 'package:fruti_express_jahr_admin/features/banners/data/models/banner_model.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner.dart';

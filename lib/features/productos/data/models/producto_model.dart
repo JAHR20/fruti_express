@@ -60,22 +60,14 @@ extension ProductoModelX on ProductoModel {
 
 int _leerStock(Map<dynamic, dynamic> json, String key) {
 
-  print('=============================================');
-  print('📦 PRODUCTO: ${json['nombre']}');
-  print('📦 INVENTARIO BRUTO: ${json['inventario']}');
-  print('=============================================');
-
   final inventario = json['inventario'];
   
-  // Si Supabase lo manda como lista: "inventario": [{"stock": 50}]
   if (inventario is List && inventario.isNotEmpty) {
     return inventario.first['stock_disponible'] ?? 0;
   } 
-  // Si Supabase lo manda como mapa: "inventario": {"stock": 50}
   else if (inventario is Map) {
     return inventario['stock_disponible'] ?? 0;
   }
   
-  // Si ya viene plano (por defecto)
   return json['stock_disponible'] ?? 0;
 }

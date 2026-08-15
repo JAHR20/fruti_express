@@ -31,42 +31,44 @@ class EnvioAdminCubit extends Cubit<EnvioAdminState> {
        _eliminarTarifa = eliminarTarifa,
        super(const EnvioAdminState());
 
- Future<void> cargarDatos(String sucursalId) async {
+  Future<void> cargarDatos(String sucursalId) async {
     emit(state.copyWith(isLoading: true, error: null, mensajeExito: null));
 
     final configResult = await _obtenerConfiguracion(sucursalId).run();
     final tarifasResult = await _obtenerTarifas(sucursalId).run();
 
-    // 🌟 1. Revisamos si falló la configuración
     if (configResult.isLeft()) {
-      // Extraemos el mensaje real del Failure
-      final mensajeError = configResult.match((failure) => failure.errorMessage, (_) => '');
-      print('🔴 ERROR EN CONFIG: $mensajeError');
-      emit(state.copyWith(isLoading: false, error: 'Error Config: $mensajeError'));
+      final mensajeError = configResult.match(
+        (failure) => failure.errorMessage,
+        (_) => '',
+      );
+      emit(
+        state.copyWith(isLoading: false, error: 'Error Config: $mensajeError'),
+      );
       return;
     }
 
-    // 🌟 2. Revisamos si fallaron las tarifas
     if (tarifasResult.isLeft()) {
-      final mensajeError = tarifasResult.match((failure) => failure.errorMessage, (_) => '');
-      print('🔴 ERROR EN TARIFAS: $mensajeError');
-      emit(state.copyWith(isLoading: false, error: 'Error Tarifas: $mensajeError'));
+      final mensajeError = tarifasResult.match(
+        (failure) => failure.errorMessage,
+        (_) => '',
+      );
+      emit(
+        state.copyWith(isLoading: false, error: 'Error Tarifas: $mensajeError'),
+      );
       return;
     }
 
-    // Si llegamos aquí, ambos fueron Right (éxito)
-    // Nota: toNullable() funciona perfecto si tu Either es <Failure, Configuracion?>
-    final configuracion = configResult.getRight().toNullable(); 
-    
-    // Si no hay tarifas, devolvemos una lista vacía
-    final tarifas = tarifasResult.getRight().toNullable() ?? []; 
+    final configuracion = configResult.getRight().toNullable();
+
+    final tarifas = tarifasResult.getRight().toNullable() ?? [];
 
     emit(
       state.copyWith(
         isLoading: false,
         configuracion: configuracion,
         tarifas: tarifas,
-        radioTemporalKm: configuracion?.radioMaximoKm ?? 10.0, // Ajustado a 10.0 como tu inicial
+        radioTemporalKm: configuracion?.radioMaximoKm ?? 10.0,
         requiereCPTemporal: configuracion?.requerirValidacionCP ?? false,
         montoGratisTemporal: configuracion?.montoMinimoEnvioGratis,
       ),
@@ -101,7 +103,13 @@ class EnvioAdminCubit extends Cubit<EnvioAdminState> {
     required Perfil usuarioActual,
     required TarifaEnvio tarifa,
   }) async {
-    emit(state.copyWith(isLoading: true, error: null, mensajeExito: null));
+    emit(
+      state.copyWith(
+        tarifaProcesandoId: tarifa.id,
+        error: null,
+        mensajeExito: null,
+      ),
+    );
 
     final result = await _guardarTarifa(
       usuarioActual: usuarioActual,
@@ -109,16 +117,17 @@ class EnvioAdminCubit extends Cubit<EnvioAdminState> {
     ).run();
 
     result.fold(
-      (failure) =>
-          emit(state.copyWith(isLoading: false, error: failure.errorMessage)),
+      (failure) => emit(
+        state.copyWith(tarifaProcesandoId: null, error: failure.errorMessage),
+      ),
       (_) {
         final index = state.tarifas.indexWhere((t) => t.id == tarifa.id);
         final nuevasTarifas = List<TarifaEnvio>.from(state.tarifas);
 
         if (index >= 0) {
-          nuevasTarifas[index] = tarifa; // Era una edición
+          nuevasTarifas[index] = tarifa;
         } else {
-          nuevasTarifas.add(tarifa); // Era una tarifa nueva
+          nuevasTarifas.add(tarifa);
         }
 
         nuevasTarifas.sort(
@@ -127,7 +136,7 @@ class EnvioAdminCubit extends Cubit<EnvioAdminState> {
 
         emit(
           state.copyWith(
-            isLoading: false,
+            tarifaProcesandoId: null,
             tarifas: nuevasTarifas,
             mensajeExito: 'Tarifa guardada correctamente.',
           ),
@@ -176,5 +185,17 @@ class EnvioAdminCubit extends Cubit<EnvioAdminState> {
 
   void cambiarMontoGratis(double? monto) {
     emit(state.copyWith(montoGratisTemporal: monto));
+  }
+
+  void inicializarConEnvioExistente(ConfiguracionEnvio? configuracion) {
+    if (configuracion == null) return;
+    emit(
+      state.copyWith(
+        configuracion: configuracion,
+        requiereCPTemporal: configuracion.requerirValidacionCP,
+        radioTemporalKm: configuracion.radioMaximoKm,
+        montoGratisTemporal: configuracion.montoMinimoEnvioGratis,
+      ),
+    );
   }
 }

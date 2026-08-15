@@ -1,5 +1,3 @@
-// features/pedidos/presentation/pages/repartidor_dashboard_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/di/injection_container.dart';
@@ -45,7 +43,7 @@ class _RepartidorDashboardPageState extends State<RepartidorDashboardPage> {
 
   void _navegar(SeccionRepartidor seccion) {
     setState(() => _seccion = seccion);
-    Navigator.of(context).pop(); // cierra el drawer
+    Navigator.of(context).pop();
   }
 
   String get _titulo => switch (_seccion) {

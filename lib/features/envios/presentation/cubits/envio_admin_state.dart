@@ -9,11 +9,12 @@ abstract class EnvioAdminState with _$EnvioAdminState {
   const factory EnvioAdminState({
     @Default(false) bool isLoading,
     ConfiguracionEnvio? configuracion,
-    @Default([]) List<TarifaEnvio> tarifas,
+    @Default(<TarifaEnvio>[]) List<TarifaEnvio> tarifas,
     @Default(5.0) double radioTemporalKm,
     @Default(false) bool requiereCPTemporal,
     double? montoGratisTemporal,
     String? error,
-    String? mensajeExito, // Útil para mostrar un SnackBar al guardar
+    String? mensajeExito,
+    String? tarifaProcesandoId,
   }) = _EnvioAdminState;
 }

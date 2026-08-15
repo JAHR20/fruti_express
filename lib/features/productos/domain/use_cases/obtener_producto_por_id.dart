@@ -13,7 +13,7 @@ class ObtenerProductoPorId {
     final idLimpio = id.trim();
 
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación de entrada (Fail Fast)
+      // Validación de entrada
       if (idLimpio.isEmpty) {
         return await $(
           TaskEither.left(
@@ -22,7 +22,7 @@ class ObtenerProductoPorId {
         );
       }
 
-      // 2️⃣ Llamada al repositorio
+      // Llamada al repositorio
       final producto = await $(repository.obtenerPorId(idLimpio));
       return producto;
     });

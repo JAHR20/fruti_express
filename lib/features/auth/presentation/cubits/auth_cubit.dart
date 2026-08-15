@@ -20,7 +20,7 @@ class AuthCubit extends Cubit<AuthState> {
         _registerUseCase = registerUseCase,
         _logoutUseCase = logoutUseCase,
         _checkAuthStatusUseCase = checkAuthStatusUseCase,
-        super(const AuthState.initial()); // ← corregido
+        super(const AuthState.initial()); 
 
   Future<void> checkStatus() async {
     emit(const AuthState.loading());
@@ -73,8 +73,6 @@ class AuthCubit extends Cubit<AuthState> {
   result.fold(
     (failure) => emit(AuthState.error(failure.errorMessage)),
     (_) async {
-      // ← espera un frame antes de emitir unauthenticated
-      await Future.delayed(const Duration(milliseconds: 100));
       emit(const AuthState.unauthenticated());
     },
   );

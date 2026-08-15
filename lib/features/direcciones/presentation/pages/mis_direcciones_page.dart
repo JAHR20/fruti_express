@@ -1,5 +1,3 @@
-// features/direcciones/presentation/pages/mis_direcciones_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/domain/entities/direccion.dart';
@@ -15,6 +13,7 @@ class MisDireccionesPage extends StatelessWidget {
 
   void _abrirFormulario(BuildContext context) {
     final cubit = context.read<DireccionesCubit>();
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -40,6 +39,7 @@ class MisDireccionesPage extends StatelessWidget {
           FilledButton(
             onPressed: () {
               Navigator.of(ctx).pop();
+
               context.read<DireccionesCubit>().eliminarDireccion(direccion.id);
             },
             style: FilledButton.styleFrom(backgroundColor: Colors.red),
@@ -54,6 +54,7 @@ class MisDireccionesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
+
       appBar: AppBar(
         title: const Text(
           'Mis Direcciones',
@@ -69,53 +70,81 @@ class MisDireccionesPage extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocConsumer<DireccionesCubit, DireccionesState>(
-        listener: (context, state) {
-          state.maybeWhen(
-            error: (msg) => ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(msg), backgroundColor: Colors.red),
-            ),
-            orElse: () {},
-          );
-        },
-        builder: (context, state) {
-          return state.maybeWhen(
-            loading: () => const Center(
-              child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
-            ),
-            error: (msg) => _ErrorView(
-              mensaje: msg,
-              onReintentar: () =>
-                  context.read<DireccionesCubit>().cargarDirecciones(usuarioId),
-            ),
-            loaded: (direcciones) {
-              if (direcciones.isEmpty) {
-                return _SinDirecciones(
-                  onAgregar: () => _abrirFormulario(context),
-                );
-              }
 
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: direcciones.length,
-                itemBuilder: (_, i) {
-                  final direccion = direcciones[i];
-                  return _DireccionItemGestion(
-                    direccion: direccion,
-                    onEstablecerPrincipal: direccion.esPrincipal
-                        ? null
-                        : () => context
-                              .read<DireccionesCubit>()
-                              .establecerComoPrincipal(usuarioId, direccion.id),
-                    onEliminar: () => _confirmarEliminar(context, direccion),
-                  );
-                },
+      body: BlocConsumer<DireccionesCubit, DireccionesState>(
+        listenWhen: (previous, current) =>
+            previous.operacionError != current.operacionError ||
+            previous.operacionExitosa != current.operacionExitosa,
+
+        listener: (context, state) {
+          if (state.operacionError != null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.operacionError!),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },
+
+        builder: (context, state) {
+
+          if (state.isLoading && state.direcciones.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+            );
+          }
+
+          if (state.errorMessage != null && state.direcciones.isEmpty) {
+            return _ErrorView(
+              mensaje: state.errorMessage!,
+              onReintentar: () {
+                context.read<DireccionesCubit>().cargarDirecciones(usuarioId);
+              },
+            );
+          }
+
+          if (state.direcciones.isEmpty) {
+            return _SinDirecciones(onAgregar: () => _abrirFormulario(context));
+          }
+
+          return RefreshIndicator(
+            onRefresh: () {
+              return context.read<DireccionesCubit>().cargarDirecciones(
+                usuarioId,
               );
             },
-            orElse: () => const SizedBox.shrink(),
+            child: ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: state.direcciones.length,
+              itemBuilder: (_, index) {
+                final direccion = state.direcciones[index];
+
+                final estaProcesando =
+                    state.direccionProcesandoId == direccion.id;
+
+                return _DireccionItemGestion(
+                  direccion: direccion,
+                  estaProcesando: estaProcesando,
+
+                  onEstablecerPrincipal: direccion.esPrincipal || estaProcesando
+                      ? null
+                      : () {
+                          context
+                              .read<DireccionesCubit>()
+                              .establecerComoPrincipal(usuarioId, direccion.id);
+                        },
+
+                  onEliminar: estaProcesando
+                      ? null
+                      : () => _confirmarEliminar(context, direccion),
+                );
+              },
+            ),
           );
         },
       ),
+
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _abrirFormulario(context),
         backgroundColor: const Color(0xFF1E3A8A),
@@ -129,15 +158,15 @@ class MisDireccionesPage extends StatelessWidget {
   }
 }
 
-// ─── Card con acciones de gestión ─────────────────────────────────────────────
-
 class _DireccionItemGestion extends StatelessWidget {
   final Direccion direccion;
+  final bool estaProcesando;
   final VoidCallback? onEstablecerPrincipal;
-  final VoidCallback onEliminar;
+  final VoidCallback? onEliminar;
 
   const _DireccionItemGestion({
     required this.direccion,
+    required this.estaProcesando,
     required this.onEstablecerPrincipal,
     required this.onEliminar,
   });
@@ -146,13 +175,29 @@ class _DireccionItemGestion extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Reutiliza DireccionCard sin selección
-        DireccionCard(
-          direccion: direccion,
-          estaSeleccionada: direccion.esPrincipal,
-          onTap: () {},
+        Stack(
+          children: [
+            DireccionCard(
+              direccion: direccion,
+              estaSeleccionada: direccion.esPrincipal,
+              onTap: () {},
+            ),
+
+            if (estaProcesando)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Center(
+                    child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+                  ),
+                ),
+              ),
+          ],
         ),
-        // Acciones debajo de la card
+
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Row(
@@ -167,12 +212,14 @@ class _DireccionItemGestion extends StatelessWidget {
                     foregroundColor: const Color(0xFF1E3A8A),
                   ),
                 ),
-              TextButton.icon(
-                onPressed: onEliminar,
-                icon: const Icon(Icons.delete_outline, size: 16),
-                label: const Text('Eliminar'),
-                style: TextButton.styleFrom(foregroundColor: Colors.red),
-              ),
+
+              if (onEliminar != null)
+                TextButton.icon(
+                  onPressed: onEliminar,
+                  icon: const Icon(Icons.delete_outline, size: 16),
+                  label: const Text('Eliminar'),
+                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                ),
             ],
           ),
         ),
@@ -180,8 +227,6 @@ class _DireccionItemGestion extends StatelessWidget {
     );
   }
 }
-
-// ─── Vistas auxiliares ────────────────────────────────────────────────────────
 
 class _SinDirecciones extends StatelessWidget {
   final VoidCallback onAgregar;

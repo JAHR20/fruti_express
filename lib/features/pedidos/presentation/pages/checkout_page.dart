@@ -5,7 +5,6 @@ import 'package:fruti_express_jahr_admin/core/enums/modo_entrega.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_state.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/domain/entities/direccion.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_state.dart';
@@ -14,11 +13,7 @@ import 'package:fruti_express_jahr_admin/features/direcciones/presentation/widge
 import 'package:fruti_express_jahr_admin/features/pedidos/presentation/cubits/pedido_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/presentation/cubits/pedido_state.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/domain/entities/sucursal.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_state.dart';
 import 'package:go_router/go_router.dart';
-
-// 🌟 1. IMPORTAMOS EL CUBIT DEL CLIENTE
 import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/envio_cliente_cubit.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -34,29 +29,29 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   void initState() {
     super.initState();
-    final perfil = context.read<AuthCubit>().state.whenOrNull(authenticated: (p) => p);
+    final perfil = context.read<AuthCubit>().state.whenOrNull(
+      authenticated: (p) => p,
+    );
     if (perfil != null) {
       context.read<DireccionesCubit>().cargarDirecciones(perfil.id);
     }
   }
 
-  // ─── LÓGICA DE NEGOCIO ────────────────────────────────────────────────────
-
   void _manejarSeleccionDireccion(Direccion direccion) {
-    final sucursales = context.read<SucursalCubit>().state.maybeWhen(
-      loaded: (lista) => lista,
-      orElse: () => <Sucursal>[],
-    );
-    
-    // 🌟 2. USAMOS LA LISTA PLURAL DEL CLIENTE
-    final configuraciones = context.read<EnvioClienteCubit>().state.configuraciones;
+    final sucursales = context.read<SucursalCubit>().state.sucursales;
 
-    // 🌟 3. MANDAMOS LA LISTA AL CUBIT (Ya no usamos radioMaximoKm)
-    final sucursalGanadora = context.read<CarritoCubit>().validarCoberturaDireccion(
-      direccion: direccion,
-      sucursales: sucursales,
-      configuraciones: configuraciones,
-    );
+    final configuraciones = context
+        .read<EnvioClienteCubit>()
+        .state
+        .configuraciones;
+
+    final sucursalGanadora = context
+        .read<CarritoCubit>()
+        .validarCoberturaDireccion(
+          direccion: direccion,
+          sucursales: sucursales,
+          configuraciones: configuraciones,
+        );
 
     if (sucursalGanadora != null) {
       setState(() => _direccionSeleccionadaId = direccion.id);
@@ -72,35 +67,44 @@ class _CheckoutPageState extends State<CheckoutPage> {
       return _mostrarError('Selecciona una dirección de envío');
     }
 
-    final perfil = context.read<AuthCubit>().state.whenOrNull(authenticated: (p) => p);
+    final perfil = context.read<AuthCubit>().state.whenOrNull(
+      authenticated: (p) => p,
+    );
     if (perfil == null) {
       return _mostrarError('Sesión expirada. Vuelve a iniciar sesión.');
     }
 
-    final estadoCarrito = context.read<CarritoCubit>().state.mapOrNull(loaded: (s) => s);
-    if (estadoCarrito == null || estadoCarrito.sucursalId == null) {
+    final estadoCarrito = context.read<CarritoCubit>().state;
+    if (estadoCarrito.sucursalId == null) {
       return _mostrarError('Error: No hay sucursal activa o carrito vacío');
     }
 
-    final direcciones = context.read<DireccionesCubit>().state.whenOrNull(loaded: (d) => d);
-    if (direcciones == null) return;
+    final direccionesState = context.read<DireccionesCubit>().state;
+    if (direccionesState.direcciones.isEmpty) return;
+    final direcciones = direccionesState.direcciones;
 
-    final direccion = direcciones.firstWhere((d) => d.id == _direccionSeleccionadaId);
-    final modoSeleccionado = estadoCarrito.modoEntrega ?? ModoEntrega.aDomicilio;
+    final direccion = direcciones.firstWhere(
+      (d) => d.id == _direccionSeleccionadaId,
+    );
+    final modoSeleccionado =
+        estadoCarrito.modoEntrega ?? ModoEntrega.aDomicilio;
 
-    // Validación de seguridad final
     if (modoSeleccionado != ModoEntrega.pickUp) {
-      final sucursales = context.read<SucursalCubit>().state.maybeWhen(loaded: (l) => l, orElse: () => <Sucursal>[]);
-      
-      // 🌟 4. REPETIMOS LA PROTECCIÓN AQUÍ
-      final configuraciones = context.read<EnvioClienteCubit>().state.configuraciones;
-      
-      final sucursalGanadora = context.read<CarritoCubit>().validarCoberturaDireccion(
-        direccion: direccion, 
-        sucursales: sucursales, 
-        configuraciones: configuraciones,
-      );
-      
+      final sucursales = context.read<SucursalCubit>().state.sucursales;
+
+      final configuraciones = context
+          .read<EnvioClienteCubit>()
+          .state
+          .configuraciones;
+
+      final sucursalGanadora = context
+          .read<CarritoCubit>()
+          .validarCoberturaDireccion(
+            direccion: direccion,
+            sucursales: sucursales,
+            configuraciones: configuraciones,
+          );
+
       if (sucursalGanadora == null) {
         return _mostrarModalPickUp(context, direccion, () {
           setState(() => _direccionSeleccionadaId = direccion.id);
@@ -109,7 +113,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     final subtotal = estadoCarrito.items.fold<int>(
-      0, (suma, item) => suma + (item.cantidad * item.precioUnitario),
+      0,
+      (suma, item) => suma + (item.cantidad * item.precioUnitario),
     );
 
     context.read<PedidoCubit>().crearDesdeCarrito(
@@ -125,12 +130,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
   void _autoSeleccionarDireccion(List<Direccion> direcciones) {
     if (_direccionSeleccionadaId != null || direcciones.isEmpty) return;
     setState(() {
-      _direccionSeleccionadaId = direcciones.where((d) => d.esPrincipal).map((d) => d.id).firstOrNull 
-                                 ?? direcciones.first.id;
+      _direccionSeleccionadaId =
+          direcciones
+              .where((d) => d.esPrincipal)
+              .map((d) => d.id)
+              .firstOrNull ??
+          direcciones.first.id;
     });
   }
-
-  // ─── HELPERS DE UI ────────────────────────────────────────────────────────
 
   void _mostrarError(String mensaje) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -140,7 +147,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
 
   void _abrirFormularioDireccion(BuildContext context) {
     final cubit = context.read<DireccionesCubit>();
-    final perfil = context.read<AuthCubit>().state.whenOrNull(authenticated: (p) => p);
+    final perfil = context.read<AuthCubit>().state.whenOrNull(
+      authenticated: (p) => p,
+    );
 
     showModalBottomSheet(
       context: context,
@@ -153,25 +162,28 @@ class _CheckoutPageState extends State<CheckoutPage> {
     );
   }
 
-  // ─── BUILD PRINCIPAL ──────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<PedidoCubit, PedidoState>(
       listener: (context, state) {
         state.maybeWhen(
           procesando: () => showDialog(
-            context: context, barrierDismissible: false,
-            builder: (_) => const Center(child: CircularProgressIndicator(color: Colors.white)),
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            ),
           ),
           esperandoPago: (pedidoCreado) {
-            // 🌟 5. ELIMINAMOS EL DOBLE POP PARA EVITAR PANTALLAS NEGRAS
-            Navigator.of(context).pop(); // Cierra el diálogo de carga
+            Navigator.of(context).pop(); 
             context.read<CarritoCubit>().vaciarCarrito();
-            context.go(AppRouter.pedidoExitoso, extra: pedidoCreado); // Viaja a la pantalla de éxito
+            context.go(
+              AppRouter.pedidoExitoso,
+              extra: pedidoCreado,
+            ); 
           },
           error: (mensaje) {
-            Navigator.of(context).pop(); // Cierra el diálogo de carga
+            Navigator.of(context).pop();
             _mostrarError(mensaje);
           },
           orElse: () {},
@@ -180,46 +192,69 @@ class _CheckoutPageState extends State<CheckoutPage> {
       child: Scaffold(
         backgroundColor: Colors.grey.shade50,
         appBar: AppBar(
-          title: const Text('Confirmar Pedido', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          title: const Text(
+            'Confirmar Pedido',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
           backgroundColor: const Color(0xFF1E3A8A),
           iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: BlocBuilder<DireccionesCubit, DireccionesState>(
           builder: (context, state) {
-            return state.maybeWhen(
-              loading: () => const Center(child: CircularProgressIndicator(color: Color(0xFF1E3A8A))),
-              error: (msg) => Center(child: Text(msg, style: const TextStyle(color: Colors.red))),
-              loaded: (direcciones) {
-                if (direcciones.isEmpty) {
-                  return _VistaSinDirecciones(onAgregar: () => _abrirFormularioDireccion(context));
-                }
+            if (state.isLoading && state.direcciones.isEmpty) {
+              return const Center(
+                child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+              );
+            }
 
-                WidgetsBinding.instance.addPostFrameCallback((_) => _autoSeleccionarDireccion(direcciones));
+            if (state.errorMessage != null && state.direcciones.isEmpty) {
+              return Center(
+                child: Text(
+                  state.errorMessage!,
+                  style: const TextStyle(color: Colors.red),
+                ),
+              );
+            }
 
-                return ListView(
-                  padding: const EdgeInsets.all(24.0),
+            if (state.direcciones.isEmpty) {
+              return _VistaSinDirecciones(
+                onAgregar: () => _abrirFormularioDireccion(context),
+              );
+            }
+
+            WidgetsBinding.instance.addPostFrameCallback(
+              (_) => _autoSeleccionarDireccion(state.direcciones),
+            );
+
+            return ListView(
+              padding: const EdgeInsets.all(24.0),
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text('Dirección de entrega', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        TextButton.icon(
-                          onPressed: () => _abrirFormularioDireccion(context),
-                          icon: const Icon(Icons.add, size: 18),
-                          label: const Text('Nueva'),
-                        ),
-                      ],
+                    const Text(
+                      'Dirección de entrega',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    const SizedBox(height: 16),
-                    ...direcciones.map((direccion) => DireccionCard(
-                          direccion: direccion,
-                          estaSeleccionada: direccion.id == _direccionSeleccionadaId,
-                          onTap: () => _manejarSeleccionDireccion(direccion),
-                        )),
+                    TextButton.icon(
+                      onPressed: () => _abrirFormularioDireccion(context),
+                      icon: const Icon(Icons.add, size: 18),
+                      label: const Text('Nueva'),
+                    ),
                   ],
-                );
-              },
-              orElse: () => const SizedBox.shrink(),
+                ),
+                const SizedBox(height: 16),
+                ...state.direcciones.map(
+                  (direccion) => DireccionCard(
+                    direccion: direccion,
+                    estaSeleccionada: direccion.id == _direccionSeleccionadaId,
+                    onTap: () => _manejarSeleccionDireccion(direccion),
+                  ),
+                ),
+              ],
             );
           },
         ),
@@ -232,9 +267,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 }
 
-// ============================================================================
-// 🌟 WIDGETS PRIVADOS EXTRAÍDOS (Single Responsibility)
-// ============================================================================
 
 class _VistaSinDirecciones extends StatelessWidget {
   final VoidCallback onAgregar;
@@ -248,17 +280,30 @@ class _VistaSinDirecciones extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.location_off_outlined, size: 80, color: Colors.grey.shade300),
+            Icon(
+              Icons.location_off_outlined,
+              size: 80,
+              color: Colors.grey.shade300,
+            ),
             const SizedBox(height: 16),
-            const Text('¿A dónde lo enviamos?', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text(
+              '¿A dónde lo enviamos?',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 8),
-            Text('Agrega una dirección para recibir tu pedido.', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey.shade600)),
+            Text(
+              'Agrega una dirección para recibir tu pedido.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey.shade600),
+            ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFF9A826),
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: onAgregar,
               icon: const Icon(Icons.add_location_alt_outlined),
@@ -274,7 +319,10 @@ class _VistaSinDirecciones extends StatelessWidget {
 class _BotonConfirmarPedido extends StatelessWidget {
   final bool habilitado;
   final VoidCallback onPressed;
-  const _BotonConfirmarPedido({required this.habilitado, required this.onPressed});
+  const _BotonConfirmarPedido({
+    required this.habilitado,
+    required this.onPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -282,7 +330,13 @@ class _BotonConfirmarPedido extends StatelessWidget {
       padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, -5))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -5),
+          ),
+        ],
       ),
       child: SafeArea(
         child: SizedBox(
@@ -292,10 +346,19 @@ class _BotonConfirmarPedido extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF1E3A8A),
               disabledBackgroundColor: Colors.grey.shade300,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             onPressed: habilitado ? onPressed : null,
-            child: const Text('Confirmar Pedido', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white)),
+            child: const Text(
+              'Confirmar Pedido',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
           ),
         ),
       ),
@@ -303,11 +366,17 @@ class _BotonConfirmarPedido extends StatelessWidget {
   }
 }
 
-void _mostrarModalPickUp(BuildContext context, Direccion direccion, VoidCallback onSeleccionada) {
+void _mostrarModalPickUp(
+  BuildContext context,
+  Direccion direccion,
+  VoidCallback onSeleccionada,
+) {
   showModalBottomSheet(
     context: context,
     backgroundColor: Colors.white,
-    shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+    ),
     builder: (ctx) => Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -315,11 +384,15 @@ void _mostrarModalPickUp(BuildContext context, Direccion direccion, VoidCallback
         children: [
           Icon(Icons.storefront, size: 60, color: Colors.orange.shade400),
           const SizedBox(height: 16),
-          const Text('¡Estás un poco lejos! 🛵', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const Text(
+            '¡Estás un poco lejos! 🛵',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           const Text(
             'Por el momento nuestros repartidores no llegan a esta dirección. ¿Qué te gustaría hacer?',
-            textAlign: TextAlign.center, style: TextStyle(fontSize: 16, color: Colors.black54),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 16, color: Colors.black54),
           ),
           const SizedBox(height: 24),
           SizedBox(
@@ -328,14 +401,25 @@ void _mostrarModalPickUp(BuildContext context, Direccion direccion, VoidCallback
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFF9A826),
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               onPressed: () {
-                context.read<CarritoCubit>().establecerModoEntrega(ModoEntrega.pickUp);
+                context.read<CarritoCubit>().establecerModoEntrega(
+                  ModoEntrega.pickUp,
+                );
                 onSeleccionada();
                 Navigator.pop(ctx);
               },
-              child: const Text('Pasar a recoger a sucursal', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+              child: const Text(
+                'Pasar a recoger a sucursal',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
           const SizedBox(height: 12),
@@ -343,9 +427,16 @@ void _mostrarModalPickUp(BuildContext context, Direccion direccion, VoidCallback
             width: double.infinity,
             child: TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Elegir otra dirección de envío', style: TextStyle(color: Color(0xFF1E3A8A), fontSize: 16, fontWeight: FontWeight.bold)),
+              child: const Text(
+                'Elegir otra dirección de envío',
+                style: TextStyle(
+                  color: Color(0xFF1E3A8A),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          )
+          ),
         ],
       ),
     ),

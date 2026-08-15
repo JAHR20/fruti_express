@@ -17,26 +17,20 @@ class CambiarEstadoCategoria {
     required bool nuevoEstado,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Validación de Permisos (Solo Admin/Personal autorizado)
       await $(_validarPermisos(usuarioActual));
 
-      // 2️⃣ Obtener la categoría actual
       final categoria = await $(repository.obtenerPorId(categoriaId));
       if (categoria == null) {
         return await $(
           TaskEither.left(const Failure.notFound("Categoría no encontrada")),
         );
       }
-
-      // 3️⃣ Validar estado actual (No cambiar si ya está en ese estado)
       await $(_validarCambioNecesario(categoria, nuevoEstado));
 
-      // 4️⃣ Validar Integridad: Solo si estamos DESACTIVANDO (nuevoEstado == false)
       if (!nuevoEstado) {
         await $(_validarIntegridadSubcategorias(categoriaId));
       }
 
-      // 5️⃣ Proceder a la actualización
       final actualizada = categoria.copyWith(activa: nuevoEstado);
       await $(repository.actualizar(actualizada));
 
@@ -44,11 +38,9 @@ class CambiarEstadoCategoria {
     });
   }
 
-  // --- 🧩 MICRO-PASOS ACTUALIZADOS ---
-
   ResultTask<Unit> _validarPermisos(Perfil usuario) =>
       usuario
-          .puedeDesactivarCategoria() // Asumiendo que esta extensión cubre gestión general
+          .puedeDesactivarCategoria()
       ? TaskEither.right(unit)
       : TaskEither.left(
           const Failure.unauthorized(

@@ -64,7 +64,7 @@ extension DireccionModelX on DireccionModel {
     esPrincipal: d.esPrincipal,
     fechaCreacion: d.fechaCreacion,
     updatedAt: d.updatedAT,
-    latitud: d.latitud ?? 0.0,
-    longitud: d.longitud ?? 0.0
+    latitud: d.latitud,
+    longitud: d.longitud
   );
 }

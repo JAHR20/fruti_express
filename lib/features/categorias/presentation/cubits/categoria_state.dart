@@ -4,9 +4,14 @@ import 'package:fruti_express_jahr_admin/features/categorias/domain/entities/cat
 part 'categoria_state.freezed.dart';
 
 @freezed
-class CategoriaState with _$CategoriaState {
-  const factory CategoriaState.initial() = CategoriaInitial;
-  const factory CategoriaState.loading() = CategoriaLoading;
-  const factory CategoriaState.loaded(List<Categoria> categorias) = CategoriaLoaded;
-  const factory CategoriaState.error(String message) = CategoriaError;
+abstract class CategoriaState with _$CategoriaState {
+  const factory CategoriaState({
+    @Default(<Categoria>[]) List<Categoria> categorias,
+    @Default(false) bool isLoading,
+    String? errorMessage,
+    @Default(false) bool guardandoOperacion,
+    String? operacionError,
+    @Default(false) bool operacionExitosa,
+    String? categoriaProcesandoId,
+  }) = _CategoriaState;
 }

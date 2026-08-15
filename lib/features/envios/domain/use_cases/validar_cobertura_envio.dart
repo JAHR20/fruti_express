@@ -11,18 +11,13 @@ class ValidarCoberturaEnvioUseCase {
   ValidarCoberturaEnvioUseCase(this._repository, this._service);
 
   ResultTask<bool> call({
-    required Sucursal sucursal, // 👈 Ahora pedimos la entidad completa
+    required Sucursal sucursal,
     required Direccion direccion,
   }) {
-    // Usamos el id de la sucursal para traer su configuración
     return _repository.obtenerConfiguracion(sucursal.id).map((configuracion) {
-      
-      // Si la sucursal no tiene reglas configuradas, asumimos que no hay cobertura
       if (configuracion == null) return false;
-
-      // Retornamos directamente el resultado síncrono del servicio, pasando la sucursal
       return _service.validarCobertura(
-        sucursal: sucursal, // 👈 Le pasamos la sucursal al servicio matemático
+        sucursal: sucursal,
         direccion: direccion,
         configuracion: configuracion,
       );

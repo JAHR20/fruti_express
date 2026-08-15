@@ -50,13 +50,10 @@ class DireccionRemoteDatasourceImpl implements DireccionRemoteDatasource {
 
   @override
   Future<void> establecerPrincipal(String usuarioId, String direccionId) async {
-    // 1. Ponemos todas las direcciones de este usuario en es_principal = false
     await supabase
         .from('direcciones')
         .update({'es_principal': false})
         .eq('usuario_id', usuarioId);
-
-    // 2. Activamos la dirección seleccionada
     await supabase
         .from('direcciones')
         .update({'es_principal': true})

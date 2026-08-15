@@ -1,5 +1,3 @@
-// features/pedidos/presentation/widgets/pedido_card_repartidor.dart
-
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/core/utils/formato_moneda.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';
@@ -65,8 +63,6 @@ class PedidoCardRepartidor extends StatelessWidget {
     );
   }
 }
-
-// ─── Subwidgets ───────────────────────────────────────────────────────────────
 
 class _Encabezado extends StatelessWidget {
   final Pedido pedido;

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';
 
 class PedidoExitosoPage extends StatelessWidget {
-  final Pedido pedido; // Recibimos el pedido que acabamos de crear
+  final Pedido pedido;
 
   const PedidoExitosoPage({super.key, required this.pedido});
 
@@ -19,8 +19,6 @@ class PedidoExitosoPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Spacer(),
-              
-              // 🌟 Ícono gigante de éxito (Puedes cambiarlo por una animación Lottie después)
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -34,8 +32,6 @@ class PedidoExitosoPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 32),
-              
-              // 🌟 Mensaje de agradecimiento
               const Text(
                 '¡Pedido Confirmado!',
                 style: TextStyle(
@@ -56,7 +52,6 @@ class PedidoExitosoPage extends StatelessWidget {
               ),
               const SizedBox(height: 32),
               
-              // 🌟 Tarjeta con el resumen
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
@@ -73,7 +68,7 @@ class PedidoExitosoPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '#${pedido.id.substring(0, 8).toUpperCase()}', // Mostramos un pedacito del ID
+                      '#${pedido.id.substring(0, 8).toUpperCase()}',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -86,7 +81,7 @@ class PedidoExitosoPage extends StatelessWidget {
                       children: [
                         const Text('Total pagado:', style: TextStyle(fontSize: 16)),
                         Text(
-                          '\$${pedido.total}', // Formatea a moneda si tienes un helper
+                          '\$${pedido.total}',
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -100,8 +95,7 @@ class PedidoExitosoPage extends StatelessWidget {
               ),
               
               const Spacer(),
-              
-              // 🌟 Botón para volver al inicio
+
               SizedBox(
                 width: double.infinity,
                 height: 54,
@@ -113,9 +107,7 @@ class PedidoExitosoPage extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    // Usamos go() para borrar todo el historial de navegación
-                    // y que no pueda regresar a la pantalla de pago dándole "Atrás"
-                    context.go(AppRouter.clienteInicio); // 🌟 Usamos la ruta de bienvenida
+                    context.go(AppRouter.clienteInicio);
                   },
                   child: const Text(
                     'Volver a la Tienda',

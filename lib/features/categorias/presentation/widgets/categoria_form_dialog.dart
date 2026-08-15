@@ -35,7 +35,6 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
   @override
   void initState() {
     super.initState();
-    // Si viene una categoría para editar, pre-llenamos los campos
     _nombreController = TextEditingController(
       text: widget.categoriaAEditar?.nombre ?? '',
     );
@@ -53,13 +52,10 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
 
   Future<void> _seleccionarImagen() async {
     try {
-      // Abre la galería. Si quisieras usar la cámara, cambias ImageSource.gallery por ImageSource.camera
       final XFile? imagen = await _picker.pickImage(
         source: ImageSource.gallery,
-        imageQuality:
-            80, // Reducimos la calidad al 80% para optimizar el tamaño y no saturar tu Supabase gratis
-        maxWidth:
-            800, // Limitamos el ancho máximo para estandarizar las imágenes del catálogo
+        imageQuality: 80,
+        maxWidth: 800,
       );
 
       if (imagen != null) {
@@ -68,7 +64,6 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
         });
       }
     } catch (e) {
-      // Aquí puedes mostrar un SnackBar si ocurre un error de permisos
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al seleccionar la imagen: $e')),
       );
@@ -95,7 +90,7 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
                 labelText: 'Nombre',
                 border: OutlineInputBorder(),
               ),
-              enabled: !widget.isLoading, // Bloqueamos si está guardando
+              enabled: !widget.isLoading,
             ),
             const SizedBox(height: 16),
             TextField(
@@ -108,7 +103,7 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
             ),
             const SizedBox(height: 20),
             GestureDetector(
-              onTap: widget.isLoading ? null : _seleccionarImagen, // Al tocar el recuadro, abre la galería
+              onTap: widget.isLoading ? null : _seleccionarImagen,
               child: Container(
                 width: double.infinity,
                 height: 180,
@@ -118,15 +113,17 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
                   border: Border.all(color: Colors.grey[400]!),
                   image: tieneImagenLocal
                       ? DecorationImage(
-                          // Mostramos la foto local usando su ruta de archivo
                           image: FileImage(File(_imagenSeleccionada!.path)),
                           fit: BoxFit.cover,
                         )
-                      : (tieneImagenGuardada? DecorationImage(
-                          // Si no hay local pero sí una imagen guardada, la mostramos desde la URL
-                          image: NetworkImage(widget.categoriaAEditar!.imagenUrl!),
-                          fit: BoxFit.cover,
-                        ):null),
+                      : (tieneImagenGuardada
+                            ? DecorationImage(
+                                image: NetworkImage(
+                                  widget.categoriaAEditar!.imagenUrl!,
+                                ),
+                                fit: BoxFit.cover,
+                              )
+                            : null),
                 ),
                 child: (!tieneImagenLocal && !tieneImagenGuardada)
                     ? const Column(
@@ -140,7 +137,7 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
                           ),
                         ],
                       )
-                    : null, // Si hay imagen, la decoración de arriba la cubre por completo
+                    : null,
               ),
             ),
           ],
@@ -160,7 +157,6 @@ class _CategoriaFormDialogState extends State<CategoriaFormDialog> {
           onPressed: widget.isLoading
               ? null
               : () {
-                  // 🚀 Ejecutamos la función tonta, pasándole los textos actuales
                   widget.onSave(
                     _nombreController.text,
                     _descripcionController.text.isEmpty

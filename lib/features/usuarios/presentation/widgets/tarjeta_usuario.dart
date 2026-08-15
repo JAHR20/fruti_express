@@ -10,6 +10,8 @@ class TarjetaUsuario extends StatelessWidget {
   final Perfil usuarioTarget;
   final Perfil usuarioActual;
   final SucursalCubit sucursalCubit;
+  final bool isProcesando; 
+  
   final Function(bool) onEstadoCambiado;
   final Function(TipoUsuario, String?) onRolCambiado;
 
@@ -18,6 +20,7 @@ class TarjetaUsuario extends StatelessWidget {
     required this.usuarioTarget,
     required this.usuarioActual,
     required this.sucursalCubit,
+    this.isProcesando = false,
     required this.onEstadoCambiado,
     required this.onRolCambiado,
   });
@@ -50,43 +53,55 @@ class TarjetaUsuario extends StatelessWidget {
             RoleBadge(rol: usuarioTarget.rol),
           ],
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (usuarioActual.esAdmin)
-              Switch(
-                value: usuarioTarget.activo,
-                activeThumbColor: Colors.green,
-                onChanged: onEstadoCambiado,
-              ),
-            PopupMenuButton<TipoUsuario>(
-              icon: const Icon(Icons.shield_outlined, color: Color(0xFF1E3A8A)),
-              tooltip: 'Cambiar Rol',
-              onSelected: (TipoUsuario nuevoRol) async {
-                if (nuevoRol == TipoUsuario.encargado || nuevoRol == TipoUsuario.repartidor) {
-                  final String? idSucursalElegida = await showDialog<String>(
-                    context: context,
-                    barrierDismissible: false,
-                    builder: (context) => DialogoSucursal(rol: nuevoRol, sucursalCubit: sucursalCubit),
-                  );
+        
+        trailing: isProcesando
+            ? const SizedBox(
+                width: 48,
+                height: 48,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    color: Color(0xFF1E3A8A),
+                  ),
+                ),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (usuarioActual.esAdmin)
+                    Switch(
+                      value: usuarioTarget.activo,
+                      activeThumbColor: Colors.green,
+                      onChanged: onEstadoCambiado,
+                    ),
+                  PopupMenuButton<TipoUsuario>(
+                    icon: const Icon(Icons.shield_outlined, color: Color(0xFF1E3A8A)),
+                    tooltip: 'Cambiar Rol',
+                    onSelected: (TipoUsuario nuevoRol) async {
+                      if (nuevoRol == TipoUsuario.encargado || nuevoRol == TipoUsuario.repartidor) {
+                        final String? idSucursalElegida = await showDialog<String>(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => DialogoSucursal(rol: nuevoRol, sucursalCubit: sucursalCubit),
+                        );
 
-                  if (idSucursalElegida == null) return;
-                  onRolCambiado(nuevoRol, idSucursalElegida);
-                } else {
-                  onRolCambiado(nuevoRol, null);
-                }
-              },
-              itemBuilder: (BuildContext context) => [
-                if (usuarioActual.esAdmin) ...[
-                  const PopupMenuItem(value: TipoUsuario.admin, child: Text('Hacer Admin')),
-                  const PopupMenuItem(value: TipoUsuario.encargado, child: Text('Hacer Encargado')),
+                        if (idSucursalElegida == null) return;
+                        onRolCambiado(nuevoRol, idSucursalElegida);
+                      } else {
+                        onRolCambiado(nuevoRol, null);
+                      }
+                    },
+                    itemBuilder: (BuildContext context) => [
+                      if (usuarioActual.esAdmin) ...[
+                        const PopupMenuItem(value: TipoUsuario.admin, child: Text('Hacer Admin')),
+                        const PopupMenuItem(value: TipoUsuario.encargado, child: Text('Hacer Encargado')),
+                      ],
+                      const PopupMenuItem(value: TipoUsuario.repartidor, child: Text('Asignar Repartidor')),
+                      const PopupMenuItem(value: TipoUsuario.cliente, child: Text('Cambiar a Cliente')),
+                    ],
+                  ),
                 ],
-                const PopupMenuItem(value: TipoUsuario.repartidor, child: Text('Asignar Repartidor')),
-                const PopupMenuItem(value: TipoUsuario.cliente, child: Text('Cambiar a Cliente')),
-              ],
-            ),
-          ],
-        ),
+              ),
       ),
     );
   }

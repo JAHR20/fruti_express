@@ -16,7 +16,6 @@ class GuardarConfiguracionEnvioUseCase {
     required ConfiguracionEnvio configuracion,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Seguridad: Validar rol
       if (!usuarioActual.esAdmin) {
         return await $(
           TaskEither.left(
@@ -27,7 +26,6 @@ class GuardarConfiguracionEnvioUseCase {
         );
       }
 
-      // 2️⃣ Validaciones de negocio preventivas
       if (configuracion.radioMaximoKm <= 0) {
         return await $(
           TaskEither.left(
@@ -38,7 +36,6 @@ class GuardarConfiguracionEnvioUseCase {
         );
       }
 
-      // 3️⃣ Guardamos la configuración
       await $(repository.guardarConfiguracion(configuracion));
 
       return unit;

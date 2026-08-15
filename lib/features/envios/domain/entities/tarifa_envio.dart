@@ -7,10 +7,10 @@ abstract class TarifaEnvio with _$TarifaEnvio {
   const factory TarifaEnvio({
     required String id,
     required String sucursalId,
-    required String nombre,           // "Zona Local", "Zona Centro"
-    required double distanciaMinKm,   // desde (inclusive)
-    required double distanciaMaxKm,   // hasta (inclusive)
-    required int costo,               // en pesos enteros (0 = gratis)
+    required String nombre,
+    required double distanciaMinKm,   
+    required double distanciaMaxKm,
+    required int costo,               
     required bool activa,
     required DateTime fechaCreacion,
   }) = _TarifaEnvio;

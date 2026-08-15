@@ -9,8 +9,6 @@ class ObtenerUsuarioPorId {
   final UsuarioRepository repository;
   ObtenerUsuarioPorId(this.repository);
 
-  /// Obtiene un perfil por ID validando permisos.
-  /// 🛡️ Regla: Solo el dueño del perfil o el Staff pueden ver esta información.
   ResultTask<Perfil> ejecutar({
     required Perfil solicitante,
     required String idABuscar,
@@ -18,7 +16,7 @@ class ObtenerUsuarioPorId {
     return TaskEither.Do(($) async {
       final esDueno = solicitante.id == idABuscar;
 
-      // 1. Validación de seguridad
+      // Validación de seguridad
       if (!esDueno && !solicitante.esStaff) {
         return await $(
           TaskEither<Failure, Perfil>.left(
@@ -29,7 +27,7 @@ class ObtenerUsuarioPorId {
         );
       }
 
-      // 2. Validación de datos
+      // Validación de datos
       if (idABuscar.trim().isEmpty) {
         return await $(
           TaskEither<Failure, Perfil>.left(
@@ -38,7 +36,7 @@ class ObtenerUsuarioPorId {
         );
       }
 
-      // 3. Consulta al repositorio
+      // Consulta al repositorio
       return await $(repository.obtenerPorId(idABuscar));
     });
   }

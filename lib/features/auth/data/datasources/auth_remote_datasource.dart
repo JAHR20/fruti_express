@@ -9,7 +9,7 @@ abstract class AuthRemoteDataSource {
     required String apellidoPaterno,
     String? apellidoMaterno,
     String? alias,
-    required String telefono, // Puedes usar este campo para asignar el rol (cliente/repart
+    required String telefono,
   });
   Future<void> logout();
   Future<PerfilModel?> obtenerUsuarioActual();

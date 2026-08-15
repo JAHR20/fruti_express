@@ -1,7 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/enums/tipo_usuario.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/domain/use_cases/actualizar_perfil.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/use_cases/buscar_usuarios.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/use_cases/cambiar_estado_usuario.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/use_cases/cambiar_rol_usuario.dart';
@@ -14,10 +13,10 @@ import 'package:fruti_express_jahr_admin/features/usuarios/domain/use_cases/obte
 import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/usuarios_state.dart';
 
 class UsuariosCubit extends Cubit<UsuariosState> {
-  final ActualizarPerfil _actualizarPerfilUseCase;
   final BuscarUsuarios _buscarUsuariosUseCase;
   final CambiarEstadoUsuario _cambiarEstadoUsuarioUseCase;
   final CambiarRolUsuario _cambiarRolUseCase;
+  final ContarAdminsActivos _contarAdminsActivosUseCase;
   final ExisteEncargadoEnSucursal _existeEncargadoActivoUseCase;
   final ObtenerClientes _obtenerClientesUseCase;
   final ObtenerRepartidores _obtenerRepartidoresUseCase;
@@ -25,7 +24,6 @@ class UsuariosCubit extends Cubit<UsuariosState> {
   final ObtenerUsuarios _obtenerUsuariosUseCase;
 
   UsuariosCubit({
-    required ActualizarPerfil actualizarPerfilUseCase,
     required BuscarUsuarios buscarUsuariosUseCase,
     required CambiarEstadoUsuario cambiarEstadoUsuarioUseCase,
     required CambiarRolUsuario cambiarRolUseCase,
@@ -35,38 +33,92 @@ class UsuariosCubit extends Cubit<UsuariosState> {
     required ObtenerRepartidores obtenerRepartidoresUseCase,
     required ObtenerUsuarioPorId obtenerUsuarioPorIdUseCase,
     required ObtenerUsuarios obtenerUsuariosUseCase,
-  })  : _obtenerUsuariosUseCase = obtenerUsuariosUseCase,
-        _obtenerUsuarioPorIdUseCase = obtenerUsuarioPorIdUseCase,
-        _obtenerRepartidoresUseCase = obtenerRepartidoresUseCase,
-        _obtenerClientesUseCase = obtenerClientesUseCase,
-        _existeEncargadoActivoUseCase = existeEncargadoActivoUseCase,
-        _cambiarRolUseCase = cambiarRolUseCase,
-        _cambiarEstadoUsuarioUseCase = cambiarEstadoUsuarioUseCase,
-        _buscarUsuariosUseCase = buscarUsuariosUseCase,
-        _actualizarPerfilUseCase = actualizarPerfilUseCase,
-        super(const UsuariosState.initial()); // ← corregido
+  }) : _obtenerUsuariosUseCase = obtenerUsuariosUseCase,
+       _obtenerUsuarioPorIdUseCase = obtenerUsuarioPorIdUseCase,
+       _obtenerRepartidoresUseCase = obtenerRepartidoresUseCase,
+       _obtenerClientesUseCase = obtenerClientesUseCase,
+       _existeEncargadoActivoUseCase = existeEncargadoActivoUseCase,
+       _cambiarRolUseCase = cambiarRolUseCase,
+       _cambiarEstadoUsuarioUseCase = cambiarEstadoUsuarioUseCase,
+       _contarAdminsActivosUseCase = contarAdminsActivosUseCase,
+       _buscarUsuariosUseCase = buscarUsuariosUseCase,
+       super(const UsuariosState());
 
   Future<void> cargarUsuarios(Perfil usuarioActual) async {
-    emit(const UsuariosState.loading()); // ← corregido
+    emit(
+      state.copyWith(
+        isLoading: true,
+        errorMessage: null,
+        tab: UsuariosTab.todos,
+      ),
+    );
     final result = await _obtenerUsuariosUseCase.ejecutar(usuarioActual).run();
     result.fold(
-      (failure) => emit(UsuariosState.error(failure.errorMessage)), // ← corregido
-      (lista) => emit(UsuariosState.loaded(lista)), // ← corregido
+      (failure) => emit(
+        state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+      ),
+      (lista) => emit(
+        state.copyWith(
+          usuarios: lista,
+          isLoading: false,
+          errorMessage: null,
+          tab: UsuariosTab.todos,
+        ),
+      ),
     );
   }
 
-  Future<void> actualizarPerfil({
+  Future<void> cargarClientes(Perfil usuarioActual) async {
+    emit(
+      state.copyWith(
+        isLoading: true,
+        errorMessage: null,
+        tab: UsuariosTab.clientes,
+      ),
+    );
+    final result = await _obtenerClientesUseCase.ejecutar(usuarioActual).run();
+    result.fold(
+      (failure) => emit(
+        state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+      ),
+      (lista) => emit(
+        state.copyWith(
+          usuarios: lista,
+          isLoading: false,
+          errorMessage: null,
+          tab: UsuariosTab.clientes,
+        ),
+      ),
+    );
+  }
+
+  Future<void> cargarRepartidores({
     required Perfil usuarioActual,
-    required Perfil perfilAEditar,
+    String? sucursalIdFiltro,
   }) async {
-    emit(const UsuariosState.loading());
-    final result = await _actualizarPerfilUseCase.ejecutar(
+    emit(
+      state.copyWith(
+        isLoading: true,
+        errorMessage: null,
+        tab: UsuariosTab.repartidores,
+      ),
+    );
+    final result = await _obtenerRepartidoresUseCase(
       solicitante: usuarioActual,
-      perfilAEditar: perfilAEditar,
+      sucursalIdOpcional: sucursalIdFiltro,
     ).run();
     result.fold(
-      (failure) => emit(UsuariosState.error(failure.errorMessage)),
-      (_) => cargarUsuarios(usuarioActual),
+      (failure) => emit(
+        state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+      ),
+      (lista) => emit(
+        state.copyWith(
+          usuarios: lista,
+          isLoading: false,
+          errorMessage: null,
+          tab: UsuariosTab.repartidores,
+        ),
+      ),
     );
   }
 
@@ -74,15 +126,42 @@ class UsuariosCubit extends Cubit<UsuariosState> {
     required Perfil usuarioActual,
     required String query,
   }) async {
-    if (query.trim().isEmpty) return cargarUsuarios(usuarioActual);
-    emit(const UsuariosState.loading());
-    final result = await _buscarUsuariosUseCase.ejecutar(
-      usuarioActual: usuarioActual,
-      query: query,
-    ).run();
+    final queryLimpia = query.trim();
+
+    if (queryLimpia.isEmpty) {
+      emit(state.copyWith(searchQuery: '')); 
+      switch (state.tab) {
+        case UsuariosTab.todos:
+          return cargarUsuarios(usuarioActual);
+        case UsuariosTab.repartidores:
+          return cargarRepartidores(usuarioActual: usuarioActual);
+        case UsuariosTab.clientes:
+          return cargarClientes(usuarioActual);
+      }
+    }
+
+    emit(
+      state.copyWith(
+        isLoading: true,
+        errorMessage: null,
+        searchQuery: queryLimpia,
+      ),
+    );
+    final result = await _buscarUsuariosUseCase
+        .ejecutar(usuarioActual: usuarioActual, query: queryLimpia)
+        .run();
     result.fold(
-      (failure) => emit(UsuariosState.error(failure.errorMessage)),
-      (lista) => emit(UsuariosState.loaded(lista)),
+      (failure) => emit(
+        state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+      ),
+      (lista) => emit(
+        state.copyWith(
+          usuarios: lista,
+          isLoading: false,
+          errorMessage: null,
+          searchQuery: queryLimpia,
+        ),
+      ),
     );
   }
 
@@ -91,15 +170,32 @@ class UsuariosCubit extends Cubit<UsuariosState> {
     required String usuarioId,
     required bool activar,
   }) async {
-    emit(const UsuariosState.loading());
-    final result = await _cambiarEstadoUsuarioUseCase.ejecutar(
-      usuarioActual: usuarioActual,
-      usuarioId: usuarioId,
-      activar: activar,
-    ).run();
+    emit(
+      state.copyWith(
+        isLoading: true,
+        errorMessage: null,
+        usuarioProcesandoId: usuarioId,
+      ),
+    );
+    final result = await _cambiarEstadoUsuarioUseCase
+        .ejecutar(
+          usuarioActual: usuarioActual,
+          usuarioId: usuarioId,
+          activar: activar,
+        )
+        .run();
     result.fold(
-      (failure) => emit(UsuariosState.error(failure.errorMessage)),
-      (_) => cargarUsuarios(usuarioActual),
+      (failure) => emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: failure.errorMessage,
+          usuarioProcesandoId: null,
+        ),
+      ),
+      (_) {
+        emit(state.copyWith(usuarioProcesandoId: null));
+        cargarUsuarios(usuarioActual);
+      },
     );
   }
 
@@ -109,64 +205,60 @@ class UsuariosCubit extends Cubit<UsuariosState> {
     required TipoUsuario nuevoRol,
     String? sucursalAsignadaId,
   }) async {
-    emit(const UsuariosState.loading());
-    final result = await _cambiarRolUseCase.ejecutar(
-      usuarioActual: usuarioActual,
-      usuarioId: usuarioId,
-      nuevoRol: nuevoRol,
-      sucursalAsignadaId: sucursalAsignadaId,
-    ).run();
+    emit(
+      state.copyWith(
+        isLoading: true,
+        errorMessage: null,
+        usuarioProcesandoId: usuarioId,
+      ),
+    );
+    final result = await _cambiarRolUseCase
+        .ejecutar(
+          usuarioActual: usuarioActual,
+          usuarioId: usuarioId,
+          nuevoRol: nuevoRol,
+          sucursalAsignadaId: sucursalAsignadaId,
+        )
+        .run();
     result.fold(
-      (failure) => emit(UsuariosState.error(failure.errorMessage)),
-      (_) => cargarUsuarios(usuarioActual),
+      (failure) => emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: failure.errorMessage,
+          usuarioProcesandoId: null,
+        ),
+      ),
+      (_) {
+        emit(state.copyWith(usuarioProcesandoId: null));
+        cargarUsuarios(usuarioActual);
+      },
     );
   }
-
 
   Future<void> verificarEncargadoSucursal({
     required Perfil usuarioActual,
     required String sucursalId,
   }) async {
-    final result = await _existeEncargadoActivoUseCase.ejecutar(
-      solicitante: usuarioActual,
-      sucursalId: sucursalId,
-    ).run();
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+    final result = await _existeEncargadoActivoUseCase
+        .ejecutar(solicitante: usuarioActual, sucursalId: sucursalId)
+        .run();
     result.fold(
-      (failure) => emit(UsuariosState.error(failure.errorMessage)),
+      (failure) => emit(
+        state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+      ),
       (yaTieneEncargado) {
         if (yaTieneEncargado) {
-          emit(const UsuariosState.error("Esta sucursal ya tiene un encargado asignado."));
-        } else {
-          state.maybeWhen( // ← corregido, sin cast manual
-            loaded: (usuarios) => emit(UsuariosState.loaded(usuarios)),
-            orElse: () {},
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: "Esta sucursal ya tiene un encargado asignado.",
+            ),
           );
+        } else {
+          emit(state.copyWith(isLoading: false, errorMessage: null));
         }
       },
-    );
-  }
-
-  Future<void> cargarClientes(Perfil usuarioActual) async {
-    emit(const UsuariosState.loading());
-    final result = await _obtenerClientesUseCase.ejecutar(usuarioActual).run();
-    result.fold(
-      (failure) => emit(UsuariosState.error(failure.errorMessage)),
-      (lista) => emit(UsuariosState.loaded(lista)),
-    );
-  }
-
-  Future<void> cargarRepartidores({
-    required Perfil usuarioActual,
-    String? sucursalIdFiltro,
-  }) async {
-    emit(const UsuariosState.loading());
-    final result = await _obtenerRepartidoresUseCase(
-      solicitante: usuarioActual,
-      sucursalIdOpcional: sucursalIdFiltro,
-    ).run();
-    result.fold(
-      (failure) => emit(UsuariosState.error(failure.errorMessage)),
-      (lista) => emit(UsuariosState.loaded(lista)),
     );
   }
 
@@ -174,14 +266,42 @@ class UsuariosCubit extends Cubit<UsuariosState> {
     required Perfil usuarioActual,
     required String idABuscar,
   }) async {
-    emit(const UsuariosState.loading());
-    final result = await _obtenerUsuarioPorIdUseCase.ejecutar(
-      solicitante: usuarioActual,
-      idABuscar: idABuscar,
-    ).run();
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+    final result = await _obtenerUsuarioPorIdUseCase
+        .ejecutar(solicitante: usuarioActual, idABuscar: idABuscar)
+        .run();
     result.fold(
-      (failure) => emit(UsuariosState.error(failure.errorMessage)),
-      (perfil) => emit(UsuariosState.loaded([perfil])),
+      (failure) => emit(
+        state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+      ),
+      (perfil) => emit(
+        state.copyWith(
+          usuarios: [perfil],
+          isLoading: false,
+          errorMessage: null,
+        ),
+      ),
+    );
+  }
+
+  Future<bool> verificarSiEsUltimoAdmin({required Perfil usuarioActual}) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+
+    final result = await _contarAdminsActivosUseCase
+        .ejecutar(usuarioActual)
+        .run();
+
+    return result.fold(
+      (failure) {
+        emit(
+          state.copyWith(isLoading: false, errorMessage: failure.errorMessage),
+        );
+        return false;
+      },
+      (cantidadAdmins) {
+        emit(state.copyWith(isLoading: false));
+        return cantidadAdmins <= 1;
+      },
     );
   }
 }

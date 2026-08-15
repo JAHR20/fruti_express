@@ -1,3 +1,4 @@
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/enums/modo_entrega.dart';
 import 'package:fruti_express_jahr_admin/core/services/ubicacion/ubicacion_service.dart';
@@ -23,179 +24,133 @@ class CarritoCubit extends Cubit<CarritoState> {
     required ObtenerCarritoUseCase obtenerCarrito,
     required GuardarCarritoUseCase guardarCarrito,
     required VaciarCarritoUseCase vaciarCarritoUseCase,
-    required UbicacionService
-    ubicacionService, // 🌟 Lo pedimos en el constructor
+    required UbicacionService ubicacionService,
     required ObtenerStockActual obtenerStockActual,
   }) : _obtenerCarrito = obtenerCarrito,
        _guardarCarrito = guardarCarrito,
        _vaciarCarritoUseCase = vaciarCarritoUseCase,
        _ubicacionService = ubicacionService,
        _obtenerStockActual = obtenerStockActual,
-       super(const CarritoState.initial());
+       super(const CarritoState());
 
-  /// Carga el carrito desde la memoria del celular al arrancar la app
   Future<void> cargarCarrito() async {
-    emit(const CarritoState.loading());
+    emit(state.copyWith(isLoading: true, errorMessage: null));
+
     try {
       final items = await _obtenerCarrito();
-      // 🌟 Usamos parámetro nombrado: items:
-      emit(CarritoState.loaded(items: items));
+      emit(state.copyWith(isLoading: false, items: items, errorMessage: null));
     } catch (e) {
-      emit(const CarritoState.error('Error al cargar el carrito local'));
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Error al cargar el carrito local',
+        ),
+      );
     }
   }
 
-  /// Agrega un producto o suma cantidad si ya existe
-  /// Agrega un producto evaluando el stock real.
-  /// Retorna un texto con el error, o [null] si fue exitoso.
   Future<String?> agregarProducto(CarritoItem nuevoItem) async {
+    final sucursalId = state.sucursalId;
+
+    if (sucursalId == null) {
+      return 'Selecciona una sucursal de entrega primero.';
+    }
+
+    emit(state.copyWith(productoProcesandoId: nuevoItem.productoId));
+
+    final result = await _obtenerStockActual
+        .ejecutar(nuevoItem.productoId, sucursalId)
+        .run();
+
     String? mensajeError;
 
-    await state.maybeMap(
-      loaded: (currentState) async {
-        final sucursalId = currentState.sucursalId;
+    await result.fold(
+      (failure) async {
+        mensajeError = 'No se pudo verificar el stock: ${failure.errorMessage}';
+      },
+      (stockReal) async {
+        final List<CarritoItem> itemsActuales = List.from(state.items);
+        final index = itemsActuales.indexWhere(
+          (item) => item.productoId == nuevoItem.productoId,
+        );
 
-        if (sucursalId == null) {
-          mensajeError = 'Selecciona una sucursal de entrega primero.';
+        final cantidadActualEnCarrito =
+            index != -1 ? itemsActuales[index].cantidad : 0;
+        final cantidadTotalDeseada =
+            cantidadActualEnCarrito + nuevoItem.cantidad;
+
+        if (cantidadTotalDeseada > stockReal) {
+          mensajeError = 'Stock insuficiente. Solo quedan $stockReal disponibles.';
           return;
         }
 
-        // 🌟 1. DELEGAMOS AL CASO DE USO (Clean Architecture)
-        final result = await _obtenerStockActual
-            .ejecutar(nuevoItem.productoId, sucursalId)
-            .run();
+        if (index != -1) {
+          final itemExistente = itemsActuales[index];
+          itemsActuales[index] = itemExistente.copyWith(
+            cantidad: cantidadTotalDeseada,
+          );
+        } else {
+          itemsActuales.add(nuevoItem);
+        }
 
-        // 🌟 2. EVALUAMOS EL RESULTADO (Programación Funcional)
-        await result.fold(
-          (failure) async {
-            // Error de conexión o base de datos
-            mensajeError =
-                'No se pudo verificar el stock: ${failure.errorMessage}';
-          },
-          (stockReal) async {
-            // 🌟 3. LÓGICA DE NEGOCIO DEL CARRITO
-            final List<CarritoItem> itemsActuales = List.from(
-              currentState.items,
-            );
-            final index = itemsActuales.indexWhere(
-              (item) => item.productoId == nuevoItem.productoId,
-            );
-
-            final cantidadActualEnCarrito = index != -1
-                ? itemsActuales[index].cantidad
-                : 0;
-            final cantidadTotalDeseada =
-                cantidadActualEnCarrito + nuevoItem.cantidad;
-
-            if (cantidadTotalDeseada > stockReal) {
-              mensajeError =
-                  'Stock insuficiente. Solo quedan $stockReal disponibles.';
-              return;
-            }
-
-            // Si hay stock, actualizamos el estado
-            if (index != -1) {
-              final itemExistente = itemsActuales[index];
-              itemsActuales[index] = itemExistente.copyWith(
-                cantidad: cantidadTotalDeseada,
-              );
-            } else {
-              itemsActuales.add(nuevoItem);
-            }
-
-            await _guardarCarrito(itemsActuales);
-            emit(currentState.copyWith(items: itemsActuales));
-          },
-        );
-      },
-      orElse: () {
-        mensajeError = 'El carrito aún no está listo.';
+        await _guardarCarrito(itemsActuales);
+        emit(state.copyWith(items: itemsActuales));
       },
     );
+
+    emit(state.copyWith(productoProcesandoId: null));
 
     return mensajeError;
   }
 
-  /// Actualiza la cantidad exacta desde los botones + y - del carrito
   Future<void> actualizarCantidad(String productoId, int nuevaCantidad) async {
     if (nuevaCantidad <= 0) {
       return eliminarProducto(productoId);
     }
 
-    state.maybeMap(
-      loaded: (currentState) async {
-        final List<CarritoItem> itemsActuales = List.from(currentState.items);
-        final index = itemsActuales.indexWhere(
-          (item) => item.productoId == productoId,
-        );
-
-        if (index != -1) {
-          itemsActuales[index] = itemsActuales[index].copyWith(
-            cantidad: nuevaCantidad,
-          );
-          await _guardarCarrito(itemsActuales);
-
-          // 🌟 Conservamos modo de entrega
-          emit(
-            CarritoState.loaded(
-              items: itemsActuales,
-              modoEntrega: currentState.modoEntrega,
-            ),
-          );
-        }
-      },
-      orElse: () {},
+    final List<CarritoItem> itemsActuales = List.from(state.items);
+    final index = itemsActuales.indexWhere(
+      (item) => item.productoId == productoId,
     );
+
+    if (index == -1) return;
+
+    emit(state.copyWith(productoProcesandoId: productoId));
+
+    itemsActuales[index] = itemsActuales[index].copyWith(
+      cantidad: nuevaCantidad,
+    );
+    await _guardarCarrito(itemsActuales);
+
+    emit(state.copyWith(items: itemsActuales, productoProcesandoId: null));
   }
 
-  /// Quita un producto completamente del carrito
   Future<void> eliminarProducto(String productoId) async {
-    state.maybeMap(
-      loaded: (currentState) async {
-        final itemsActuales = currentState.items
-            .where((item) => item.productoId != productoId)
-            .toList();
+    emit(state.copyWith(productoProcesandoId: productoId));
 
-        await _guardarCarrito(itemsActuales);
-        // 🌟 Conservamos modo de entrega
-        emit(
-          CarritoState.loaded(
-            items: itemsActuales,
-            modoEntrega: currentState.modoEntrega,
-          ),
-        );
-      },
-      orElse: () {},
-    );
+    final itemsActuales = state.items
+        .where((item) => item.productoId != productoId)
+        .toList();
+
+    await _guardarCarrito(itemsActuales);
+
+    emit(state.copyWith(items: itemsActuales, productoProcesandoId: null));
   }
 
-  /// Borra todo al confirmar compra o vaciar manualmente
+
   Future<void> vaciarCarrito() async {
     await _vaciarCarritoUseCase();
-    emit(const CarritoState.loaded(items: []));
+    emit(state.copyWith(items: const []));
   }
 
-  // =========================================================================
-  // 🌟 NUEVAS FUNCIONES DE COBERTURA Y MODO DE ENTREGA
-  // =========================================================================
-
-  /// Cambia entre A Domicilio y Pick-Up sin perder los productos
   void establecerModoEntrega(ModoEntrega modo) {
-    state.maybeMap(
-      loaded: (currentState) {
-        emit(currentState.copyWith(modoEntrega: modo));
-      },
-      orElse: () {
-        emit(CarritoState.loaded(items: [], modoEntrega: modo));
-      },
-    );
+    emit(state.copyWith(modoEntrega: modo));
   }
 
-  /// Evalúa si la dirección está en rango de alguna sucursal.
   Sucursal? validarCoberturaDireccion({
     required Direccion direccion,
     required List<Sucursal> sucursales,
-    required List<ConfiguracionEnvio> configuraciones, // 🌟 AHORA RECIBE LA LISTA COMPLETA
+    required List<ConfiguracionEnvio> configuraciones,
   }) {
     Sucursal? sucursalGanadora;
     double distanciaMinima = double.infinity;
@@ -203,19 +158,17 @@ class CarritoCubit extends Cubit<CarritoState> {
     for (var sucursal in sucursales) {
       if (sucursal.latitud == null || sucursal.longitud == null) continue;
 
-      // 🌟 1. Buscamos la configuración específica de esta sucursal
-      final configIndex = configuraciones.indexWhere((c) => c.sucursalId == sucursal.id);
-      if (configIndex == -1) continue; // Si no tiene config, la saltamos
+      final configIndex =
+          configuraciones.indexWhere((c) => c.sucursalId == sucursal.id);
+      if (configIndex == -1) continue;
 
       final config = configuraciones[configIndex];
 
-      // 🌟 2. Validamos el Código Postal (Solo si la sucursal lo requiere)
       if (config.requerirValidacionCP &&
           !config.codigosPostalesPermitidos.contains(direccion.codigoPostal)) {
-        continue; // No cubre este C.P., evaluamos la siguiente sucursal
+        continue;
       }
 
-      // 🌟 3. Calculamos la distancia
       final distanciaKm = _ubicacionService.calcularDistancia(
         lat1: direccion.latitud,
         lon1: direccion.longitud,
@@ -223,7 +176,6 @@ class CarritoCubit extends Cubit<CarritoState> {
         lon2: sucursal.longitud!,
       );
 
-      // 🌟 4. Evaluamos contra el radio ESPECÍFICO de esta sucursal
       if (distanciaKm <= config.radioMaximoKm && distanciaKm < distanciaMinima) {
         distanciaMinima = distanciaKm;
         sucursalGanadora = sucursal;
@@ -234,20 +186,10 @@ class CarritoCubit extends Cubit<CarritoState> {
   }
 
   void establecerDireccionEntrega(Direccion direccion) {
-    state.maybeMap(
-      loaded: (currentState) {
-        emit(currentState.copyWith(direccionSeleccionada: direccion));
-      },
-      orElse: () {},
-    );
+    emit(state.copyWith(direccionSeleccionada: direccion));
   }
 
   void establecerSucursalActiva(String sucursalId) {
-    state.maybeMap(
-      loaded: (currentState) {
-        emit(currentState.copyWith(sucursalId: sucursalId));
-      },
-      orElse: () {},
-    );
+    emit(state.copyWith(sucursalId: sucursalId));
   }
 }

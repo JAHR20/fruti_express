@@ -25,8 +25,6 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
   void initState() {
     super.initState();
     _radioCtrl = TextEditingController();
-
-    // 🌟 Usamos tu método real para cargar config y tarifas al mismo tiempo
     context.read<EnvioAdminCubit>().cargarDatos(widget.sucursalId);
   }
 
@@ -89,9 +87,6 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ==========================================
-                // 1. ZONA DE COBERTURA (Configuración General)
-                // ==========================================
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -192,9 +187,6 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
 
                 const SizedBox(height: 32),
 
-                // ==========================================
-                // 2. TARIFAS POR DISTANCIA (Escalonadas)
-                // ==========================================
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -209,15 +201,13 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
                       onPressed: () {
                         showModalBottomSheet(
                           context: context,
-                          isScrollControlled:
-                              true, // Importante para que el teclado no cubra el form
+                          isScrollControlled: true,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.vertical(
                               top: Radius.circular(20),
                             ),
                           ),
                           builder: (_) => BlocProvider.value(
-                            // Le pasamos el mismo Cubit para que el modal escuche el estado
                             value: context.read<EnvioAdminCubit>(),
                             child: TarifaFormBottomSheet(
                               sucursalId: widget.sucursalId,
@@ -254,7 +244,6 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
                         margin: const EdgeInsets.only(bottom: 8),
                         child: ListTile(
                           onTap: () {
-                            // 🌟 Abrir modal en modo EDICIÓN
                             showModalBottomSheet(
                               context: context,
                               isScrollControlled: true,
@@ -267,8 +256,7 @@ class _GestionTarifasScreenState extends State<GestionTarifasScreen> {
                                 value: context.read<EnvioAdminCubit>(),
                                 child: TarifaFormBottomSheet(
                                   sucursalId: widget.sucursalId,
-                                  tarifaAEditar:
-                                      tarifa, // 👈 Pasamos la tarifa para que se pre-llene
+                                  tarifaAEditar: tarifa,
                                 ),
                               ),
                             );

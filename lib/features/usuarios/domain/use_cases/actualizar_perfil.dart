@@ -14,7 +14,7 @@ class ActualizarPerfil {
     required Perfil perfilAEditar,
   }) {
     return TaskEither.Do(($) async {
-      // 🛡️ Regla: Solo puedes editarte a ti mismo O ser Administrador
+      // Regla: Solo puedes editarte a ti mismo O ser Administrador
       final esDueno = solicitante.id == perfilAEditar.id;
 
       if (!esDueno && !solicitante.esAdmin) {

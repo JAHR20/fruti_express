@@ -8,7 +8,6 @@ class BienvenidaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usamos un fondo claro como en el diseño
     return Scaffold(
       backgroundColor: const Color(0xFFE3F0F8), 
       body: SafeArea(
@@ -19,8 +18,6 @@ class BienvenidaPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const Spacer(),
-              
-              // 💠 LOGO Y TÍTULO (Puedes separarlo en otro widget luego)
               const Icon(Icons.hexagon_outlined, size: 60, color: Colors.black87),
               const SizedBox(height: 16),
               const Text(
@@ -34,8 +31,7 @@ class BienvenidaPage extends StatelessWidget {
               ),
               
               const Spacer(),
-              
-              // 📝 SECCIÓN DE BOTONES
+            
               const Text(
                 '¿No tienes una cuenta?',
                 textAlign: TextAlign.center,
@@ -43,17 +39,15 @@ class BienvenidaPage extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               
-              // Botón de Registro
               PrimaryAuthButton(
                 text: 'Regístrate con email',
                 onPressed: () {
-                  context.go(AppRouter.register); // Ajusta la ruta a tu página de registro
+                  context.go(AppRouter.register);
                 },
               ),
               
               const SizedBox(height: 24),
               
-              // Link al Login
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -65,7 +59,7 @@ class BienvenidaPage extends StatelessWidget {
                     child: const Text(
                       'Inicia Sesión',
                       style: TextStyle(
-                        color: Color(0xFF1E40AF), // Azul oscuro
+                        color: Color(0xFF1E40AF),
                         fontWeight: FontWeight.bold,
                       ),
                     ),

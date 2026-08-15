@@ -4,11 +4,28 @@ import 'package:fruti_express_jahr_admin/features/direcciones/domain/entities/di
 part 'direcciones_state.freezed.dart';
 
 @freezed
-class DireccionesState with _$DireccionesState {
-  const DireccionesState._();
+abstract class DireccionesState with _$DireccionesState {
+  const factory DireccionesState({
+    @Default(<Direccion>[]) List<Direccion> direcciones,
 
-  const factory DireccionesState.initial() = _Initial;
-  const factory DireccionesState.loading() = _Loading;
-  const factory DireccionesState.loaded(List<Direccion> direcciones) = _Loaded;
-  const factory DireccionesState.error(String mensaje) = _Error;
+    @Default(false) bool isLoading,
+
+    /// ID de la dirección que está siendo creada/actualizada/eliminada.
+    String? direccionProcesandoId,
+
+    /// ID de la dirección que se está marcando como principal.
+    String? direccionPrincipalProcesandoId,
+
+    /// Error al cargar la lista completa.
+    String? errorMessage,
+
+    /// Error producido durante una operación puntual.
+    String? operacionError,
+
+    /// Indica que una operación puntual terminó correctamente.
+    @Default(false) bool operacionExitosa,
+
+    /// Usuario cuyas direcciones están actualmente cargadas.
+    String? usuarioId,
+  }) = _DireccionesState;
 }

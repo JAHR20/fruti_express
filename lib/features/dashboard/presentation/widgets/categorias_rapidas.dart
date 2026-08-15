@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/presentation/cubits/categoria_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/categorias/presentation/cubits/categoria_state.dart';
 
-// 🌟 1. Se cambió el nombre a CategoriasRapidasWidget
 class CategoriasRapidas extends StatelessWidget {
   const CategoriasRapidas({super.key});
 
@@ -37,70 +36,71 @@ class CategoriasRapidas extends StatelessWidget {
           height: 100,
           child: BlocBuilder<CategoriaCubit, CategoriaState>(
             builder: (context, state) {
-              return state.when(
-                initial: () => const Center(child: Text('Cargando...')),
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (message) => Center(
+              if (state.isLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state.errorMessage != null) {
+                return Center(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      message,
+                      state.errorMessage!,
                       style: const TextStyle(color: Colors.red, fontSize: 12),
                     ),
                   ),
-                ),
-                loaded: (categorias) {
-                  if (categorias.isEmpty) {
-                    return const Center(child: Text('No hay categorías'));
-                  }
+                );
+              }
 
-                  return ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    scrollDirection: Axis.horizontal,
-                    itemCount: categorias.length,
-                    itemBuilder: (context, index) {
-                      final categoria = categorias[index];
-                      final color = colores[index % colores.length];
+              if (state.categorias.isEmpty) {
+                return const Center(child: Text('No hay categorías'));
+              }
 
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 16.0),
-                        child: Column(
-                          children: [
-                            Container(
-                              height: 65,
-                              width: 65,
-                              clipBehavior: Clip.antiAlias,
-                              decoration: BoxDecoration(
-                                color: color,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child:
-                                  categoria.imagenUrl != null &&
-                                      categoria.imagenUrl!.isNotEmpty
-                                  ? Image.network(
-                                      categoria.imagenUrl!,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : const Icon(
-                                      Icons.category,
-                                      color: Colors.white,
-                                      size: 32,
-                                    ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              categoria.nombre,
-                              style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w500,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+              return ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                scrollDirection: Axis.horizontal,
+                itemCount: state.categorias.length,
+                itemBuilder: (context, index) {
+                  final categoria = state.categorias[index];
+                  final color = colores[index % colores.length];
+
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 16.0),
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 65,
+                          width: 65,
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child:
+                              categoria.imagenUrl != null &&
+                                  categoria.imagenUrl!.isNotEmpty
+                              ? Image.network(
+                                  categoria.imagenUrl!,
+                                  fit: BoxFit.cover,
+                                )
+                              : const Icon(
+                                  Icons.category,
+                                  color: Colors.white,
+                                  size: 32,
+                                ),
                         ),
-                      );
-                    },
+                        const SizedBox(height: 8),
+                        Text(
+                          categoria.nombre,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   );
                 },
               );

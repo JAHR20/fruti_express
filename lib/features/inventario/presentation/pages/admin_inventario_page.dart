@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/presentation/cubits/inventario_cubit.dart';
@@ -9,10 +8,6 @@ import 'package:fruti_express_jahr_admin/features/inventario/presentation/widget
 import 'package:fruti_express_jahr_admin/features/inventario/presentation/widgets/tarjeta_inventario.dart';
 import 'package:fruti_express_jahr_admin/features/productos/domain/enums/unidad_medida_producto.dart';
 import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/productos/domain/entities/producto.dart';
-import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_state.dart';
-
-// 🌟 Importa tu Cubit y State de Sucursales
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_state.dart';
 
@@ -24,7 +19,6 @@ class AdminInventarioPage extends StatefulWidget {
 }
 
 class _AdminInventarioPageState extends State<AdminInventarioPage> {
-  // 🌟 Variable para guardar qué sucursal seleccionó el Admin en el Dropdown
   String? _sucursalSeleccionadaId;
 
   void _mostrarDialogoAjuste(
@@ -35,18 +29,21 @@ class _AdminInventarioPageState extends State<AdminInventarioPage> {
     UnidadMedida unidad,
     int stockActual,
   ) {
-    final usuarioActual =
-        (context.read<AuthCubit>().state as AuthAuthenticated).perfil;
-    final cubit = context.read<InventarioCubit>();
+    final authState = context.read<AuthCubit>().state;
+
+    if (authState is! AuthAuthenticated) return;
+
+    final usuarioActual = authState.perfil;
+    final inventarioCubit = context.read<InventarioCubit>();
 
     showDialog(
       context: context,
       builder: (_) => DialogoAjusteStock(
         esAumento: esAumento,
         unidadMedida: unidad,
-        stockActual: stockActual, // 🌟 NUEVO: Pasamos el stock actual
+        stockActual: stockActual,
         onConfirmar: (cantidad) {
-          cubit.ajustarStockManual(
+          inventarioCubit.ajustarStockManual(
             usuarioActual: usuarioActual,
             productoId: productoId,
             sucursalId: sucursalId,
@@ -60,19 +57,22 @@ class _AdminInventarioPageState extends State<AdminInventarioPage> {
 
   @override
   Widget build(BuildContext context) {
-    final estadoProductos = context.watch<ProductosCubit>().state;
-    final List<Producto> listaProductos = estadoProductos.maybeWhen(
-      loaded: (productos, _, __) => productos,
-      orElse: () => [],
-    );
+    final authState = context.watch<AuthCubit>().state;
 
-    final usuarioActual =
-        (context.read<AuthCubit>().state as AuthAuthenticated).perfil;
+    if (authState is! AuthAuthenticated) {
+      return const Scaffold(
+        body: Center(child: Text('No hay una sesión activa.')),
+      );
+    }
+
+    final usuarioActual = authState.perfil;
+
     final esAdminGlobal =
         usuarioActual.sucursalId == null || usuarioActual.sucursalId!.isEmpty;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
+
       appBar: AppBar(
         title: const Text(
           'Control de Bodega',
@@ -81,15 +81,14 @@ class _AdminInventarioPageState extends State<AdminInventarioPage> {
         backgroundColor: const Color(0xFF1E3A8A),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+
       body: Column(
         children: [
-          // 🌟 1. EL SELECTOR DE SUCURSALES (Solo visible para el Admin Global)
           if (esAdminGlobal)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               margin: const EdgeInsets.only(bottom: 8),
-              // Sombra sutil para separarlo del resto de la lista
               decoration: BoxDecoration(
                 color: Colors.white,
                 boxShadow: [
@@ -102,118 +101,182 @@ class _AdminInventarioPageState extends State<AdminInventarioPage> {
               ),
               child: BlocBuilder<SucursalCubit, SucursalState>(
                 builder: (context, state) {
-                  return state.maybeWhen(
-                    loading: () =>
-                        const Center(child: LinearProgressIndicator()),
-                    loaded: (sucursales) {
-                      if (sucursales.isEmpty) {
-                        return const Text(
-                          'No hay sucursales registradas.',
-                          style: TextStyle(color: Colors.grey),
-                        );
-                      }
-                      return DropdownButtonFormField<String>(
-                        decoration: InputDecoration(
-                          labelText: 'Selecciona una sucursal',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                        ),
-                        initialValue: _sucursalSeleccionadaId,
-                        items: sucursales.map((sucursal) {
-                          return DropdownMenuItem(
-                            value: sucursal.id,
-                            child: Text(sucursal.nombre),
-                          );
-                        }).toList(),
-                        onChanged: (nuevoId) {
-                          if (nuevoId != null) {
-                            setState(() => _sucursalSeleccionadaId = nuevoId);
-                            context.read<InventarioCubit>().cargarInventario(
-                              nuevoId,
-                            );
-                          }
-                        },
+                  if (state.isLoading && state.sucursales.isEmpty) {
+                    return const LinearProgressIndicator();
+                  }
+
+                  final sucursales = state.sucursales;
+
+                  if (sucursales.isEmpty) {
+                    return const Text(
+                      'No hay sucursales registradas.',
+                      style: TextStyle(color: Colors.grey),
+                    );
+                  }
+
+                  return DropdownButtonFormField<String>(
+                    decoration: InputDecoration(
+                      labelText: 'Selecciona una sucursal',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
+                    ),
+
+                    initialValue: _sucursalSeleccionadaId,
+
+                    items: sucursales.map((sucursal) {
+                      return DropdownMenuItem<String>(
+                        value: sucursal.id,
+                        child: Text(sucursal.nombre),
                       );
+                    }).toList(),
+
+                    onChanged: (nuevoId) {
+                      if (nuevoId == null) return;
+
+                      setState(() {
+                        _sucursalSeleccionadaId = nuevoId;
+                      });
+
+                      context.read<InventarioCubit>().cargarInventario(nuevoId);
                     },
-                    orElse: () => const SizedBox.shrink(),
                   );
                 },
               ),
             ),
 
-          // 🌟 2. LA LISTA DEL INVENTARIO
           Expanded(
             child: BlocConsumer<InventarioCubit, InventarioState>(
+              listenWhen: (previous, current) =>
+                  previous.errorMessage != current.errorMessage ||
+                  previous.operacionError != current.operacionError ||
+                  previous.operacionExitosa != current.operacionExitosa,
+
               listener: (context, state) {
-                state.maybeWhen(
-                  error: (message) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(message),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                  },
-                  orElse: () {},
-                );
+                if (state.errorMessage != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.errorMessage!),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+
+                if (state.operacionError != null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(state.operacionError!),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+
+                  context.read<InventarioCubit>().limpiarErrorOperacion();
+                }
+
+                if (state.operacionExitosa) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Stock actualizado correctamente.'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                }
               },
+
               builder: (context, state) {
-                // Usamos el when de freezed para ser exhaustivos
-                return state.when(
-                  initial: () => const SizedBox.shrink(),
-                  loading: () => const Center(
+                if (state.isLoading && state.inventario.isEmpty) {
+                  return const Center(
                     child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
-                  ),
-                  error: (message) => Center(child: Text('Error: $message')),
-                  loaded: (inventario, actualizandoId) {
-                    // Ajusta estos parámetros según lo que tenga tu InventarioLoaded
-                    if (inventario.isEmpty) {
-                      return const Center(
-                        child: Text('Aún no hay registros en esta sucursal.'),
-                      );
-                    }
+                  );
+                }
 
-                    return ListView.builder(
+                if (state.errorMessage != null && state.inventario.isEmpty) {
+                  return Center(child: Text('Error: ${state.errorMessage}'));
+                }
+
+                if (state.sucursalId == null) {
+                  return const Center(
+                    child: Text(
+                      'Selecciona una sucursal para consultar su inventario.',
+                    ),
+                  );
+                }
+
+                if (state.inventario.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'Aún no hay registros de inventario en esta sucursal.',
+                    ),
+                  );
+                }
+
+                final productosState = context.watch<ProductosCubit>().state;
+
+                final listaProductos = productosState.productos;
+
+                return Stack(
+                  children: [
+                    ListView.builder(
                       padding: const EdgeInsets.only(top: 8, bottom: 80),
-                      itemCount: inventario.length,
+                      itemCount: state.inventario.length,
                       itemBuilder: (context, index) {
-                        final item = inventario[index];
-                        final indexProducto = listaProductos.indexWhere(
-                          (p) => p.id == item.productoId,
-                        );
-                        if (indexProducto == -1) return const SizedBox.shrink();
+                        final item = state.inventario[index];
 
-                        final productoBase = listaProductos[indexProducto];
+                        final indexProducto = listaProductos.indexWhere(
+                          (producto) => producto.id == item.productoId,
+                        );
+
+                        if (indexProducto == -1) {
+                          return const SizedBox.shrink();
+                        }
+
+                        final producto = listaProductos[indexProducto];
+
+                        final estaActualizando =
+                            state.productoProcesandoId == item.productoId;
 
                         return TarjetaInventario(
                           item: item,
-                          producto: productoBase,
-                          estaActualizando: actualizandoId == item.productoId,
-                          onSumar: () => _mostrarDialogoAjuste(
-                            context,
-                            item.productoId,
-                            item.sucursalId,
-                            true,
-                            productoBase.unidadMedida,
-                            item.stockDisponible, // 🌟 NUEVO: Pasamos el stock actual
-                          ),
-                          onRestar: () => _mostrarDialogoAjuste(
-                            context,
-                            item.productoId,
-                            item.sucursalId,
-                            false,
-                            productoBase.unidadMedida,
-                            item.stockDisponible, // 🌟 NUEVO: Pasamos el stock actual
-                          ),
+                          producto: producto,
+                          estaActualizando: estaActualizando,
+
+                          onSumar: () {
+                            _mostrarDialogoAjuste(
+                              context,
+                              item.productoId,
+                              item.sucursalId,
+                              true,
+                              producto.unidadMedida,
+                              item.stockDisponible,
+                            );
+                          },
+
+                          onRestar: () {
+                            _mostrarDialogoAjuste(
+                              context,
+                              item.productoId,
+                              item.sucursalId,
+                              false,
+                              producto.unidadMedida,
+                              item.stockDisponible,
+                            );
+                          },
                         );
                       },
-                    );
-                  },
+                    ),
+
+                    if (state.isLoading)
+                      const Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: LinearProgressIndicator(),
+                      ),
+                  ],
                 );
               },
             ),

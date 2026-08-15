@@ -20,7 +20,7 @@ class CoberturaSliderWidget extends StatelessWidget {
             value: radioActualKm,
             min: 1.0,
             max: 30.0,
-            divisions: 58, // (30 - 1) / 0.5 para saltos de medio km
+            divisions: 58,
             activeColor: Colors.blue,
             onChanged: onChanged,
           ),

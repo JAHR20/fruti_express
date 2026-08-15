@@ -3,10 +3,20 @@ import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfi
 
 part 'usuarios_state.freezed.dart';
 
+enum UsuariosTab {
+  todos,
+  repartidores,
+  clientes,
+}
+
 @freezed
-class UsuariosState with _$UsuariosState {
-  const factory UsuariosState.initial() = UsuariosInitial;
-  const factory UsuariosState.loading() = UsuariosLoading;
-  const factory UsuariosState.loaded(List<Perfil> usuarios) = UsuariosLoaded;
-  const factory UsuariosState.error(String message) = UsuariosError;
+abstract class UsuariosState with _$UsuariosState {
+  const factory UsuariosState({
+    @Default([]) List<Perfil> usuarios,
+    @Default(false) bool isLoading,
+    @Default(UsuariosTab.todos) UsuariosTab tab,
+    String? usuarioProcesandoId,
+    String? errorMessage,
+    @Default('') String searchQuery,
+  }) = _UsuariosState;
 }

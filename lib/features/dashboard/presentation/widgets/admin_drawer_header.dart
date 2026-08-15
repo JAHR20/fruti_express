@@ -58,7 +58,7 @@ class AdminDrawerHeader extends StatelessWidget {
                 border: Border.all(color: Colors.white30, width: 0.5),
               ),
               child: Text(
-                usuarioActual.rol.nombreUI, // 🔗 Usando la extensión
+                usuarioActual.rol.nombreUI,
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,

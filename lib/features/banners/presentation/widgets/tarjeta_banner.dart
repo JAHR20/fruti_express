@@ -15,7 +15,6 @@ class TarjetaBanner extends StatelessWidget {
     required this.onEstadoCambiado,
   });
 
-  // 🎨 Función auxiliar para convertir el "#Hex" de la BD a Color de Flutter
   Color _hexToColor(String hexString) {
     try {
       final buffer = StringBuffer();
@@ -23,7 +22,7 @@ class TarjetaBanner extends StatelessWidget {
       buffer.write(hexString.replaceFirst('#', ''));
       return Color(int.parse(buffer.toString(), radix: 16));
     } catch (e) {
-      return Colors.grey.shade300; // Color de respaldo en caso de error
+      return Colors.grey.shade300;
     }
   }
 
@@ -48,7 +47,6 @@ class TarjetaBanner extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 👁️ 1. MINI VISTA PREVIA DEL BANNER (Tal cual lo verá el cliente)
           Container(
             height: 120,
             width: double.infinity,
@@ -66,7 +64,6 @@ class TarjetaBanner extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                // Imagen de fondo si existe
                 if (banner.imagenUrl != null && banner.imagenUrl!.isNotEmpty)
                   Positioned(
                     right: -10,
@@ -126,8 +123,6 @@ class TarjetaBanner extends StatelessWidget {
               ],
             ),
           ),
-
-          // 🛠️ 2. PANEL DE CONTROLES ADMINISTRATIVOS
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
@@ -177,8 +172,6 @@ class TarjetaBanner extends StatelessWidget {
                     ),
                   ],
                 ),
-
-                // Botones de Acción (Editar y Eliminar)
                 Row(
                   children: [
                     IconButton(

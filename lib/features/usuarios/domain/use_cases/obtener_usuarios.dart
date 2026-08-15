@@ -10,11 +10,9 @@ class ObtenerUsuarios {
 
   ObtenerUsuarios(this.repository);
 
-  /// Obtiene la lista MAESTRA de todos los usuarios del sistema.
-  /// 🛡️ Reservado exclusivamente para Administradores.
   ResultTask<List<Perfil>> ejecutar(Perfil usuarioActual) {
     return TaskEither.Do(($) async {
-      // 🔴 1. Bloqueo de seguridad: Si no es Admin, no entra.
+      // Bloqueo de seguridad: Si no es Admin, no entra.
       if (!usuarioActual.esAdmin) {
         return await $(
           TaskEither<Failure, List<Perfil>>.left(
@@ -25,8 +23,6 @@ class ObtenerUsuarios {
         );
       }
 
-      // 🟢 2. Caso: Administrador -> Acceso total
-      // Aquí el Admin ve a todos: otros admins, encargados, repartidores y clientes.
       return await $(repository.obtenerTodos());
     });
   }

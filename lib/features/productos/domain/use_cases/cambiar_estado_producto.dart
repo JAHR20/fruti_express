@@ -15,27 +15,25 @@ class CambiarEstadoProducto {
     required Perfil usuario,
     required String productoId,
     required bool
-    nuevoEstado, // <--- El "interruptor" (true = activo, false = inactivo)
+    nuevoEstado,
   }) {
     return TaskEither.Do(($) async {
-      // 1️⃣ Validar Permisos
+      // Validar Permisos
       await $(_validarPermisos(usuario));
 
-      // 2️⃣ Obtener Producto
+      // Obtener Producto
       final producto = await $(repository.obtenerPorId(productoId));
 
-      // 3️⃣ Validar que el cambio sea necesario (Evitar peticiones redundantes)
+      // Validar que el cambio sea necesario (Evitar peticiones redundantes)
       await $(_validarCambioNecesario(producto, nuevoEstado));
 
-      // 4️⃣ Aplicar Cambio con inmutabilidad
+      // Aplicar Cambio con inmutabilidad
       final productoActualizado = producto.copyWith(isActive: nuevoEstado);
 
-      // 5️⃣ Persistir y retornar
+      // Persistir y retornar
       return await $(repository.actualizar(productoActualizado));
     });
   }
-
-  // --- 🧩 MICRO-PASOS BLINDADOS ---
 
   ResultTask<Unit> _validarPermisos(Perfil u) => u.puedeGestionarCatalogo
       ? TaskEither.right(unit)

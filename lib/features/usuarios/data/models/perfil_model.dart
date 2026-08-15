@@ -42,7 +42,6 @@ extension PerfilModelX on PerfilModel {
     fechaCreacion: fechaCreacion,
   );
 
-  // ← Agrega este
   static PerfilModel fromDomain(Perfil p) => PerfilModel(
     id: p.id,
     nombre: p.nombre,

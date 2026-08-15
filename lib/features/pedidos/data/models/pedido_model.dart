@@ -31,7 +31,7 @@ abstract class PedidoModel with _$PedidoModel {
     @JsonKey(name: 'fecha_entrega_estimada') DateTime? fechaEntregaEstimada,
     @JsonKey(name: 'fecha_entrega') DateTime? fechaEntrega,
     @JsonKey(name: 'idempotency_key') String? idempotencyKey,
-    @JsonKey(includeFromJson: false, includeToJson: false) // ← no viene de BD
+    @JsonKey(includeFromJson: false, includeToJson: false)
     String? codigoConfirmacion,
     @JsonKey(name: 'detalles_pedido') @Default([]) List<PedidoItemModel> items,
   }) = _PedidoModel;
@@ -86,7 +86,7 @@ extension PedidoModelX on PedidoModel {
   );
 
   static PedidoModel fromParams(CrearPedidoParams p) => PedidoModel(
-    id: '', // ← la BD lo genera, no importa este valor
+    id: '',
     clienteId: p.clienteId,
     sucursalId: p.sucursalId,
     clienteNombreSnapshot: p.clienteNombreSnapshot,

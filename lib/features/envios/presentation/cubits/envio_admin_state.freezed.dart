@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$EnvioAdminState {
 
- bool get isLoading; ConfiguracionEnvio? get configuracion; List<TarifaEnvio> get tarifas; double get radioTemporalKm; bool get requiereCPTemporal; double? get montoGratisTemporal; String? get error; String? get mensajeExito;
+ bool get isLoading; ConfiguracionEnvio? get configuracion; List<TarifaEnvio> get tarifas; double get radioTemporalKm; bool get requiereCPTemporal; double? get montoGratisTemporal; String? get error; String? get mensajeExito;// 🌟 NUEVO — para no tumbar toda la pantalla al editar UNA tarifa
+ String? get tarifaProcesandoId;
 /// Create a copy of EnvioAdminState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,16 @@ $EnvioAdminStateCopyWith<EnvioAdminState> get copyWith => _$EnvioAdminStateCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnvioAdminState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.configuracion, configuracion) || other.configuracion == configuracion)&&const DeepCollectionEquality().equals(other.tarifas, tarifas)&&(identical(other.radioTemporalKm, radioTemporalKm) || other.radioTemporalKm == radioTemporalKm)&&(identical(other.requiereCPTemporal, requiereCPTemporal) || other.requiereCPTemporal == requiereCPTemporal)&&(identical(other.montoGratisTemporal, montoGratisTemporal) || other.montoGratisTemporal == montoGratisTemporal)&&(identical(other.error, error) || other.error == error)&&(identical(other.mensajeExito, mensajeExito) || other.mensajeExito == mensajeExito));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is EnvioAdminState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.configuracion, configuracion) || other.configuracion == configuracion)&&const DeepCollectionEquality().equals(other.tarifas, tarifas)&&(identical(other.radioTemporalKm, radioTemporalKm) || other.radioTemporalKm == radioTemporalKm)&&(identical(other.requiereCPTemporal, requiereCPTemporal) || other.requiereCPTemporal == requiereCPTemporal)&&(identical(other.montoGratisTemporal, montoGratisTemporal) || other.montoGratisTemporal == montoGratisTemporal)&&(identical(other.error, error) || other.error == error)&&(identical(other.mensajeExito, mensajeExito) || other.mensajeExito == mensajeExito)&&(identical(other.tarifaProcesandoId, tarifaProcesandoId) || other.tarifaProcesandoId == tarifaProcesandoId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,configuracion,const DeepCollectionEquality().hash(tarifas),radioTemporalKm,requiereCPTemporal,montoGratisTemporal,error,mensajeExito);
+int get hashCode => Object.hash(runtimeType,isLoading,configuracion,const DeepCollectionEquality().hash(tarifas),radioTemporalKm,requiereCPTemporal,montoGratisTemporal,error,mensajeExito,tarifaProcesandoId);
 
 @override
 String toString() {
-  return 'EnvioAdminState(isLoading: $isLoading, configuracion: $configuracion, tarifas: $tarifas, radioTemporalKm: $radioTemporalKm, requiereCPTemporal: $requiereCPTemporal, montoGratisTemporal: $montoGratisTemporal, error: $error, mensajeExito: $mensajeExito)';
+  return 'EnvioAdminState(isLoading: $isLoading, configuracion: $configuracion, tarifas: $tarifas, radioTemporalKm: $radioTemporalKm, requiereCPTemporal: $requiereCPTemporal, montoGratisTemporal: $montoGratisTemporal, error: $error, mensajeExito: $mensajeExito, tarifaProcesandoId: $tarifaProcesandoId)';
 }
 
 
@@ -45,7 +46,7 @@ abstract mixin class $EnvioAdminStateCopyWith<$Res>  {
   factory $EnvioAdminStateCopyWith(EnvioAdminState value, $Res Function(EnvioAdminState) _then) = _$EnvioAdminStateCopyWithImpl;
 @useResult
 $Res call({
- bool isLoading, ConfiguracionEnvio? configuracion, List<TarifaEnvio> tarifas, double radioTemporalKm, bool requiereCPTemporal, double? montoGratisTemporal, String? error, String? mensajeExito
+ bool isLoading, ConfiguracionEnvio? configuracion, List<TarifaEnvio> tarifas, double radioTemporalKm, bool requiereCPTemporal, double? montoGratisTemporal, String? error, String? mensajeExito, String? tarifaProcesandoId
 });
 
 
@@ -62,7 +63,7 @@ class _$EnvioAdminStateCopyWithImpl<$Res>
 
 /// Create a copy of EnvioAdminState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? configuracion = freezed,Object? tarifas = null,Object? radioTemporalKm = null,Object? requiereCPTemporal = null,Object? montoGratisTemporal = freezed,Object? error = freezed,Object? mensajeExito = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? isLoading = null,Object? configuracion = freezed,Object? tarifas = null,Object? radioTemporalKm = null,Object? requiereCPTemporal = null,Object? montoGratisTemporal = freezed,Object? error = freezed,Object? mensajeExito = freezed,Object? tarifaProcesandoId = freezed,}) {
   return _then(_self.copyWith(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,configuracion: freezed == configuracion ? _self.configuracion : configuracion // ignore: cast_nullable_to_non_nullable
@@ -72,6 +73,7 @@ as double,requiereCPTemporal: null == requiereCPTemporal ? _self.requiereCPTempo
 as bool,montoGratisTemporal: freezed == montoGratisTemporal ? _self.montoGratisTemporal : montoGratisTemporal // ignore: cast_nullable_to_non_nullable
 as double?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,mensajeExito: freezed == mensajeExito ? _self.mensajeExito : mensajeExito // ignore: cast_nullable_to_non_nullable
+as String?,tarifaProcesandoId: freezed == tarifaProcesandoId ? _self.tarifaProcesandoId : tarifaProcesandoId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -169,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  ConfiguracionEnvio? configuracion,  List<TarifaEnvio> tarifas,  double radioTemporalKm,  bool requiereCPTemporal,  double? montoGratisTemporal,  String? error,  String? mensajeExito)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( bool isLoading,  ConfiguracionEnvio? configuracion,  List<TarifaEnvio> tarifas,  double radioTemporalKm,  bool requiereCPTemporal,  double? montoGratisTemporal,  String? error,  String? mensajeExito,  String? tarifaProcesandoId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _EnvioAdminState() when $default != null:
-return $default(_that.isLoading,_that.configuracion,_that.tarifas,_that.radioTemporalKm,_that.requiereCPTemporal,_that.montoGratisTemporal,_that.error,_that.mensajeExito);case _:
+return $default(_that.isLoading,_that.configuracion,_that.tarifas,_that.radioTemporalKm,_that.requiereCPTemporal,_that.montoGratisTemporal,_that.error,_that.mensajeExito,_that.tarifaProcesandoId);case _:
   return orElse();
 
 }
@@ -190,10 +192,10 @@ return $default(_that.isLoading,_that.configuracion,_that.tarifas,_that.radioTem
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  ConfiguracionEnvio? configuracion,  List<TarifaEnvio> tarifas,  double radioTemporalKm,  bool requiereCPTemporal,  double? montoGratisTemporal,  String? error,  String? mensajeExito)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( bool isLoading,  ConfiguracionEnvio? configuracion,  List<TarifaEnvio> tarifas,  double radioTemporalKm,  bool requiereCPTemporal,  double? montoGratisTemporal,  String? error,  String? mensajeExito,  String? tarifaProcesandoId)  $default,) {final _that = this;
 switch (_that) {
 case _EnvioAdminState():
-return $default(_that.isLoading,_that.configuracion,_that.tarifas,_that.radioTemporalKm,_that.requiereCPTemporal,_that.montoGratisTemporal,_that.error,_that.mensajeExito);case _:
+return $default(_that.isLoading,_that.configuracion,_that.tarifas,_that.radioTemporalKm,_that.requiereCPTemporal,_that.montoGratisTemporal,_that.error,_that.mensajeExito,_that.tarifaProcesandoId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -210,10 +212,10 @@ return $default(_that.isLoading,_that.configuracion,_that.tarifas,_that.radioTem
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  ConfiguracionEnvio? configuracion,  List<TarifaEnvio> tarifas,  double radioTemporalKm,  bool requiereCPTemporal,  double? montoGratisTemporal,  String? error,  String? mensajeExito)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( bool isLoading,  ConfiguracionEnvio? configuracion,  List<TarifaEnvio> tarifas,  double radioTemporalKm,  bool requiereCPTemporal,  double? montoGratisTemporal,  String? error,  String? mensajeExito,  String? tarifaProcesandoId)?  $default,) {final _that = this;
 switch (_that) {
 case _EnvioAdminState() when $default != null:
-return $default(_that.isLoading,_that.configuracion,_that.tarifas,_that.radioTemporalKm,_that.requiereCPTemporal,_that.montoGratisTemporal,_that.error,_that.mensajeExito);case _:
+return $default(_that.isLoading,_that.configuracion,_that.tarifas,_that.radioTemporalKm,_that.requiereCPTemporal,_that.montoGratisTemporal,_that.error,_that.mensajeExito,_that.tarifaProcesandoId);case _:
   return null;
 
 }
@@ -225,7 +227,7 @@ return $default(_that.isLoading,_that.configuracion,_that.tarifas,_that.radioTem
 
 
 class _EnvioAdminState implements EnvioAdminState {
-  const _EnvioAdminState({this.isLoading = false, this.configuracion, final  List<TarifaEnvio> tarifas = const [], this.radioTemporalKm = 5.0, this.requiereCPTemporal = false, this.montoGratisTemporal, this.error, this.mensajeExito}): _tarifas = tarifas;
+  const _EnvioAdminState({this.isLoading = false, this.configuracion, final  List<TarifaEnvio> tarifas = const <TarifaEnvio>[], this.radioTemporalKm = 5.0, this.requiereCPTemporal = false, this.montoGratisTemporal, this.error, this.mensajeExito, this.tarifaProcesandoId}): _tarifas = tarifas;
   
 
 @override@JsonKey() final  bool isLoading;
@@ -242,6 +244,8 @@ class _EnvioAdminState implements EnvioAdminState {
 @override final  double? montoGratisTemporal;
 @override final  String? error;
 @override final  String? mensajeExito;
+// 🌟 NUEVO — para no tumbar toda la pantalla al editar UNA tarifa
+@override final  String? tarifaProcesandoId;
 
 /// Create a copy of EnvioAdminState
 /// with the given fields replaced by the non-null parameter values.
@@ -253,16 +257,16 @@ _$EnvioAdminStateCopyWith<_EnvioAdminState> get copyWith => __$EnvioAdminStateCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnvioAdminState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.configuracion, configuracion) || other.configuracion == configuracion)&&const DeepCollectionEquality().equals(other._tarifas, _tarifas)&&(identical(other.radioTemporalKm, radioTemporalKm) || other.radioTemporalKm == radioTemporalKm)&&(identical(other.requiereCPTemporal, requiereCPTemporal) || other.requiereCPTemporal == requiereCPTemporal)&&(identical(other.montoGratisTemporal, montoGratisTemporal) || other.montoGratisTemporal == montoGratisTemporal)&&(identical(other.error, error) || other.error == error)&&(identical(other.mensajeExito, mensajeExito) || other.mensajeExito == mensajeExito));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _EnvioAdminState&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.configuracion, configuracion) || other.configuracion == configuracion)&&const DeepCollectionEquality().equals(other._tarifas, _tarifas)&&(identical(other.radioTemporalKm, radioTemporalKm) || other.radioTemporalKm == radioTemporalKm)&&(identical(other.requiereCPTemporal, requiereCPTemporal) || other.requiereCPTemporal == requiereCPTemporal)&&(identical(other.montoGratisTemporal, montoGratisTemporal) || other.montoGratisTemporal == montoGratisTemporal)&&(identical(other.error, error) || other.error == error)&&(identical(other.mensajeExito, mensajeExito) || other.mensajeExito == mensajeExito)&&(identical(other.tarifaProcesandoId, tarifaProcesandoId) || other.tarifaProcesandoId == tarifaProcesandoId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,isLoading,configuracion,const DeepCollectionEquality().hash(_tarifas),radioTemporalKm,requiereCPTemporal,montoGratisTemporal,error,mensajeExito);
+int get hashCode => Object.hash(runtimeType,isLoading,configuracion,const DeepCollectionEquality().hash(_tarifas),radioTemporalKm,requiereCPTemporal,montoGratisTemporal,error,mensajeExito,tarifaProcesandoId);
 
 @override
 String toString() {
-  return 'EnvioAdminState(isLoading: $isLoading, configuracion: $configuracion, tarifas: $tarifas, radioTemporalKm: $radioTemporalKm, requiereCPTemporal: $requiereCPTemporal, montoGratisTemporal: $montoGratisTemporal, error: $error, mensajeExito: $mensajeExito)';
+  return 'EnvioAdminState(isLoading: $isLoading, configuracion: $configuracion, tarifas: $tarifas, radioTemporalKm: $radioTemporalKm, requiereCPTemporal: $requiereCPTemporal, montoGratisTemporal: $montoGratisTemporal, error: $error, mensajeExito: $mensajeExito, tarifaProcesandoId: $tarifaProcesandoId)';
 }
 
 
@@ -273,7 +277,7 @@ abstract mixin class _$EnvioAdminStateCopyWith<$Res> implements $EnvioAdminState
   factory _$EnvioAdminStateCopyWith(_EnvioAdminState value, $Res Function(_EnvioAdminState) _then) = __$EnvioAdminStateCopyWithImpl;
 @override @useResult
 $Res call({
- bool isLoading, ConfiguracionEnvio? configuracion, List<TarifaEnvio> tarifas, double radioTemporalKm, bool requiereCPTemporal, double? montoGratisTemporal, String? error, String? mensajeExito
+ bool isLoading, ConfiguracionEnvio? configuracion, List<TarifaEnvio> tarifas, double radioTemporalKm, bool requiereCPTemporal, double? montoGratisTemporal, String? error, String? mensajeExito, String? tarifaProcesandoId
 });
 
 
@@ -290,7 +294,7 @@ class __$EnvioAdminStateCopyWithImpl<$Res>
 
 /// Create a copy of EnvioAdminState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? configuracion = freezed,Object? tarifas = null,Object? radioTemporalKm = null,Object? requiereCPTemporal = null,Object? montoGratisTemporal = freezed,Object? error = freezed,Object? mensajeExito = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? isLoading = null,Object? configuracion = freezed,Object? tarifas = null,Object? radioTemporalKm = null,Object? requiereCPTemporal = null,Object? montoGratisTemporal = freezed,Object? error = freezed,Object? mensajeExito = freezed,Object? tarifaProcesandoId = freezed,}) {
   return _then(_EnvioAdminState(
 isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,configuracion: freezed == configuracion ? _self.configuracion : configuracion // ignore: cast_nullable_to_non_nullable
@@ -300,6 +304,7 @@ as double,requiereCPTemporal: null == requiereCPTemporal ? _self.requiereCPTempo
 as bool,montoGratisTemporal: freezed == montoGratisTemporal ? _self.montoGratisTemporal : montoGratisTemporal // ignore: cast_nullable_to_non_nullable
 as double?,error: freezed == error ? _self.error : error // ignore: cast_nullable_to_non_nullable
 as String?,mensajeExito: freezed == mensajeExito ? _self.mensajeExito : mensajeExito // ignore: cast_nullable_to_non_nullable
+as String?,tarifaProcesandoId: freezed == tarifaProcesandoId ? _self.tarifaProcesandoId : tarifaProcesandoId // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

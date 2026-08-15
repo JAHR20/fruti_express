@@ -10,25 +10,17 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
 
   @override
   Future<PedidoModel> crear(PedidoModel model) async {
-    // 1. Preparamos los mapas (sin preocuparnos por el clienteId o los UUIDs vacíos)
     final pedidoMap = model.toJson();
-    pedidoMap.remove('items'); // Limpiamos para evitar ruido
-
-    // Asumiendo que tu modelo tiene una propiedad 'items' o 'detalles'
+    pedidoMap.remove('items');
     final itemsList = model.items.map((item) => item.toJson()).toList();
 
-    print('🚨 ITEMS ENVIADOS A SUPABASE: $itemsList');
-
-    // 2. 🚀 LLAMAMOS A LA FUNCIÓN CON PASE VIP EN LUGAR DE INSERTAR DIRECTO
     final response = await supabase.rpc(
       'crear_pedido_completo',
       params: {'pedido_data': pedidoMap, 'items_data': itemsList},
     );
 
-    // 3. La función nos devuelve el UUID real que generó Supabase
     final String nuevoPedidoId = response.toString();
 
-    // 4. Retornamos el pedido completo consultándolo de nuevo (como ya lo hacías)
     final resultado = await obtenerPorId(nuevoPedidoId);
 
     if (resultado == null) {
@@ -40,6 +32,7 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
     return resultado;
   }
 
+  @override
   Future<List<PedidoModel>> obtenerPorUsuario(String usuarioId) async {
     final response = await supabase
         .from('pedidos')
@@ -60,8 +53,6 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
         .map((p) => p.id)
         .toList();
 
-    print('📦 pedidos activos: ${pedidosActivosIds.length}'); // ← agrega
-
     if (pedidosActivosIds.isEmpty) return pedidos;
 
     final codigos = await supabase
@@ -69,18 +60,14 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
         .select('pedido_id, codigo')
         .inFilter('pedido_id', pedidosActivosIds);
 
-    print('🔑 códigos encontrados: ${codigos}'); // ← agrega
 
     final codigosPorPedido = {
       for (final c in codigos as List)
         c['pedido_id'] as String: c['codigo'] as String,
     };
 
-    print('🗺️ mapa códigos: $codigosPorPedido'); // ← agrega
-
     return pedidos.map((p) {
       final codigo = codigosPorPedido[p.id];
-      print('✅ pedido ${p.id.substring(0, 8)} → código: $codigo'); // ← agrega
       return codigo != null ? p.copyWith(codigoConfirmacion: codigo) : p;
     }).toList();
   }
@@ -100,7 +87,7 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
   Future<List<PedidoModel>> obtenerTodos() async {
     final response = await supabase
         .from('pedidos')
-        .select('*, detalles_pedido(*)') // Traemos la relación completa
+        .select('*, detalles_pedido(*)')
         .order('fecha_creacion', ascending: false);
 
     return (response as List)
@@ -213,8 +200,6 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
   @override
   Future<int> obtenerVentasDelDia(String sucursalId) async {
     final hoy = DateTime.now().toIso8601String().split('T')[0];
-
-    // Traemos solo la columna 'total' de los pedidos de hoy
     final response = await supabase
         .from('pedidos')
         .select('total')
@@ -222,15 +207,10 @@ class PedidoRemoteDatasourceImpl implements PedidoRemoteDatasource {
         .gte('fecha_creacion', hoy);
 
     final data = response as List;
-
-    // Sumamos todos los totales.
-    // Usamos fold para iterar y acumular el valor.
     final totalVendido = data.fold<double>(
       0,
       (sum, item) => sum + (item['total'] ?? 0),
     );
-
-    // Lo convertimos a int para cumplir con tu contrato de Dominio
     return totalVendido.toInt();
   }
 

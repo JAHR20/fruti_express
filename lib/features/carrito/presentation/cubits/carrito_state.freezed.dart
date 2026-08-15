@@ -14,30 +14,97 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CarritoState {
 
-
+// ============================================================
+// DATOS DEL CARRITO
+// ============================================================
+ List<CarritoItem> get items;// ============================================================
+// DATOS DE ENTREGA
+// ============================================================
+ ModoEntrega? get modoEntrega; Direccion? get direccionSeleccionada; String? get sucursalId;// ============================================================
+// ESTADO DE CARGA
+// ============================================================
+ bool get isLoading;// Producto que está siendo modificado actualmente
+ String? get productoProcesandoId;// ============================================================
+// ERRORES
+// ============================================================
+ String? get errorMessage; String? get operacionError;// ============================================================
+// RESULTADO DE OPERACIÓN
+// ============================================================
+ bool get operacionExitosa;
+/// Create a copy of CarritoState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CarritoStateCopyWith<CarritoState> get copyWith => _$CarritoStateCopyWithImpl<CarritoState>(this as CarritoState, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CarritoState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CarritoState&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.modoEntrega, modoEntrega) || other.modoEntrega == modoEntrega)&&(identical(other.direccionSeleccionada, direccionSeleccionada) || other.direccionSeleccionada == direccionSeleccionada)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.productoProcesandoId, productoProcesandoId) || other.productoProcesandoId == productoProcesandoId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.operacionError, operacionError) || other.operacionError == operacionError)&&(identical(other.operacionExitosa, operacionExitosa) || other.operacionExitosa == operacionExitosa));
 }
 
 
 @override
-int get hashCode => runtimeType.hashCode;
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(items),modoEntrega,direccionSeleccionada,sucursalId,isLoading,productoProcesandoId,errorMessage,operacionError,operacionExitosa);
 
 @override
 String toString() {
-  return 'CarritoState()';
+  return 'CarritoState(items: $items, modoEntrega: $modoEntrega, direccionSeleccionada: $direccionSeleccionada, sucursalId: $sucursalId, isLoading: $isLoading, productoProcesandoId: $productoProcesandoId, errorMessage: $errorMessage, operacionError: $operacionError, operacionExitosa: $operacionExitosa)';
 }
 
 
 }
 
 /// @nodoc
-class $CarritoStateCopyWith<$Res>  {
-$CarritoStateCopyWith(CarritoState _, $Res Function(CarritoState) __);
+abstract mixin class $CarritoStateCopyWith<$Res>  {
+  factory $CarritoStateCopyWith(CarritoState value, $Res Function(CarritoState) _then) = _$CarritoStateCopyWithImpl;
+@useResult
+$Res call({
+ List<CarritoItem> items, ModoEntrega? modoEntrega, Direccion? direccionSeleccionada, String? sucursalId, bool isLoading, String? productoProcesandoId, String? errorMessage, String? operacionError, bool operacionExitosa
+});
+
+
+$DireccionCopyWith<$Res>? get direccionSeleccionada;
+
+}
+/// @nodoc
+class _$CarritoStateCopyWithImpl<$Res>
+    implements $CarritoStateCopyWith<$Res> {
+  _$CarritoStateCopyWithImpl(this._self, this._then);
+
+  final CarritoState _self;
+  final $Res Function(CarritoState) _then;
+
+/// Create a copy of CarritoState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? items = null,Object? modoEntrega = freezed,Object? direccionSeleccionada = freezed,Object? sucursalId = freezed,Object? isLoading = null,Object? productoProcesandoId = freezed,Object? errorMessage = freezed,Object? operacionError = freezed,Object? operacionExitosa = null,}) {
+  return _then(_self.copyWith(
+items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
+as List<CarritoItem>,modoEntrega: freezed == modoEntrega ? _self.modoEntrega : modoEntrega // ignore: cast_nullable_to_non_nullable
+as ModoEntrega?,direccionSeleccionada: freezed == direccionSeleccionada ? _self.direccionSeleccionada : direccionSeleccionada // ignore: cast_nullable_to_non_nullable
+as Direccion?,sucursalId: freezed == sucursalId ? _self.sucursalId : sucursalId // ignore: cast_nullable_to_non_nullable
+as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,productoProcesandoId: freezed == productoProcesandoId ? _self.productoProcesandoId : productoProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,operacionError: freezed == operacionError ? _self.operacionError : operacionError // ignore: cast_nullable_to_non_nullable
+as String?,operacionExitosa: null == operacionExitosa ? _self.operacionExitosa : operacionExitosa // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+/// Create a copy of CarritoState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$DireccionCopyWith<$Res>? get direccionSeleccionada {
+    if (_self.direccionSeleccionada == null) {
+    return null;
+  }
+
+  return $DireccionCopyWith<$Res>(_self.direccionSeleccionada!, (value) {
+    return _then(_self.copyWith(direccionSeleccionada: value));
+  });
+}
 }
 
 
@@ -55,14 +122,11 @@ extension CarritoStatePatterns on CarritoState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Loaded value)?  loaded,TResult Function( _Error value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _CarritoState value)?  $default,{required TResult orElse(),}){
 final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _Error() when error != null:
-return error(_that);case _:
+case _CarritoState() when $default != null:
+return $default(_that);case _:
   return orElse();
 
 }
@@ -80,14 +144,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Loaded value)  loaded,required TResult Function( _Error value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _CarritoState value)  $default,){
 final _that = this;
 switch (_that) {
-case _Initial():
-return initial(_that);case _Loading():
-return loading(_that);case _Loaded():
-return loaded(_that);case _Error():
-return error(_that);case _:
+case _CarritoState():
+return $default(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -104,14 +165,11 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Loaded value)?  loaded,TResult? Function( _Error value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _CarritoState value)?  $default,){
 final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial(_that);case _Loading() when loading != null:
-return loading(_that);case _Loaded() when loaded != null:
-return loaded(_that);case _Error() when error != null:
-return error(_that);case _:
+case _CarritoState() when $default != null:
+return $default(_that);case _:
   return null;
 
 }
@@ -128,13 +186,10 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<CarritoItem> items,  ModoEntrega? modoEntrega,  Direccion? direccionSeleccionada,  String? sucursalId)?  loaded,TResult Function( String mensaje)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<CarritoItem> items,  ModoEntrega? modoEntrega,  Direccion? direccionSeleccionada,  String? sucursalId,  bool isLoading,  String? productoProcesandoId,  String? errorMessage,  String? operacionError,  bool operacionExitosa)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial();case _Loading() when loading != null:
-return loading();case _Loaded() when loaded != null:
-return loaded(_that.items,_that.modoEntrega,_that.direccionSeleccionada,_that.sucursalId);case _Error() when error != null:
-return error(_that.mensaje);case _:
+case _CarritoState() when $default != null:
+return $default(_that.items,_that.modoEntrega,_that.direccionSeleccionada,_that.sucursalId,_that.isLoading,_that.productoProcesandoId,_that.errorMessage,_that.operacionError,_that.operacionExitosa);case _:
   return orElse();
 
 }
@@ -152,13 +207,10 @@ return error(_that.mensaje);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<CarritoItem> items,  ModoEntrega? modoEntrega,  Direccion? direccionSeleccionada,  String? sucursalId)  loaded,required TResult Function( String mensaje)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<CarritoItem> items,  ModoEntrega? modoEntrega,  Direccion? direccionSeleccionada,  String? sucursalId,  bool isLoading,  String? productoProcesandoId,  String? errorMessage,  String? operacionError,  bool operacionExitosa)  $default,) {final _that = this;
 switch (_that) {
-case _Initial():
-return initial();case _Loading():
-return loading();case _Loaded():
-return loaded(_that.items,_that.modoEntrega,_that.direccionSeleccionada,_that.sucursalId);case _Error():
-return error(_that.mensaje);case _:
+case _CarritoState():
+return $default(_that.items,_that.modoEntrega,_that.direccionSeleccionada,_that.sucursalId,_that.isLoading,_that.productoProcesandoId,_that.errorMessage,_that.operacionError,_that.operacionExitosa);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +227,10 @@ return error(_that.mensaje);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<CarritoItem> items,  ModoEntrega? modoEntrega,  Direccion? direccionSeleccionada,  String? sucursalId)?  loaded,TResult? Function( String mensaje)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<CarritoItem> items,  ModoEntrega? modoEntrega,  Direccion? direccionSeleccionada,  String? sucursalId,  bool isLoading,  String? productoProcesandoId,  String? errorMessage,  String? operacionError,  bool operacionExitosa)?  $default,) {final _that = this;
 switch (_that) {
-case _Initial() when initial != null:
-return initial();case _Loading() when loading != null:
-return loading();case _Loaded() when loaded != null:
-return loaded(_that.items,_that.modoEntrega,_that.direccionSeleccionada,_that.sucursalId);case _Error() when error != null:
-return error(_that.mensaje);case _:
+case _CarritoState() when $default != null:
+return $default(_that.items,_that.modoEntrega,_that.direccionSeleccionada,_that.sucursalId,_that.isLoading,_that.productoProcesandoId,_that.errorMessage,_that.operacionError,_that.operacionExitosa);case _:
   return null;
 
 }
@@ -192,140 +241,104 @@ return error(_that.mensaje);case _:
 /// @nodoc
 
 
-class _Initial extends CarritoState {
-  const _Initial(): super._();
+class _CarritoState extends CarritoState {
+  const _CarritoState({final  List<CarritoItem> items = const <CarritoItem>[], this.modoEntrega, this.direccionSeleccionada, this.sucursalId, this.isLoading = false, this.productoProcesandoId, this.errorMessage, this.operacionError, this.operacionExitosa = false}): _items = items,super._();
   
 
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'CarritoState.initial()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class _Loading extends CarritoState {
-  const _Loading(): super._();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loading);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'CarritoState.loading()';
-}
-
-
-}
-
-
-
-
-/// @nodoc
-
-
-class _Loaded extends CarritoState {
-  const _Loaded({final  List<CarritoItem> items = const [], this.modoEntrega, this.direccionSeleccionada, this.sucursalId}): _items = items,super._();
-  
-
+// ============================================================
+// DATOS DEL CARRITO
+// ============================================================
  final  List<CarritoItem> _items;
-@JsonKey() List<CarritoItem> get items {
+// ============================================================
+// DATOS DEL CARRITO
+// ============================================================
+@override@JsonKey() List<CarritoItem> get items {
   if (_items is EqualUnmodifiableListView) return _items;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_items);
 }
 
- final  ModoEntrega? modoEntrega;
-// 🌟 Aquí vive la decisión del usuario
- final  Direccion? direccionSeleccionada;
- final  String? sucursalId;
+// ============================================================
+// DATOS DE ENTREGA
+// ============================================================
+@override final  ModoEntrega? modoEntrega;
+@override final  Direccion? direccionSeleccionada;
+@override final  String? sucursalId;
+// ============================================================
+// ESTADO DE CARGA
+// ============================================================
+@override@JsonKey() final  bool isLoading;
+// Producto que está siendo modificado actualmente
+@override final  String? productoProcesandoId;
+// ============================================================
+// ERRORES
+// ============================================================
+@override final  String? errorMessage;
+@override final  String? operacionError;
+// ============================================================
+// RESULTADO DE OPERACIÓN
+// ============================================================
+@override@JsonKey() final  bool operacionExitosa;
 
 /// Create a copy of CarritoState
 /// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
+@override @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
-_$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _$identity);
+_$CarritoStateCopyWith<_CarritoState> get copyWith => __$CarritoStateCopyWithImpl<_CarritoState>(this, _$identity);
 
 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.modoEntrega, modoEntrega) || other.modoEntrega == modoEntrega)&&(identical(other.direccionSeleccionada, direccionSeleccionada) || other.direccionSeleccionada == direccionSeleccionada)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CarritoState&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.modoEntrega, modoEntrega) || other.modoEntrega == modoEntrega)&&(identical(other.direccionSeleccionada, direccionSeleccionada) || other.direccionSeleccionada == direccionSeleccionada)&&(identical(other.sucursalId, sucursalId) || other.sucursalId == sucursalId)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.productoProcesandoId, productoProcesandoId) || other.productoProcesandoId == productoProcesandoId)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.operacionError, operacionError) || other.operacionError == operacionError)&&(identical(other.operacionExitosa, operacionExitosa) || other.operacionExitosa == operacionExitosa));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),modoEntrega,direccionSeleccionada,sucursalId);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),modoEntrega,direccionSeleccionada,sucursalId,isLoading,productoProcesandoId,errorMessage,operacionError,operacionExitosa);
 
 @override
 String toString() {
-  return 'CarritoState.loaded(items: $items, modoEntrega: $modoEntrega, direccionSeleccionada: $direccionSeleccionada, sucursalId: $sucursalId)';
+  return 'CarritoState(items: $items, modoEntrega: $modoEntrega, direccionSeleccionada: $direccionSeleccionada, sucursalId: $sucursalId, isLoading: $isLoading, productoProcesandoId: $productoProcesandoId, errorMessage: $errorMessage, operacionError: $operacionError, operacionExitosa: $operacionExitosa)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$LoadedCopyWith<$Res> implements $CarritoStateCopyWith<$Res> {
-  factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
-@useResult
+abstract mixin class _$CarritoStateCopyWith<$Res> implements $CarritoStateCopyWith<$Res> {
+  factory _$CarritoStateCopyWith(_CarritoState value, $Res Function(_CarritoState) _then) = __$CarritoStateCopyWithImpl;
+@override @useResult
 $Res call({
- List<CarritoItem> items, ModoEntrega? modoEntrega, Direccion? direccionSeleccionada, String? sucursalId
+ List<CarritoItem> items, ModoEntrega? modoEntrega, Direccion? direccionSeleccionada, String? sucursalId, bool isLoading, String? productoProcesandoId, String? errorMessage, String? operacionError, bool operacionExitosa
 });
 
 
-$DireccionCopyWith<$Res>? get direccionSeleccionada;
+@override $DireccionCopyWith<$Res>? get direccionSeleccionada;
 
 }
 /// @nodoc
-class __$LoadedCopyWithImpl<$Res>
-    implements _$LoadedCopyWith<$Res> {
-  __$LoadedCopyWithImpl(this._self, this._then);
+class __$CarritoStateCopyWithImpl<$Res>
+    implements _$CarritoStateCopyWith<$Res> {
+  __$CarritoStateCopyWithImpl(this._self, this._then);
 
-  final _Loaded _self;
-  final $Res Function(_Loaded) _then;
+  final _CarritoState _self;
+  final $Res Function(_CarritoState) _then;
 
 /// Create a copy of CarritoState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? items = null,Object? modoEntrega = freezed,Object? direccionSeleccionada = freezed,Object? sucursalId = freezed,}) {
-  return _then(_Loaded(
+@override @pragma('vm:prefer-inline') $Res call({Object? items = null,Object? modoEntrega = freezed,Object? direccionSeleccionada = freezed,Object? sucursalId = freezed,Object? isLoading = null,Object? productoProcesandoId = freezed,Object? errorMessage = freezed,Object? operacionError = freezed,Object? operacionExitosa = null,}) {
+  return _then(_CarritoState(
 items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable
 as List<CarritoItem>,modoEntrega: freezed == modoEntrega ? _self.modoEntrega : modoEntrega // ignore: cast_nullable_to_non_nullable
 as ModoEntrega?,direccionSeleccionada: freezed == direccionSeleccionada ? _self.direccionSeleccionada : direccionSeleccionada // ignore: cast_nullable_to_non_nullable
 as Direccion?,sucursalId: freezed == sucursalId ? _self.sucursalId : sucursalId // ignore: cast_nullable_to_non_nullable
-as String?,
+as String?,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as bool,productoProcesandoId: freezed == productoProcesandoId ? _self.productoProcesandoId : productoProcesandoId // ignore: cast_nullable_to_non_nullable
+as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as String?,operacionError: freezed == operacionError ? _self.operacionError : operacionError // ignore: cast_nullable_to_non_nullable
+as String?,operacionExitosa: null == operacionExitosa ? _self.operacionExitosa : operacionExitosa // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -342,72 +355,6 @@ $DireccionCopyWith<$Res>? get direccionSeleccionada {
     return _then(_self.copyWith(direccionSeleccionada: value));
   });
 }
-}
-
-/// @nodoc
-
-
-class _Error extends CarritoState {
-  const _Error(this.mensaje): super._();
-  
-
- final  String mensaje;
-
-/// Create a copy of CarritoState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$ErrorCopyWith<_Error> get copyWith => __$ErrorCopyWithImpl<_Error>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Error&&(identical(other.mensaje, mensaje) || other.mensaje == mensaje));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,mensaje);
-
-@override
-String toString() {
-  return 'CarritoState.error(mensaje: $mensaje)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$ErrorCopyWith<$Res> implements $CarritoStateCopyWith<$Res> {
-  factory _$ErrorCopyWith(_Error value, $Res Function(_Error) _then) = __$ErrorCopyWithImpl;
-@useResult
-$Res call({
- String mensaje
-});
-
-
-
-
-}
-/// @nodoc
-class __$ErrorCopyWithImpl<$Res>
-    implements _$ErrorCopyWith<$Res> {
-  __$ErrorCopyWithImpl(this._self, this._then);
-
-  final _Error _self;
-  final $Res Function(_Error) _then;
-
-/// Create a copy of CarritoState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? mensaje = null,}) {
-  return _then(_Error(
-null == mensaje ? _self.mensaje : mensaje // ignore: cast_nullable_to_non_nullable
-as String,
-  ));
-}
-
-
 }
 
 // dart format on

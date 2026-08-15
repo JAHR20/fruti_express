@@ -81,8 +81,6 @@ class _PedidosClienteViewState extends State<PedidosClienteView> {
   }
 }
 
-// ─── Card del cliente ─────────────────────────────────────────────────────────
-
 class _PedidoCardCliente extends StatelessWidget {
   final Pedido pedido;
   const _PedidoCardCliente({required this.pedido});
@@ -106,7 +104,6 @@ class _PedidoCardCliente extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ─── Encabezado ───────────────────────────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -127,7 +124,6 @@ class _PedidoCardCliente extends StatelessWidget {
               ),
               const Divider(height: 20),
 
-              // ─── Items ────────────────────────────────────────────────────
               ...pedido.items.map((item) {
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 2),
@@ -136,13 +132,11 @@ class _PedidoCardCliente extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          // 🌟 La UI no piensa, solo pinta lo que el Dominio ya procesó
                           '${item.cantidadFormateada} x ${item.nombreProductoSnapshot}',
                           style: const TextStyle(fontSize: 13),
                         ),
                       ),
                       Text(
-                        // 🌟 Adiós multiplicaciones feas en la vista
                         item.subtotalCalculado.formatoMoneda,
                         style: const TextStyle(fontSize: 13),
                       ),
@@ -151,8 +145,6 @@ class _PedidoCardCliente extends StatelessWidget {
                 );
               }),
               const Divider(height: 20),
-
-              // ─── Total ────────────────────────────────────────────────────
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -170,8 +162,6 @@ class _PedidoCardCliente extends StatelessWidget {
                   ),
                 ],
               ),
-
-              // ─── Código de confirmación (solo pedidos activos) ────────────
               if (estaActivo && pedido.codigoConfirmacion != null) ...[
                 const SizedBox(height: 16),
                 _CodigoConfirmacion(codigo: pedido.codigoConfirmacion!),
@@ -201,8 +191,6 @@ class _PedidoCardCliente extends StatelessWidget {
     return '${fecha.day} ${meses[fecha.month - 1]} ${fecha.year}';
   }
 }
-
-// ─── Widget del código ────────────────────────────────────────────────────────
 
 class _CodigoConfirmacion extends StatefulWidget {
   final String codigo;
@@ -288,8 +276,6 @@ class _CodigoConfirmacionState extends State<_CodigoConfirmacion> {
     );
   }
 }
-
-// ─── Vistas auxiliares ────────────────────────────────────────────────────────
 
 class _SinPedidos extends StatelessWidget {
   const _SinPedidos();

@@ -5,9 +5,9 @@ part 'failures.freezed.dart';
 @freezed
 class Failure with _$Failure {
   
-  const Failure._(); // Constructor privado para usar métodos personalizados si es necesario
+  const Failure._(); 
 
-  // --- 🌐 ERRORES TÉCNICOS ---
+  // --- ERRORES TÉCNICOS ---
 
   const factory Failure.server(String message) = ServerFailure;
 
@@ -19,10 +19,10 @@ class Failure with _$Failure {
 
   // --- 🛡️ ERRORES DE ACCESO Y SEGURIDAD ---
 
-  /// Error de permisos: "No tienes permisos para editar el catálogo", etc.
+  /// Error de permisos.
   const factory Failure.unauthorized(String message) = UnauthorizedFailure;
 
-  // --- 📦 ERRORES DE RECURSOS (PRODUCTOS, CATEGORÍAS, USUARIOS) ---
+  // --- ERRORES DE RECURSOS (PRODUCTOS, CATEGORÍAS, USUARIOS) ---
 
   /// Cuando buscas algo que no existe: "Producto no encontrado", "Sucursal no existe".
   const factory Failure.notFound(String message) = NotFoundFailure;
@@ -30,7 +30,7 @@ class Failure with _$Failure {
   /// Cuando intentas crear algo que ya existe: "El nombre del producto ya está en uso".
   const factory Failure.alreadyExists(String message) = AlreadyExistsFailure;
 
-  // --- 🍎 ERRORES DE LÓGICA DE NEGOCIO (EL "CORAZÓN") ---
+  // --- ERRORES DE LÓGICA DE NEGOCIO ---
 
   /// Específico para Inventarios: "No hay stock suficiente para esta fruta".
   const factory Failure.insufficientStock(String message) =

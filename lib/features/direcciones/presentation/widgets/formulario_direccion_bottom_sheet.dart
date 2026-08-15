@@ -4,7 +4,6 @@ import 'package:fruti_express_jahr_admin/core/services/postali/postali_service.d
 import 'package:get_it/get_it.dart';
 import 'package:fruti_express_jahr_admin/core/services/ubicacion/ubicacion_service.dart';
 import 'package:fruti_express_jahr_admin/core/types/coordenadas.dart';
-
 import 'package:fruti_express_jahr_admin/features/direcciones/domain/entities/direccion.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_state.dart';
@@ -32,12 +31,8 @@ class _FormularioDireccionBottomSheetState
   final _estadoController = TextEditingController();
   final _referenciasController = TextEditingController();
   bool _esPrincipal = false;
-
-  // 🌟 1. Nuestras variables temporales para el pin del mapa
   double? _latitudSeleccionada;
   double? _longitudSeleccionada;
-
-  // 🌟 2. Inyectamos nuestro servicio de mapas
   final UbicacionService _ubicacionService = GetIt.I<UbicacionService>();
   final PostaliService _postaliService = GetIt.I<PostaliService>();
   bool _buscandoCp = false;
@@ -70,7 +65,6 @@ class _FormularioDireccionBottomSheetState
         .join(' ');
   }
 
-  // 🌟 3. El método que abre tu selector de mapas
   Future<void> _abrirMapa() async {
     Coordenadas? ubicacionActual;
     if (_latitudSeleccionada != null && _longitudSeleccionada != null) {
@@ -79,14 +73,11 @@ class _FormularioDireccionBottomSheetState
         longitud: _longitudSeleccionada!,
       );
     }
-
-    // Reutilizamos tu pantalla de selección del mapa
     final seleccion = await _ubicacionService.seleccionarEnMapa(
       context,
       ubicacionInicial: ubicacionActual,
     );
 
-    // Si el usuario puso el pin, guardamos las coordenadas
     if (seleccion != null) {
       setState(() {
         _latitudSeleccionada = seleccion.latitud;
@@ -96,29 +87,22 @@ class _FormularioDireccionBottomSheetState
   }
 
   Future<void> _buscarCodigoPostal(String cp) async {
-    if (cp.length != 5) return; // Solo buscamos si tiene 5 dígitos
+    if (cp.length != 5) return;
 
     setState(() => _buscandoCp = true);
 
     try {
-      // Llamamos a tu servicio de Postali (Ajusta los nombres según tu modelo exacto)
       final infoCp = await _postaliService.consultarCp(cp);
 
       if (infoCp != null) {
         setState(() {
-          // Llenamos Municipio y Estado automáticamente
           _municipioController.text = infoCp.municipio;
           _estadoController.text = infoCp.estado;
-
-          // Opcional: Si Postali te devuelve una lista de colonias ('asentamientos'),
-          // puedes rellenar la primera por defecto para ahorrarle tiempo al usuario.
           if (infoCp.asentamientos.isNotEmpty) {
             _coloniasDisponibles = infoCp.asentamientos
                 .map((a) => a.nombre)
                 .toList();
-            _coloniaSeleccionada = _coloniasDisponibles
-                .first; // Seleccionamos la primera por defecto
-            // (Ya no usamos _coloniaController)
+            _coloniaSeleccionada = _coloniasDisponibles.first;
           } else {
             _coloniasDisponibles = [];
             _coloniaSeleccionada = null;
@@ -136,8 +120,6 @@ class _FormularioDireccionBottomSheetState
 
   void _guardarDireccion() {
     if (!_formKey.currentState!.validate()) return;
-
-    // 🌟 4. Validación de seguridad: No guardar sin el pin del mapa
     if (_latitudSeleccionada == null || _longitudSeleccionada == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -166,7 +148,6 @@ class _FormularioDireccionBottomSheetState
           : _referenciasController.text.trim(),
       esPrincipal: _esPrincipal,
       fechaCreacion: DateTime.now(),
-      // 🌟 5. Enviamos las coordenadas reales al Cubit
       latitud: _latitudSeleccionada!,
       longitud: _longitudSeleccionada!,
     );
@@ -179,24 +160,29 @@ class _FormularioDireccionBottomSheetState
     final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
     return BlocListener<DireccionesCubit, DireccionesState>(
+      listenWhen: (previous, current) =>
+          previous.operacionExitosa != current.operacionExitosa ||
+          previous.operacionError != current.operacionError,
       listener: (context, state) {
-        state.maybeWhen(
-          loaded: (_) {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Dirección guardada correctamente'),
-                backgroundColor: Colors.green,
-              ),
-            );
-          },
-          error: (message) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text(message), backgroundColor: Colors.red),
-            );
-          },
-          orElse: () {},
-        );
+        if (state.operacionExitosa) {
+          Navigator.pop(context);
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Dirección guardada correctamente'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+
+        if (state.operacionError != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.operacionError!),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       },
       child: Container(
         margin: EdgeInsets.only(bottom: bottomInset),
@@ -229,8 +215,6 @@ class _FormularioDireccionBottomSheetState
                   ],
                 ),
                 const SizedBox(height: 16),
-
-                // 🌟 6. El botón para abrir el mapa
                 Container(
                   width: double.infinity,
                   margin: const EdgeInsets.only(bottom: 16.0),
@@ -299,8 +283,7 @@ class _FormularioDireccionBottomSheetState
                       child: _coloniasDisponibles.isNotEmpty
                           ? DropdownButtonFormField<String>(
                               initialValue: _coloniaSeleccionada,
-                              isExpanded:
-                                  true, // Para que el texto largo no rompa la pantalla
+                              isExpanded: true,
                               decoration: InputDecoration(
                                 labelText: 'Colonia',
                                 border: OutlineInputBorder(
@@ -332,18 +315,16 @@ class _FormularioDireccionBottomSheetState
                     ),
                     const SizedBox(width: 16),
                     Expanded(
-                      // 🌟 Campo de CP personalizado con Postali
                       child: TextFormField(
                         controller: _cpController,
                         keyboardType: TextInputType.number,
-                        maxLength: 5, // Límite de 5 dígitos
+                        maxLength: 5,
                         decoration: InputDecoration(
                           labelText: 'C.P.',
-                          counterText: '', // Oculta el contador 0/5
+                          counterText: '',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          // Muestra un loader pequeño mientras busca en Postali
                           suffixIcon: _buscandoCp
                               ? const Padding(
                                   padding: EdgeInsets.all(12.0),
@@ -357,10 +338,8 @@ class _FormularioDireccionBottomSheetState
                             val == null || val.length < 5 ? 'Requerido' : null,
                         onChanged: (val) {
                           if (val.length == 5) {
-                            FocusScope.of(
-                              context,
-                            ).unfocus(); // Oculta el teclado
-                            _buscarCodigoPostal(val); // 🌟 Dispara la búsqueda
+                            FocusScope.of(context).unfocus();
+                            _buscarCodigoPostal(val);
                           }
                         },
                       ),
@@ -416,10 +395,8 @@ class _FormularioDireccionBottomSheetState
 
                 BlocBuilder<DireccionesCubit, DireccionesState>(
                   builder: (context, state) {
-                    final isLoading = state.maybeWhen(
-                      loading: () => true,
-                      orElse: () => false,
-                    );
+                    final isLoading = state.isLoading;
+
                     return SizedBox(
                       width: double.infinity,
                       height: 50,

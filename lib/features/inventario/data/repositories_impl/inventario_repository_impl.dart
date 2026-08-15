@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/core/utils/supabase_handle_exception.dart';
+import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/data/datasources/inventario_remote_datasource.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/data/models/inventario_model.dart';
 import 'package:fruti_express_jahr_admin/features/inventario/domain/entities/inventario.dart';
@@ -73,17 +73,14 @@ class InventarioRepositoryImpl
     required String productoId,
     required String sucursalId,
     required int cantidadCambio,
-  }) => TaskEither.tryCatch(
-    () async {
-      await remoteDatasource.ajustarStockAtomicamente(
-        productoId: productoId,
-        sucursalId: sucursalId,
-        cantidadCambio: cantidadCambio,
-      );
-      return unit;
-    },
-    handleException, // ← usa el mixin consistentemente
-  );
+  }) => TaskEither.tryCatch(() async {
+    await remoteDatasource.ajustarStockAtomicamente(
+      productoId: productoId,
+      sucursalId: sucursalId,
+      cantidadCambio: cantidadCambio,
+    );
+    return unit;
+  }, handleException);
 
   @override
   ResultTask<int> obtenerStockActual(String productoId, String sucursalId) =>

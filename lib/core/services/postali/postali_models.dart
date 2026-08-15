@@ -1,6 +1,4 @@
-// core/services/postali/postali_models.dart
 
-/// Resultado de GET /cp/{codigo}
 class PostaliCp {
   final String cp;
   final String estado;
@@ -32,7 +30,6 @@ class PostaliCp {
   List<String> get colonias => asentamientos.map((a) => a.nombre).toList();
 }
 
-/// Asentamiento/Colonia dentro de un C.P.
 class PostaliAsentamiento {
   final String nombre;
   final String tipo;
@@ -52,7 +49,6 @@ class PostaliAsentamiento {
       );
 }
 
-/// Resultado de GET /municipio/{estado}/{municipio}
 class PostaliMunicipio {
   final String estado;
   final String estadoSlug;
@@ -85,12 +81,10 @@ class PostaliMunicipio {
             .toList(),
       );
 
-  /// C.P. únicos del municipio — para el selector de cobertura del admin
   List<String> get codigosPostalesUnicos =>
       colonias.map((c) => c.cp).toSet().toList()..sort();
 }
 
-/// Colonia dentro de la respuesta de municipio
 class PostaliColoniaMunicipio {
   final String cp;
   final String nombre;

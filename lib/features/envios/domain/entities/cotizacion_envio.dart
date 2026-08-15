@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:fruti_express_jahr_admin/features/envios/domain/enums/motivo_noDisponible.dart';
+import 'package:fruti_express_jahr_admin/features/envios/domain/enums/motivo_nod_isponible.dart';
 part 'cotizacion_envio.freezed.dart';
 
 @freezed

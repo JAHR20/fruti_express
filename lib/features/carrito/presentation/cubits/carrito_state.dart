@@ -1,35 +1,39 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:fruti_express_jahr_admin/features/carrito/domain/entities/carrito_item.dart';
 import 'package:fruti_express_jahr_admin/core/enums/modo_entrega.dart';
-import 'package:fruti_express_jahr_admin/features/direcciones/domain/entities/direccion.dart'; // 🌟 Importar enum
+import 'package:fruti_express_jahr_admin/features/carrito/domain/entities/carrito_item.dart';
+import 'package:fruti_express_jahr_admin/features/direcciones/domain/entities/direccion.dart';
 
 part 'carrito_state.freezed.dart';
 
 @freezed
-class CarritoState with _$CarritoState {
+abstract class CarritoState with _$CarritoState {
+  const factory CarritoState({
+    @Default(<CarritoItem>[]) List<CarritoItem> items,
+    ModoEntrega? modoEntrega,
+    Direccion? direccionSeleccionada,
+    String? sucursalId,
+    @Default(false) bool isLoading,
+    String? productoProcesandoId,
+    String? errorMessage,
+    String? operacionError,
+    @Default(false) bool operacionExitosa,
+  }) = _CarritoState;
+
   const CarritoState._();
 
-  const factory CarritoState.initial() = _Initial;
-  const factory CarritoState.loading() = _Loading;
-  
-  // 🌟 Transformamos loaded a parámetros nombrados para poder guardar más cosas
-  const factory CarritoState.loaded({
-    @Default([]) List<CarritoItem> items,
-    ModoEntrega? modoEntrega, // 🌟 Aquí vive la decisión del usuario
-    Direccion? direccionSeleccionada,
-    final String? sucursalId,
-  }) = _Loaded;
-  
-  const factory CarritoState.error(String mensaje) = _Error;
+  int get total {
+    return items.fold(0, (suma, item) => suma + item.subtotal);
+  }
 
-  // 🌟 Usamos maybeMap para acceder fácilmente a state.items
-  int get total => maybeMap(
-        loaded: (state) => state.items.fold(0, (suma, item) => suma + item.subtotal),
-        orElse: () => 0,
-      );
+  int get cantidadArticulos => items.length;
 
-  int get cantidadArticulos => maybeMap(
-        loaded: (state) => state.items.length,
-        orElse: () => 0,
-      );
+  bool get estaVacio => items.isEmpty;
+
+  bool get tieneProductos => items.isNotEmpty;
+
+  bool get tieneModoEntrega => modoEntrega != null;
+
+  bool get esEntregaADomicilio => modoEntrega == ModoEntrega.aDomicilio;
+
+  bool get esPickup => modoEntrega == ModoEntrega.pickUp;
 }

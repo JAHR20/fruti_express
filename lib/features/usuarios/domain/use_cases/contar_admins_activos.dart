@@ -11,7 +11,6 @@ class ContarAdminsActivos {
 
   ResultTask<int> ejecutar(Perfil solicitante) {
     return TaskEither.Do(($) async {
-      // 🛡️ Regla: Solo el Staff (Admin/Encargado) puede ver métricas de administración
       if (!solicitante.esStaff) {
         return await $(
           TaskEither<Failure, int>.left(

@@ -24,18 +24,13 @@ abstract class ConfiguracionEnvioModel with _$ConfiguracionEnvioModel {
   factory ConfiguracionEnvioModel.fromJson(Map<String, dynamic> json) =>
       _$ConfiguracionEnvioModelFromJson(json);
 
-  // 2. 🌟 Creamos nuestro propio factory para limpiar los datos antes
   factory ConfiguracionEnvioModel.fromSupabase(Map<String, dynamic> json) {
-    // Interceptamos la respuesta de Supabase (el JOIN) para aplanar los C.P.
     if (json['sucursal_cobertura'] != null) {
       final listaRelacional = json['sucursal_cobertura'] as List<dynamic>;
-      // Lo inyectamos en el json
       json['codigosPostalesPermitidos'] = listaRelacional
           .map((e) => e['codigo_postal'].toString())
           .toList();
     }
-    
-    // Ahora sí se lo pasamos al fromJson generado
     return ConfiguracionEnvioModel.fromJson(json);
   }
 

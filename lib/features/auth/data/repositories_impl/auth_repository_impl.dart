@@ -1,6 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/core/utils/supabase_handle_exception.dart';
+import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/repositories/auth_repository.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/data/models/perfil_model.dart';
 import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
@@ -52,7 +52,7 @@ class AuthRepositoryImpl
   ResultTask<Perfil?> obtenerUsuarioActual() => TaskEither.tryCatch(
     () async {
       final model = await remoteDataSource.obtenerUsuarioActual();
-      return model?.toDomain(); // ← nullable con ?.
+      return model?.toDomain();
     },
     handleException,
   );

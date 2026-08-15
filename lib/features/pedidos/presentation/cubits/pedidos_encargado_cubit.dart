@@ -7,8 +7,6 @@ import 'package:fruti_express_jahr_admin/features/pedidos/domain/enums/estado_pe
 import 'package:fruti_express_jahr_admin/features/pedidos/domain/repositories/pedido_repository.dart';
 import 'package:fruti_express_jahr_admin/features/pedidos/presentation/cubits/pedidos_encargado_state.dart';
 
-// ─── Cubit ───────────────────────────────────────────────────────────────────
-
 class PedidosEncargadoCubit extends Cubit<PedidosEncargadoState> {
   final PedidoRepository _repository;
   StreamSubscription<Either<Failure, List<Pedido>>>? _subscription;
@@ -16,8 +14,6 @@ class PedidosEncargadoCubit extends Cubit<PedidosEncargadoState> {
   PedidosEncargadoCubit({required PedidoRepository repository})
     : _repository = repository,
       super(const PedidosEncargadoState.inicial());
-
-  // ─── Realtime watch ───────────────────────────────────────────────────────
 
   void iniciarWatch(String sucursalId) {
   emit(const PedidosEncargadoState.cargando());
@@ -41,8 +37,6 @@ class PedidosEncargadoCubit extends Cubit<PedidosEncargadoState> {
     _subscription = null;
   }
 
-  // ─── Confirmar pedido ─────────────────────────────────────────────────────
-
   Future<void> confirmarPedido(String pedidoId) async {
     final pedidosActuales = _pedidosActuales();
     if (pedidosActuales == null) return;
@@ -64,11 +58,8 @@ class PedidosEncargadoCubit extends Cubit<PedidosEncargadoState> {
     result.fold(
       (failure) => emit(PedidosEncargadoState.error(failure.errorMessage)),
       (_) => emit(PedidosEncargadoState.cargado(pedidosActuales)),
-      // el watch actualizará la lista automáticamente via Supabase realtime
     );
   }
-
-  // ─── Asignar repartidor y pasar a enPreparacion ───────────────────────────
 
   Future<void> asignarRepartidorYPreparar({
     required String pedidoId,
@@ -84,7 +75,6 @@ class PedidosEncargadoCubit extends Cubit<PedidosEncargadoState> {
       ),
     );
 
-    // 1. Asignar repartidor
     final asignacion = await _repository
         .asignarRepartidor(pedidoId: pedidoId, repartidorId: repartidorId)
         .run();
@@ -96,7 +86,6 @@ class PedidosEncargadoCubit extends Cubit<PedidosEncargadoState> {
 
     if (asignacionFallida) return;
 
-    // 2. Cambiar estado a enPreparacion
     final resultado = await _repository
         .actualizarEstado(
           pedidoId: pedidoId,
@@ -109,8 +98,6 @@ class PedidosEncargadoCubit extends Cubit<PedidosEncargadoState> {
       (_) => emit(PedidosEncargadoState.cargado(pedidosActuales)),
     );
   }
-
-  // ─── Cancelar pedido ──────────────────────────────────────────────────────
 
   Future<void> cancelarPedido(String pedidoId) async {
     final pedidosActuales = _pedidosActuales();
@@ -135,8 +122,6 @@ class PedidosEncargadoCubit extends Cubit<PedidosEncargadoState> {
       (_) => emit(PedidosEncargadoState.cargado(pedidosActuales)),
     );
   }
-
-  // ─── Helper ───────────────────────────────────────────────────────────────
 
   List<Pedido>? _pedidosActuales() {
     return state.maybeWhen(

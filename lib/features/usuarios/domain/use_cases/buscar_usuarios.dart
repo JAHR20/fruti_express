@@ -13,7 +13,6 @@ class BuscarUsuarios {
     required Perfil usuarioActual,
     required String query,
   }) {
-    // Solo el staff puede usar el buscador
     if (!usuarioActual.esStaff) {
       return TaskEither<Failure, List<Perfil>>.left(
         const Failure.unauthorized("No tienes permiso para buscar usuarios"),
@@ -24,7 +23,6 @@ class BuscarUsuarios {
       return TaskEither<Failure, List<Perfil>>.right([]);
     }
 
-    // El repositorio se encargará de buscar por nombre o email en Supabase
     return repository.buscarUsuarios(query);
   }
 }
