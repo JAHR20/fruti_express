@@ -1,0 +1,554 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
+// ignore_for_file: type=lint
+// ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
+
+part of 'driver_orders_state.dart';
+
+// **************************************************************************
+// FreezedGenerator
+// **************************************************************************
+
+// dart format off
+T _$identity<T>(T value) => value;
+/// @nodoc
+mixin _$DriverOrdersState {
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DriverOrdersState);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'DriverOrdersState()';
+}
+
+
+}
+
+/// @nodoc
+class $DriverOrdersStateCopyWith<$Res>  {
+$DriverOrdersStateCopyWith(DriverOrdersState _, $Res Function(DriverOrdersState) __);
+}
+
+
+/// Adds pattern-matching-related methods to [DriverOrdersState].
+extension DriverOrdersStatePatterns on DriverOrdersState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Loading value)?  loading,TResult Function( _Loaded value)?  loaded,TResult Function( _ErrorWithOrders value)?  errorWithOrders,TResult Function( _Error value)?  error,TResult Function( _PerformingAction value)?  performingAction,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _Initial() when initial != null:
+return initial(_that);case _Loading() when loading != null:
+return loading(_that);case _Loaded() when loaded != null:
+return loaded(_that);case _ErrorWithOrders() when errorWithOrders != null:
+return errorWithOrders(_that);case _Error() when error != null:
+return error(_that);case _PerformingAction() when performingAction != null:
+return performingAction(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Loading value)  loading,required TResult Function( _Loaded value)  loaded,required TResult Function( _ErrorWithOrders value)  errorWithOrders,required TResult Function( _Error value)  error,required TResult Function( _PerformingAction value)  performingAction,}){
+final _that = this;
+switch (_that) {
+case _Initial():
+return initial(_that);case _Loading():
+return loading(_that);case _Loaded():
+return loaded(_that);case _ErrorWithOrders():
+return errorWithOrders(_that);case _Error():
+return error(_that);case _PerformingAction():
+return performingAction(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Loading value)?  loading,TResult? Function( _Loaded value)?  loaded,TResult? Function( _ErrorWithOrders value)?  errorWithOrders,TResult? Function( _Error value)?  error,TResult? Function( _PerformingAction value)?  performingAction,}){
+final _that = this;
+switch (_that) {
+case _Initial() when initial != null:
+return initial(_that);case _Loading() when loading != null:
+return loading(_that);case _Loaded() when loaded != null:
+return loaded(_that);case _ErrorWithOrders() when errorWithOrders != null:
+return errorWithOrders(_that);case _Error() when error != null:
+return error(_that);case _PerformingAction() when performingAction != null:
+return performingAction(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<Order> orders)?  loaded,TResult Function( List<Order> orders,  String message)?  errorWithOrders,TResult Function( String message)?  error,TResult Function( List<Order> orders,  String orderId)?  performingAction,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _Initial() when initial != null:
+return initial();case _Loading() when loading != null:
+return loading();case _Loaded() when loaded != null:
+return loaded(_that.orders);case _ErrorWithOrders() when errorWithOrders != null:
+return errorWithOrders(_that.orders,_that.message);case _Error() when error != null:
+return error(_that.message);case _PerformingAction() when performingAction != null:
+return performingAction(_that.orders,_that.orderId);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<Order> orders)  loaded,required TResult Function( List<Order> orders,  String message)  errorWithOrders,required TResult Function( String message)  error,required TResult Function( List<Order> orders,  String orderId)  performingAction,}) {final _that = this;
+switch (_that) {
+case _Initial():
+return initial();case _Loading():
+return loading();case _Loaded():
+return loaded(_that.orders);case _ErrorWithOrders():
+return errorWithOrders(_that.orders,_that.message);case _Error():
+return error(_that.message);case _PerformingAction():
+return performingAction(_that.orders,_that.orderId);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<Order> orders)?  loaded,TResult? Function( List<Order> orders,  String message)?  errorWithOrders,TResult? Function( String message)?  error,TResult? Function( List<Order> orders,  String orderId)?  performingAction,}) {final _that = this;
+switch (_that) {
+case _Initial() when initial != null:
+return initial();case _Loading() when loading != null:
+return loading();case _Loaded() when loaded != null:
+return loaded(_that.orders);case _ErrorWithOrders() when errorWithOrders != null:
+return errorWithOrders(_that.orders,_that.message);case _Error() when error != null:
+return error(_that.message);case _PerformingAction() when performingAction != null:
+return performingAction(_that.orders,_that.orderId);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _Initial implements DriverOrdersState {
+  const _Initial();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Initial);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'DriverOrdersState.initial()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _Loading implements DriverOrdersState {
+  const _Loading();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loading);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'DriverOrdersState.loading()';
+}
+
+
+}
+
+
+
+
+/// @nodoc
+
+
+class _Loaded implements DriverOrdersState {
+  const _Loaded(final  List<Order> orders): _orders = orders;
+  
+
+ final  List<Order> _orders;
+ List<Order> get orders {
+  if (_orders is EqualUnmodifiableListView) return _orders;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_orders);
+}
+
+
+/// Create a copy of DriverOrdersState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$LoadedCopyWith<_Loaded> get copyWith => __$LoadedCopyWithImpl<_Loaded>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Loaded&&const DeepCollectionEquality().equals(other._orders, _orders));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_orders));
+
+@override
+String toString() {
+  return 'DriverOrdersState.loaded(orders: $orders)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$LoadedCopyWith<$Res> implements $DriverOrdersStateCopyWith<$Res> {
+  factory _$LoadedCopyWith(_Loaded value, $Res Function(_Loaded) _then) = __$LoadedCopyWithImpl;
+@useResult
+$Res call({
+ List<Order> orders
+});
+
+
+
+
+}
+/// @nodoc
+class __$LoadedCopyWithImpl<$Res>
+    implements _$LoadedCopyWith<$Res> {
+  __$LoadedCopyWithImpl(this._self, this._then);
+
+  final _Loaded _self;
+  final $Res Function(_Loaded) _then;
+
+/// Create a copy of DriverOrdersState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? orders = null,}) {
+  return _then(_Loaded(
+null == orders ? _self._orders : orders // ignore: cast_nullable_to_non_nullable
+as List<Order>,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _ErrorWithOrders implements DriverOrdersState {
+  const _ErrorWithOrders({required final  List<Order> orders, required this.message}): _orders = orders;
+  
+
+ final  List<Order> _orders;
+ List<Order> get orders {
+  if (_orders is EqualUnmodifiableListView) return _orders;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_orders);
+}
+
+ final  String message;
+
+/// Create a copy of DriverOrdersState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ErrorWithOrdersCopyWith<_ErrorWithOrders> get copyWith => __$ErrorWithOrdersCopyWithImpl<_ErrorWithOrders>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ErrorWithOrders&&const DeepCollectionEquality().equals(other._orders, _orders)&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_orders),message);
+
+@override
+String toString() {
+  return 'DriverOrdersState.errorWithOrders(orders: $orders, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ErrorWithOrdersCopyWith<$Res> implements $DriverOrdersStateCopyWith<$Res> {
+  factory _$ErrorWithOrdersCopyWith(_ErrorWithOrders value, $Res Function(_ErrorWithOrders) _then) = __$ErrorWithOrdersCopyWithImpl;
+@useResult
+$Res call({
+ List<Order> orders, String message
+});
+
+
+
+
+}
+/// @nodoc
+class __$ErrorWithOrdersCopyWithImpl<$Res>
+    implements _$ErrorWithOrdersCopyWith<$Res> {
+  __$ErrorWithOrdersCopyWithImpl(this._self, this._then);
+
+  final _ErrorWithOrders _self;
+  final $Res Function(_ErrorWithOrders) _then;
+
+/// Create a copy of DriverOrdersState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? orders = null,Object? message = null,}) {
+  return _then(_ErrorWithOrders(
+orders: null == orders ? _self._orders : orders // ignore: cast_nullable_to_non_nullable
+as List<Order>,message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _Error implements DriverOrdersState {
+  const _Error(this.message);
+  
+
+ final  String message;
+
+/// Create a copy of DriverOrdersState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ErrorCopyWith<_Error> get copyWith => __$ErrorCopyWithImpl<_Error>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Error&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,message);
+
+@override
+String toString() {
+  return 'DriverOrdersState.error(message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ErrorCopyWith<$Res> implements $DriverOrdersStateCopyWith<$Res> {
+  factory _$ErrorCopyWith(_Error value, $Res Function(_Error) _then) = __$ErrorCopyWithImpl;
+@useResult
+$Res call({
+ String message
+});
+
+
+
+
+}
+/// @nodoc
+class __$ErrorCopyWithImpl<$Res>
+    implements _$ErrorCopyWith<$Res> {
+  __$ErrorCopyWithImpl(this._self, this._then);
+
+  final _Error _self;
+  final $Res Function(_Error) _then;
+
+/// Create a copy of DriverOrdersState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+  return _then(_Error(
+null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+/// @nodoc
+
+
+class _PerformingAction implements DriverOrdersState {
+  const _PerformingAction({required final  List<Order> orders, required this.orderId}): _orders = orders;
+  
+
+ final  List<Order> _orders;
+ List<Order> get orders {
+  if (_orders is EqualUnmodifiableListView) return _orders;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_orders);
+}
+
+ final  String orderId;
+
+/// Create a copy of DriverOrdersState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$PerformingActionCopyWith<_PerformingAction> get copyWith => __$PerformingActionCopyWithImpl<_PerformingAction>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PerformingAction&&const DeepCollectionEquality().equals(other._orders, _orders)&&(identical(other.orderId, orderId) || other.orderId == orderId));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_orders),orderId);
+
+@override
+String toString() {
+  return 'DriverOrdersState.performingAction(orders: $orders, orderId: $orderId)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$PerformingActionCopyWith<$Res> implements $DriverOrdersStateCopyWith<$Res> {
+  factory _$PerformingActionCopyWith(_PerformingAction value, $Res Function(_PerformingAction) _then) = __$PerformingActionCopyWithImpl;
+@useResult
+$Res call({
+ List<Order> orders, String orderId
+});
+
+
+
+
+}
+/// @nodoc
+class __$PerformingActionCopyWithImpl<$Res>
+    implements _$PerformingActionCopyWith<$Res> {
+  __$PerformingActionCopyWithImpl(this._self, this._then);
+
+  final _PerformingAction _self;
+  final $Res Function(_PerformingAction) _then;
+
+/// Create a copy of DriverOrdersState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? orders = null,Object? orderId = null,}) {
+  return _then(_PerformingAction(
+orders: null == orders ? _self._orders : orders // ignore: cast_nullable_to_non_nullable
+as List<Order>,orderId: null == orderId ? _self.orderId : orderId // ignore: cast_nullable_to_non_nullable
+as String,
+  ));
+}
+
+
+}
+
+// dart format on

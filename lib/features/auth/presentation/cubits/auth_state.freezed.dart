@@ -89,10 +89,7 @@ return initial(_that);case AuthLoading():
 return loading(_that);case AuthAuthenticated():
 return authenticated(_that);case AuthUnauthenticated():
 return unauthenticated(_that);case AuthError():
-return error(_that);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return error(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -131,12 +128,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( Perfil perfil)?  authenticated,TResult Function()?  unauthenticated,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( Profile profile)?  authenticated,TResult Function()?  unauthenticated,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthAuthenticated() when authenticated != null:
-return authenticated(_that.perfil);case AuthUnauthenticated() when unauthenticated != null:
+return authenticated(_that.profile);case AuthUnauthenticated() when unauthenticated != null:
 return unauthenticated();case AuthError() when error != null:
 return error(_that.message);case _:
   return orElse();
@@ -156,17 +153,14 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( Perfil perfil)  authenticated,required TResult Function()  unauthenticated,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( Profile profile)  authenticated,required TResult Function()  unauthenticated,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case AuthInitial():
 return initial();case AuthLoading():
 return loading();case AuthAuthenticated():
-return authenticated(_that.perfil);case AuthUnauthenticated():
+return authenticated(_that.profile);case AuthUnauthenticated():
 return unauthenticated();case AuthError():
-return error(_that.message);case _:
-  throw StateError('Unexpected subclass');
-
-}
+return error(_that.message);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -180,12 +174,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( Perfil perfil)?  authenticated,TResult? Function()?  unauthenticated,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( Profile profile)?  authenticated,TResult? Function()?  unauthenticated,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthAuthenticated() when authenticated != null:
-return authenticated(_that.perfil);case AuthUnauthenticated() when unauthenticated != null:
+return authenticated(_that.profile);case AuthUnauthenticated() when unauthenticated != null:
 return unauthenticated();case AuthError() when error != null:
 return error(_that.message);case _:
   return null;
@@ -263,10 +257,10 @@ String toString() {
 
 
 class AuthAuthenticated implements AuthState {
-  const AuthAuthenticated(this.perfil);
+  const AuthAuthenticated(this.profile);
   
 
- final  Perfil perfil;
+ final  Profile profile;
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
@@ -278,16 +272,16 @@ $AuthAuthenticatedCopyWith<AuthAuthenticated> get copyWith => _$AuthAuthenticate
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthAuthenticated&&(identical(other.perfil, perfil) || other.perfil == perfil));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthAuthenticated&&(identical(other.profile, profile) || other.profile == profile));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,perfil);
+int get hashCode => Object.hash(runtimeType,profile);
 
 @override
 String toString() {
-  return 'AuthState.authenticated(perfil: $perfil)';
+  return 'AuthState.authenticated(profile: $profile)';
 }
 
 
@@ -298,11 +292,11 @@ abstract mixin class $AuthAuthenticatedCopyWith<$Res> implements $AuthStateCopyW
   factory $AuthAuthenticatedCopyWith(AuthAuthenticated value, $Res Function(AuthAuthenticated) _then) = _$AuthAuthenticatedCopyWithImpl;
 @useResult
 $Res call({
- Perfil perfil
+ Profile profile
 });
 
 
-$PerfilCopyWith<$Res> get perfil;
+$ProfileCopyWith<$Res> get profile;
 
 }
 /// @nodoc
@@ -315,10 +309,10 @@ class _$AuthAuthenticatedCopyWithImpl<$Res>
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? perfil = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? profile = null,}) {
   return _then(AuthAuthenticated(
-null == perfil ? _self.perfil : perfil // ignore: cast_nullable_to_non_nullable
-as Perfil,
+null == profile ? _self.profile : profile // ignore: cast_nullable_to_non_nullable
+as Profile,
   ));
 }
 
@@ -326,10 +320,10 @@ as Perfil,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$PerfilCopyWith<$Res> get perfil {
+$ProfileCopyWith<$Res> get profile {
   
-  return $PerfilCopyWith<$Res>(_self.perfil, (value) {
-    return _then(_self.copyWith(perfil: value));
+  return $ProfileCopyWith<$Res>(_self.profile, (value) {
+    return _then(_self.copyWith(profile: value));
   });
 }
 }

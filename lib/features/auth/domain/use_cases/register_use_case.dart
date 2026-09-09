@@ -1,29 +1,29 @@
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/repositories/auth_repository.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
 
 class RegisterUseCase {
   final AuthRepository repository;
 
   RegisterUseCase(this.repository);
 
-  ResultTask<Perfil> call({
+  ResultTask<Profile> call({
     required String email,
     required String password,
-    required String nombre,
-    required String apellidoPaterno,
-    String? apellidoMaterno,
+    required String firstName,
+    required String paternalLastName,
+    String? maternalLastName,
     String? alias,
-    required String telefono, 
+    required String phone, 
   }) {
-    return repository.registro(
+    return repository.register(
       email: email,
       password: password,
-      nombre: nombre,
-      apellidoPaterno: apellidoPaterno,
-      apellidoMaterno: apellidoMaterno,
+      firstName: firstName,
+      paternalLastName: paternalLastName,
+      maternalLastName: maternalLastName,
       alias: alias,
-      telefono: telefono,
+      phone: phone,
     );
   }
 }

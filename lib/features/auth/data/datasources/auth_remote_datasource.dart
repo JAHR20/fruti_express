@@ -1,16 +1,19 @@
-import 'package:fruti_express_jahr_admin/features/usuarios/data/models/perfil_model.dart';
+import 'package:fruti_express_jahr_admin/features/users/data/models/profile_model.dart'; 
 
 abstract class AuthRemoteDataSource {
-  Future<PerfilModel> login(String email, String password);
-  Future<PerfilModel> registro({
+  Future<ProfileModel> login(String email, String password);
+  
+  Future<ProfileModel> register({
     required String email,
     required String password,
-    required String nombre,
-    required String apellidoPaterno,
-    String? apellidoMaterno,
+    required String firstName,
+    required String paternalLastName,
+    String? maternalLastName,
     String? alias,
-    required String telefono,
+    required String phone,
   });
+  
   Future<void> logout();
-  Future<PerfilModel?> obtenerUsuarioActual();
+  
+  Future<ProfileModel?> getCurrentUser();
 }

@@ -1,0 +1,45 @@
+import 'dart:io';
+import 'package:fpdart/fpdart.dart';
+import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
+import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart'; // Asegúrate de importar tus códigos
+import 'package:fruti_express_jahr_admin/core/types/result.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/entities/promo_banner.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/repositories/promo_banner_repository.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart'; // Perfil -> Profile
+import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
+
+class UpdatePromoBannerUseCase { 
+  final PromoBannerRepository _repository;
+  UpdatePromoBannerUseCase(this._repository);
+
+  ResultTask<PromoBanner> execute({ 
+    required Profile currentUser, 
+    required PromoBanner banner,
+    File? imageFile, 
+  }) {
+    return TaskEither.Do(($) async {
+      // 1. Validar permisos
+      if (!currentUser.isStaff) { 
+        return await $(TaskEither.left(
+          const Failure.unauthorized(FailureCode.permissionDenied),
+        ));
+      }
+
+      String? finalImageUrl = banner.imageUrl;
+
+      if (imageFile != null) {
+        final realExtension = imageFile.path.split('.').last.toLowerCase();
+        final uniqueName = 'banner_${DateTime.now().millisecondsSinceEpoch}.$realExtension';
+
+        final url = await $(_repository.uploadImage(imageFile, uniqueName));
+        finalImageUrl = url;
+      }
+
+      // 3. Empaquetamos la nueva URL en el banner
+      final finalBanner = banner.copyWith(imageUrl: finalImageUrl);
+
+      // 4. Actualizamos el registro en la base de datos
+      return await $(_repository.update(finalBanner)); 
+    });
+  }
+}

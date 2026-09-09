@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/login_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/register_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/logout_use_case.dart';
@@ -26,9 +27,9 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthState.loading());
     final result = await _checkAuthStatusUseCase().run();
     result.fold(
-      (failure) => emit(AuthState.error('Error de sesión: ${failure.errorMessage}')),
-      (perfil) => perfil != null
-          ? emit(AuthState.authenticated(perfil))
+      (failure) => emit(AuthState.error('Error de sesión: ${translateFailure(failure)}')),
+      (profile) => profile != null
+          ? emit(AuthState.authenticated(profile))
           : emit(const AuthState.unauthenticated()),
     );
   }
@@ -37,44 +38,44 @@ class AuthCubit extends Cubit<AuthState> {
     emit(const AuthState.loading());
     final result = await _loginUseCase(email, password).run();
     result.fold(
-      (failure) => emit(AuthState.error(failure.errorMessage)),
-      (perfil) => emit(AuthState.authenticated(perfil)),
+      (failure) => emit(AuthState.error(translateFailure(failure))),
+      (profile) => emit(AuthState.authenticated(profile)),
     );
   }
 
   Future<void> register({
-    required String nombre,
-    required String apellidoPaterno,
-    String? apellidoMaterno,
+    required String firstName,
+    required String paternalLastName,
+    String? maternalLastName,
     String? alias,
-    required String telefono,
+    required String phone,
     required String email,
     required String password,
   }) async {
     emit(const AuthState.loading());
     final result = await _registerUseCase(
-      nombre: nombre,
-      apellidoPaterno: apellidoPaterno,
-      apellidoMaterno: apellidoMaterno,
+      firstName: firstName,
+      paternalLastName: paternalLastName,
+      maternalLastName: maternalLastName,
       alias: alias,
-      telefono: telefono,
+      phone: phone,
       email: email,
       password: password,
     ).run();
     result.fold(
-      (failure) => emit(AuthState.error(failure.errorMessage)),
-      (perfil) => emit(AuthState.authenticated(perfil)),
+      (failure) => emit(AuthState.error(translateFailure(failure))),
+      (profile) => emit(AuthState.authenticated(profile)),
     );
   }
 
   Future<void> logout() async {
-  emit(const AuthState.loading());
-  final result = await _logoutUseCase().run();
-  result.fold(
-    (failure) => emit(AuthState.error(failure.errorMessage)),
-    (_) async {
-      emit(const AuthState.unauthenticated());
-    },
-  );
-}
+    emit(const AuthState.loading());
+    final result = await _logoutUseCase().run();
+    result.fold(
+      (failure) => emit(AuthState.error(translateFailure(failure))),
+      (_) async {
+        emit(const AuthState.unauthenticated());
+      },
+    );
+  }
 }

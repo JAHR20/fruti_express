@@ -1,60 +1,60 @@
-import 'dart:async';
 
+/*
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/di/injection_container.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
-import 'package:fruti_express_jahr_admin/features/auth/presentation/pages/bienvenida_page.dart';
+import 'package:fruti_express_jahr_admin/features/auth/presentation/pages/welcome_page.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/pages/login_page.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/pages/register_page.dart';
-import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/banner_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/banners/presentation/pages/admin_banners_page.dart';
+import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/promo_banner_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/banners/presentation/pages/admin_promo_banners_page.dart';
 import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/carrito/presentation/pages/carrito_cliente_page.dart';
-import 'package:fruti_express_jahr_admin/features/categorias/domain/entities/categoria.dart';
-import 'package:fruti_express_jahr_admin/features/categorias/presentation/cubits/categoria_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/categorias/presentation/pages/admin_categories_page.dart';
+import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart';
+import 'package:fruti_express_jahr_admin/features/categories/presentation/cubits/category_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/categories/presentation/pages/admin_categories_page.dart';
 import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/admin_dashboard_page.dart';
 import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/admin_shell_page.dart';
-import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/busqueda_page.dart';
-import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/categorias_cliente_view.dart';
-import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/cliente_principal_shell.dart';
-import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/inicio_cliente_view.dart';
-import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/pedidos_cliente_view.dart';
-import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/perfil_cliente_view.dart';
-import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/productos_categoria_view.dart';
-import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/direcciones/presentation/pages/mis_direcciones_page.dart';
-import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/coordinador_cliente_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/envio_admin_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/envios/presentation/cubits/envio_cliente_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/inventario/presentation/cubits/inventario_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/inventario/presentation/pages/admin_inventario_page.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/domain/entities/pedido.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/presentation/cubits/pedido_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/presentation/cubits/pedidos_cliente_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/presentation/cubits/pedidos_encargado_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/presentation/cubits/pedidos_repartidor_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/presentation/cubits/repartidores_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/presentation/pages/checkout_page.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/presentation/pages/dashboard_pedidos_page.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/presentation/pages/pedido_exitoso_page.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/presentation/pages/repartidor_dashboard_page.dart';
-import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/productos/presentation/pages/admin_productos_page.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/domain/entities/sucursal.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/sucursal_state.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/cubits/wizard_sucursal_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/pages/admin_sucursales_page.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/pages/crear_sucursal_wizard_screen.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/presentation/pages/gestion_tarifas_screen.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/domain/extensions/perfil_permisos_extension.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/editar_perfil_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/presentation/cubits/usuarios_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/presentation/pages/editar_perfil_page.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/presentation/pages/usuarios_page.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/pages/search_page.dart';
+import 'package:fruti_express_jahr_admin/features/categories/presentation/pages/customer_categories_page.dart';
+import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/customer_shell_page.dart';
+import 'package:fruti_express_jahr_admin/features/dashboard/presentation/pages/customer_home_view.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/customer_orders_page.dart';
+import 'package:fruti_express_jahr_admin/features/users/presentation/pages/customer_profile_page.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/pages/category_products_page.dart';
+import 'package:fruti_express_jahr_admin/features/addresses/presentation/cubits/address_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/addresses/presentation/pages/my_addresses_page.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_coordinator_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/shipping_admin_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_shipping_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/inventory/presentation/cubits/inventory_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/inventory/presentation/pages/admin_inventory_page.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/order_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/customer_orders_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/manager_orders_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/driver_orders_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/drivers_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/checkout_page.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/orders_dashboard_page.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/order_successful_page.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/driver_dashboard_page.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/cubits/product_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/pages/admin_products_page.dart';
+import 'package:fruti_express_jahr_admin/features/branches/domain/entities/branch.dart';
+import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_state.dart';
+import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/wizard_branch_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/branches/presentation/pages/admin_branches_page.dart';
+import 'package:fruti_express_jahr_admin/features/branches/presentation/pages/create_branch_wizard_screen.dart';
+import 'package:fruti_express_jahr_admin/features/branches/presentation/pages/gestion_tarifas_screen.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
+import 'package:fruti_express_jahr_admin/features/users/presentation/cubits/edit_profile_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/users/presentation/cubits/users_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/users/presentation/pages/edit_profile_page.dart';
+import 'package:fruti_express_jahr_admin/features/users/presentation/pages/users_page.dart';
 import 'package:go_router/go_router.dart';
 
 class AppRouter {
@@ -131,7 +131,7 @@ class AppRouter {
     routes: [
       GoRoute(
         path: bienvenida,
-        builder: (context, state) => const BienvenidaPage(),
+        builder: (context, state) => const WelcomePage(),
       ),
       GoRoute(path: login, builder: (context, state) => const LoginPage()),
       GoRoute(
@@ -148,7 +148,14 @@ class AppRouter {
       GoRoute(
         path: AppRouter.barraBusqueda,
         builder: (context, state) {
-          final sucursalActivaId = state.extra as String;
+          final sucursalActivaId = state.extra as String?;
+          if (sucursalActivaId == null) {
+            return const Scaffold(
+              body: Center(
+                child: Text('Selecciona primero una dirección de entrega.'),
+              ),
+            );
+          }
           return BlocProvider(
             create: (context) => sl<ProductosCubit>(),
             child: BusquedaPage(sucursalId: sucursalActivaId),
@@ -182,11 +189,11 @@ class AppRouter {
             providers: [
               BlocProvider(create: (_) => sl<PedidoCubit>()),
               BlocProvider(
-                create: (_) => sl<SucursalCubit>()..cargarSucursales(),
+                create: (_) => sl<BranchCubit>()..cargarSucursales(),
               ),
               BlocProvider(create: (_) => sl<EnvioAdminCubit>()),
             ],
-            child: BlocListener<SucursalCubit, SucursalState>(
+            child: BlocListener<BranchCubit, BranchState>(
               listener: (context, state) {
                 if (state.sucursales.isNotEmpty) {
                   final sucursalActivaId = state.sucursales.first.id;
@@ -229,11 +236,11 @@ class AppRouter {
                     sl<DireccionesCubit>()..cargarDirecciones(perfil.id),
               ),
               BlocProvider(
-                create: (_) => sl<SucursalCubit>()..cargarSucursales(),
+                create: (_) => sl<BranchCubit>()..cargarSucursales(),
               ),
               BlocProvider(create: (_) => sl<EnvioAdminCubit>()),
             ],
-            child: BlocListener<SucursalCubit, SucursalState>(
+            child: BlocListener<BranchCubit, BranchState>(
               listener: (context, state) {
                 if (state.sucursales.isNotEmpty) {
                   final sucursalActivaId = state.sucursales.first.id;
@@ -256,13 +263,16 @@ class AppRouter {
               GoRoute(
                 path: clienteInicio,
                 builder: (context, state) {
-                  debugPrint('🔵 clienteInicio builder ejecutado');
                   final usuarioActual =
                       (sl<AuthCubit>().state as AuthAuthenticated).perfil;
-                  final sucursalCubit = sl<SucursalCubit>()..cargarSucursales();
+                  final sucursalCubit = sl<BranchCubit>();
+                  sucursalCubit
+                    ..cargarSucursales()
+                    ..startRealtime();
                   final envioClienteCubit = sl<EnvioClienteCubit>();
                   final carritoCubit = context.read<CarritoCubit>();
                   final productosCubit = context.read<ProductosCubit>();
+                  final direccionesCubit = context.read<DireccionesCubit>();
 
                   return MultiBlocProvider(
                     providers: [
@@ -283,7 +293,9 @@ class AppRouter {
                           productosCubit: productosCubit,
                           sucursalCubit: sucursalCubit,
                           envioClienteCubit: envioClienteCubit,
-                          direccionesCubit: sl(),
+                          direccionesCubit: direccionesCubit,
+                          getSelectedAddress: sl(),
+                          saveSelectedAddress: sl(),
                         ),
                         lazy: false,
                       ),
@@ -355,7 +367,7 @@ class AppRouter {
             path: adminSucursales,
             builder: (context, state) {
               return BlocProvider(
-                create: (_) => sl<SucursalCubit>(),
+                create: (_) => sl<BranchCubit>(),
                 child: const AdminSucursalesPage(),
               );
             },
@@ -405,7 +417,7 @@ class AppRouter {
                 providers: [
                   BlocProvider(create: (_) => sl<PedidosEncargadoCubit>()),
                   BlocProvider(create: (_) => sl<RepartidoresCubit>()),
-                  BlocProvider(create: (_) => sl<SucursalCubit>()),
+                  BlocProvider(create: (_) => sl<BranchCubit>()),
                 ],
                 child: DashboardPedidosPage(key: ValueKey(usuarioActual.id)),
               );
@@ -417,7 +429,7 @@ class AppRouter {
               return MultiBlocProvider(
                 providers: [
                   BlocProvider(create: (context) => sl<UsuariosCubit>()),
-                  BlocProvider(create: (context) => sl<SucursalCubit>()),
+                  BlocProvider(create: (context) => sl<BranchCubit>()),
                 ],
                 child: UsuariosPage(
                   usuarioActual:
@@ -471,7 +483,7 @@ class AppRouter {
                   ),
                   BlocProvider(
                     create: (context) {
-                      final cubit = sl<SucursalCubit>();
+                      final cubit = sl<BranchCubit>();
                       if (usuarioActual.sucursalId == null ||
                           usuarioActual.sucursalId!.isEmpty) {
                         cubit.cargarSucursales();
@@ -515,3 +527,4 @@ class GoRouterRefreshStream extends ChangeNotifier {
     super.dispose();
   }
 }
+*/

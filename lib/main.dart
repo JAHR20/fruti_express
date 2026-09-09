@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:fruti_express_jahr_admin/config/router/admin_router.dart';
+import 'package:fruti_express_jahr_admin/config/router/app_router.dart.dart';
 import 'package:fruti_express_jahr_admin/core/di/injection_container.dart'
     as di;
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/carrito/presentation/cubits/carrito_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/direcciones/presentation/cubits/direcciones_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/productos/presentation/cubits/productos_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/addresses/presentation/cubits/address_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/cart/presentation/cubits/cart_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/cubits/product_cubit.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
   await Supabase.initialize(
     url: dotenv.get('SUPABASE_URL'),
-    anonKey: dotenv.get('SUPABASE_ANON_KEY'),
+    publishableKey: dotenv.get('SUPABASE_ANON_KEY'),
   );
   await di.init();
   runApp(const MyApp());
@@ -32,12 +32,12 @@ class MyApp extends StatelessWidget {
           lazy: false,
         ),
         BlocProvider(
-          create: (_) => di.sl<CarritoCubit>()..cargarCarrito(),
+          create: (_) => di.sl<CartCubit>()..loadCart(),
           lazy: false,
         ),
-        BlocProvider(create: (_) => di.sl<DireccionesCubit>()),
+        BlocProvider(create: (_) => di.sl<AddressCubit>()),
 
-        BlocProvider(create: (_) => di.sl<ProductosCubit>()),
+        BlocProvider(create: (_) => di.sl<ProductCubit>()),
       ],
       child: MaterialApp.router(
         debugShowCheckedModeBanner: false,

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/presentation/extensions/tipo_usuario_ui_extension.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart'; // Perfil -> Profile
+import 'package:fruti_express_jahr_admin/features/users/presentation/extensions/tipo_usuario_ui_extension.dart';
 
 class AdminDrawerHeader extends StatelessWidget {
-  final Perfil usuarioActual;
+  final Profile currentUser; 
 
   const AdminDrawerHeader({
     super.key,
-    required this.usuarioActual,
+    required this.currentUser,
   });
 
-  String get nombreCompleto => "${usuarioActual.nombre} ${usuarioActual.apellidoPaterno}";
+  String get fullName => "${currentUser.firstName} ${currentUser.paternalLastName}"; // nombreCompleto -> fullName
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +41,7 @@ class AdminDrawerHeader extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              nombreCompleto,  
+              fullName,  
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w700,
@@ -58,7 +58,7 @@ class AdminDrawerHeader extends StatelessWidget {
                 border: Border.all(color: Colors.white30, width: 0.5),
               ),
               child: Text(
-                usuarioActual.rol.nombreUI,
+                currentUser.role.displayName, 
                 style: const TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -71,7 +71,7 @@ class AdminDrawerHeader extends StatelessWidget {
         ),
       ),
       accountEmail: Text(
-        usuarioActual.email,
+        currentUser.email,
         style: TextStyle(
           fontSize: 13,
           color: Colors.white.withValues(alpha: 0.7),

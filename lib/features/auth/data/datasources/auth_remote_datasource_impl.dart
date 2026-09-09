@@ -1,13 +1,17 @@
 import 'package:fruti_express_jahr_admin/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/data/models/perfil_model.dart';
+import 'package:fruti_express_jahr_admin/features/users/data/models/profile_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final SupabaseClient supabase;
+  
+  static const String _tableName = 'profiles';
+  static const String _colId = 'id';
+
   AuthRemoteDataSourceImpl(this.supabase);
 
   @override
-  Future<PerfilModel> login(String email, String password) async {
+  Future<ProfileModel> login(String email, String password) async {
     final response = await supabase.auth.signInWithPassword(
       email: email,
       password: password,
@@ -15,49 +19,50 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     if (response.user == null) throw Exception("Error de autenticación");
 
-    return await _traerPerfilDeBaseDeDatos(response.user!.id);
+    return await _fetchProfileFromDatabase(response.user!.id);
   }
 
   @override
-  Future<PerfilModel?> obtenerUsuarioActual() async {
+  Future<ProfileModel?> getCurrentUser() async {
     final session = supabase.auth.currentSession;
     if (session == null) return null;
-    return await _traerPerfilDeBaseDeDatos(session.user.id);
+    
+    return await _fetchProfileFromDatabase(session.user.id);
   }
 
-  Future<PerfilModel> _traerPerfilDeBaseDeDatos(String id) async {
-    final data = await supabase.from('perfiles').select().eq('id', id).single();
+  Future<ProfileModel> _fetchProfileFromDatabase(String id) async {
+    final data = await supabase.from(_tableName).select().eq(_colId, id).single();
 
-    return PerfilModel.fromJson(data);
+    return ProfileModel.fromJson(data);
   }
 
   @override
   Future<void> logout() async => await supabase.auth.signOut();
 
   @override
-  Future<PerfilModel> registro({
+  Future<ProfileModel> register({
     required String email,
     required String password,
-    required String nombre,
-    required String apellidoPaterno,
-    String? apellidoMaterno,
+    required String firstName,
+    required String paternalLastName,
+    String? maternalLastName,
     String? alias,
-    required String telefono,
+    required String phone,
   }) async {
     final authRes = await supabase.auth.signUp(
       email: email,
       password: password,
       data: {
-        'nombre': nombre,
-        'apellido_paterno': apellidoPaterno,
-        'apellido_materno': apellidoMaterno ?? '',
+        'first_name': firstName,
+        'last_name': paternalLastName,
+        'maternal_last_name': maternalLastName ?? '',
         'alias': alias ?? '',
-        'telefono': telefono,
+        'phone': phone,
       },
     );
 
     if (authRes.user == null) throw Exception("Error al crear cuenta");
 
-    return await _traerPerfilDeBaseDeDatos(authRes.user!.id);
+    return await _fetchProfileFromDatabase(authRes.user!.id);
   }
 }

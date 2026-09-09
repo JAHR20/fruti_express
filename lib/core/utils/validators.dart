@@ -9,7 +9,7 @@ class Validators {
     return null;
   }
 
-  static String? apellido(String? value) {
+  static String? paternalLastName(String? value) { // apellido -> lastName
     if (value == null || value.isEmpty) return 'Por favor ingresa un apellido';
     if (value.trim().length < 2) return 'Mínimo 2 caracteres';
     final nameRegExp = RegExp(r"^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$");
@@ -40,7 +40,14 @@ class Validators {
     return null;
   }
 
-  // --- VALIDACIONES COMPUESTAS 
+  static String? optionalPositiveNumber(String? value) {
+    if (value == null || value.isEmpty) return null; // Deja pasar si está vacío
+    final numValue = double.tryParse(value);
+    if (numValue == null || numValue <= 0) return 'Ingresa un número válido mayor a 0';
+    return null;
+  }
+
+  // --- VALIDACIONES COMPUESTAS ---
 
   static String? Function(String?) required([String? fieldName]) {
     return (String? value) {
@@ -54,7 +61,7 @@ class Validators {
   static String? Function(String?) requiredMenu([String? fieldName]) {
     return (String? value) {
       if (value == null || value.trim().isEmpty) {
-        return 'Por favor Seleciona ${fieldName ?? 'en el menú'}';
+        return 'Por favor Selecciona ${fieldName ?? 'en el menú'}';
       }
       return null;
     };
@@ -87,8 +94,8 @@ class Validators {
     if (value.length < 6) return 'La contraseña debe tener al menos 6 caracteres';
 
     if (!RegExp(r'[A-Z]').hasMatch(value)) {
-    return 'Debe contener una letra mayúscula';
-  }
+      return 'Debe contener una letra mayúscula';
+    }
 
     if (!RegExp(r'\d').hasMatch(value)) {
       return 'Debe contener un número';
@@ -97,7 +104,7 @@ class Validators {
     if (!RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(value)) {
       return 'Debe contener un carácter especial';
     }
-      return null;
+    return null;
   }
 
   static String? loginPassword(String? value) {
@@ -111,23 +118,24 @@ class Validators {
     return null;
   }
 
-  static String? validateSucursalName(String? value) {
+  static String? validateBranchName(String? value) { // validateSucursalName -> validateBranchName
     if (value == null || value.trim().isEmpty) return 'El nombre de la sucursal es obligatorio';
     if (value.trim().length < 3) return 'El nombre debe tener al menos 3 caracteres';
     return null;
   }
 
-  static String? validateSucursalAddress(String? value) {
+  static String? validateBranchAddress(String? value) { // validateSucursalAddress -> validateBranchAddress
     if (value == null || value.trim().isEmpty) return 'La dirección de la sucursal es obligatoria';
     if (value.trim().length < 5) return 'La dirección debe tener al menos 5 caracteres';
     return null;
   }
 
   static String? percentage(String? value) {
-    final validacionBase = positiveNumber(value);
-    if (validacionBase != null) return validacionBase;
-    final porcentaje = double.parse(value!);
-    if (porcentaje <= 0 || porcentaje >= 100) return 'El descuento debe ser de 1 a 99';
+    final baseValidation = positiveNumber(value);
+    if (baseValidation != null) return baseValidation;
+    
+    final percentageValue = double.parse(value!);
+    if (percentageValue <= 0 || percentageValue >= 100) return 'El descuento debe ser de 1 a 99';
     return null;
   }
 
@@ -149,30 +157,30 @@ class Validators {
     return null;
   }
 
-  static String? Function(String?) ajusteInventario({
-    required bool esAumento,
-    required bool aceptaDecimales,
-    required int stockActualBase, 
+  static String? Function(String?) inventoryAdjustment({
+    required bool isIncrease,
+    required bool acceptsDecimals,
+    required int baseCurrentStock, 
   }) {
     return (String? value) {
       if (value == null || value.trim().isEmpty) return 'Ingresa una cantidad';
 
-      final cantidadUI = double.tryParse(value);
-      if (cantidadUI == null) return 'Ingresa un número válido';
+      final uiQuantity = double.tryParse(value);
+      if (uiQuantity == null) return 'Ingresa un número válido';
       
-      if (cantidadUI <= 0) return 'La cantidad debe ser mayor a 0';
+      if (uiQuantity <= 0) return 'La cantidad debe ser mayor a 0';
 
-      if (!esAumento) {
-        final cantidadBaseARestar = aceptaDecimales 
-            ? (cantidadUI * 1000).toInt() 
-            : cantidadUI.toInt();
+      if (!isIncrease) {
+        final baseQuantityToSubtract = acceptsDecimals 
+            ? (uiQuantity * 1000).toInt() 
+            : uiQuantity.toInt();
 
-        if (cantidadBaseARestar > stockActualBase) {
-          final stockUI = aceptaDecimales 
-              ? (stockActualBase / 1000).toStringAsFixed(2) 
-              : stockActualBase.toString();
+        if (baseQuantityToSubtract > baseCurrentStock) {
+          final uiStock = acceptsDecimals 
+              ? (baseCurrentStock / 1000).toStringAsFixed(2) 
+              : baseCurrentStock.toString();
               
-          return 'Solo tienes $stockUI disponibles';
+          return 'Solo tienes $uiStock disponibles';
         }
       }
       return null;

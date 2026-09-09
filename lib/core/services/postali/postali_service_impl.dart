@@ -1,5 +1,3 @@
-// core/services/postali/postali_service_impl.dart
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'postali_service.dart';
@@ -13,32 +11,32 @@ class PostaliServiceImpl implements PostaliService {
       : _client = client ?? http.Client();
 
   @override
-  Future<PostaliCp?> consultarCp(String codigoPostal) async {
-    final cp = codigoPostal.trim();
-    if (cp.length != 5) return null;
+  Future<PostaliPostalCode?> fetchPostalCode(String postalCode) async {
+    final cleanCp = postalCode.trim();
+    if (cleanCp.length != 5) return null;
 
     try {
       final response = await _client
-          .get(Uri.parse('$_baseUrl/cp/$cp'))
+          .get(Uri.parse('$_baseUrl/cp/$cleanCp'))
           .timeout(const Duration(seconds: 10));
 
       if (response.statusCode == 404) return null;
       if (response.statusCode != 200) return null;
 
       final json = jsonDecode(response.body) as Map<String, dynamic>;
-      return PostaliCp.fromJson(json);
+      return PostaliPostalCode.fromJson(json);
     } catch (_) {
       return null;
     }
   }
 
   @override
-  Future<PostaliMunicipio?> obtenerMunicipio({
-    required String estadoSlug,
-    required String municipioSlug,
+  Future<PostaliMunicipality?> fetchMunicipality({
+    required String stateSlug,
+    required String municipalitySlug,
   }) async {
     try {
-      final url = '$_baseUrl/municipio/$estadoSlug/$municipioSlug';
+      final url = '$_baseUrl/municipio/$stateSlug/$municipalitySlug';
       final response = await _client
           .get(Uri.parse(url))
           .timeout(const Duration(seconds: 15));
@@ -47,7 +45,7 @@ class PostaliServiceImpl implements PostaliService {
       if (response.statusCode != 200) return null;
 
       final json = jsonDecode(response.body) as Map<String, dynamic>;
-      return PostaliMunicipio.fromJson(json);
+      return PostaliMunicipality.fromJson(json);
     } catch (_) {
       return null;
     }

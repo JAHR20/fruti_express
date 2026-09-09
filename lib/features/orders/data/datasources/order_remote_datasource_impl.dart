@@ -1,0 +1,259 @@
+import 'package:fruti_express_jahr_admin/features/orders/data/models/order_model.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'order_remote_datasource.dart';
+
+class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
+  final SupabaseClient supabase;
+
+  static const String _tableName = 'orders';
+  static const String _tableConfirmation = 'order_confirmation';
+  static const String _colId = 'id';
+  static const String _colCustomerId = 'customer_id';
+  static const String _colBranchId = 'branch_id';
+  static const String _colCreatedAt = 'created_at';
+  static const String _colStatus = 'status';
+  static const String _colDeliveryPersonId = 'delivery_person_id';
+  static const String _colTotal = 'total';
+  static const String _colOrderId = 'order_id';
+  static const String _colCode = 'code';
+  static const String _relOrderDetails = 'order_details(*)';
+  static const String _createCompleteOrderRpc = 'create_complete_order';
+  static const String _orderDataParam = 'order_data';
+  static const String _itemsDataParam = 'items_data';
+
+  static const String _confirmDeliveryRpc = 'confirm_delivery';
+  static const String _orderIdParam = 'p_order_id';
+  static const String _codeParam = 'p_code';
+  static const String _proofUrlParam = 'p_proof_url';
+
+
+  OrderRemoteDataSourceImpl(this.supabase);
+
+  @override
+  Future<OrderModel> create(OrderModel model) async {
+    final orderMap = model.toJson();
+    orderMap.remove('items'); 
+    final itemsList = model.items.map((item) => item.toJson()).toList();
+    print('🚀 ENVIANDO A SUPABASE - COUPON ID: ${model.couponId}');
+    final response = await supabase.rpc(
+      _createCompleteOrderRpc,
+      params: {_orderDataParam: orderMap, _itemsDataParam: itemsList},
+    );
+
+    final String newOrderId = response.toString();
+    final result = await getById(newOrderId);
+
+    if (result == null) {
+      throw const PostgrestException(
+        message: 'Error al recuperar el pedido creado',
+      );
+    }
+    return result;
+  }
+
+  @override
+  Future<List<OrderModel>> getByUser(String userId) async {
+    final response = await supabase
+        .from(_tableName)
+        .select('*, $_relOrderDetails')
+        .eq(_colCustomerId, userId)
+        .order(_colCreatedAt, ascending: false);
+
+    final orders = (response as List)
+        .map((json) => OrderModel.fromJson(json))
+        .toList();
+
+    final activeOrderIds = orders
+        .where(
+          (o) =>
+              o.status != OrderStatus.delivered &&
+              o.status != OrderStatus.cancelled,
+        )
+        .map((o) => o.id)
+        .toList();
+
+    if (activeOrderIds.isEmpty) return orders;
+
+    final codes = await supabase
+        .from(_tableConfirmation)
+        .select('$_colOrderId, $_colCode')
+        .inFilter(_colOrderId, activeOrderIds);
+
+    final codesByOrder = {
+      for (final c in codes as List)
+        c[_colOrderId] as String: c[_colCode] as String,
+    };
+
+    return orders.map((o) {
+      final code = codesByOrder[o.id];
+      return code != null ? o.copyWith(confirmationCode: code) : o;
+    }).toList();
+  }
+
+  @override
+  Future<String?> getConfirmationCode(String orderId) async {
+    final response = await supabase
+        .from(_tableConfirmation)
+        .select(_colCode)
+        .eq(_colOrderId, orderId)
+        .maybeSingle();
+
+    return response?[_colCode] as String?;
+  }
+
+  @override
+  Future<List<OrderModel>> getAll() async {
+    final response = await supabase
+        .from(_tableName)
+        .select('*, $_relOrderDetails')
+        .order(_colCreatedAt, ascending: false);
+
+    return (response as List)
+        .map((json) => OrderModel.fromJson(json))
+        .toList();
+  }
+
+  @override
+  Future<List<OrderModel>> getByBranch(String branchId) async {
+    final response = await supabase
+        .from(_tableName)
+        .select('*, $_relOrderDetails')
+        .eq(_colBranchId, branchId)
+        .order(_colCreatedAt, ascending: false);
+
+    return (response as List)
+        .map((json) => OrderModel.fromJson(json))
+        .toList();
+  }
+
+  @override
+  Future<List<OrderModel>> getByStatus(
+    String branchId,
+    String status,
+  ) async {
+    final response = await supabase
+        .from(_tableName)
+        .select('*, $_relOrderDetails')
+        .eq(_colBranchId, branchId)
+        .eq(_colStatus, status)
+        .order(_colCreatedAt, ascending: false);
+
+    return (response as List)
+        .map((json) => OrderModel.fromJson(json))
+        .toList();
+  }
+
+  @override
+  Future<OrderModel?> getById(String id) async {
+    final response = await supabase
+        .from(_tableName)
+        .select('*, $_relOrderDetails')
+        .eq(_colId, id)
+        .maybeSingle();
+
+    return response != null ? OrderModel.fromJson(response) : null;
+  }
+
+  @override
+  Future<OrderModel> updateStatus(String id, String newStatus) async {
+    final response = await supabase
+        .from(_tableName)
+        .update({_colStatus: newStatus})
+        .eq(_colId, id)
+        .select('*, $_relOrderDetails')
+        .single();
+
+    return OrderModel.fromJson(response);
+  }
+
+  @override
+  Future<int> countByStatus(String branchId, String status) async {
+    final response = await supabase
+        .from(_tableName)
+        .select(_colId)
+        .eq(_colBranchId, branchId)
+        .eq(_colStatus, status)
+        .count(CountOption.exact);
+    return response.count;
+  }
+
+  @override
+  Future<int> countTodaysOrders(String branchId) async {
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final response = await supabase
+        .from(_tableName)
+        .select(_colId)
+        .eq(_colBranchId, branchId)
+        .gte(_colCreatedAt, today)
+        .count(CountOption.exact);
+    return response.count;
+  }
+
+  @override
+  Future<OrderModel> assignDriver(
+    String orderId,
+    String driverId,
+  ) async {
+    final response = await supabase
+        .from(_tableName)
+        .update({_colDeliveryPersonId: driverId})
+        .eq(_colId, orderId)
+        .select('*, $_relOrderDetails')
+        .single();
+    return OrderModel.fromJson(response);
+  }
+
+  @override
+  Stream<List<OrderModel>> watchByBranch(String branchId) {
+    return supabase
+        .from(_tableName)
+        .stream(primaryKey: [_colId])
+        .eq(_colBranchId, branchId)
+        .order(_colCreatedAt)
+        .map((data) => data.map((json) => OrderModel.fromJson(json)).toList());
+  }
+
+  @override
+  Future<int> getTodaysSales(String branchId) async {
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final response = await supabase
+        .from(_tableName)
+        .select(_colTotal)
+        .eq(_colBranchId, branchId)
+        .gte(_colCreatedAt, today);
+
+    final data = response as List;
+    final totalSold = data.fold<double>(
+      0,
+      (sum, item) => sum + (item[_colTotal] ?? 0),
+    );
+    return totalSold.toInt();
+  }
+
+  @override
+  Stream<List<OrderModel>> watchByDriver(String driverId) {
+    return supabase
+        .from(_tableName)
+        .stream(primaryKey: [_colId])
+        .eq(_colDeliveryPersonId, driverId)
+        .order(_colCreatedAt, ascending: false)
+        .map((data) => data.map((json) => OrderModel.fromJson(json)).toList());
+  }
+
+  @override
+  Future<void> confirmDelivery({
+    required String orderId,
+    String? confirmationCode,
+    String? evidenceUrl,
+  }) async {
+    await supabase.rpc(
+      _confirmDeliveryRpc,
+      params: {
+        _orderIdParam: orderId,
+        _codeParam: confirmationCode,
+        _proofUrlParam: evidenceUrl,
+      },
+    );
+  }
+}

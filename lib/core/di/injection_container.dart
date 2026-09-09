@@ -2,19 +2,21 @@ import 'package:fruti_express_jahr_admin/core/services/postali/postali_service.d
 import 'package:fruti_express_jahr_admin/core/services/postali/postali_service_impl.dart';
 import 'package:fruti_express_jahr_admin/core/services/storage/storage_service.dart';
 import 'package:fruti_express_jahr_admin/core/services/storage/supabase_storage_impl.dart';
-import 'package:fruti_express_jahr_admin/core/services/ubicacion/open_street_map_impl.dart';
-import 'package:fruti_express_jahr_admin/core/services/ubicacion/ubicacion_service.dart';
+import 'package:fruti_express_jahr_admin/core/services/location/open_street_map_impl.dart';
+import 'package:fruti_express_jahr_admin/core/services/location/location_service.dart';
 import 'package:fruti_express_jahr_admin/features/auth/di/auth_di.dart';
 import 'package:fruti_express_jahr_admin/features/banners/di/banners_di.dart';
-import 'package:fruti_express_jahr_admin/features/carrito/di/carrito_di.dart';
-import 'package:fruti_express_jahr_admin/features/categorias/di/categorias_di.dart';
-import 'package:fruti_express_jahr_admin/features/direcciones/di/direcciones_di.dart';
-import 'package:fruti_express_jahr_admin/features/envios/di/envios_di.dart';
-import 'package:fruti_express_jahr_admin/features/inventario/di/inventario_di.dart';
-import 'package:fruti_express_jahr_admin/features/pedidos/di/pedidos_di.dart';
-import 'package:fruti_express_jahr_admin/features/productos/di/productos_di.dart';
-import 'package:fruti_express_jahr_admin/features/sucursales/di/sucursales_di.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/di/usuarios_di.dart';
+import 'package:fruti_express_jahr_admin/features/cart/di/cart_di.dart';
+import 'package:fruti_express_jahr_admin/features/categories/di/categories_di.dart';
+import 'package:fruti_express_jahr_admin/features/coupons/di/coupons_di.dart';
+import 'package:fruti_express_jahr_admin/features/delivery_preferences/di/delivery_preferences_di.dart';
+import 'package:fruti_express_jahr_admin/features/addresses/di/address_di.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/di/shipping_di.dart';
+import 'package:fruti_express_jahr_admin/features/inventory/di/inventory_di.dart';
+import 'package:fruti_express_jahr_admin/features/orders/di/orders_di.dart';
+import 'package:fruti_express_jahr_admin/features/products/di/products_di.dart';
+import 'package:fruti_express_jahr_admin/features/branches/di/branches_di.dart';
+import 'package:fruti_express_jahr_admin/features/users/di/users_di.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -25,7 +27,7 @@ Future<void> init() async {
   final supabaseClient = Supabase.instance.client;
   sl.registerLazySingleton(() => supabaseClient);
 
-  sl.registerLazySingleton<UbicacionService>(() => OpenStreetMapServiceImpl());
+  sl.registerLazySingleton<LocationService>(() => OpenStreetMapServiceImpl());
 
   sl.registerLazySingleton<StorageService>(() => SupabaseStorageImpl(sl()));
 
@@ -33,15 +35,17 @@ Future<void> init() async {
 
   // --- REGISTRO DE FEATURES ---
   initAuth(sl);
-  initPedidos(sl);
-  initDirecciones(sl);
-  initUsuarios(sl);
-  initCategorias(sl);
-  initProductos(sl);
-  initInventario(sl);
-  initSucursales(sl);
-  initCarrito(sl);
+  initOrders(sl);
+  initAddress(sl);
+  initUsers(sl);
+  initCategories(sl);
+  initProducts(sl);
+  initInventory(sl);
+  initBranches(sl);
+  initCart(sl);
   initBanners(sl);
-  initEnvios(sl);
+  initShipping(sl);
+  initDeliveryPreferences(sl);
+  initCoupons(sl);
 
 }

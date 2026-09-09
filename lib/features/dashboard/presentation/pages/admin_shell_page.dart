@@ -9,11 +9,11 @@ class AdminShellPage extends StatelessWidget {
   const AdminShellPage({super.key, required this.child});
 
   String _obtenerTitulo(BuildContext context) {
-    final rutaActual = GoRouterState.of(context).uri.path;
+    final currentRoute = GoRouterState.of(context).uri.path;
     
     try {
-      final itemActivo = menuAdminItems.firstWhere((item) => item.ruta == rutaActual);
-      return itemActivo.titulo;
+      final activeItem = menuAdminItems.firstWhere((item) => item.path == currentRoute);
+      return activeItem.title;
     } catch (e) {
       return 'Fruti Express Admin'; 
     }

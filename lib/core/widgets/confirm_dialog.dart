@@ -1,45 +1,45 @@
 import 'package:flutter/material.dart';
 
 class ConfirmDialog extends StatelessWidget {
-  final String titulo;
-  final String mensaje;
-  final String textoConfirmar;
-  final String textoCancelar;
-  final VoidCallback onConfirmar;
-  final Color? colorConfirmar;
+  final String title;
+  final String message;
+  final String confirmText;
+  final String cancelText;
+  final VoidCallback onConfirm;
+  final Color? confirmColor;
 
   const ConfirmDialog({
     super.key,
-    required this.titulo,
-    required this.mensaje,
-    required this.onConfirmar,
-    this.textoConfirmar = 'Confirmar',
-    this.textoCancelar = 'Cancelar',
-    this.colorConfirmar,
+    required this.title,
+    required this.message,
+    required this.onConfirm,
+    this.confirmText = 'Confirmar',
+    this.cancelText = 'Cancelar',
+    this.confirmColor,
   });
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(
-        titulo,
+        title,
         style: const TextStyle(fontWeight: FontWeight.bold),
       ),
-      content: Text(mensaje),
+      content: Text(message),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(), 
-          child: Text(textoCancelar),
+          child: Text(cancelText),
         ),
         FilledButton(
           style: FilledButton.styleFrom(
-            backgroundColor: colorConfirmar ?? const Color(0xFF1E3A8A), 
+            backgroundColor: confirmColor ?? const Color(0xFF1E3A8A), 
           ),
           onPressed: () {
             Navigator.of(context).pop(); 
-            onConfirmar(); 
+            onConfirm(); 
           },
-          child: Text(textoConfirmar),
+          child: Text(confirmText),
         ),
       ],
     );

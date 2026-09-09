@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fruti_express_jahr_admin/config/menu/admin_menu_items.dart';
+import 'package:fruti_express_jahr_admin/config/menu/admin_menu_items.dart'; 
 import 'package:fruti_express_jahr_admin/features/dashboard/presentation/widgets/admin_drawer_header.dart';
 import 'package:go_router/go_router.dart';
 
@@ -16,22 +16,22 @@ class AdminDrawer extends StatelessWidget {
     
     if (authState is! AuthAuthenticated) return const SizedBox.shrink(); 
     
-    final usuarioActual = authState.perfil;
+    final currentUser = authState.profile; 
 
     return Drawer(
       child: Column(
         children: [
-          AdminDrawerHeader(usuarioActual: usuarioActual),
+          AdminDrawerHeader(currentUser: currentUser), 
           
-          ...menuAdminItems
-              .where((item) => item.tienePermiso(usuarioActual)) 
+          ...menuAdminItems 
+              .where((item) => item.hasPermission(currentUser)) 
               .map(
                 (item) => ListTile(
-                  leading: Icon(item.icono),
-                  title: Text(item.titulo),
+                  leading: Icon(item.icon),
+                  title: Text(item.title),
                   onTap: () {
                     context.pop();
-                    context.go(item.ruta); 
+                    context.go(item.path); 
                   },
                 ),
               ),

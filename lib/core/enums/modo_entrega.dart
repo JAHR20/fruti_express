@@ -1,4 +1,0 @@
-enum ModoEntrega { 
-  aDomicilio, 
-  pickUp 
-}

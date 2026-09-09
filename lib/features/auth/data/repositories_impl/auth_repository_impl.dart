@@ -2,8 +2,8 @@ import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/repositories/auth_repository.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/data/models/perfil_model.dart';
-import 'package:fruti_express_jahr_admin/features/usuarios/domain/entities/perfil.dart';
+import 'package:fruti_express_jahr_admin/features/users/data/models/profile_model.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
 import '../datasources/auth_remote_datasource.dart';
 
 class AuthRepositoryImpl
@@ -14,7 +14,7 @@ class AuthRepositoryImpl
   AuthRepositoryImpl(this.remoteDataSource);
 
   @override
-  ResultTask<Perfil> login(String email, String password) =>
+  ResultTask<Profile> login(String email, String password) =>
       TaskEither.tryCatch(
         () async {
           final model = await remoteDataSource.login(email, password);
@@ -24,24 +24,24 @@ class AuthRepositoryImpl
       );
 
   @override
-  ResultTask<Perfil> registro({
+  ResultTask<Profile> register({
     required String email,
     required String password,
-    required String nombre,
-    required String apellidoPaterno,
-    String? apellidoMaterno,
+    required String firstName,
+    required String paternalLastName,
+    String? maternalLastName,
     String? alias,
-    required String telefono,
+    required String phone,
   }) => TaskEither.tryCatch(
     () async {
-      final model = await remoteDataSource.registro(
+      final model = await remoteDataSource.register(
         email: email,
         password: password,
-        nombre: nombre,
-        apellidoPaterno: apellidoPaterno,
-        apellidoMaterno: apellidoMaterno,
+        firstName: firstName,
+        paternalLastName: paternalLastName,
+        maternalLastName: maternalLastName,
         alias: alias,
-        telefono: telefono,
+        phone: phone,
       );
       return model.toDomain();
     },
@@ -49,9 +49,9 @@ class AuthRepositoryImpl
   );
 
   @override
-  ResultTask<Perfil?> obtenerUsuarioActual() => TaskEither.tryCatch(
+  ResultTask<Profile?> getCurrentUser() => TaskEither.tryCatch(
     () async {
-      final model = await remoteDataSource.obtenerUsuarioActual();
+      final model = await remoteDataSource.getCurrentUser();
       return model?.toDomain();
     },
     handleException,

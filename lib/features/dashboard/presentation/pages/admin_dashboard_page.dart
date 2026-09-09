@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fruti_express_jahr_admin/config/router/admin_router.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
+import 'package:fruti_express_jahr_admin/features/auth/presentation/router/auth_routes.dart';
 import 'package:go_router/go_router.dart';
 
 
@@ -16,7 +16,7 @@ class AdminDashboardPage extends StatelessWidget {
     BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthInitial || state is AuthUnauthenticated) { 
-          context.go(AppRouter.login); 
+          context.goNamed(AuthRoutes.loginName); 
         }
       },
     );

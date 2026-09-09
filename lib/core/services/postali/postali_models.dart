@@ -1,108 +1,107 @@
+class PostaliPostalCode {
+  final String postalCode;
+  final String state;
+  final String stateSlug;
+  final String municipality;
+  final String municipalitySlug;
+  final List<PostaliSettlement> settlements;
 
-class PostaliCp {
-  final String cp;
-  final String estado;
-  final String estadoSlug;
-  final String municipio;
-  final String municipioSlug;
-  final List<PostaliAsentamiento> asentamientos;
-
-  const PostaliCp({
-    required this.cp,
-    required this.estado,
-    required this.estadoSlug,
-    required this.municipio,
-    required this.municipioSlug,
-    required this.asentamientos,
+  const PostaliPostalCode({
+    required this.postalCode,
+    required this.state,
+    required this.stateSlug,
+    required this.municipality,
+    required this.municipalitySlug,
+    required this.settlements,
   });
 
-  factory PostaliCp.fromJson(Map<String, dynamic> json) => PostaliCp(
-        cp: json['cp'] as String,
-        estado: json['estado'] as String,
-        estadoSlug: json['estado_slug'] as String,
-        municipio: json['municipio'] as String,
-        municipioSlug: json['municipio_slug'] as String,
-        asentamientos: (json['asentamientos'] as List)
-            .map((a) => PostaliAsentamiento.fromJson(a))
+  factory PostaliPostalCode.fromJson(Map<String, dynamic> json) => PostaliPostalCode(
+        postalCode: json['cp'] as String,
+        state: json['estado'] as String,
+        stateSlug: json['estado_slug'] as String,
+        municipality: json['municipio'] as String,
+        municipalitySlug: json['municipio_slug'] as String,
+        settlements: (json['asentamientos'] as List)
+            .map((a) => PostaliSettlement.fromJson(a))
             .toList(),
       );
 
-  List<String> get colonias => asentamientos.map((a) => a.nombre).toList();
+  List<String> get neighborhoods => settlements.map((s) => s.name).toList(); 
 }
 
-class PostaliAsentamiento {
-  final String nombre;
-  final String tipo;
-  final String? ciudad;
+class PostaliSettlement { 
+  final String name; 
+  final String type; 
+  final String? city; 
 
-  const PostaliAsentamiento({
-    required this.nombre,
-    required this.tipo,
-    this.ciudad,
+  const PostaliSettlement({
+    required this.name,
+    required this.type,
+    this.city,
   });
 
-  factory PostaliAsentamiento.fromJson(Map<String, dynamic> json) =>
-      PostaliAsentamiento(
-        nombre: json['nombre'] as String,
-        tipo: json['tipo'] as String,
-        ciudad: json['ciudad'] as String?,
+  factory PostaliSettlement.fromJson(Map<String, dynamic> json) =>
+      PostaliSettlement(
+        name: json['nombre'] as String,
+        type: json['tipo'] as String,
+        city: json['ciudad'] as String?,
       );
 }
 
-class PostaliMunicipio {
-  final String estado;
-  final String estadoSlug;
-  final String municipio;
-  final String municipioSlug;
-  final int totalAsentamientos;
+class PostaliMunicipality { 
+  final String state;
+  final String stateSlug;
+  final String municipality;
+  final String municipalitySlug;
+  final int totalSettlements;
   final bool truncated;
-  final List<PostaliColoniaMunicipio> colonias;
+  final List<PostaliNeighborhood> neighborhoods; 
 
-  const PostaliMunicipio({
-    required this.estado,
-    required this.estadoSlug,
-    required this.municipio,
-    required this.municipioSlug,
-    required this.totalAsentamientos,
+  const PostaliMunicipality({
+    required this.state,
+    required this.stateSlug,
+    required this.municipality,
+    required this.municipalitySlug,
+    required this.totalSettlements,
     required this.truncated,
-    required this.colonias,
+    required this.neighborhoods,
   });
 
-  factory PostaliMunicipio.fromJson(Map<String, dynamic> json) =>
-      PostaliMunicipio(
-        estado: json['estado'] as String,
-        estadoSlug: json['estado_slug'] as String,
-        municipio: json['municipio'] as String,
-        municipioSlug: json['municipio_slug'] as String,
-        totalAsentamientos: json['total_asentamientos'] as int,
+  factory PostaliMunicipality.fromJson(Map<String, dynamic> json) =>
+      PostaliMunicipality(
+        state: json['estado'] as String,
+        stateSlug: json['estado_slug'] as String,
+        municipality: json['municipio'] as String,
+        municipalitySlug: json['municipio_slug'] as String,
+        totalSettlements: json['total_asentamientos'] as int,
         truncated: json['truncated'] as bool? ?? false,
-        colonias: (json['colonias'] as List)
-            .map((c) => PostaliColoniaMunicipio.fromJson(c))
+        neighborhoods: (json['colonias'] as List)
+            .map((c) => PostaliNeighborhood.fromJson(c))
             .toList(),
       );
 
-  List<String> get codigosPostalesUnicos =>
-      colonias.map((c) => c.cp).toSet().toList()..sort();
+  List<String> get uniquePostalCodes =>
+      neighborhoods.map((n) => n.postalCode).toSet().toList()..sort();
 }
 
-class PostaliColoniaMunicipio {
-  final String cp;
-  final String nombre;
-  final String tipo;
-  final String? ciudad;
+class PostaliNeighborhood { 
+  final String postalCode; 
+  final String name; 
+  final String type; 
+  final String? city; 
 
-  const PostaliColoniaMunicipio({
-    required this.cp,
-    required this.nombre,
-    required this.tipo,
-    this.ciudad,
+  const PostaliNeighborhood({
+    required this.postalCode,
+    required this.name,
+    required this.type,
+    this.city,
   });
 
-  factory PostaliColoniaMunicipio.fromJson(Map<String, dynamic> json) =>
-      PostaliColoniaMunicipio(
-        cp: json['cp'] as String,
-        nombre: json['nombre'] as String,
-        tipo: json['tipo'] as String,
-        ciudad: json['ciudad'] as String?,
+  factory PostaliNeighborhood.fromJson(Map<String, dynamic> json) =>
+      PostaliNeighborhood(
+        postalCode: json['cp'] as String,
+        name: json['nombre'] as String,
+        type: json['tipo'] as String,
+        city: json['ciudad'] as String?,
       );
 }

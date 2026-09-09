@@ -1,43 +1,43 @@
-import 'package:fruti_express_jahr_admin/features/banners/data/datasources/banner_remote_datasource.dart';
-import 'package:fruti_express_jahr_admin/features/banners/data/datasources/banner_remote_datasource_impl.dart';
-import 'package:fruti_express_jahr_admin/features/banners/data/repositories_impl/banner_repository_impl.dart';
-import 'package:fruti_express_jahr_admin/features/banners/domain/repositories/banner_repository.dart';
-import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/actualizar_banner.dart';
-import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/cambiar_estado_banner.dart';
-import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/crear_banner.dart';
-import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/eliminar_banner.dart';
-import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/obtener_banners_activos.dart';
-import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/obtener_todos_los_banners.dart';
-import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/banner_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/banners/data/datasources/promo_banner_remote_datasource.dart';
+import 'package:fruti_express_jahr_admin/features/banners/data/datasources/promo_banner_remote_datasource_impl.dart';
+import 'package:fruti_express_jahr_admin/features/banners/data/repositories_impl/promo_banner_repository_impl.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/repositories/promo_banner_repository.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/update_promo_banner_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/change_promo_banner_status_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/create_promo_banner_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/delete_promo_banner_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/get_active_promo_banners_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/get_all_promo_banners_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/promo_banner_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 void initBanners(GetIt sl) async {
 
   // --- DATA SOURCES
-  sl.registerLazySingleton<BannerRemoteDatasource>(
-    () => BannerRemoteDatasourceImpl(sl()),
+  sl.registerLazySingleton<PromoBannerRemoteDataSource>(
+    () => PromoBannerRemoteDataSourceImpl(sl()),
   );
 
   // 2. --- REPOSITORIES ---
-  sl.registerLazySingleton<BannerRepository>(() => BannerRepositoryImpl(sl()));
+  sl.registerLazySingleton<PromoBannerRepository>(() => PromoBannerRepositoryImpl(sl()));
 
   // 3. --- CASOS DE USO ---
-  sl.registerLazySingleton(() => ObtenerBannersActivos(sl()));
-  sl.registerLazySingleton(() => ObtenerTodosLosBanners(sl()));
-  sl.registerLazySingleton(() => CrearBanner(sl()));
-  sl.registerLazySingleton(() => ActualizarBanner(sl()));
-  sl.registerLazySingleton(() => CambiarEstadoBanner(sl()));
-  sl.registerLazySingleton(() => EliminarBanner(sl()));
+  sl.registerLazySingleton(() => GetActivePromoBannersUseCase(sl()));
+  sl.registerLazySingleton(() => GetAllPromoBannersUseCase(sl()));
+  sl.registerLazySingleton(() => CreatePromoBannerUseCase(sl()));
+  sl.registerLazySingleton(() => UpdatePromoBannerUseCase(sl()));
+  sl.registerLazySingleton(() => ChangePromoBannerStatusUseCase(sl()));
+  sl.registerLazySingleton(() => DeletePromoBannerUseCase(sl()));
 
  // --- CUBITS ---
   sl.registerFactory(
-    () => BannerCubit(
-      obtenerBannersActivos: sl(),
-      obtenerTodosLosBanners: sl(),
-      crearBanner: sl(),
-      actualizarBanner: sl(),
-      cambiarEstadoBanner: sl(),
-      eliminarBanner: sl(),
+    () => PromoBannerCubit(
+      getActivePromoBannersUseCase: sl(),
+      getAllPromoBannersUseCase: sl(),
+      createPromoBannerUseCase: sl(),
+      updatePromoBannerUseCase: sl(),
+      changePromoBannerStatusUseCase: sl(),
+      deleteBanner: sl(),
     ),
   );
 }

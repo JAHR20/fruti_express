@@ -1,1 +1,0 @@
-enum SeccionRepartidor { pedidos, resumen, perfil }
