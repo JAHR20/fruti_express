@@ -21,6 +21,7 @@ class _CouponInputCardState extends State<CouponInputCard> {
 
   @override
   Widget build(BuildContext context) {
+     final colorTheme = Theme.of(context).colorScheme;
     return BlocConsumer<CartCubit, CartState>(
       listenWhen: (prev, curr) => 
           prev.operationError != curr.operationError ||
@@ -28,14 +29,14 @@ class _CouponInputCardState extends State<CouponInputCard> {
       listener: (context, state) {
         if (state.operationError != null) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.operationError!), backgroundColor: Colors.red),
+            SnackBar(content: Text(state.operationError!), backgroundColor: colorTheme.error),
           );
         } else if (state.appliedCoupon != null) {
           // Mostrar éxito real
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('¡Cupón ${state.appliedCoupon!.code} aplicado con éxito!'), 
-              backgroundColor: Colors.green
+              backgroundColor: colorTheme.primary
             ),
           );
         }
@@ -75,7 +76,7 @@ class _CouponInputCardState extends State<CouponInputCard> {
                     const SizedBox(width: 12),
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: hasCoupon ? Colors.grey : const Color(0xFF1E3A8A),
+                        backgroundColor: hasCoupon ? colorTheme.onSurfaceVariant : colorTheme.primary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -90,7 +91,7 @@ class _CouponInputCardState extends State<CouponInputCard> {
                                 context.read<CartCubit>().validateAndApplyCoupon(code);
                               }
                             },
-                      child: const Text('Aplicar', style: TextStyle(color: Colors.white)),
+                      child: Text('Aplicar', style: TextStyle(color: colorTheme.onPrimary)),
                     ),
                   ],
                 ),

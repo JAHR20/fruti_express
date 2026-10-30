@@ -1,28 +1,30 @@
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/user_profile.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 
 abstract class UserRepository {
-  ResultTask<Profile> getById(String id);
+  ResultTask<AppUser> getById(String id);
   
-  ResultTask<List<Profile>> getAll();
+  ResultTask<List<AppUser>> getAll();
   
-  ResultTask<List<Profile>> getDeliveryPersons({String? branchId});
+  ResultTask<List<AppUser>> getDeliveryPersons({String? branchId});
   
   ResultTask<int> countActiveAdmins();
   
   ResultTask<bool> managerExistsInBranch(String branchId);
   
-  ResultTask<List<Profile>> getCustomersWhoBoughtInBranch(String branchId);
+  ResultTask<List<AppUser>> getCustomersWhoBoughtInBranch(String branchId);
   
-  ResultTask<List<Profile>> searchUsers(String query);
+  ResultTask<List<AppUser>> searchUsers(String query);
   
-  ResultTask<Profile> update(Profile profile);
+  ResultTask<UserProfile> update(UserProfile profile);
   
-  ResultTask<Profile> changeStatus({required String id, required bool active});
+  ResultTask<AppUser> changeStatus({required String id, required bool active});
   
-  ResultTask<Profile> changeRole({
+  ResultTask<AppUser> changeRole({
     required String id,
     required UserRole newRole,
+    required String? branchId,
   });
 }

@@ -9,7 +9,7 @@ import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/b
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_state.dart';
 import 'package:fruti_express_jahr_admin/features/cart/presentation/cubits/cart_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/categories/presentation/cubits/category_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/products/presentation/cubits/product_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/customer/cubits/customer_products_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_coordinator_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_shipping_cubit.dart';
 
@@ -24,13 +24,13 @@ class CustomerDependencyProvider extends StatelessWidget {
     final authState = sl<AuthCubit>().state;
     if (authState is! AuthAuthenticated) return child; 
     
-    final usuarioActual = authState.profile; 
+    final usuarioActual = authState.user; 
 
     final branchCubit = sl<BranchCubit>()..loadBranches()..startRealtime();
     final customerShippingCubit = sl<CustomerShippingCubit>();
     
     final cartCubit = context.read<CartCubit>();
-    final productCubit = context.read<ProductCubit>();
+    final customerProductsCubit = context.read<CustomerProductsCubit>();
     final addressCubit = context.read<AddressCubit>();
 
     return MultiBlocProvider(
@@ -43,7 +43,7 @@ class CustomerDependencyProvider extends StatelessWidget {
           lazy: false,
           create: (_) => CustomerCoordinatorCubit(
             cartCubit: cartCubit,
-            productsCubit: productCubit,
+            customerProductsCubit: customerProductsCubit,
             branchCubit: branchCubit,
             customerShippingCubit: customerShippingCubit,
             addressCubit: addressCubit,

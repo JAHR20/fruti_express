@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/core/utils/app_formatters.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/router/auth_routes.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fruti_express_jahr_admin/core/utils/validators.dart';
 
-import '../widgets/custom_auth_field.dart';
+import '../../../../core/widgets/custom_text_field.dart';
 import '../widgets/primary_auth_button.dart';
 import '../widgets/terms_checkbox.dart';
 
@@ -19,11 +20,6 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-
-  final _firstNameCtrl = TextEditingController();
-  final _paternalLastNameCtrl = TextEditingController();
-  final _maternalLastNameCtrl = TextEditingController();
-  final _phoneCtrl = TextEditingController();
   final _emailCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
   final _confirmPassCtrl = TextEditingController();
@@ -32,10 +28,6 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void dispose() {
-    _firstNameCtrl.dispose();
-    _paternalLastNameCtrl.dispose();
-    _maternalLastNameCtrl.dispose();
-    _phoneCtrl.dispose();
     _emailCtrl.dispose();
     _passwordCtrl.dispose();
     _confirmPassCtrl.dispose();
@@ -53,12 +45,6 @@ class _RegisterPageState extends State<RegisterPage> {
         return;
       }
       context.read<AuthCubit>().register(
-        firstName: _firstNameCtrl.text.trim(),
-        paternalLastName: _paternalLastNameCtrl.text.trim(),
-        maternalLastName: _maternalLastNameCtrl.text.trim().isEmpty
-            ? null
-            : _maternalLastNameCtrl.text.trim(),
-        phone: _phoneCtrl.text.trim(),
         email: _emailCtrl.text.trim(),
         password: _passwordCtrl.text,
       );
@@ -75,6 +61,21 @@ class _RegisterPageState extends State<RegisterPage> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(message), backgroundColor: Colors.red),
             );
+          }
+
+          if (state case AuthEmailConfirmationPending()) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Te enviamos un correo de confirmación. '
+                  'Revísalo antes de iniciar sesión.',
+                ),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 5),
+              ),
+            );
+
+            context.goNamed(AuthRoutes.loginName);
           }
         },
         builder: (context, state) {
@@ -101,7 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24.0,
-                        vertical: 32.0,
+                        vertical: 10.0,
                       ),
                       child: Form(
                         key: _formKey,
@@ -109,7 +110,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'REGISTRATION',
+                              'REGISTRO',
                               style: TextStyle(
                                 color: Color(0xFF1E3A8A),
                                 fontWeight: FontWeight.bold,
@@ -118,7 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             const SizedBox(height: 8),
                             const Text(
-                              'Create an account',
+                              'Crear una cuenta',
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
@@ -126,74 +127,34 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                             const SizedBox(height: 32),
 
-                            CustomAuthField(
-                              label: 'Nombre(s)',
-                              hintText: 'Ej. Juan',
-                              controller: _firstNameCtrl,
-                              validator: Validators.name,
-                              enabled: !isLoading,
-                            ),
-                            const SizedBox(height: 16),
-
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: CustomAuthField(
-                                    label: 'Ap. Paterno',
-                                    hintText: 'García',
-                                    controller: _paternalLastNameCtrl,
-                                    validator: Validators.paternalLastName,
-                                    enabled: !isLoading,
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: CustomAuthField(
-                                    label: 'Ap. Materno (Opcional)',
-                                    hintText: 'López',
-                                    controller: _maternalLastNameCtrl,
-                                    validator: null,
-                                    enabled: !isLoading,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-
-                            CustomAuthField(
-                              label: 'Teléfono',
-                              hintText: '10 dígitos',
-                              controller: _phoneCtrl,
-                              validator: Validators.phone,
-                              enabled: !isLoading,
-                            ),
-                            const SizedBox(height: 16),
-
-                            CustomAuthField(
+                            CustomTextField(
                               label: 'Email',
                               hintText: 'correo@ejemplo.com',
                               controller: _emailCtrl,
+                              inputFormatters: [AppFormatters.email],
                               validator: Validators.email,
                               enabled: !isLoading,
+                              colorLabel: Colors.blue.shade900,
                             ),
                             const SizedBox(height: 16),
 
-                            CustomAuthField(
-                              label: 'Password',
+                            CustomTextField(
+                              label: 'Contraseña',
                               hintText: '********',
                               isPassword: true,
                               controller: _passwordCtrl,
                               validator: Validators.registerPassword,
                               enabled: !isLoading,
+                              colorLabel: Colors.blue.shade900,
                             ),
                             const SizedBox(height: 16),
 
-                            CustomAuthField(
-                              label: 'Confirmar Password',
+                            CustomTextField(
+                              label: 'Confirmar Contraseña',
                               hintText: '********',
                               isPassword: true,
                               controller: _confirmPassCtrl,
+                              colorLabel: Colors.blue.shade900,
                               validator: (value) => Validators.confirmPassword(
                                 _passwordCtrl.text,
                                 value,
@@ -224,14 +185,14 @@ class _RegisterPageState extends State<RegisterPage> {
                             const SizedBox(height: 24),
                             const Center(
                               child: Text(
-                                'Already have an account?',
+                                '¿Ya tienes una cuenta?',
                                 style: TextStyle(color: Colors.black54),
                               ),
                             ),
                             const SizedBox(height: 12),
 
                             PrimaryAuthButton(
-                              text: 'Login',
+                              text: 'Iniciar Sesión',
                               backgroundColor: const Color(0xFF2C2C4E),
                               onPressed: isLoading
                                   ? () {}

@@ -11,5 +11,6 @@ abstract class BranchState with _$BranchState {
     String? errorMessage,
     String? branchProcessingId, 
     @Default(<String>{}) Set<String> branchesWithShippingConfigured,
+    @Default(<String>{}) Set<String> branchesWithRatesConfigured,
   }) = _BranchState;
 }

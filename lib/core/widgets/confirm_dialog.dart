@@ -7,6 +7,7 @@ class ConfirmDialog extends StatelessWidget {
   final String cancelText;
   final VoidCallback onConfirm;
   final Color? confirmColor;
+  final Color? cancelColor;
 
   const ConfirmDialog({
     super.key,
@@ -16,6 +17,7 @@ class ConfirmDialog extends StatelessWidget {
     this.confirmText = 'Confirmar',
     this.cancelText = 'Cancelar',
     this.confirmColor,
+    this.cancelColor
   });
 
   @override
@@ -29,11 +31,11 @@ class ConfirmDialog extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(), 
-          child: Text(cancelText),
+          child: Text(cancelText, style: TextStyle(color: cancelColor ?? Theme.of(context).primaryColor),),
         ),
         FilledButton(
           style: FilledButton.styleFrom(
-            backgroundColor: confirmColor ?? const Color(0xFF1E3A8A), 
+            backgroundColor: confirmColor ?? Theme.of(context).colorScheme.error, 
           ),
           onPressed: () {
             Navigator.of(context).pop(); 

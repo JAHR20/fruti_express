@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fruti_express_jahr_admin/core/enums/delivery_method.dart';
+import 'package:fruti_express_jahr_admin/core/enums/payment_method_type.dart'; // Ajusta según tu enum
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/features/cart/presentation/cubits/cart_cubit.dart';
@@ -13,16 +13,17 @@ import 'package:fruti_express_jahr_admin/features/orders/presentation/router/ord
 import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/checkout_items_list.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/coupon_input_card.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/order_summary_card.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/payment_method_selector.dart';
 import 'package:go_router/go_router.dart';
 
 class CheckoutPage extends StatelessWidget {
   const CheckoutPage({super.key});
 
   void _confirmOrder(BuildContext context) {
-    final profile = context.read<AuthCubit>().state.whenOrNull(
+    final user = context.read<AuthCubit>().state.whenOrNull(
       authenticated: (p) => p,
     );
-    if (profile == null) {
+    if (user == null) {
       return _showError(context, 'Sesión expirada. Vuelve a iniciar sesión.');
     }
 
@@ -38,73 +39,81 @@ class CheckoutPage extends StatelessWidget {
       return _showError(context, 'Error: No hay sucursal activa');
     }
 
+    // 1. Extraemos el preview ya calculado por Supabase
+    final preview = cartState.orderPreview;
+
+    // 2. Validamos que exista (para evitar que se confirme mientras isCalculating == true)
+    if (preview == null || cartState.isCalculating) {
+      return _showError(
+        context,
+        'Calculando el total del pedido, por favor espera...',
+      );
+    }
+
     final branches = context.read<BranchCubit>().state.branches;
-    final selectedBranch = branches.firstWhere(
-      (s) => s.id == cartState.branchId,
-    );
+    final selectedBranch = branches
+        .where((s) => s.id == cartState.branchId)
+        .firstOrNull;
+    if (selectedBranch == null) {
+      return _showError(
+        context,
+        'No se pudo cargar la sucursal. Inténtalo de nuevo.',
+      );
+    }
 
-    final subtotal = cartState.items.fold<int>(0, (sum, item) {
-      final bool isWeight =
-          item.measurementUnit.name == 'gram' ||
-          item.measurementUnit.name == 'milliliter';
-      final double multiplier = isWeight
-          ? (item.quantity / 1000)
-          : item.quantity.toDouble();
-      return sum + (multiplier * item.unitPrice).round();
-    });
-
-    final bool hasFreeShipping =
-        cartState.freeShippingThreshold != null &&
-        subtotal >= cartState.freeShippingThreshold!;
-
-    final shippingCost =
-        (cartState.deliveryMethod == DeliveryMethod.pickUp || hasFreeShipping)
-        ? 0
-        : cartState.baseShippingRate;
-
-    final discount = cartState.discountAmount;
-    final finalTotal = subtotal + shippingCost - discount;
-    final couponId = cartState.appliedCoupon?.id;
-
+    // 3. Enviamos la orden usando ESTRICTAMENTE los datos devueltos por el backend
     context.read<OrderCubit>().createFromCart(
       items: cartState.items,
       address: cartState.selectedAddress,
       branch: selectedBranch,
-      profile: profile,
-      subtotal: subtotal,
-      calculatedShippingCost: shippingCost,
+      profile: user.profile,
+      subtotal: preview.subtotal,
+      calculatedShippingCost: preview.shippingCost,
       deliveryMethod: cartState.deliveryMethod!,
-      appliedDiscount: discount,
-      total: finalTotal,
-      couponId: couponId,
+      paymentMethod: cartState.paymentMethod,
+      appliedDiscount: preview.discount,
+      total: preview.total,
+      couponId: cartState.appliedCoupon?.id,
     );
   }
 
   void _showError(BuildContext context, String message) {
+    final colorScheme = Theme.of(context).colorScheme;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(message, style: TextStyle(color: colorScheme.onError)),
+        backgroundColor: colorScheme.error,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return BlocListener<OrderCubit, OrderState>(
       listener: (context, state) {
         state.maybeWhen(
-          processing: () => showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => const Center(
-              child: CircularProgressIndicator(color: Colors.white),
-            ),
-          ),
+          processing: () => _showLoadingDialog(context),
           awaitingPayment: (createdOrder) {
             Navigator.of(context).pop();
-            context.read<CartCubit>().clearCart();
-            context.goNamed(
-              OrderRoutes.orderSuccessfulName,
-              extra: createdOrder,
-            );
+
+            final paymentMethod = context.read<CartCubit>().state.paymentMethod;
+
+            if (paymentMethod == PaymentMethodType.cashOnDelivery) {
+              // Flujo contra entrega
+              context.read<CartCubit>().clearCart();
+              context.goNamed(
+                OrderRoutes.orderSuccessfulName,
+                extra: createdOrder,
+              );
+            } else {
+              // Flujo con tarjeta: abre la pantalla de pago
+              context.pushNamed(
+                OrderRoutes.cardPaymentName,
+                extra: createdOrder,
+              );
+            }
           },
           error: (message) {
             Navigator.of(context).pop();
@@ -114,28 +123,31 @@ class CheckoutPage extends StatelessWidget {
         );
       },
       child: Scaffold(
-        backgroundColor: Colors.grey.shade50,
+        backgroundColor: colorScheme.surface,
         appBar: AppBar(
           title: const Text(
             'Confirmar Pedido',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-          backgroundColor: const Color(0xFF1E3A8A),
-          iconTheme: const IconThemeData(color: Colors.white),
         ),
         body: BlocBuilder<CartCubit, CartState>(
           builder: (context, state) {
             return ListView(
               padding: const EdgeInsets.all(24.0),
               children: [
-                const Text(
+                Text(
                   'Detalles de entrega',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
                 const SizedBox(height: 12),
 
                 Card(
                   elevation: 2,
+                  color: colorScheme.surfaceContainer,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
@@ -150,16 +162,17 @@ class CheckoutPage extends StatelessWidget {
                               state.isPickup
                                   ? Icons.storefront
                                   : Icons.location_on,
-                              color: const Color(0xFF1E3A8A),
+                              color: colorScheme.primary,
                             ),
                             const SizedBox(width: 8),
                             Text(
                               state.isPickup
                                   ? 'Pasar a recoger (Pick Up)'
                                   : 'Envío a Domicilio',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
+                                color: colorScheme.onSurface,
                               ),
                             ),
                             const Spacer(),
@@ -176,12 +189,16 @@ class CheckoutPage extends StatelessWidget {
                         else if (state.selectedAddress != null)
                           Text(
                             '${state.selectedAddress!.street} #${state.selectedAddress!.exteriorNumber}\nCol. ${state.selectedAddress!.neighborhood}, C.P. ${state.selectedAddress!.zipCode}',
-                            style: const TextStyle(fontSize: 14, height: 1.5),
+                            style: TextStyle(
+                              fontSize: 14,
+                              height: 1.5,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           )
                         else
-                          const Text(
+                          Text(
                             'Por favor, selecciona una dirección.',
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(color: colorScheme.error),
                           ),
                       ],
                     ),
@@ -190,11 +207,27 @@ class CheckoutPage extends StatelessWidget {
 
                 const SizedBox(height: 24),
 
+                Text(
+                  'Método de pago',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                const PaymentMethodSelector(),
+
                 CheckoutItemsList(items: state.items),
 
-                const Text(
+                Text(
                   'Resumen del pedido',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
 
                 const SizedBox(height: 12),
@@ -224,6 +257,19 @@ class CheckoutPage extends StatelessWidget {
       ),
     );
   }
+
+  void _showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        final dialogColorScheme = Theme.of(dialogContext).colorScheme;
+        return Center(
+          child: CircularProgressIndicator(color: dialogColorScheme.primary),
+        );
+      },
+    );
+  }
 }
 
 class _BuildBranchInfo extends StatelessWidget {
@@ -234,18 +280,33 @@ class _BuildBranchInfo extends StatelessWidget {
   Widget build(BuildContext context) {
     if (branchId == null) return const SizedBox.shrink();
 
-    final branch = context.read<BranchCubit>().state.branches.firstWhere(
-      (b) => b.id == branchId,
-    );
+    final colorScheme = Theme.of(context).colorScheme;
+
+    // watch: se redibuja cuando las sucursales terminan de cargar.
+    final branches = context.watch<BranchCubit>().state.branches;
+    final branch = branches.where((b) => b.id == branchId).firstOrNull;
+
+    if (branch == null) {
+      return Text(
+        branches.isEmpty ? 'Cargando sucursal…' : 'Sucursal no disponible.',
+        style: TextStyle(color: colorScheme.onSurfaceVariant),
+      );
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(branch.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        Text(
+          branch.name,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+          ),
+        ),
         const SizedBox(height: 4),
         Text(
           '${branch.street} #${branch.exteriorNumber}',
-          style: TextStyle(color: Colors.grey.shade700),
+          style: TextStyle(color: colorScheme.onSurfaceVariant),
         ),
       ],
     );
@@ -260,13 +321,15 @@ class _ConfirmOrderButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(24.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Theme.of(context).shadowColor.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, -5),
           ),
@@ -276,10 +339,10 @@ class _ConfirmOrderButton extends StatelessWidget {
         child: SizedBox(
           width: double.infinity,
           height: 50,
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1E3A8A),
-              disabledBackgroundColor: Colors.grey.shade300,
+          child: FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: colorScheme.primary,
+              foregroundColor: colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -287,11 +350,7 @@ class _ConfirmOrderButton extends StatelessWidget {
             onPressed: isEnabled ? onPressed : null,
             child: const Text(
               'Confirmar Pedido',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
         ),

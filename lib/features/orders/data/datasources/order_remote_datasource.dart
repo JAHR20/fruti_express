@@ -1,4 +1,5 @@
 import 'package:fruti_express_jahr_admin/features/orders/data/models/order_model.dart';
+import 'package:fruti_express_jahr_admin/features/orders/data/models/order_preview_model.dart';
 
 abstract class OrderRemoteDataSource {
   Future<OrderModel?> getById(String id);
@@ -22,4 +23,15 @@ abstract class OrderRemoteDataSource {
   });
 
   Future<String?> getConfirmationCode(String orderId);
+
+  Future<OrderPreviewModel> getOrderPreview({
+    required String branchId,
+    required List<Map<String, dynamic>> items,
+    required String deliveryMethod,
+    String? couponId,
+    double? customerLatitude, // 👈 nuevo
+    double? customerLongitude, // 👈 nuevo
+  });
+
+  Future<void> confirmCashOrder({required String orderId});
 }

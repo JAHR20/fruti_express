@@ -1,20 +1,6 @@
-import 'dart:io';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/enums/measurement_unit.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/update_product_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/search_products_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/change_product_status_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/create_product_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_product_by_id_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_product_by_name_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_products_by_category_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_products_by_branch_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_all_products_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/upload_product_image_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
-import 'product_state.dart';
 
+
+/*
 class ProductCubit extends Cubit<ProductState> {
   final UpdateProductUseCase _updateProductUseCase;
   final ChangeProductStatusUseCase _changeProductStatusUseCase;
@@ -26,6 +12,7 @@ class ProductCubit extends Cubit<ProductState> {
   final UploadProductImageUseCase _uploadProductImageUseCase;
   final SearchProductsUseCase _searchProductsUseCase;
   final GetProductsByBranchUseCase _getProductsByBranchUseCase;
+  final WatchInventoryChangesUseCase _watchInventoryChangesUseCase;
 
   ProductCubit({
     required UpdateProductUseCase updateProductUseCase,
@@ -38,6 +25,7 @@ class ProductCubit extends Cubit<ProductState> {
     required UploadProductImageUseCase uploadProductImageUseCase,
     required SearchProductsUseCase searchProductsUseCase,
     required GetProductsByBranchUseCase getProductsByBranchUseCase,
+    required WatchInventoryChangesUseCase watchInventoryChangesUseCase,
   }) : _updateProductUseCase = updateProductUseCase,
        _changeProductStatusUseCase = changeProductStatusUseCase,
        _createProductUseCase = createProductUseCase,
@@ -48,9 +36,12 @@ class ProductCubit extends Cubit<ProductState> {
        _uploadProductImageUseCase = uploadProductImageUseCase,
        _searchProductsUseCase = searchProductsUseCase,
        _getProductsByBranchUseCase = getProductsByBranchUseCase,
+       _watchInventoryChangesUseCase = watchInventoryChangesUseCase,
        super(const ProductState());
 
   int _currentSearchId = 0;
+  StreamSubscription<void>? _inventorySubscription;
+  String? _listeningBranchId;
 
   Future<void> loadAllProducts() async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
@@ -79,6 +70,8 @@ class ProductCubit extends Cubit<ProductState> {
   }
 
   Future<void> loadProductsByBranch(String branchId) async {
+    _listenToInventoryRealtime(branchId);
+
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final result = await _getProductsByBranchUseCase.execute(branchId).run();
@@ -150,6 +143,7 @@ class ProductCubit extends Cubit<ProductState> {
     String categoryId,
     String branchId,
   ) async {
+    _listenToInventoryRealtime(branchId);
     emit(
       state.copyWith(
         isLoading: true,
@@ -278,8 +272,7 @@ class ProductCubit extends Cubit<ProductState> {
           emit(
             state.copyWith(
               isSavingOperation: false,
-              operationError:
-                  'Error al subir imagen: ${translateFailure(failure)}',
+              operationError: translateFailure(failure),
             ),
           );
           return true;
@@ -365,8 +358,7 @@ class ProductCubit extends Cubit<ProductState> {
           emit(
             state.copyWith(
               processingProductId: null,
-              operationError:
-                  'Error al subir imagen: ${translateFailure(failure)}',
+              operationError: translateFailure(failure),
             ),
           );
           return true;
@@ -453,4 +445,29 @@ class ProductCubit extends Cubit<ProductState> {
       },
     );
   }
+
+  void _listenToInventoryRealtime(String branchId) {
+    if (_listeningBranchId == branchId) return;
+    _listeningBranchId = branchId;
+
+    _inventorySubscription?.cancel();
+
+    _inventorySubscription = _watchInventoryChangesUseCase
+        .execute(branchId)
+        .listen((_) {
+          if (state.currentCategoryId != null) {
+            loadProductsByCategory(state.currentCategoryId!, branchId);
+          } else {
+            loadProductsByBranch(branchId);
+          }
+        });
+  }
+
+  @override
+  Future<void> close() {
+    _inventorySubscription?.cancel();
+    return super.close();
+  }
 }
+
+*/

@@ -9,7 +9,7 @@ import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/creat
 import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/delete_promo_banner_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/get_active_promo_banners_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/use_cases/get_all_promo_banners_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart'; 
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 import 'promo_banner_state.dart';
 
@@ -61,7 +61,7 @@ class PromoBannerCubit extends Cubit<PromoBannerState> {
     );
   }
 
-  Future<void> loadAllBanners({required Profile currentUser}) async { // cargarTodosLosBanners -> loadAllBanners
+  Future<void> loadAllBanners({required AppUser currentUser}) async {
     emit(
       state.copyWith(isLoading: true, errorMessage: null, operationError: null),
     );
@@ -88,10 +88,10 @@ class PromoBannerCubit extends Cubit<PromoBannerState> {
     );
   }
 
-  Future<void> createBanner({ // crearBanner -> createBanner
-    required Profile currentUser,
+  Future<void> createBanner({ 
+    required AppUser currentUser,
     required PromoBanner banner,
-    File? imageFile, // imagenArchivo -> imageFile
+    File? imageFile, 
   }) async {
     emit(state.copyWith(operationError: null, isOperationSuccessful: false));
 
@@ -114,13 +114,13 @@ class PromoBannerCubit extends Cubit<PromoBannerState> {
       },
       (_) {
         emit(state.copyWith(operationError: null, isOperationSuccessful: true));
-        loadAllBanners(currentUser: currentUser); // Recargar la lista después de crear
+        loadAllBanners(currentUser: currentUser); 
       },
     );
   }
 
-  Future<void> updateBanner({ // actualizarBanner -> updateBanner
-    required Profile currentUser,
+  Future<void> updateBanner({ 
+    required AppUser currentUser,
     required PromoBanner banner,
     File? imageFile,
   }) async {
@@ -150,7 +150,7 @@ class PromoBannerCubit extends Cubit<PromoBannerState> {
           ),
         );
       },
-      (updatedBanner) { // bannerActualizado -> updatedBanner
+      (updatedBanner) { 
         final newBanners = state.banners.map((currentBanner) {
           if (currentBanner.id == updatedBanner.id) {
             return updatedBanner;
@@ -170,10 +170,10 @@ class PromoBannerCubit extends Cubit<PromoBannerState> {
     );
   }
 
-  Future<void> changeBannerStatus({ // cambiarEstadoBanner -> changeBannerStatus
-    required Profile currentUser,
+  Future<void> changeBannerStatus({ 
+    required AppUser currentUser,
     required String id,
-    required bool isActive, // activo -> isActive
+    required bool isActive, 
   }) async {
     emit(
       state.copyWith(
@@ -200,7 +200,7 @@ class PromoBannerCubit extends Cubit<PromoBannerState> {
       (_) {
         final newBanners = state.banners.map((banner) {
           if (banner.id == id) {
-            return banner.copyWith(isActive: isActive); // activo -> isActive
+            return banner.copyWith(isActive: isActive); 
           }
           return banner;
         }).toList();
@@ -217,8 +217,8 @@ class PromoBannerCubit extends Cubit<PromoBannerState> {
     );
   }
 
-  Future<void> deleteBanner({ // eliminarBanner -> deleteBanner
-    required Profile currentUser,
+  Future<void> deleteBanner({ 
+    required AppUser currentUser,
     required String id,
   }) async {
     emit(
@@ -260,7 +260,7 @@ class PromoBannerCubit extends Cubit<PromoBannerState> {
     );
   }
 
-  void clearOperationResult() { // limpiarResultadoOperacion -> clearOperationResult
+  void clearOperationResult() { 
     emit(state.copyWith(operationError: null, isOperationSuccessful: false));
   }
 }

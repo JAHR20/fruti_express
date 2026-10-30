@@ -1,10 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/enums/delivery_method.dart';
+import 'package:fruti_express_jahr_admin/core/enums/payment_method_type.dart';
+import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
+import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/services/location/location_service.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
 import 'package:fruti_express_jahr_admin/features/addresses/domain/entities/address.dart';
-import 'package:fruti_express_jahr_admin/features/coupons/domain/enums/discount_type.dart';
 import 'package:fruti_express_jahr_admin/features/coupons/domain/use_cases/validate_and_apply_coupon_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/get_order_preview_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/shipping_config.dart';
 import 'package:fruti_express_jahr_admin/features/inventory/domain/use_cases/get_current_stock_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/entities/branch.dart';
@@ -22,6 +25,7 @@ class CartCubit extends Cubit<CartState> {
   final LocationService _locationService;
   final GetCurrentStockUseCase _getCurrentStockUseCase;
   final ValidateAndApplyCouponUseCase _validateAndApplyCouponUseCase;
+  final GetOrderPreviewUseCase _getOrderPreviewUseCase;
 
   CartCubit({
     required GetCartUseCase getCartUseCase,
@@ -30,12 +34,14 @@ class CartCubit extends Cubit<CartState> {
     required LocationService locationService,
     required GetCurrentStockUseCase getCurrentStockUseCase,
     required ValidateAndApplyCouponUseCase validateAndApplyCouponUseCase,
+    required GetOrderPreviewUseCase getOrderPreviewUseCase,
   }) : _getCartUseCase = getCartUseCase,
        _saveCartUseCase = saveCartUseCase,
        _clearCartUseCase = clearCartUseCase,
        _locationService = locationService,
        _getCurrentStockUseCase = getCurrentStockUseCase,
        _validateAndApplyCouponUseCase = validateAndApplyCouponUseCase,
+       _getOrderPreviewUseCase = getOrderPreviewUseCase,
        super(const CartState());
 
   Future<void> loadCart() async {
@@ -44,21 +50,86 @@ class CartCubit extends Cubit<CartState> {
     try {
       final items = await _getCartUseCase.execute();
       emit(state.copyWith(isLoading: false, items: items, errorMessage: null));
+
+      // 🛑 Solo calculamos si ya tenemos sucursal Y coordenadas listas
+      if (items.isNotEmpty &&
+          state.branchId != null &&
+          state.selectedAddress?.latitude != null &&
+          state.selectedAddress?.longitude != null) {
+        await calculateOrderPreview(
+          lat: state.selectedAddress?.latitude,
+          lng: state.selectedAddress?.longitude,
+        );
+      }
     } catch (e) {
       emit(
         state.copyWith(
           isLoading: false,
-          errorMessage: 'Error al cargar el carrito local',
+          errorMessage: translateFailure(
+            const Failure.validation(FailureCode.localCartLoadError),
+          ),
         ),
       );
     }
+  }
+
+  Future<void> calculateOrderPreview({double? lat, double? lng}) async {
+    final finalLat = lat ?? state.selectedAddress?.latitude;
+    final finalLng = lng ?? state.selectedAddress?.longitude;
+
+    if (state.branchId == null || state.items.isEmpty) return;
+
+    if (state.deliveryMethod == DeliveryMethod.homeDelivery &&
+        (finalLat == null || finalLng == null)) {
+      return;
+    }
+
+    emit(state.copyWith(isCalculating: true));
+
+    final itemsData = state.items
+        .map(
+          (item) => {
+            'product_id': item.productId,
+            'quantity': item.quantity,
+            'product_name_snapshot': item.name,
+            'unit_price_snapshot': item.unitPrice,
+            'measurement_unit': item.measurementUnit.name,
+          },
+        )
+        .toList();
+
+    final deliveryMethodStr = state.deliveryMethod == DeliveryMethod.pickUp
+        ? 'pick_up'
+        : 'delivery';
+
+    final result = await _getOrderPreviewUseCase(
+      branchId: state.branchId!,
+      items: itemsData,
+      deliveryMethod: deliveryMethodStr,
+      couponId: state.appliedCoupon?.id,
+      customerLatitude: finalLat,
+      customerLongitude: finalLng,
+    ).run();
+
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          isCalculating: false,
+          errorMessage: translateFailure(failure),
+        ),
+      ),
+      (preview) =>
+          emit(state.copyWith(isCalculating: false, orderPreview: preview)),
+    );
   }
 
   Future<String?> addItem(CartItem newItem) async {
     final branchId = state.branchId;
 
     if (branchId == null) {
-      return 'Selecciona una sucursal de entrega primero.';
+      return translateFailure(
+        const Failure.validation(FailureCode.branchNotSelected),
+      );
     }
 
     emit(state.copyWith(processingProductId: newItem.productId));
@@ -71,8 +142,7 @@ class CartCubit extends Cubit<CartState> {
 
     await result.fold(
       (failure) async {
-        returnErrorMessage =
-            'No se pudo verificar el stock: ${translateFailure(failure)}';
+        returnErrorMessage = returnErrorMessage = translateFailure(failure);
       },
       (actualStock) async {
         final List<CartItem> currentItems = List.from(state.items);
@@ -86,8 +156,16 @@ class CartCubit extends Cubit<CartState> {
         final desiredTotalQuantity = currentQuantityInCart + newItem.quantity;
 
         if (desiredTotalQuantity > actualStock) {
-          returnErrorMessage =
-              'Stock insuficiente. Solo quedan $actualStock disponibles.';
+          returnErrorMessage = translateFailure(
+            Failure.insufficientStock(
+              FailureCode.insufficientStock,
+              params: {
+                'productName': newItem.name,
+                'stock': actualStock,
+                'unit': newItem.measurementUnit.name,
+              },
+            ),
+          );
           return;
         }
 
@@ -106,6 +184,8 @@ class CartCubit extends Cubit<CartState> {
     );
 
     emit(state.copyWith(processingProductId: null));
+
+    await calculateOrderPreview();
 
     return returnErrorMessage;
   }
@@ -128,6 +208,8 @@ class CartCubit extends Cubit<CartState> {
     await _saveCartUseCase.execute(currentItems);
 
     emit(state.copyWith(items: currentItems, processingProductId: null));
+
+    await calculateOrderPreview();
   }
 
   Future<void> removeItem(String productId) async {
@@ -140,19 +222,20 @@ class CartCubit extends Cubit<CartState> {
     await _saveCartUseCase.execute(currentItems);
 
     emit(state.copyWith(items: currentItems, processingProductId: null));
+
+    await calculateOrderPreview();
   }
 
   Future<void> clearCart() async {
     await _clearCartUseCase.execute();
-    emit(state.copyWith(
-      items: const [],
-      appliedCoupon: null, // 
-      discountAmount: 0, 
-    ));
+    emit(
+      state.copyWith(items: const [], appliedCoupon: null, discountAmount: 0),
+    );
   }
 
   void setDeliveryMethod(DeliveryMethod method) {
     emit(state.copyWith(deliveryMethod: method));
+    calculateOrderPreview();
   }
 
   Branch? validateAddressCoverage({
@@ -197,63 +280,38 @@ class CartCubit extends Cubit<CartState> {
     emit(state.copyWith(operationError: null));
 
     if (code.trim().isEmpty) return;
-    
-    final subtotal = state.items.fold<int>(
-      0,
-      (sum, item) {
-        final bool isWeight = item.measurementUnit.name == 'gram' || item.measurementUnit.name == 'milliliter';
-        final double multiplier = isWeight ? (item.quantity / 1000) : item.quantity.toDouble();
-        return sum + (multiplier * item.unitPrice).round();
-      },
-    );
 
-    final result = await _validateAndApplyCouponUseCase.execute(code: code, cartSubtotal: subtotal).run();
+    if (state.orderPreview == null) {
+      emit(
+        state.copyWith(
+          operationError: translateFailure(
+            const Failure.validation(FailureCode.branchNotSelected),
+          ),
+        ),
+      );
+      return;
+    }
+
+    final subtotal = state.orderPreview!.subtotal;
+
+    final result = await _validateAndApplyCouponUseCase
+        .execute(code: code.trim(), cartSubtotal: subtotal)
+        .run();
 
     result.fold(
       (failure) {
-        emit(state.copyWith(
-          operationError: translateFailure(failure),
-          appliedCoupon: null,
-          discountAmount: 0,
-        ));
+        emit(
+          state.copyWith(
+            operationError: translateFailure(failure),
+            appliedCoupon: null,
+            discountAmount: 0,
+          ),
+        );
       },
       (coupon) {
-        if (!coupon.isValidNow) {
-          emit(state.copyWith(
-            operationError: 'Este cupón ha expirado o ya no está disponible.',
-            appliedCoupon: null,
-            discountAmount: 0,
-          ));
-          return;
-        }
+        emit(state.copyWith(appliedCoupon: coupon, operationSuccessful: true));
 
-        if (!coupon.isApplicableForAmount(subtotal)) {
-          final minAmountFormat = (coupon.minPurchaseAmount / 100).toStringAsFixed(2);
-          emit(state.copyWith(
-            operationError: 'El monto mínimo para usar este cupón es \$$minAmountFormat',
-            appliedCoupon: null,
-            discountAmount: 0,
-          ));
-          return;
-        }
-
-        int calculatedDiscount = 0;
-        
-        if (coupon.discountType == DiscountType.percentage) { 
-          calculatedDiscount = (subtotal * (coupon.discountValue / 100)).round();
-        } else {
-          calculatedDiscount = coupon.discountValue;
-        }
-
-        if (calculatedDiscount > subtotal) {
-          calculatedDiscount = subtotal;
-        }
-
-        emit(state.copyWith(
-          appliedCoupon: coupon,
-          discountAmount: calculatedDiscount,
-          operationSuccessful: true, 
-        ));
+        calculateOrderPreview();
       },
     );
   }
@@ -269,10 +327,14 @@ class CartCubit extends Cubit<CartState> {
 
   void setDeliveryAddress(Address address) {
     emit(state.copyWith(selectedAddress: address));
+
+    calculateOrderPreview(lat: address.latitude, lng: address.longitude);
   }
 
   void setActiveBranch(String branchId) {
     emit(state.copyWith(branchId: branchId));
+
+    calculateOrderPreview();
   }
 
   void clearActiveBranch() {
@@ -281,5 +343,9 @@ class CartCubit extends Cubit<CartState> {
 
   void clearDeliveryAddress() {
     emit(state.copyWith(selectedAddress: null));
+  }
+
+  void setPaymentMethod(PaymentMethodType method) {
+    emit(state.copyWith(paymentMethod: method));
   }
 }

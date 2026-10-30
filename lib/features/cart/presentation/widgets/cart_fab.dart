@@ -10,6 +10,7 @@ class CartFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorTheme = Theme.of(context).colorScheme;
     return BlocBuilder<CartCubit, CartState>(
       builder: (context, state) {
         final itemCount = state.itemCount;
@@ -20,8 +21,8 @@ class CartFab extends StatelessWidget {
           offset: const Offset(5, -5),
           child: FloatingActionButton(
             shape: const CircleBorder(),
-            backgroundColor: const Color(0xFFF9A826),
-            foregroundColor: Colors.white,
+            backgroundColor: colorTheme.secondary,
+            foregroundColor: colorTheme.surface,
             onPressed: () {
               context.pushNamed(CartRoutes.name);
             },

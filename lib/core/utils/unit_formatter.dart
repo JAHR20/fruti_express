@@ -24,7 +24,6 @@ extension MeasurementUnitFormatter on MeasurementUnit {
   }
 }
 
-// Convierte 1.0 → "1", 1.5 → "1.5", 1.25 → "1.25"
 String _cleanDecimal(double value) {
   return value == value.truncateToDouble()
       ? value.toInt().toString()

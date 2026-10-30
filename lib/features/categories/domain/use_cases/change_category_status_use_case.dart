@@ -5,7 +5,7 @@ import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/extensions/category_permissions_extension.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/repositories/category_repository.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 class ChangeCategoryStatusUseCase {
   final CategoryRepository repository;
@@ -13,7 +13,7 @@ class ChangeCategoryStatusUseCase {
   ChangeCategoryStatusUseCase(this.repository);
 
   ResultTask<Category> execute({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String categoryId,
     required bool newState,
   }) {
@@ -39,7 +39,7 @@ class ChangeCategoryStatusUseCase {
     });
   }
 
-  ResultTask<Unit> _validatePermissions(Profile user) =>
+  ResultTask<Unit> _validatePermissions(AppUser user) =>
       user.canDeactivateCategory
       ? TaskEither.right(unit)
       : TaskEither.left(

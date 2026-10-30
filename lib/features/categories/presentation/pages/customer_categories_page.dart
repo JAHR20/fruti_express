@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/core/widgets/animated_empty_state.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/features/cart/presentation/cubits/cart_cubit.dart'; // CarritoCubit -> CartCubit
@@ -12,11 +13,11 @@ import 'package:go_router/go_router.dart';
 class CustomerCategoriesPage extends StatelessWidget {
   const CustomerCategoriesPage({super.key});
 
-  Future<void> _refresh(BuildContext context) async { 
+  Future<void> _refresh(BuildContext context) async {
     final authState = context.read<AuthCubit>().state;
 
-    final currentProfile = authState.maybeMap( 
-      authenticated: (state) => state.profile, 
+    final currentProfile = authState.maybeMap(
+      authenticated: (state) => state.user,
       orElse: () => null,
     );
 
@@ -27,72 +28,85 @@ class CustomerCategoriesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorTheme = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text(
           'Categorías',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF1E3A8A),
-        elevation: 0,
       ),
       body: BlocBuilder<CategoryCubit, CategoryState>(
         builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
-            );
-          }
-
-          if (state.errorMessage != null) {
+          // 1. CARGA INICIAL (Solo si no hay datos previos)
+          if (state.isLoading && state.categories.isEmpty) {
             return Center(
-              child: Text(
-                state.errorMessage!,
-                style: const TextStyle(color: Colors.red, fontSize: 16),
-              ),
+              child: CircularProgressIndicator(color: colorTheme.secondary),
             );
           }
 
-          if (state.categories.isEmpty) { 
-            return RefreshIndicator(
-              color: const Color(0xFFF9A826),
-              onRefresh: () => _refresh(context),
-              child: ListView(
-                children: const [
-                  SizedBox(height: 100),
-                  Center(
+          // Variable para guardar el widget que se va a mostrar
+          Widget content;
+
+          // 2. ESTADO DE ERROR GLOBAL
+          if (state.errorMessage != null && state.categories.isEmpty) {
+            content = CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Center(
                     child: Text(
-                      'No hay categorías disponibles por el momento.',
-                      style: TextStyle(color: Colors.grey),
+                      state.errorMessage!,
+                      style: TextStyle(color: colorTheme.error, fontSize: 16),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           }
-
-          return RefreshIndicator(
-            color: const Color(0xFFF9A826),
-            backgroundColor: Colors.white,
-            onRefresh: () => _refresh(context),
-            child: AdaptiveCategories(
+          // 3. ESTADO VACÍO
+          else if (state.categories.isEmpty) {
+            content = const CustomScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: AnimatedEmptyState(
+                    icon: Icon(Icons.category_outlined),
+                    title: 'No hay categorías',
+                    subtitle:
+                        'Aún no hay categorías disponibles en el sistema.',
+                  ),
+                ),
+              ],
+            );
+          }
+          // 4. ESTADO CON DATOS
+          else {
+            content = AdaptiveCategories(
               categories: state.categories,
               onTap: (category) {
-                final cartState = context.read<CartCubit>().state; 
-                final activeBranch = cartState.branchId; 
+                final cartState = context.read<CartCubit>().state;
+                final activeBranch = cartState.branchId;
 
                 if (activeBranch != null) {
                   context.pushNamed(
                     ProductCategoryRoutes.name,
-                    extra: {
-                      'category': category, 
-                      'branchId': activeBranch, 
-                    },
+                    extra: {'category': category, 'branchId': activeBranch},
                   );
                 }
               },
-            ),
+            );
+          }
+
+          // Envolvemos el contenido final en el RefreshIndicator
+          return RefreshIndicator(
+            color: colorTheme.secondary,
+            backgroundColor: colorTheme.surface,
+            onRefresh: () => _refresh(context),
+            child: content,
           );
         },
       ),

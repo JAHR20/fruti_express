@@ -65,7 +65,15 @@ class _StockAdjustmentDialogState extends State<StockAdjustmentDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final themeColor = widget.isIncrease ? Colors.green : Colors.orange;
+    final colors = Theme.of(context).colorScheme;
+    
+    // 👇 Color principal del diálogo
+    final themeColor = widget.isIncrease ? colors.primaryContainer : colors.secondaryContainer;
+    // 👇 Color inverso para el campo de texto
+    final inverseThemeColor = widget.isIncrease ? colors.secondaryContainer : colors.primaryContainer;
+    // 👇 Color de contraste correcto para el texto del botón
+    final onThemeColor = widget.isIncrease ? colors.onPrimary : colors.onSecondary;
+
     final icon = widget.isIncrease
         ? Icons.add_circle_outline
         : Icons.remove_circle_outline;
@@ -87,39 +95,54 @@ class _StockAdjustmentDialogState extends State<StockAdjustmentDialog> {
       ),
       content: Form(
         key: _formKey,
-        child: TextFormField(
-          controller: _quantityController,
-          decoration: InputDecoration(
-            labelText: widget.isIncrease
-                ? 'Cantidad a agregar'
-                : 'Cantidad a restar',
-            suffixText: _unitSuffix,
-            border: const OutlineInputBorder(),
-            helperText: 'Stock actual: $displayedStockUI $_unitSuffix',
+        // 👇 Envolvemos en Theme para inyectar el color inverso
+        child: Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: colors.copyWith(
+              primary: inverseThemeColor,
+            ),
           ),
-          keyboardType: TextInputType.numberWithOptions(
-            decimal: _acceptsDecimals,
-          ),
-          inputFormatters: _acceptsDecimals
-              ? [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))]
-              : [FilteringTextInputFormatter.digitsOnly],
-          autofocus: true,
-          validator: Validators.inventoryAdjustment( 
-            isIncrease: widget.isIncrease,
-            acceptsDecimals: _acceptsDecimals,
-            baseCurrentStock: widget.currentStock,
+          child: TextFormField(
+            controller: _quantityController,
+            decoration: InputDecoration(
+              labelText: widget.isIncrease
+                  ? 'Cantidad a agregar'
+                  : 'Cantidad a restar',
+              labelStyle: TextStyle(color: inverseThemeColor.withValues(alpha: 0.8)),
+              floatingLabelStyle: TextStyle(
+              color: inverseThemeColor, 
+              fontWeight: FontWeight.bold,
+            ),
+              suffixText: _unitSuffix,
+              
+              border: const OutlineInputBorder(),
+              // Mantenemos el helperText neutral para que no se pinte del color inverso si no quieres
+              helperText: 'Stock actual: $displayedStockUI $_unitSuffix',
+            ),
+            keyboardType: TextInputType.numberWithOptions(
+              decimal: _acceptsDecimals,
+            ),
+            inputFormatters: _acceptsDecimals
+                ? [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))]
+                : [FilteringTextInputFormatter.digitsOnly],
+            autofocus: true,
+            validator: Validators.inventoryAdjustment( 
+              isIncrease: widget.isIncrease,
+              acceptsDecimals: _acceptsDecimals,
+              baseCurrentStock: widget.currentStock,
+            ),
           ),
         ),
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+          child: Text('Cancelar', style: TextStyle(color: themeColor)),
         ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: themeColor),
           onPressed: _processConfirmation,
-          child: const Text('Confirmar', style: TextStyle(color: Colors.white)),
+          child: Text('Confirmar', style: TextStyle(color: onThemeColor)),
         ),
       ],
     );

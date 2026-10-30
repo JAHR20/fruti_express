@@ -11,12 +11,14 @@ import 'package:fruti_express_jahr_admin/features/shipping/domain/strategies/cov
 import 'package:fruti_express_jahr_admin/features/shipping/domain/strategies/distance_strategy.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/strategies/pricing_strategy.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/calculate_shipping_quote_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/delete_shipping_rate_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/delete_and_merge_shipping_rate_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/edit_shipping_rate_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/save_shipping_config_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/save_shipping_rate_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_shipping_config_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_branches_with_configured_shipping_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_shipping_rates_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/save_shipping_rates_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/split_shipping_rate_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/validate_shipping_coverage_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_coordinator_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/shipping_admin_cubit.dart';
@@ -44,12 +46,18 @@ void initShipping(GetIt sl) {
   sl.registerLazySingleton(() => GetShippingConfigUseCase(sl()));
   sl.registerLazySingleton(() => GetShippingRatesUseCase(sl()));
   sl.registerLazySingleton(() => SaveShippingConfigUseCase(sl()));
-  sl.registerLazySingleton(() => SaveShippingRateUseCase(sl()));
-  sl.registerLazySingleton(() => DeleteShippingRateUseCase(sl()));
-  sl.registerLazySingleton(() => GetBranchesWithConfiguredShippingUseCase(sl()));
+  sl.registerLazySingleton(() => SaveShippingRatesUseCase(sl()));
+  sl.registerLazySingleton(
+    () => GetBranchesWithConfiguredShippingUseCase(sl()),
+  );
+  sl.registerLazySingleton(() => const SplitShippingRateUseCase());
+  sl.registerLazySingleton(() => const DeleteAndMergeShippingRateUseCase());
+  sl.registerLazySingleton(() => const EditShippingRateUseCase());
 
   // --- REPOSITORIO ---
-  sl.registerLazySingleton<ShippingRepository>(() => ShippingRepositoryImpl(sl()));
+  sl.registerLazySingleton<ShippingRepository>(
+    () => ShippingRepositoryImpl(sl()),
+  );
 
   // --- FUENTE DE DATOS ---
   sl.registerLazySingleton<ShippingRemoteDataSource>(
@@ -59,11 +67,13 @@ void initShipping(GetIt sl) {
   // --- CUBITS ---
   sl.registerFactory(
     () => ShippingAdminCubit(
-      getConfig: sl(),
-      getRates: sl(),
-      saveConfig: sl(),
-      saveRate: sl(),
-      deleteRate: sl(),
+      getConfigUseCase: sl(),
+      getRatesUseCase: sl(),
+      saveConfigUseCase: sl(),
+      saveRatesUseCase: sl(),
+      splitRateUseCase: sl(),
+      deleteAndMergeRateUseCase: sl(),
+      editRateUseCase: sl()
     ),
   );
 
@@ -72,7 +82,7 @@ void initShipping(GetIt sl) {
   sl.registerFactory<CustomerCoordinatorCubit>(
     () => CustomerCoordinatorCubit(
       cartCubit: sl(),
-      productsCubit: sl(),
+      customerProductsCubit: sl(),
       branchCubit: sl(),
       customerShippingCubit: sl(),
       addressCubit: sl(),

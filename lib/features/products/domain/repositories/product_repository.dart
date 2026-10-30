@@ -15,4 +15,5 @@ abstract class ProductRepository {
   ResultTask<Unit> delete(String id); 
   ResultTask<String> uploadImage(File file, String fileName); 
   ResultTask<List<Product>> getByBranch(String branchId);
+  Stream<void> watchInventoryChanges(String branchId);
 }

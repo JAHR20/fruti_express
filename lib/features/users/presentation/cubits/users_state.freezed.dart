@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UsersState {
 
- List<Profile> get users; bool get isLoading; UsersTab get tab; String? get processingUserId; String? get errorMessage; String get searchQuery;
+ List<AppUser> get users; bool get isLoading; UsersTab get tab; String? get processingUserId; String? get errorMessage; String get searchQuery;
 /// Create a copy of UsersState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $UsersStateCopyWith<$Res>  {
   factory $UsersStateCopyWith(UsersState value, $Res Function(UsersState) _then) = _$UsersStateCopyWithImpl;
 @useResult
 $Res call({
- List<Profile> users, bool isLoading, UsersTab tab, String? processingUserId, String? errorMessage, String searchQuery
+ List<AppUser> users, bool isLoading, UsersTab tab, String? processingUserId, String? errorMessage, String searchQuery
 });
 
 
@@ -65,7 +65,7 @@ class _$UsersStateCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? users = null,Object? isLoading = null,Object? tab = null,Object? processingUserId = freezed,Object? errorMessage = freezed,Object? searchQuery = null,}) {
   return _then(_self.copyWith(
 users: null == users ? _self.users : users // ignore: cast_nullable_to_non_nullable
-as List<Profile>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as List<AppUser>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,tab: null == tab ? _self.tab : tab // ignore: cast_nullable_to_non_nullable
 as UsersTab,processingUserId: freezed == processingUserId ? _self.processingUserId : processingUserId // ignore: cast_nullable_to_non_nullable
 as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
@@ -155,7 +155,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Profile> users,  bool isLoading,  UsersTab tab,  String? processingUserId,  String? errorMessage,  String searchQuery)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<AppUser> users,  bool isLoading,  UsersTab tab,  String? processingUserId,  String? errorMessage,  String searchQuery)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _UsersState() when $default != null:
 return $default(_that.users,_that.isLoading,_that.tab,_that.processingUserId,_that.errorMessage,_that.searchQuery);case _:
@@ -176,7 +176,7 @@ return $default(_that.users,_that.isLoading,_that.tab,_that.processingUserId,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Profile> users,  bool isLoading,  UsersTab tab,  String? processingUserId,  String? errorMessage,  String searchQuery)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<AppUser> users,  bool isLoading,  UsersTab tab,  String? processingUserId,  String? errorMessage,  String searchQuery)  $default,) {final _that = this;
 switch (_that) {
 case _UsersState():
 return $default(_that.users,_that.isLoading,_that.tab,_that.processingUserId,_that.errorMessage,_that.searchQuery);case _:
@@ -196,7 +196,7 @@ return $default(_that.users,_that.isLoading,_that.tab,_that.processingUserId,_th
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Profile> users,  bool isLoading,  UsersTab tab,  String? processingUserId,  String? errorMessage,  String searchQuery)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<AppUser> users,  bool isLoading,  UsersTab tab,  String? processingUserId,  String? errorMessage,  String searchQuery)?  $default,) {final _that = this;
 switch (_that) {
 case _UsersState() when $default != null:
 return $default(_that.users,_that.isLoading,_that.tab,_that.processingUserId,_that.errorMessage,_that.searchQuery);case _:
@@ -211,11 +211,11 @@ return $default(_that.users,_that.isLoading,_that.tab,_that.processingUserId,_th
 
 
 class _UsersState implements UsersState {
-  const _UsersState({final  List<Profile> users = const [], this.isLoading = false, this.tab = UsersTab.all, this.processingUserId, this.errorMessage, this.searchQuery = ''}): _users = users;
+  const _UsersState({final  List<AppUser> users = const [], this.isLoading = false, this.tab = UsersTab.all, this.processingUserId, this.errorMessage, this.searchQuery = ''}): _users = users;
   
 
- final  List<Profile> _users;
-@override@JsonKey() List<Profile> get users {
+ final  List<AppUser> _users;
+@override@JsonKey() List<AppUser> get users {
   if (_users is EqualUnmodifiableListView) return _users;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_users);
@@ -257,7 +257,7 @@ abstract mixin class _$UsersStateCopyWith<$Res> implements $UsersStateCopyWith<$
   factory _$UsersStateCopyWith(_UsersState value, $Res Function(_UsersState) _then) = __$UsersStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Profile> users, bool isLoading, UsersTab tab, String? processingUserId, String? errorMessage, String searchQuery
+ List<AppUser> users, bool isLoading, UsersTab tab, String? processingUserId, String? errorMessage, String searchQuery
 });
 
 
@@ -277,7 +277,7 @@ class __$UsersStateCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? users = null,Object? isLoading = null,Object? tab = null,Object? processingUserId = freezed,Object? errorMessage = freezed,Object? searchQuery = null,}) {
   return _then(_UsersState(
 users: null == users ? _self._users : users // ignore: cast_nullable_to_non_nullable
-as List<Profile>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
+as List<AppUser>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,tab: null == tab ? _self.tab : tab // ignore: cast_nullable_to_non_nullable
 as UsersTab,processingUserId: freezed == processingUserId ? _self.processingUserId : processingUserId // ignore: cast_nullable_to_non_nullable
 as String?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable

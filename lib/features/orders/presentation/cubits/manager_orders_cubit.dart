@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
-import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart'; 
+import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/repositories/order_repository.dart';
 import 'manager_orders_state.dart';
 
@@ -16,30 +16,32 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
     : _repository = repository,
       super(const ManagerOrdersState.initial());
 
-  void startWatching(String branchId) { 
+  void startWatching(String branchId) {
     emit(const ManagerOrdersState.loading());
-    
+
     _subscription?.cancel();
 
-    _subscription = _repository.watchByBranch(branchId).listen(
-      (either) => either.fold(
-        (failure) {
-          // Usamos el traductor
-          emit(ManagerOrdersState.error(translateFailure(failure)));
-        },
-        (orders) {
-          emit(ManagerOrdersState.loaded(orders));
-        },
-      ),
-    );
+    _subscription = _repository
+        .watchByBranch(branchId)
+        .listen(
+          (either) => either.fold(
+            (failure) {
+              // Usamos el traductor
+              emit(ManagerOrdersState.error(translateFailure(failure)));
+            },
+            (orders) {
+              emit(ManagerOrdersState.loaded(orders));
+            },
+          ),
+        );
   }
 
-  void stopWatching() { 
+  void stopWatching() {
     _subscription?.cancel();
     _subscription = null;
   }
 
-  Future<void> confirmOrder(String orderId) async { 
+  Future<void> confirmOrder(String orderId) async {
     final currentOrdersList = _currentOrders();
     if (currentOrdersList == null) return;
 
@@ -50,12 +52,7 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
       ),
     );
 
-    final result = await _repository
-        .updateStatus(
-          orderId: orderId,
-          newStatus: OrderStatus.confirmed,
-        )
-        .run();
+    final result = await _repository.confirmCashOrder(orderId: orderId).run();
 
     result.fold(
       (failure) => emit(ManagerOrdersState.error(translateFailure(failure))),
@@ -63,7 +60,7 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
     );
   }
 
-  Future<void> assignDriverAndPrepare({ 
+  Future<void> assignDriverAndPrepare({
     required String orderId,
     required String driverId,
   }) async {
@@ -79,7 +76,7 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
 
     // 1. Asignamos al repartidor
     final assignment = await _repository
-        .assignDriver(orderId: orderId, driverId: driverId) 
+        .assignDriver(orderId: orderId, driverId: driverId)
         .run();
 
     final assignmentFailed = assignment.fold((failure) {
@@ -90,10 +87,7 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
     if (assignmentFailed) return;
 
     final updateResult = await _repository
-        .updateStatus(
-          orderId: orderId,
-          newStatus: OrderStatus.preparing,
-        )
+        .updateStatus(orderId: orderId, newStatus: OrderStatus.preparing)
         .run();
 
     updateResult.fold(
@@ -102,7 +96,7 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
     );
   }
 
-  Future<void> cancelOrder(String orderId) async { 
+  Future<void> cancelOrder(String orderId) async {
     final currentOrdersList = _currentOrders();
     if (currentOrdersList == null) return;
 
@@ -114,10 +108,7 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
     );
 
     final result = await _repository
-        .updateStatus(
-          orderId: orderId,
-          newStatus: OrderStatus.cancelled,
-        )
+        .updateStatus(orderId: orderId, newStatus: OrderStatus.cancelled)
         .run();
 
     result.fold(
@@ -126,7 +117,7 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
     );
   }
 
-  List<Order>? _currentOrders() { 
+  List<Order>? _currentOrders() {
     return state.maybeWhen(
       loaded: (orders) => orders,
       performingAction: (orders, _) => orders,

@@ -1,4 +1,5 @@
 import 'package:fruti_express_jahr_admin/features/orders/data/models/order_model.dart';
+import 'package:fruti_express_jahr_admin/features/orders/data/models/order_preview_model.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'order_remote_datasource.dart';
@@ -19,6 +20,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   static const String _colCode = 'code';
   static const String _relOrderDetails = 'order_details(*)';
   static const String _createCompleteOrderRpc = 'create_complete_order';
+  static const String _calculateOrderTotalsRpc = 'calculate_order_totals';
   static const String _orderDataParam = 'order_data';
   static const String _itemsDataParam = 'items_data';
 
@@ -26,16 +28,15 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   static const String _orderIdParam = 'p_order_id';
   static const String _codeParam = 'p_code';
   static const String _proofUrlParam = 'p_proof_url';
-
+  static const String _confirmCashOrderRpc = 'confirm_cash_order';
 
   OrderRemoteDataSourceImpl(this.supabase);
 
   @override
   Future<OrderModel> create(OrderModel model) async {
     final orderMap = model.toJson();
-    orderMap.remove('items'); 
+    orderMap.remove('items');
     final itemsList = model.items.map((item) => item.toJson()).toList();
-    print('🚀 ENVIANDO A SUPABASE - COUPON ID: ${model.couponId}');
     final response = await supabase.rpc(
       _createCompleteOrderRpc,
       params: {_orderDataParam: orderMap, _itemsDataParam: itemsList},
@@ -109,9 +110,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         .select('*, $_relOrderDetails')
         .order(_colCreatedAt, ascending: false);
 
-    return (response as List)
-        .map((json) => OrderModel.fromJson(json))
-        .toList();
+    return (response as List).map((json) => OrderModel.fromJson(json)).toList();
   }
 
   @override
@@ -122,16 +121,11 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         .eq(_colBranchId, branchId)
         .order(_colCreatedAt, ascending: false);
 
-    return (response as List)
-        .map((json) => OrderModel.fromJson(json))
-        .toList();
+    return (response as List).map((json) => OrderModel.fromJson(json)).toList();
   }
 
   @override
-  Future<List<OrderModel>> getByStatus(
-    String branchId,
-    String status,
-  ) async {
+  Future<List<OrderModel>> getByStatus(String branchId, String status) async {
     final response = await supabase
         .from(_tableName)
         .select('*, $_relOrderDetails')
@@ -139,9 +133,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         .eq(_colStatus, status)
         .order(_colCreatedAt, ascending: false);
 
-    return (response as List)
-        .map((json) => OrderModel.fromJson(json))
-        .toList();
+    return (response as List).map((json) => OrderModel.fromJson(json)).toList();
   }
 
   @override
@@ -191,10 +183,7 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   }
 
   @override
-  Future<OrderModel> assignDriver(
-    String orderId,
-    String driverId,
-  ) async {
+  Future<OrderModel> assignDriver(String orderId, String driverId) async {
     final response = await supabase
         .from(_tableName)
         .update({_colDeliveryPersonId: driverId})
@@ -242,6 +231,29 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   }
 
   @override
+  Future<OrderPreviewModel> getOrderPreview({
+    required String branchId,
+    required List<Map<String, dynamic>> items,
+    required String deliveryMethod,
+    String? couponId,
+    double? customerLatitude, // 👈 nuevo
+    double? customerLongitude, // 👈 nuevo
+  }) async {
+    final response = await supabase.rpc(
+      _calculateOrderTotalsRpc,
+      params: {
+        'p_branch_id': branchId,
+        'p_items_data': items,
+        'p_delivery_method': deliveryMethod,
+        'p_coupon_id': couponId,
+        'p_customer_latitude': customerLatitude,
+        'p_customer_longitude': customerLongitude,
+      },
+    );
+    return OrderPreviewModel.fromJson(response as Map<String, dynamic>);
+  }
+
+  @override
   Future<void> confirmDelivery({
     required String orderId,
     String? confirmationCode,
@@ -255,5 +267,10 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         _proofUrlParam: evidenceUrl,
       },
     );
+  }
+
+  @override
+  Future<void> confirmCashOrder({required String orderId}) async {
+    await supabase.rpc(_confirmCashOrderRpc, params: {_orderIdParam: orderId});
   }
 }

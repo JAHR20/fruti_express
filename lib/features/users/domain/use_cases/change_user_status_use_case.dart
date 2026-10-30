@@ -2,7 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/repositories/user_repository.dart';
 
@@ -11,8 +11,8 @@ class ChangeUserStatusUseCase {
 
   ChangeUserStatusUseCase(this.repository);
 
-  ResultTask<Profile> execute({
-    required Profile currentUser,
+  ResultTask<AppUser> execute({
+    required AppUser currentUser,
     required String targetUserId,
     required bool activate,
   }) {
@@ -20,29 +20,27 @@ class ChangeUserStatusUseCase {
       final targetUser = await $(repository.getById(targetUserId));
 
       await $(_validatePermissions(currentUser, targetUser));
-
       await $(_validateStatusChange(targetUser, activate));
 
-      final updatedUser = targetUser.copyWith(active: activate);
-
-      return await $(repository.update(updatedUser));
+      return await $(repository.changeStatus(
+        id: targetUser.id,
+        active: activate,
+      ));
     });
   }
 
-  ResultTask<Unit> _validatePermissions(Profile actor, Profile target) =>
+  ResultTask<Unit> _validatePermissions(AppUser actor, AppUser target) =>
       actor.canDeactivateReactivateUser(target)
-      ? TaskEither.right(unit)
-      : TaskEither.left(
-          const Failure.unauthorized(FailureCode.noPermissionToPerformAction),
-        );
+          ? TaskEither.right(unit)
+          : TaskEither.left(
+              const Failure.unauthorized(FailureCode.noPermissionToPerformAction),
+            );
 
-  ResultTask<Unit> _validateStatusChange(Profile target, bool newState) {
+  ResultTask<Unit> _validateStatusChange(AppUser target, bool newState) {
     if (target.active == newState) {
       return TaskEither.left(
         Failure.validation(
-          newState
-              ? FailureCode.userAlreadyActive
-              : FailureCode.userAlreadyDeactivated,
+          newState ? FailureCode.userAlreadyActive : FailureCode.userAlreadyDeactivated,
         ),
       );
     }

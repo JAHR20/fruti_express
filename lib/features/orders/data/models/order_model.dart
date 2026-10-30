@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fruti_express_jahr_admin/core/enums/delivery_method.dart';
+import 'package:fruti_express_jahr_admin/core/enums/payment_method_type.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/create_order_params.dart';
 import '../../domain/entities/order.dart';
 import '../../domain/enums/order_status.dart';
@@ -16,8 +17,10 @@ abstract class OrderModel with _$OrderModel {
     @JsonKey(name: 'branch_id') required String branchId,
     @JsonKey(name: 'coupon_id') String? couponId,
     @JsonKey(name: 'delivery_person_id') String? deliveryDriverId,
-    @JsonKey(name: 'customer_name_snapshot') required String customerNameSnapshot,
-    @JsonKey(name: 'customer_phone_snapshot') required String customerPhoneSnapshot,
+    @JsonKey(name: 'customer_name_snapshot')
+    required String customerNameSnapshot,
+    @JsonKey(name: 'customer_phone_snapshot')
+    required String customerPhoneSnapshot,
     @JsonKey(name: 'address_snapshot') required String addressSnapshot,
     required int subtotal,
     @JsonKey(name: 'shipping_cost') required int shippingCost,
@@ -30,7 +33,12 @@ abstract class OrderModel with _$OrderModel {
     @JsonKey(name: 'estimated_delivery_date') DateTime? estimatedDeliveryDate,
     @JsonKey(name: 'delivery_date') DateTime? deliveredAt,
     @JsonKey(name: 'idempotency_key') String? idempotencyKey,
-    @JsonKey(includeFromJson: false, includeToJson: false) String? confirmationCode,
+    @JsonKey(name: 'payment_method') String? paymentMethod,
+    @JsonKey(name: 'customer_latitude') double? customerLatitude,
+    @JsonKey(name: 'customer_longitude') double? customerLongitude,
+    @JsonKey(name: 'address_id') String? addressId,
+    @JsonKey(includeFromJson: false, includeToJson: false)
+    String? confirmationCode,
     @JsonKey(name: 'order_details') @Default([]) List<OrderItemModel> items,
   }) = _OrderModel;
 
@@ -55,6 +63,9 @@ extension OrderModelX on OrderModel {
     deliveryEvidenceUrl: deliveryEvidenceUrl,
     createdAt: createdAt,
     deliveryMethod: deliveryMethod,
+    paymentMethod: paymentMethod != null
+        ? PaymentMethodType.fromJson(paymentMethod!)
+        : null,
     estimatedDeliveryDate: estimatedDeliveryDate,
     deliveredAt: deliveredAt,
     confirmationCode: confirmationCode,
@@ -77,6 +88,7 @@ extension OrderModelX on OrderModel {
     deliveryEvidenceUrl: o.deliveryEvidenceUrl,
     createdAt: o.createdAt,
     deliveryMethod: o.deliveryMethod,
+    paymentMethod: o.paymentMethod?.toJson(),
     estimatedDeliveryDate: o.estimatedDeliveryDate,
     deliveredAt: o.deliveredAt,
     confirmationCode: o.confirmationCode,
@@ -98,6 +110,10 @@ extension OrderModelX on OrderModel {
     status: OrderStatus.pendingPayment,
     createdAt: DateTime.now(),
     deliveryMethod: p.deliveryMethod,
+    paymentMethod: p.paymentMethod.toJson(),
+    customerLatitude: p.customerLatitude,
+    customerLongitude: p.customerLongitude,
+    addressId: p.addressId,
     items: p.items
         .map(
           (i) => OrderItemModel(

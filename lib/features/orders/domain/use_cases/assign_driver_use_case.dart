@@ -5,7 +5,7 @@ import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/repositories/order_repository.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/mixins/order_validations.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/repositories/user_repository.dart';
 
@@ -38,14 +38,14 @@ class AssignDriverUseCase with OrderValidations {
     });
   }
 
-  ResultTask<Unit> _validateDriverRole(Profile user) =>
+  ResultTask<Unit> _validateDriverRole(AppUser user) =>
       user.role == UserRole.deliveryPerson
       ? TaskEither.right(unit)
       : TaskEither.left(
           const Failure.unauthorized(FailureCode.invalidDriverRole),
         );
 
-  ResultTask<Unit> _validateBranchMatch(Profile driver, Order order) {
+  ResultTask<Unit> _validateBranchMatch(AppUser driver, Order order) {
     final driverBranch = driver.branchId ?? '';
     final orderBranch = order.branchId;
 

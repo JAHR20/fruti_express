@@ -9,7 +9,7 @@ class Validators {
     return null;
   }
 
-  static String? paternalLastName(String? value) { // apellido -> lastName
+  static String? paternalLastName(String? value) { 
     if (value == null || value.isEmpty) return 'Por favor ingresa un apellido';
     if (value.trim().length < 2) return 'Mínimo 2 caracteres';
     final nameRegExp = RegExp(r"^[a-zA-ZÀ-ÿ\u00f1\u00d1\s]+$");
@@ -41,7 +41,7 @@ class Validators {
   }
 
   static String? optionalPositiveNumber(String? value) {
-    if (value == null || value.isEmpty) return null; // Deja pasar si está vacío
+    if (value == null || value.isEmpty) return null; 
     final numValue = double.tryParse(value);
     if (numValue == null || numValue <= 0) return 'Ingresa un número válido mayor a 0';
     return null;
@@ -118,13 +118,13 @@ class Validators {
     return null;
   }
 
-  static String? validateBranchName(String? value) { // validateSucursalName -> validateBranchName
+  static String? validateBranchName(String? value) { 
     if (value == null || value.trim().isEmpty) return 'El nombre de la sucursal es obligatorio';
     if (value.trim().length < 3) return 'El nombre debe tener al menos 3 caracteres';
     return null;
   }
 
-  static String? validateBranchAddress(String? value) { // validateSucursalAddress -> validateBranchAddress
+  static String? validateBranchAddress(String? value) { 
     if (value == null || value.trim().isEmpty) return 'La dirección de la sucursal es obligatoria';
     if (value.trim().length < 5) return 'La dirección debe tener al menos 5 caracteres';
     return null;

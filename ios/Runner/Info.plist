@@ -24,6 +24,15 @@
 	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+  		<dict>
+    		<key>CFBundleURLSchemes</key>
+    		<array>
+      			<string>io.supabase.frutiexpress</string>
+    		</array>
+  		</dict>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
@@ -71,5 +80,21 @@
   		<string>tel</string>
   		<string>https</string>
 	</array>
+	<!-- Inicia configuración de Google Sign-In -->
+	<key>GIDClientID</key>
+	<string>447218684599-5pek70pg2tfee6gdki48k2vbmh64ujj7.apps.googleusercontent.com</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- Copia y pega aquí tu Reversed Client ID (Esquema de URL de iOS) -->
+				<string>com.googleusercontent.apps.447218684599-5pek70pg2tfee6gdki48k2vbmh64ujj7</string>
+			</array>
+		</dict>
+	</array>
+	<!-- Termina configuración de Google Sign-In -->
 	</dict>
 </plist>

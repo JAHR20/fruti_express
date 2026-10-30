@@ -5,7 +5,7 @@ enum FailureCode {
   branchMustBeSpecified,
   branchMissingForDeliveryPerson,
   managerProfileHasNoBranch,
-  
+
   // --- Unauthorized (Permisos) ---
   onlyAdminCanAssignRole,
   onlyAdminCanAssignManagers,
@@ -20,17 +20,18 @@ enum FailureCode {
   accessDenied,
   permissionDenied,
   adminRoleRequired,
-  
+
   // --- Already Exists / Conflictos de Estado ---
   branchAlreadyHasManager,
   userAlreadyActive,
   userAlreadyDeactivated,
-  
+
   // --- Otros (Ej. Pedidos/Inventario) ---
   insufficientStock,
   genericError,
   invalidArgument,
-
+  localCartLoadError,
+  branchNotSelected,
 
   invalidLoginCredentials,
   userAlreadyRegistered,
@@ -51,7 +52,6 @@ enum FailureCode {
   orderNotInTransit,
   orderNotFound,
 
-
   // --- Branches ----
   missingRequiredFields,
   branchNotFound,
@@ -64,19 +64,18 @@ enum FailureCode {
   postalCodeNotFound,
   municipalityInfoNotFound,
 
-  
   // Códigos de Productos
   invalidPrices,
   productNameAlreadyExists,
   productAlreadyInRequestedState,
-  invalidSearchParameters, 
+  invalidSearchParameters,
 
   // Errores de validación de Productos
-  invalidProductId, 
-  invalidProductName, 
-  invalidCategoryOrBranchId, 
-  invalidBranchId, 
-  invalidFileName,
+  invalidProductId,
+  invalidProductName,
+  invalidCategoryOrBranchId,
+  invalidBranchId,
+  productNameRequiredForImage,
 
   // Códigos de categorias
   invalidCategoryName,
@@ -109,12 +108,19 @@ enum FailureCode {
   missingDeliveryEvidence,
   emptyOrderItems,
   invalidOrderTotal,
+  orderPreviewUnavailable,
+  outsideCoverage,
+  outsideDeliveryZone,
+  invalidDeliveryAddress,
 
   // Módulo de Envíos (Shipping)
   shippingConfigNotFound,
   shippingCalculationError,
   unauthorizedAccess,
   invalidShippingRadius,
+  ratesMustCoverFullRadius, // no empieza en 0 o no llega al radio
+  ratesHaveGap, // hueco entre dos tarifas
+  ratesBranchMismatch, // tarifa de otra sucursal
   invalidDistanceRange,
   invalidShippingCost,
   invalidAmount,
@@ -132,6 +138,5 @@ enum FailureCode {
   couponMinAmountNotMet,
   emptyCouponCode,
   invalidMinPurchaseAmount,
-  invalidUsageLimit
-
+  invalidUsageLimit,
 }

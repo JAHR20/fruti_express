@@ -111,4 +111,9 @@ class ProductRepositoryImpl
         final models = await remoteDataSource.getByBranch(branchId);
         return models.map((model) => model.toDomain()).toList();
       }, handleException);
+
+  @override
+  Stream<void> watchInventoryChanges(String branchId) {
+    return remoteDataSource.watchInventoryChanges(branchId);
+  }
 }

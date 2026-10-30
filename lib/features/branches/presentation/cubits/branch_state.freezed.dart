@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BranchState {
 
- List<Branch> get branches; bool get isLoading; String? get errorMessage; String? get branchProcessingId; Set<String> get branchesWithShippingConfigured;
+ List<Branch> get branches; bool get isLoading; String? get errorMessage; String? get branchProcessingId; Set<String> get branchesWithShippingConfigured; Set<String> get branchesWithRatesConfigured;
 /// Create a copy of BranchState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $BranchStateCopyWith<BranchState> get copyWith => _$BranchStateCopyWithImpl<Bran
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BranchState&&const DeepCollectionEquality().equals(other.branches, branches)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.branchProcessingId, branchProcessingId) || other.branchProcessingId == branchProcessingId)&&const DeepCollectionEquality().equals(other.branchesWithShippingConfigured, branchesWithShippingConfigured));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BranchState&&const DeepCollectionEquality().equals(other.branches, branches)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.branchProcessingId, branchProcessingId) || other.branchProcessingId == branchProcessingId)&&const DeepCollectionEquality().equals(other.branchesWithShippingConfigured, branchesWithShippingConfigured)&&const DeepCollectionEquality().equals(other.branchesWithRatesConfigured, branchesWithRatesConfigured));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(branches),isLoading,errorMessage,branchProcessingId,const DeepCollectionEquality().hash(branchesWithShippingConfigured));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(branches),isLoading,errorMessage,branchProcessingId,const DeepCollectionEquality().hash(branchesWithShippingConfigured),const DeepCollectionEquality().hash(branchesWithRatesConfigured));
 
 @override
 String toString() {
-  return 'BranchState(branches: $branches, isLoading: $isLoading, errorMessage: $errorMessage, branchProcessingId: $branchProcessingId, branchesWithShippingConfigured: $branchesWithShippingConfigured)';
+  return 'BranchState(branches: $branches, isLoading: $isLoading, errorMessage: $errorMessage, branchProcessingId: $branchProcessingId, branchesWithShippingConfigured: $branchesWithShippingConfigured, branchesWithRatesConfigured: $branchesWithRatesConfigured)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $BranchStateCopyWith<$Res>  {
   factory $BranchStateCopyWith(BranchState value, $Res Function(BranchState) _then) = _$BranchStateCopyWithImpl;
 @useResult
 $Res call({
- List<Branch> branches, bool isLoading, String? errorMessage, String? branchProcessingId, Set<String> branchesWithShippingConfigured
+ List<Branch> branches, bool isLoading, String? errorMessage, String? branchProcessingId, Set<String> branchesWithShippingConfigured, Set<String> branchesWithRatesConfigured
 });
 
 
@@ -62,13 +62,14 @@ class _$BranchStateCopyWithImpl<$Res>
 
 /// Create a copy of BranchState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? branches = null,Object? isLoading = null,Object? errorMessage = freezed,Object? branchProcessingId = freezed,Object? branchesWithShippingConfigured = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? branches = null,Object? isLoading = null,Object? errorMessage = freezed,Object? branchProcessingId = freezed,Object? branchesWithShippingConfigured = null,Object? branchesWithRatesConfigured = null,}) {
   return _then(_self.copyWith(
 branches: null == branches ? _self.branches : branches // ignore: cast_nullable_to_non_nullable
 as List<Branch>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,branchProcessingId: freezed == branchProcessingId ? _self.branchProcessingId : branchProcessingId // ignore: cast_nullable_to_non_nullable
 as String?,branchesWithShippingConfigured: null == branchesWithShippingConfigured ? _self.branchesWithShippingConfigured : branchesWithShippingConfigured // ignore: cast_nullable_to_non_nullable
+as Set<String>,branchesWithRatesConfigured: null == branchesWithRatesConfigured ? _self.branchesWithRatesConfigured : branchesWithRatesConfigured // ignore: cast_nullable_to_non_nullable
 as Set<String>,
   ));
 }
@@ -154,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Branch> branches,  bool isLoading,  String? errorMessage,  String? branchProcessingId,  Set<String> branchesWithShippingConfigured)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Branch> branches,  bool isLoading,  String? errorMessage,  String? branchProcessingId,  Set<String> branchesWithShippingConfigured,  Set<String> branchesWithRatesConfigured)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BranchState() when $default != null:
-return $default(_that.branches,_that.isLoading,_that.errorMessage,_that.branchProcessingId,_that.branchesWithShippingConfigured);case _:
+return $default(_that.branches,_that.isLoading,_that.errorMessage,_that.branchProcessingId,_that.branchesWithShippingConfigured,_that.branchesWithRatesConfigured);case _:
   return orElse();
 
 }
@@ -175,10 +176,10 @@ return $default(_that.branches,_that.isLoading,_that.errorMessage,_that.branchPr
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Branch> branches,  bool isLoading,  String? errorMessage,  String? branchProcessingId,  Set<String> branchesWithShippingConfigured)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Branch> branches,  bool isLoading,  String? errorMessage,  String? branchProcessingId,  Set<String> branchesWithShippingConfigured,  Set<String> branchesWithRatesConfigured)  $default,) {final _that = this;
 switch (_that) {
 case _BranchState():
-return $default(_that.branches,_that.isLoading,_that.errorMessage,_that.branchProcessingId,_that.branchesWithShippingConfigured);case _:
+return $default(_that.branches,_that.isLoading,_that.errorMessage,_that.branchProcessingId,_that.branchesWithShippingConfigured,_that.branchesWithRatesConfigured);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +196,10 @@ return $default(_that.branches,_that.isLoading,_that.errorMessage,_that.branchPr
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Branch> branches,  bool isLoading,  String? errorMessage,  String? branchProcessingId,  Set<String> branchesWithShippingConfigured)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Branch> branches,  bool isLoading,  String? errorMessage,  String? branchProcessingId,  Set<String> branchesWithShippingConfigured,  Set<String> branchesWithRatesConfigured)?  $default,) {final _that = this;
 switch (_that) {
 case _BranchState() when $default != null:
-return $default(_that.branches,_that.isLoading,_that.errorMessage,_that.branchProcessingId,_that.branchesWithShippingConfigured);case _:
+return $default(_that.branches,_that.isLoading,_that.errorMessage,_that.branchProcessingId,_that.branchesWithShippingConfigured,_that.branchesWithRatesConfigured);case _:
   return null;
 
 }
@@ -210,7 +211,7 @@ return $default(_that.branches,_that.isLoading,_that.errorMessage,_that.branchPr
 
 
 class _BranchState implements BranchState {
-  const _BranchState({final  List<Branch> branches = const [], this.isLoading = false, this.errorMessage, this.branchProcessingId, final  Set<String> branchesWithShippingConfigured = const <String>{}}): _branches = branches,_branchesWithShippingConfigured = branchesWithShippingConfigured;
+  const _BranchState({final  List<Branch> branches = const [], this.isLoading = false, this.errorMessage, this.branchProcessingId, final  Set<String> branchesWithShippingConfigured = const <String>{}, final  Set<String> branchesWithRatesConfigured = const <String>{}}): _branches = branches,_branchesWithShippingConfigured = branchesWithShippingConfigured,_branchesWithRatesConfigured = branchesWithRatesConfigured;
   
 
  final  List<Branch> _branches;
@@ -230,6 +231,13 @@ class _BranchState implements BranchState {
   return EqualUnmodifiableSetView(_branchesWithShippingConfigured);
 }
 
+ final  Set<String> _branchesWithRatesConfigured;
+@override@JsonKey() Set<String> get branchesWithRatesConfigured {
+  if (_branchesWithRatesConfigured is EqualUnmodifiableSetView) return _branchesWithRatesConfigured;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableSetView(_branchesWithRatesConfigured);
+}
+
 
 /// Create a copy of BranchState
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +249,16 @@ _$BranchStateCopyWith<_BranchState> get copyWith => __$BranchStateCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BranchState&&const DeepCollectionEquality().equals(other._branches, _branches)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.branchProcessingId, branchProcessingId) || other.branchProcessingId == branchProcessingId)&&const DeepCollectionEquality().equals(other._branchesWithShippingConfigured, _branchesWithShippingConfigured));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BranchState&&const DeepCollectionEquality().equals(other._branches, _branches)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage)&&(identical(other.branchProcessingId, branchProcessingId) || other.branchProcessingId == branchProcessingId)&&const DeepCollectionEquality().equals(other._branchesWithShippingConfigured, _branchesWithShippingConfigured)&&const DeepCollectionEquality().equals(other._branchesWithRatesConfigured, _branchesWithRatesConfigured));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_branches),isLoading,errorMessage,branchProcessingId,const DeepCollectionEquality().hash(_branchesWithShippingConfigured));
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_branches),isLoading,errorMessage,branchProcessingId,const DeepCollectionEquality().hash(_branchesWithShippingConfigured),const DeepCollectionEquality().hash(_branchesWithRatesConfigured));
 
 @override
 String toString() {
-  return 'BranchState(branches: $branches, isLoading: $isLoading, errorMessage: $errorMessage, branchProcessingId: $branchProcessingId, branchesWithShippingConfigured: $branchesWithShippingConfigured)';
+  return 'BranchState(branches: $branches, isLoading: $isLoading, errorMessage: $errorMessage, branchProcessingId: $branchProcessingId, branchesWithShippingConfigured: $branchesWithShippingConfigured, branchesWithRatesConfigured: $branchesWithRatesConfigured)';
 }
 
 
@@ -261,7 +269,7 @@ abstract mixin class _$BranchStateCopyWith<$Res> implements $BranchStateCopyWith
   factory _$BranchStateCopyWith(_BranchState value, $Res Function(_BranchState) _then) = __$BranchStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Branch> branches, bool isLoading, String? errorMessage, String? branchProcessingId, Set<String> branchesWithShippingConfigured
+ List<Branch> branches, bool isLoading, String? errorMessage, String? branchProcessingId, Set<String> branchesWithShippingConfigured, Set<String> branchesWithRatesConfigured
 });
 
 
@@ -278,13 +286,14 @@ class __$BranchStateCopyWithImpl<$Res>
 
 /// Create a copy of BranchState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? branches = null,Object? isLoading = null,Object? errorMessage = freezed,Object? branchProcessingId = freezed,Object? branchesWithShippingConfigured = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? branches = null,Object? isLoading = null,Object? errorMessage = freezed,Object? branchProcessingId = freezed,Object? branchesWithShippingConfigured = null,Object? branchesWithRatesConfigured = null,}) {
   return _then(_BranchState(
 branches: null == branches ? _self._branches : branches // ignore: cast_nullable_to_non_nullable
 as List<Branch>,isLoading: null == isLoading ? _self.isLoading : isLoading // ignore: cast_nullable_to_non_nullable
 as bool,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,branchProcessingId: freezed == branchProcessingId ? _self.branchProcessingId : branchProcessingId // ignore: cast_nullable_to_non_nullable
 as String?,branchesWithShippingConfigured: null == branchesWithShippingConfigured ? _self._branchesWithShippingConfigured : branchesWithShippingConfigured // ignore: cast_nullable_to_non_nullable
+as Set<String>,branchesWithRatesConfigured: null == branchesWithRatesConfigured ? _self._branchesWithRatesConfigured : branchesWithRatesConfigured // ignore: cast_nullable_to_non_nullable
 as Set<String>,
   ));
 }

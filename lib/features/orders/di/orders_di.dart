@@ -2,6 +2,7 @@ import 'package:fruti_express_jahr_admin/features/orders/domain/services/contact
 import 'package:fruti_express_jahr_admin/features/orders/domain/services/contact_service_impl.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/assign_driver_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/depart_for_delivery_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/get_order_preview_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/update_order_status_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/confirm_delivery_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/create_order_use_case.dart';
@@ -35,6 +36,7 @@ void initOrders(GetIt sl) {
   sl.registerLazySingleton(() => ConfirmDeliveryUseCase(sl()));
   sl.registerLazySingleton(() => DepartForDeliveryUseCase(sl()));
   sl.registerLazySingleton(() => UploadDeliveryEvidenceUseCase(sl()));
+  sl.registerLazySingleton(() => GetOrderPreviewUseCase(sl()));
 
   //---- Services-----
   sl.registerLazySingleton<ContactService>(() => ContactServiceImpl());

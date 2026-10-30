@@ -1,41 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart'; 
 
-class ProfileHeader extends StatelessWidget { 
-  final Profile profile;
+class ProfileHeader extends StatelessWidget {
+  final AppUser user;
 
-  const ProfileHeader({super.key, required this.profile});
+  const ProfileHeader({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
-    final fullName = [ 
-      profile.firstName, 
-      profile.paternalLastName, 
-      if (profile.maternalLastName != null) profile.maternalLastName!, 
+    final profile = user.profile; 
+    final colorScheme = Theme.of(context).colorScheme; // 👈 Extraemos el colorScheme
+
+    final fullName = [
+      profile.firstName,
+      profile.paternalLastName,
+      if (profile.maternalLastName != null) profile.maternalLastName!,
     ].join(' ');
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
-      decoration: const BoxDecoration(
-        color: Color(0xFF1E3A8A),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: colorScheme.primary, // 👈 Fondo usa el color principal del tema
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(90)),
       ),
       child: Column(
         children: [
           CircleAvatar(
             radius: 44,
-            backgroundColor: Colors.white.withValues(alpha: 0.2),
-            backgroundImage: profile.avatarUrl != null 
+            backgroundColor: colorScheme.secondary.withValues(alpha: 0.8),
+            backgroundImage: profile.avatarUrl != null
                 ? NetworkImage(profile.avatarUrl!)
                 : null,
             child: profile.avatarUrl == null
                 ? Text(
-                    profile.firstName[0].toUpperCase(), 
-                    style: const TextStyle(
+                    profile.firstName[0].toUpperCase(),
+                    style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: colorScheme.onPrimary, // 👈 Letra inicial adaptable
                     ),
                   )
                 : null,
@@ -43,32 +46,35 @@ class ProfileHeader extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             fullName,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: colorScheme.onPrimary, // 👈 Nombre principal
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            profile.email,
+            user.email,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
+              color: colorScheme.onPrimary.withValues(alpha: 0.7), // 👈 Email con opacidad
               fontSize: 14,
             ),
           ),
           if (profile.alias != null) ...[
             const SizedBox(height: 4),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
+                // 👇 Fondo sutil del "chip" de alias
+                color: colorScheme.onPrimary.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 '@${profile.alias}',
-                style: const TextStyle(color: Colors.white, fontSize: 12),
+                style: TextStyle(
+                  color: colorScheme.onPrimary, // 👈 Texto del alias
+                  fontSize: 12
+                ),
               ),
             ),
           ],

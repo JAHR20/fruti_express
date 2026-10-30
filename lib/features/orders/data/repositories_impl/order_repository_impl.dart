@@ -4,7 +4,9 @@ import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/orders/data/datasources/order_remote_datasource.dart';
 import 'package:fruti_express_jahr_admin/features/orders/data/models/order_model.dart';
+import 'package:fruti_express_jahr_admin/features/orders/data/models/order_preview_model.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order_preview.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart'; // Import corregido
 import 'package:fruti_express_jahr_admin/features/orders/domain/repositories/order_repository.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/confirm_delivery_params.dart';
@@ -44,10 +46,7 @@ class OrderRepositoryImpl
     required String branchId,
     required OrderStatus status,
   }) => TaskEither.tryCatch(() async {
-    final models = await remoteDatasource.getByStatus(
-      branchId,
-      status.name,
-    );
+    final models = await remoteDatasource.getByStatus(branchId, status.name);
     return models.map((m) => m.toDomain()).toList();
   }, handleException);
 
@@ -94,10 +93,7 @@ class OrderRepositoryImpl
     required String orderId,
     required OrderStatus newStatus,
   }) => TaskEither.tryCatch(() async {
-    final model = await remoteDatasource.updateStatus(
-      orderId,
-      newStatus.name,
-    );
+    final model = await remoteDatasource.updateStatus(orderId, newStatus.name);
     return model.toDomain();
   }, handleException);
 
@@ -106,10 +102,7 @@ class OrderRepositoryImpl
     required String orderId,
     required String driverId,
   }) => TaskEither.tryCatch(() async {
-    final model = await remoteDatasource.assignDriver(
-      orderId,
-      driverId,
-    );
+    final model = await remoteDatasource.assignDriver(orderId, driverId);
     return model.toDomain();
   }, handleException);
 
@@ -140,6 +133,26 @@ class OrderRepositoryImpl
   }
 
   @override
+  ResultTask<OrderPreview> getOrderPreview({
+    required String branchId,
+    required List<Map<String, dynamic>> items,
+    required String deliveryMethod,
+    String? couponId,
+    double? customerLatitude,
+    double? customerLongitude,
+  }) => TaskEither.tryCatch(() async {
+    final model = await remoteDatasource.getOrderPreview(
+      branchId: branchId,
+      items: items,
+      deliveryMethod: deliveryMethod,
+      couponId: couponId,
+      customerLatitude: customerLatitude,
+      customerLongitude: customerLongitude,
+    );
+    return model.toDomain();
+  }, handleException);
+
+  @override
   ResultTask<Unit> confirmDelivery(ConfirmDeliveryParams params) =>
       TaskEither.tryCatch(() async {
         await remoteDatasource.confirmDelivery(
@@ -147,6 +160,13 @@ class OrderRepositoryImpl
           confirmationCode: params.confirmationCode,
           evidenceUrl: params.evidenceUrl,
         );
+        return unit;
+      }, handleException);
+
+  @override
+  ResultTask<Unit> confirmCashOrder({required String orderId}) =>
+      TaskEither.tryCatch(() async {
+        await remoteDatasource.confirmCashOrder(orderId: orderId);
         return unit;
       }, handleException);
 }

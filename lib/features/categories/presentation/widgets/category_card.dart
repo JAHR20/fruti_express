@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart'; // Asegúrate de que la entidad Category ya esté en inglés
 
-class CategoryCard extends StatelessWidget { // CategoriaCard -> CategoryCard
-  final Category category; // categoria -> category
+class CategoryCard extends StatelessWidget { 
+  final Category category; 
   final VoidCallback? onTap;
 
   const CategoryCard({
@@ -13,16 +13,17 @@ class CategoryCard extends StatelessWidget { // CategoriaCard -> CategoryCard
 
   @override
   Widget build(BuildContext context) {
+    final colorTheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorTheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.08),
+              color: colorTheme.outlineVariant,
               blurRadius: 10,
               offset: const Offset(0, 5),
             ),
@@ -35,7 +36,7 @@ class CategoryCard extends StatelessWidget { // CategoriaCard -> CategoryCard
               flex: 7,
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade100,
+                  color: colorTheme.outlineVariant,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
@@ -46,14 +47,14 @@ class CategoryCard extends StatelessWidget { // CategoriaCard -> CategoryCard
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20),
                   ),
-                  child: category.imageUrl != null && category.imageUrl!.isNotEmpty // imagenUrl -> imageUrl
+                  child: category.imageUrl != null && category.imageUrl!.isNotEmpty 
                       ? Image.network(
                           category.imageUrl!,
                           fit: BoxFit.cover,
                           errorBuilder: (_, __, ___) =>
-                              const Icon(Icons.broken_image, size: 40, color: Colors.grey),
+                               Icon(Icons.broken_image, size: 40, color: colorTheme.outline),
                         )
-                      : const Icon(Icons.category_outlined, size: 40, color: Colors.grey),
+                      :  Icon(Icons.category_outlined, size: 40, color: colorTheme.outlineVariant),
                 ),
               ),
             ),
@@ -63,14 +64,14 @@ class CategoryCard extends StatelessWidget { // CategoriaCard -> CategoryCard
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 alignment: Alignment.center,
                 child: Text(
-                  category.name, // nombre -> name
+                  category.name, 
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: colorTheme.onSurface,
                   ),
                 ),
               ),

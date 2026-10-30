@@ -5,19 +5,20 @@ import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_cubit.dart';
 
-import '../cubits/edit_profile_cubit.dart'; 
-import '../cubits/users_cubit.dart'; 
-import '../pages/edit_profile_page.dart'; 
+import '../cubits/edit_profile_cubit.dart';
+import '../cubits/users_cubit.dart';
+import '../pages/edit_profile_page.dart';
 import '../pages/users_page.dart';
 
 abstract class UserRoutes {
   static const String editProfilePath = '/customer/edit_profile';
   static const String editProfileName = 'customer-edit-profile';
-  
+
   static const String adminUsersPath = '/dashboard/users';
   static const String adminUsersName = 'admin-users';
 
-  static List<RouteBase> buildRoutes() {
+  // Rutas de cliente — fuera de cualquier shell
+  static List<RouteBase> buildCustomerRoutes() {
     return [
       GoRoute(
         path: editProfilePath,
@@ -29,6 +30,12 @@ abstract class UserRoutes {
           );
         },
       ),
+    ];
+  }
+
+  // Rutas de admin — dentro del ShellRoute de admin
+  static List<RouteBase> buildAdminRoutes() {
+    return [
       GoRoute(
         path: adminUsersPath,
         name: adminUsersName,
@@ -39,11 +46,12 @@ abstract class UserRoutes {
               BlocProvider(create: (context) => sl<BranchCubit>()),
             ],
             child: UsersPage(
-              currentUser: (sl<AuthCubit>().state as AuthAuthenticated).profile,
+              currentUser: (sl<AuthCubit>().state as AuthAuthenticated).user,
             ),
           );
         },
       ),
     ];
   }
+
 }

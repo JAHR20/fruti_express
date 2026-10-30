@@ -5,7 +5,7 @@ import 'package:fruti_express_jahr_admin/features/coupons/presentation/pages/adm
 import 'package:go_router/go_router.dart';
 
 abstract class CouponsRouter {
-  static const String adminCouponsPath = '/coupons';
+  static const String adminCouponsPath = '/dashboard/coupons';
   static const String adminCouponsName = 'AdminCoupons';
 
   static List<RouteBase> buildRoutes() {

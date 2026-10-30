@@ -2,7 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/inventory/domain/mixins/inventory_validations.dart';
 import 'package:fruti_express_jahr_admin/features/inventory/domain/repositories/inventory_repository.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 class IncreaseStockUseCase with InventoryValidations {
   final InventoryRepository repository;
@@ -10,7 +10,7 @@ class IncreaseStockUseCase with InventoryValidations {
   IncreaseStockUseCase(this.repository);
 
   ResultTask<Unit> execute({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String productId,
     required String branchId,
     required int quantity,

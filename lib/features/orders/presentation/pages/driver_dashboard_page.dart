@@ -11,7 +11,7 @@ import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/dri
 import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/driver_orders_page.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/driver_summary_page.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/driver_drawer.dart';
-import 'package:fruti_express_jahr_admin/features/users/presentation/cubits/users_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/users/presentation/cubits/edit_profile_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/users/presentation/pages/edit_profile_page.dart';
 
 class DriverDashboardPage extends StatefulWidget {
@@ -29,8 +29,7 @@ class _DriverDashboardPageState extends State<DriverDashboardPage> {
   void initState() {
     super.initState();
     _cubit = context.read<DriverOrdersCubit>();
-    final profile =
-        (context.read<AuthCubit>().state as AuthAuthenticated).profile;
+    final profile = (context.read<AuthCubit>().state as AuthAuthenticated).user;
     _cubit!.startWatching(profile.id);
   }
 
@@ -53,8 +52,7 @@ class _DriverDashboardPageState extends State<DriverDashboardPage> {
 
   @override
   Widget build(BuildContext context) {
-    final profile =
-        (context.read<AuthCubit>().state as AuthAuthenticated).profile;
+    final profile = (context.read<AuthCubit>().state as AuthAuthenticated).user;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
@@ -70,7 +68,7 @@ class _DriverDashboardPageState extends State<DriverDashboardPage> {
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: DriverDrawer(
-        profile: profile,
+        user: profile,
         activeSection: _section,
         onNavigate: _navigate,
         onLogout: () => context.read<AuthCubit>().logout(),
@@ -111,17 +109,20 @@ class _DriverDashboardPageState extends State<DriverDashboardPage> {
     return switch (_section) {
       DriverSection.orders => DriverOrdersPage(
         orders: orders,
-        activeOrderId: actionOrderId, 
+        activeOrderId: actionOrderId,
         contactService: sl<ContactService>(),
-        onDepartForDelivery: (id) =>
-            _cubit?.departForDelivery(id), 
+        onDepartForDelivery: (id) => _cubit?.departForDelivery(id),
       ),
-      DriverSection.summary => DriverSummaryPage(
-        orders: orders,
-      ), 
+      DriverSection.summary => DriverSummaryPage(orders: orders),
       DriverSection.profile => BlocProvider(
-        create: (_) => sl<UsersCubit>(),
-        child: const EditProfilePage(),
+        create: (_) => sl<EditProfileCubit>(),
+        child: EditProfilePage(
+          onSaved: () {
+            setState(() {
+              _section = DriverSection.orders;
+            });
+          },
+        ),
       ),
     };
   }

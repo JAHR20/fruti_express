@@ -15,9 +15,9 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
   static const String _colZipCode = 'zip_code';
   static const String _colIsActive = 'is_active';
   static const String _colMinDistance = 'min_distance_km';
-  static const String _colId = 'id';
 
-  static const String _saveShippingConfigurationRpc = 'save_shipping_configuration';
+  static const String _saveShippingConfigurationRpc =
+      'save_shipping_configuration';
   static const String _configurationParam = 'p_configuration';
   static const String _zipCodesParam = 'p_zip_codes';
 
@@ -41,17 +41,14 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
           .select(_colZipCode)
           .eq(_colBranchId, branchId);
 
-      final fullData = Map<String, dynamic>.from(response); 
+      final fullData = Map<String, dynamic>.from(response);
       fullData[_tableCoverage] = coverageResponse;
 
       return ShippingConfigModel.fromSupabase(fullData);
     } on PostgrestException catch (e) {
       throw ServerFailure(
         FailureCode.databaseError,
-        params: {
-          'errorCode': e.code,
-          'errorMsg': e.message,
-        },
+        params: {'errorCode': e.code, 'errorMsg': e.message},
       );
     } catch (e) {
       throw ServerFailure(
@@ -75,10 +72,7 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
     } on PostgrestException catch (e) {
       throw ServerFailure(
         FailureCode.databaseError,
-        params: {
-          'errorCode': e.code,
-          'errorMsg': e.message,
-        },
+        params: {'errorCode': e.code, 'errorMsg': e.message},
       );
     } catch (e) {
       throw ServerFailure(
@@ -94,17 +88,14 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
       await _supabaseClient.rpc(
         _saveShippingConfigurationRpc,
         params: {
-          _configurationParam: config.toJsonForInsert(), 
-          _zipCodesParam: config.allowedZipCodes, 
+          _configurationParam: config.toJsonForInsert(),
+          _zipCodesParam: config.allowedZipCodes,
         },
       );
     } on PostgrestException catch (e) {
       throw ServerFailure(
         FailureCode.databaseError,
-        params: {
-          'errorCode': e.code,
-          'errorMsg': e.message,
-        },
+        params: {'errorCode': e.code, 'errorMsg': e.message},
       );
     } catch (e) {
       throw ServerFailure(
@@ -113,22 +104,33 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
       );
     }
   }
+
 
   @override
-  Future<void> saveRate(ShippingRateModel rate) async {
+  Future<void> saveRates({
+    required String branchId,
+    required List<ShippingRateModel> rates,
+  }) async {
     try {
-      final data = rate.id.isEmpty
-          ? rate.toJsonForInsert()
-          : rate.toJson();
+      final ratesJson = rates.map((rate) {
+        final json = rate.toJson();
 
-      await _supabaseClient.from(_tableRates).upsert(data);
+        if (rate.id.isEmpty) {
+          json.remove('id');
+          json.remove('created_at');
+        }
+
+        return json;
+      }).toList();
+
+      await _supabaseClient.rpc(
+        'save_shipping_rates',
+        params: {'p_branch_id': branchId, 'p_rates': ratesJson},
+      );
     } on PostgrestException catch (e) {
       throw ServerFailure(
         FailureCode.databaseError,
-        params: {
-          'errorCode': e.code,
-          'errorMsg': e.message,
-        },
+        params: {'errorCode': e.code, 'errorMsg': e.message},
       );
     } catch (e) {
       throw ServerFailure(
@@ -138,25 +140,6 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
     }
   }
 
-  @override
-  Future<void> deleteRate(String rateId) async {
-    try {
-      await _supabaseClient.from(_tableRates).delete().eq(_colId, rateId);
-    } on PostgrestException catch (e) {
-      throw ServerFailure(
-        FailureCode.databaseError,
-        params: {
-          'errorCode': e.code,
-          'errorMsg': e.message,
-        },
-      );
-    } catch (e) {
-      throw ServerFailure(
-        FailureCode.serverError,
-        params: {'errorMsg': e.toString()},
-      );
-    }
-  }
 
   @override
   Future<Set<String>> getBranchesWithConfiguredShipping() async {
@@ -169,10 +152,7 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
     } on PostgrestException catch (e) {
       throw ServerFailure(
         FailureCode.databaseError,
-        params: {
-          'errorCode': e.code,
-          'errorMsg': e.message,
-        },
+        params: {'errorCode': e.code, 'errorMsg': e.message},
       );
     } catch (e) {
       throw ServerFailure(

@@ -8,6 +8,7 @@ abstract class BranchRemoteDatasource {
   Future<BranchModel?> getByName(String name);
   Stream<List<BranchModel>> watchAll();
   Future<List<String>> getCoverage(String branchId);
+  Future<Set<String>> getBranchesWithRates();
   Future<void> updateCoverage({
     required String branchId,
     required List<String> postalCodes,

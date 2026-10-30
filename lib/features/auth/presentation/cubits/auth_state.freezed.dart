@@ -55,7 +55,7 @@ extension AuthStatePatterns on AuthState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AuthInitial value)?  initial,TResult Function( AuthLoading value)?  loading,TResult Function( AuthAuthenticated value)?  authenticated,TResult Function( AuthUnauthenticated value)?  unauthenticated,TResult Function( AuthError value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( AuthInitial value)?  initial,TResult Function( AuthLoading value)?  loading,TResult Function( AuthAuthenticated value)?  authenticated,TResult Function( AuthUnauthenticated value)?  unauthenticated,TResult Function( AuthError value)?  error,TResult Function( AuthEmailConfirmationPending value)?  emailConfirmationPending,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
@@ -63,7 +63,8 @@ return initial(_that);case AuthLoading() when loading != null:
 return loading(_that);case AuthAuthenticated() when authenticated != null:
 return authenticated(_that);case AuthUnauthenticated() when unauthenticated != null:
 return unauthenticated(_that);case AuthError() when error != null:
-return error(_that);case _:
+return error(_that);case AuthEmailConfirmationPending() when emailConfirmationPending != null:
+return emailConfirmationPending(_that);case _:
   return orElse();
 
 }
@@ -81,7 +82,7 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AuthInitial value)  initial,required TResult Function( AuthLoading value)  loading,required TResult Function( AuthAuthenticated value)  authenticated,required TResult Function( AuthUnauthenticated value)  unauthenticated,required TResult Function( AuthError value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( AuthInitial value)  initial,required TResult Function( AuthLoading value)  loading,required TResult Function( AuthAuthenticated value)  authenticated,required TResult Function( AuthUnauthenticated value)  unauthenticated,required TResult Function( AuthError value)  error,required TResult Function( AuthEmailConfirmationPending value)  emailConfirmationPending,}){
 final _that = this;
 switch (_that) {
 case AuthInitial():
@@ -89,7 +90,8 @@ return initial(_that);case AuthLoading():
 return loading(_that);case AuthAuthenticated():
 return authenticated(_that);case AuthUnauthenticated():
 return unauthenticated(_that);case AuthError():
-return error(_that);}
+return error(_that);case AuthEmailConfirmationPending():
+return emailConfirmationPending(_that);}
 }
 /// A variant of `map` that fallback to returning `null`.
 ///
@@ -103,7 +105,7 @@ return error(_that);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AuthInitial value)?  initial,TResult? Function( AuthLoading value)?  loading,TResult? Function( AuthAuthenticated value)?  authenticated,TResult? Function( AuthUnauthenticated value)?  unauthenticated,TResult? Function( AuthError value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( AuthInitial value)?  initial,TResult? Function( AuthLoading value)?  loading,TResult? Function( AuthAuthenticated value)?  authenticated,TResult? Function( AuthUnauthenticated value)?  unauthenticated,TResult? Function( AuthError value)?  error,TResult? Function( AuthEmailConfirmationPending value)?  emailConfirmationPending,}){
 final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
@@ -111,7 +113,8 @@ return initial(_that);case AuthLoading() when loading != null:
 return loading(_that);case AuthAuthenticated() when authenticated != null:
 return authenticated(_that);case AuthUnauthenticated() when unauthenticated != null:
 return unauthenticated(_that);case AuthError() when error != null:
-return error(_that);case _:
+return error(_that);case AuthEmailConfirmationPending() when emailConfirmationPending != null:
+return emailConfirmationPending(_that);case _:
   return null;
 
 }
@@ -128,14 +131,15 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( Profile profile)?  authenticated,TResult Function()?  unauthenticated,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( AppUser user)?  authenticated,TResult Function()?  unauthenticated,TResult Function( String message)?  error,TResult Function()?  emailConfirmationPending,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthAuthenticated() when authenticated != null:
-return authenticated(_that.profile);case AuthUnauthenticated() when unauthenticated != null:
+return authenticated(_that.user);case AuthUnauthenticated() when unauthenticated != null:
 return unauthenticated();case AuthError() when error != null:
-return error(_that.message);case _:
+return error(_that.message);case AuthEmailConfirmationPending() when emailConfirmationPending != null:
+return emailConfirmationPending();case _:
   return orElse();
 
 }
@@ -153,14 +157,15 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( Profile profile)  authenticated,required TResult Function()  unauthenticated,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( AppUser user)  authenticated,required TResult Function()  unauthenticated,required TResult Function( String message)  error,required TResult Function()  emailConfirmationPending,}) {final _that = this;
 switch (_that) {
 case AuthInitial():
 return initial();case AuthLoading():
 return loading();case AuthAuthenticated():
-return authenticated(_that.profile);case AuthUnauthenticated():
+return authenticated(_that.user);case AuthUnauthenticated():
 return unauthenticated();case AuthError():
-return error(_that.message);}
+return error(_that.message);case AuthEmailConfirmationPending():
+return emailConfirmationPending();}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -174,14 +179,15 @@ return error(_that.message);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( Profile profile)?  authenticated,TResult? Function()?  unauthenticated,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( AppUser user)?  authenticated,TResult? Function()?  unauthenticated,TResult? Function( String message)?  error,TResult? Function()?  emailConfirmationPending,}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthAuthenticated() when authenticated != null:
-return authenticated(_that.profile);case AuthUnauthenticated() when unauthenticated != null:
+return authenticated(_that.user);case AuthUnauthenticated() when unauthenticated != null:
 return unauthenticated();case AuthError() when error != null:
-return error(_that.message);case _:
+return error(_that.message);case AuthEmailConfirmationPending() when emailConfirmationPending != null:
+return emailConfirmationPending();case _:
   return null;
 
 }
@@ -257,10 +263,10 @@ String toString() {
 
 
 class AuthAuthenticated implements AuthState {
-  const AuthAuthenticated(this.profile);
+  const AuthAuthenticated(this.user);
   
 
- final  Profile profile;
+ final  AppUser user;
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
@@ -272,16 +278,16 @@ $AuthAuthenticatedCopyWith<AuthAuthenticated> get copyWith => _$AuthAuthenticate
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthAuthenticated&&(identical(other.profile, profile) || other.profile == profile));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthAuthenticated&&(identical(other.user, user) || other.user == user));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,profile);
+int get hashCode => Object.hash(runtimeType,user);
 
 @override
 String toString() {
-  return 'AuthState.authenticated(profile: $profile)';
+  return 'AuthState.authenticated(user: $user)';
 }
 
 
@@ -292,11 +298,11 @@ abstract mixin class $AuthAuthenticatedCopyWith<$Res> implements $AuthStateCopyW
   factory $AuthAuthenticatedCopyWith(AuthAuthenticated value, $Res Function(AuthAuthenticated) _then) = _$AuthAuthenticatedCopyWithImpl;
 @useResult
 $Res call({
- Profile profile
+ AppUser user
 });
 
 
-$ProfileCopyWith<$Res> get profile;
+$AppUserCopyWith<$Res> get user;
 
 }
 /// @nodoc
@@ -309,10 +315,10 @@ class _$AuthAuthenticatedCopyWithImpl<$Res>
 
 /// Create a copy of AuthState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? profile = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? user = null,}) {
   return _then(AuthAuthenticated(
-null == profile ? _self.profile : profile // ignore: cast_nullable_to_non_nullable
-as Profile,
+null == user ? _self.user : user // ignore: cast_nullable_to_non_nullable
+as AppUser,
   ));
 }
 
@@ -320,10 +326,10 @@ as Profile,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$ProfileCopyWith<$Res> get profile {
+$AppUserCopyWith<$Res> get user {
   
-  return $ProfileCopyWith<$Res>(_self.profile, (value) {
-    return _then(_self.copyWith(profile: value));
+  return $AppUserCopyWith<$Res>(_self.user, (value) {
+    return _then(_self.copyWith(user: value));
   });
 }
 }
@@ -425,5 +431,37 @@ as String,
 
 
 }
+
+/// @nodoc
+
+
+class AuthEmailConfirmationPending implements AuthState {
+  const AuthEmailConfirmationPending();
+  
+
+
+
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthEmailConfirmationPending);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'AuthState.emailConfirmationPending()';
+}
+
+
+}
+
+
+
 
 // dart format on

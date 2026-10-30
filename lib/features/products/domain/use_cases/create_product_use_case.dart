@@ -6,7 +6,7 @@ import 'package:fruti_express_jahr_admin/features/categories/domain/repositories
 import 'package:fruti_express_jahr_admin/features/products/domain/entities/product.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/enums/measurement_unit.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/repositories/product_repository.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 
 class CreateProductUseCase {
@@ -19,7 +19,7 @@ class CreateProductUseCase {
   });
 
   ResultTask<Product> execute({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String categoryId,
     required String name,
     String? description,
@@ -54,7 +54,7 @@ class CreateProductUseCase {
     });
   }
 
-  ResultTask<Unit> _validatePermissions(Profile u) => u.canManageCatalog
+  ResultTask<Unit> _validatePermissions(AppUser u) => u.canManageCatalog
       ? TaskEither.right(unit)
       : TaskEither.left(const Failure.unauthorized(FailureCode.noPermissionToPerformAction));
 

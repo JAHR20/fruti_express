@@ -6,21 +6,23 @@ import 'package:fruti_express_jahr_admin/features/branches/domain/entities/branc
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/shipping_admin_cubit.dart';
 
 import '../cubits/branch_cubit.dart';
-import '../cubits/wizard_branch_cubit.dart'; 
+import '../cubits/wizard_branch_cubit.dart';
 import '../pages/admin_branches_page.dart';
-import '../pages/create_branch_wizard_screen.dart'; 
+import '../pages/create_branch_wizard_screen.dart';
 
 abstract class BranchRoutes {
   static const String listPath = '/dashboard/branches';
   static const String listName = 'admin-branches';
-  
-  static const String newBranchPath = 'nueva'; 
+
+  // 👇 ahora rutas absolutas de nivel superior, ya no anidadas bajo listPath
+  static const String newBranchPath = '/branches/new';
   static const String newBranchName = 'admin-branches-new';
-  
-  static const String ratesPath = ':id/rates';
+
+  static const String ratesPath = '/branches/:id/rates';
   static const String ratesName = 'admin-branches-rates';
 
-  static List<RouteBase> buildRoutes() {
+  // Rutas que SÍ viven dentro del ShellRoute (con drawer/AppBar del admin)
+  static List<RouteBase> buildShellRoutes() {
     return [
       GoRoute(
         path: listPath,
@@ -31,39 +33,43 @@ abstract class BranchRoutes {
             child: const AdminBranchesPage(),
           );
         },
-        routes: [
-          GoRoute(
-            path: newBranchPath,
-            name: newBranchName,
-            builder: (context, state) {
-              final extra = state.extra as Map<String, dynamic>?;
-              final branch = extra?['branch'] as Branch?; 
-              final initialStep = extra?['initialStep'] as int? ?? 0; 
+      ),
+    ];
+  }
 
-              return MultiBlocProvider(
-                providers: [
-                  BlocProvider(create: (_) => sl<WizardBranchCubit>()),
-                  BlocProvider(create: (_) => sl<ShippingAdminCubit>()),
-                ],
-                child: CreateBranchWizardScreen(
-                  branch: branch,
-                  initialStep: initialStep,
-                ),
-              );
-            },
-          ),
-          GoRoute(
-            path: ratesPath,
-            name: ratesName,
-            builder: (context, state) {
-              final branchId = state.pathParameters['id']!;
-              return BlocProvider(
-                create: (_) => sl<ShippingAdminCubit>(),
-                child: ShippingRatesScreen(branchId: branchId),
-              );
-            },
-          ),
-        ],
+  // Rutas que viven FUERA del ShellRoute (pantalla completa, su propio AppBar)
+  static List<RouteBase> buildStandaloneRoutes() {
+    return [
+      GoRoute(
+        path: newBranchPath,
+        name: newBranchName,
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>?;
+          final branch = extra?['branch'] as Branch?;
+          final initialStep = extra?['initialStep'] as int? ?? 0;
+
+          return MultiBlocProvider(
+            providers: [
+              BlocProvider(create: (_) => sl<WizardBranchCubit>()),
+              BlocProvider(create: (_) => sl<ShippingAdminCubit>()),
+            ],
+            child: CreateBranchWizardScreen(
+              branch: branch,
+              initialStep: initialStep,
+            ),
+          );
+        },
+      ),
+      GoRoute(
+        path: ratesPath,
+        name: ratesName,
+        builder: (context, state) {
+          final branchId = state.pathParameters['id']!;
+          return BlocProvider(
+            create: (_) => sl<ShippingAdminCubit>(),
+            child: ShippingRatesScreen(branchId: branchId),
+          );
+        },
       ),
     ];
   }

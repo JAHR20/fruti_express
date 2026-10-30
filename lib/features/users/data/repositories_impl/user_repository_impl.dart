@@ -1,7 +1,8 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
-import 'package:fruti_express_jahr_admin/features/users/data/models/profile_model.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/data/models/user_profile_model.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/user_profile.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/repositories/user_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
@@ -14,39 +15,39 @@ class UserRepositoryImpl with SupabaseHandleException implements UserRepository 
   UserRepositoryImpl(this.remoteDatasource);
 
   @override
-  ResultTask<List<Profile>> getAll() {
+  ResultTask<List<AppUser>> getAll() {
     return TaskEither.tryCatch(() async {
       final models = await remoteDatasource.getAll();
-      return models.map((m) => m.toDomain()).toList();
+      return models.map((m) => m.toEntity()).toList();
     }, handleException);
   }
 
   @override
-  ResultTask<Profile> getById(String id) {
+  ResultTask<AppUser> getById(String id) {
     return TaskEither.tryCatch(() async {
       final model = await remoteDatasource.getById(id);
       if (model == null) {
         throw const PostgrestException(message: 'Not found', code: 'PGRST116');
       }
-      return model.toDomain();
+      return model.toEntity();
     }, handleException);
   }
 
   @override
-  ResultTask<List<Profile>> searchUsers(String query) {
+  ResultTask<List<AppUser>> searchUsers(String query) {
     return TaskEither.tryCatch(() async {
       final models = await remoteDatasource.searchUsers(query);
-      return models.map((m) => m.toDomain()).toList();
+      return models.map((m) => m.toEntity()).toList();
     }, handleException);
   }
 
   @override
-  ResultTask<List<Profile>> getDeliveryPersons({String? branchId}) {
+  ResultTask<List<AppUser>> getDeliveryPersons({String? branchId}) {
     return TaskEither.tryCatch(() async {
       final models = await remoteDatasource.getDeliveryPersons(
         branchId: branchId,
       );
-      return models.map((m) => m.toDomain()).toList();
+      return models.map((m) => m.toEntity()).toList();
     }, handleException);
   }
 
@@ -68,46 +69,48 @@ class UserRepositoryImpl with SupabaseHandleException implements UserRepository 
   }
 
   @override
-  ResultTask<List<Profile>> getCustomersWhoBoughtInBranch(
+  ResultTask<List<AppUser>> getCustomersWhoBoughtInBranch(
     String branchId,
   ) {
     return TaskEither.tryCatch(() async {
       final models = await remoteDatasource.getByBranch(branchId);
-      return models.map((m) => m.toDomain()).toList();
+      return models.map((m) => m.toEntity()).toList();
     }, handleException);
   }
 
   @override
-  ResultTask<Profile> update(Profile profile) {
+  ResultTask<UserProfile> update(UserProfile profile) {
     return TaskEither.tryCatch(() async {
-      final model = ProfileModelX.fromDomain(profile); 
+      final model = UserProfileModel.fromDomain(profile); 
       final updated = await remoteDatasource.updateProfile(model);
-      return updated.toDomain();
+      return updated.toEntity();
     }, handleException);
   }
 
   @override
-  ResultTask<Profile> changeStatus({required String id, required bool active}) {
+  ResultTask<AppUser> changeStatus({required String id, required bool active}) {
     return TaskEither.tryCatch(() async {
       final model = await remoteDatasource.changeStatus(
         id: id,
         active: active,
       );
-      return model.toDomain();
+      return model.toEntity();
     }, handleException);
   }
 
   @override
-  ResultTask<Profile> changeRole({
+  ResultTask<AppUser> changeRole({
     required String id,
     required UserRole newRole,
+    required String? branchId,
   }) {
     return TaskEither.tryCatch(() async {
       final model = await remoteDatasource.changeRole(
         id: id,
         role: newRole.name,
+        branchId: branchId
       );
-      return model.toDomain();
+      return model.toEntity();
     }, handleException);
   }
 }

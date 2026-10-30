@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:fruti_express_jahr_admin/core/enums/payment_method_type.dart';
 import 'package:fruti_express_jahr_admin/core/utils/currency_formatter.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
-import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart'; 
+import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart';
 
 class ManagerOrderCard extends StatelessWidget {
   final Order order;
-  final bool isLoading; 
+  final bool isLoading;
   final VoidCallback? onConfirm;
   final VoidCallback? onAssignDriver;
   final VoidCallback? onCancel;
@@ -36,6 +37,7 @@ class ManagerOrderCard extends StatelessWidget {
             _Items(order: order),
             const SizedBox(height: 12),
             _Total(order: order),
+            _PaymentInfo(order: order),
             if (isLoading) ...[
               const SizedBox(height: 12),
               const LinearProgressIndicator(),
@@ -68,7 +70,7 @@ class _Header extends StatelessWidget {
           '#${order.id.substring(0, 13).toUpperCase()}',
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
-        _StatusChip(status: order.status),
+        _StatusChip(status: order.status, label: _statusLabel(order)),
       ],
     );
   }
@@ -76,22 +78,23 @@ class _Header extends StatelessWidget {
 
 class _StatusChip extends StatelessWidget {
   final OrderStatus status;
-  const _StatusChip({required this.status});
+  final String label;
+  const _StatusChip({required this.status, required this.label});
 
   Color get _color => switch (status) {
     OrderStatus.pendingPayment => Colors.orange,
-    OrderStatus.confirmed      => Colors.blue,
-    OrderStatus.preparing      => Colors.purple,
-    OrderStatus.onTheWay       => Colors.teal,
-    OrderStatus.delivered      => Colors.green,
-    OrderStatus.cancelled      => Colors.red,
+    OrderStatus.confirmed => Colors.blue,
+    OrderStatus.preparing => Colors.purple,
+    OrderStatus.onTheWay => Colors.teal,
+    OrderStatus.delivered => Colors.green,
+    OrderStatus.cancelled => Colors.red,
   };
 
   @override
   Widget build(BuildContext context) {
     return Chip(
       label: Text(
-        status.displayName,
+        label,
         style: const TextStyle(color: Colors.white, fontSize: 12),
       ),
       backgroundColor: _color,
@@ -110,28 +113,45 @@ class _CustomerInfo extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
-          const Icon(Icons.person_outline, size: 16, color: Colors.grey),
-          const SizedBox(width: 6),
-          Text(order.customerNameSnapshot,
-              style: const TextStyle(fontWeight: FontWeight.w500)),
-        ]),
+        Row(
+          children: [
+            const Icon(Icons.person_outline, size: 16, color: Colors.grey),
+            const SizedBox(width: 6),
+            Text(
+              order.customerNameSnapshot,
+              style: const TextStyle(fontWeight: FontWeight.w500),
+            ),
+          ],
+        ),
         const SizedBox(height: 4),
-        Row(children: [
-          const Icon(Icons.phone_outlined, size: 16, color: Colors.grey),
-          const SizedBox(width: 6),
-          Text(order.customerPhoneSnapshot,
-              style: const TextStyle(color: Colors.grey)),
-        ]),
+        Row(
+          children: [
+            const Icon(Icons.phone_outlined, size: 16, color: Colors.grey),
+            const SizedBox(width: 6),
+            Text(
+              order.customerPhoneSnapshot,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
         const SizedBox(height: 4),
-        Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(order.addressSnapshot,
-                style: const TextStyle(color: Colors.grey)),
-          ),
-        ]),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Icon(
+              Icons.location_on_outlined,
+              size: 16,
+              color: Colors.grey,
+            ),
+            const SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                order.addressSnapshot,
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -152,8 +172,10 @@ class _Items extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
-                child: Text('${item.quantity}x ${item.productNameSnapshot}',
-                    style: const TextStyle(fontSize: 13)),
+                child: Text(
+                  '${item.quantity}x ${item.productNameSnapshot}',
+                  style: const TextStyle(fontSize: 13),
+                ),
               ),
               Text(
                 '\$${(item.quantity * item.unitPriceSnapshot)}',
@@ -176,17 +198,22 @@ class _Total extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text('Total',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
-        Text(CurrencyFormatter.format(order.total),
-            style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 15,
-                color: Color(0xFF1E3A8A))),
+        const Text(
+          'Total',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        Text(
+          CurrencyFormatter.format(order.total),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: Color(0xFF1E3A8A),
+          ),
+        ),
       ],
     );
   }
-} 
+}
 
 class _Actions extends StatelessWidget {
   final Order order;
@@ -203,10 +230,13 @@ class _Actions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isCash = order.paymentMethod == PaymentMethodType.cashOnDelivery;
+    final isOpen = order.status != OrderStatus.delivered &&
+        order.status != OrderStatus.cancelled;
+
     return Row(
       children: [
-        if (order.status != OrderStatus.delivered &&
-            order.status != OrderStatus.cancelled)
+        if (isOpen && isCash)
           TextButton(
             onPressed: onCancel,
             style: TextButton.styleFrom(foregroundColor: Colors.red),
@@ -214,22 +244,66 @@ class _Actions extends StatelessWidget {
           ),
         const Spacer(),
         switch (order.status) {
-          OrderStatus.pendingPayment => FilledButton(
-              onPressed: onConfirm,
-              style: FilledButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E3A8A)),
-              child: const Text('Confirmar'),
-            ),
+          OrderStatus.pendingPayment => isCash
+              ? FilledButton(
+                  onPressed: onConfirm,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: const Color(0xFF1E3A8A),
+                  ),
+                  child: const Text('Aceptar pedido'),
+                )
+              : const Text(
+                  'Esperando el pago del cliente',
+                  style: TextStyle(color: Colors.grey),
+                ),
           OrderStatus.confirmed => FilledButton.icon(
               onPressed: onAssignDriver,
               icon: const Icon(Icons.delivery_dining, size: 18),
               label: const Text('Asignar y Preparar'),
-              style: FilledButton.styleFrom(
-                  backgroundColor: Colors.purple),
+              style: FilledButton.styleFrom(backgroundColor: Colors.purple),
             ),
           _ => const SizedBox.shrink(),
         },
       ],
     );
   }
+}
+
+class _PaymentInfo extends StatelessWidget {
+  final Order order;
+  const _PaymentInfo({required this.order});
+
+  @override
+  Widget build(BuildContext context) {
+    final method = order.paymentMethod;
+    if (method == null) return const SizedBox.shrink();
+
+    final isCash = method == PaymentMethodType.cashOnDelivery;
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Row(
+        children: [
+          Icon(
+            isCash ? Icons.payments_outlined : Icons.credit_card,
+            size: 16,
+            color: Colors.grey,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            isCash ? 'Efectivo contra entrega' : 'Tarjeta',
+            style: const TextStyle(color: Colors.grey, fontSize: 13),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+String _statusLabel(Order order) {
+  if (order.status == OrderStatus.pendingPayment) {
+    return order.paymentMethod == PaymentMethodType.cashOnDelivery
+        ? 'Por aceptar'
+        : 'Esperando pago';
+  }
+  return order.status.displayName;
 }

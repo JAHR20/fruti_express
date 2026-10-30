@@ -9,27 +9,15 @@ class OrderSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorTheme = Theme.of(context).colorScheme;
+
     return BlocBuilder<CartCubit, CartState>(
       builder: (context, state) {
-        final subtotal = state.total;
-        final baseRate = state.baseShippingRate; 
-        final freeThreshold =
-            state.freeShippingThreshold; 
-
-        int shippingCost = 0;
-        bool isFreeByPromotion = false;
-
-        if (!state.isPickup) {
-          if (freeThreshold != null && subtotal >= freeThreshold) {
-            shippingCost = 0;
-            isFreeByPromotion =
-                true;
-          } else {
-            shippingCost = baseRate;
-          }
-        }
-
-        final discount = 0;
+        final preview = state.orderPreview;
+        final subtotal = preview?.subtotal ?? 0;
+        final shippingCost = preview?.shippingCost ?? 0;
+        final discount = preview?.discount ?? 0;
+        final total = preview?.total ?? 0;
 
         return Card(
           elevation: 2,
@@ -41,107 +29,86 @@ class OrderSummaryCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Subtotal
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Subtotal:',
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                      style: TextStyle(
+                        color: colorTheme.onSurface,
+                        fontSize: 16,
+                      ),
                     ),
                     Text(
                       CurrencyFormatter.format(subtotal),
-                      style: const TextStyle(fontSize: 16),
+                      style: TextStyle(
+                        color: colorTheme.onSurface,
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
 
+                // Costo de envío
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
+                    Text(
                       'Costo de envío:',
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                      style: TextStyle(
+                        color: colorTheme.onSurface,
+                        fontSize: 16,
+                      ),
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(
-                          shippingCost == 0
-                              ? 'Gratis'
-                              : CurrencyFormatter.format(shippingCost),
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: shippingCost == 0
-                                ? Colors.green
-                                : Colors.black,
-                            fontWeight: shippingCost == 0
-                                ? FontWeight.bold
-                                : FontWeight.normal,
-                          ),
-                        ),
-                        if (isFreeByPromotion)
-                          Text(
-                            '¡Alcanzaste el mínimo!',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.green.shade700,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                      ],
+                    Text(
+                      shippingCost == 0
+                          ? 'Gratis'
+                          : CurrencyFormatter.format(shippingCost),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: shippingCost == 0
+                            ? colorTheme.primary
+                            : colorTheme.onSurface,
+                        fontWeight: shippingCost == 0
+                            ? FontWeight.bold
+                            : FontWeight.normal,
+                      ),
                     ),
                   ],
                 ),
 
-                if (state.appliedCoupon != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Descuento (${state.appliedCoupon!.code}):',
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '-${state.discountAmount.toCurrencyFormat}',
-                          style: const TextStyle(
-                            color: Colors.green,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                if (discount > 0) ...[
+                // Descuento por cupón (Si existe y es mayor a 0)
+                if (state.appliedCoupon != null && discount > 0) ...[
                   const SizedBox(height: 8),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'Descuento:',
-                        style: TextStyle(color: Colors.grey, fontSize: 16),
+                      Text(
+                        'Descuento (${state.appliedCoupon!.code}):',
+                        style: TextStyle(
+                          color: colorTheme.primary,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                       Text(
                         '- ${CurrencyFormatter.format(discount)}',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Colors.green,
+                        style: TextStyle(
+                          color: colorTheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
                 ],
+
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 12.0),
                   child: Divider(),
                 ),
+
+                // Total Final
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -153,12 +120,11 @@ class OrderSummaryCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      (subtotal + shippingCost - state.discountAmount)
-                          .toCurrencyFormat,
-                      style: const TextStyle(
+                      CurrencyFormatter.format(total),
+                      style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E3A8A),
+                        color: colorTheme.secondaryContainer,
                       ),
                     ),
                   ],

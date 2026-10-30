@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/user_profile.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fruti_express_jahr_admin/core/di/injection_container.dart';
@@ -25,25 +26,41 @@ abstract class RouteGuard {
       return isPublicRoute ? null : AuthRoutes.loginPath;
     }
 
-    final profile = authState.profile;
+    final user = authState.user;
 
-    if (isPublicRoute) {
-      if (profile.isStaff) return AdminShellRoutes.dashboardPath;
-      if (profile.isDeliveryPerson) return OrderRoutes.driverDashboardPath;
+    if (!user.profile.isComplete) {
+      return currentPath == AuthRoutes.completeProfilePath
+          ? null
+          : AuthRoutes.completeProfilePath;
+    }
+
+    if (currentPath == AuthRoutes.completeProfilePath) {
+      if (user.isStaff) return AdminShellRoutes.dashboardPath;
+      if (user.isDeliveryPerson) return OrderRoutes.driverDashboardPath;
       return CustomerShellRoutes.homePath;
     }
 
-    if (currentPath.startsWith('/dashboard') && !profile.isStaff) {
-      return profile.isDeliveryPerson 
+    if (isPublicRoute) {
+      if (user.isStaff) return AdminShellRoutes.dashboardPath;
+      if (user.isDeliveryPerson) return OrderRoutes.driverDashboardPath;
+      return CustomerShellRoutes.homePath;
+    }
+
+    if (currentPath.startsWith('/dashboard') && !user.isStaff) {
+      return user.isDeliveryPerson 
           ? OrderRoutes.driverDashboardPath 
           : CustomerShellRoutes.homePath;
     }
 
-    if (currentPath == BranchRoutes.listPath && !profile.canCreateBranch) {
+    if (currentPath == BranchRoutes.listPath && !user.canCreateBranch) {
       return AdminShellRoutes.dashboardPath;
     }
 
-    if (currentPath == UserRoutes.adminUsersPath && !profile.canManageUsers) {
+    if (currentPath.startsWith('/branches') && !user.canCreateBranch) {
+      return AdminShellRoutes.dashboardPath;
+    }
+
+    if (currentPath == UserRoutes.adminUsersPath && !user.canManageUsers) {
       return AdminShellRoutes.dashboardPath;
     }
 

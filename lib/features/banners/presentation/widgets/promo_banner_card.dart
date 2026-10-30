@@ -15,30 +15,35 @@ class PromoBannerCard extends StatelessWidget {
     required this.onStatusChanged,
   });
 
-  Color _hexToColor(String hexString) {
+  // 👇 Ahora recibe un fallback color dinámico basado en el tema
+  Color _hexToColor(String hexString, Color fallback) {
     try {
       final buffer = StringBuffer();
       if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
       buffer.write(hexString.replaceFirst('#', ''));
       return Color(int.parse(buffer.toString(), radix: 16));
     } catch (e) {
-      return Colors.grey.shade300;
+      return fallback;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final startColor = _hexToColor(banner.startColor); 
-    final endColor = _hexToColor(banner.endColor); 
+    // 👇 Extraemos el esquema de colores general
+    final colors = Theme.of(context).colorScheme;
+    
+    // Pasamos surfaceContainerHighest como color por defecto si el HEX falla
+    final startColor = _hexToColor(banner.startColor, colors.surfaceContainerHighest); 
+    final endColor = _hexToColor(banner.endColor, colors.surfaceContainerHighest); 
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.surface, // 👈 Reemplaza Colors.white
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withValues(alpha: 0.1),
+            color: colors.shadow.withValues(alpha: 0.2), // 👈 Usa el color de sombra nativo del tema
             blurRadius: 6,
             offset: const Offset(0, 3),
           ),
@@ -74,10 +79,10 @@ class PromoBannerCard extends StatelessWidget {
                         banner.imageUrl!,
                         height: 100,
                         fit: BoxFit.contain,
-                        errorBuilder: (_, __, ___) => const Icon(
+                        errorBuilder: (_, __, ___) => Icon(
                           Icons.broken_image,
                           size: 40,
-                          color: Colors.grey,
+                          color: colors.onSurfaceVariant, // 👈 Reemplaza Colors.grey
                         ),
                       ),
                     ),
@@ -89,9 +94,9 @@ class PromoBannerCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      banner.title, // titulo -> title
-                      style: const TextStyle(
-                        color: Colors.black54,
+                      banner.title,
+                      style: TextStyle(
+                        color: colors.onSurfaceVariant, // 👈 Reemplaza Colors.black54
                         fontWeight: FontWeight.w500,
                         fontSize: 13,
                       ),
@@ -101,19 +106,19 @@ class PromoBannerCard extends StatelessWidget {
                     const SizedBox(height: 2),
                     Text(
                       banner.discount,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: colors.onSurface, // 👈 Reemplaza Colors.black87
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       banner.subtitle, 
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 11,
-                        color: Colors.black54,
+                        color: colors.onSurfaceVariant, // 👈 Reemplaza Colors.black54
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -136,16 +141,16 @@ class PromoBannerCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
+                        color: colors.surfaceContainer, // 👈 Reemplaza Colors.grey.shade100
                         borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.grey.shade300),
+                        border: Border.all(color: colors.outlineVariant), // 👈 Reemplaza Colors.grey.shade300
                       ),
                       child: Text(
                         'Posición: ${banner.sortOrder}', 
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: colors.onSurface, // 👈 Reemplaza Colors.black
                         ),
                       ),
                     ),
@@ -156,8 +161,8 @@ class PromoBannerCard extends StatelessWidget {
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
                         color: banner.isActive
-                            ? Colors.green.shade700
-                            : Colors.grey,
+                            ? colors.primary 
+                            : colors.onSurfaceVariant,
                       ),
                     ),
                     const SizedBox(width: 4),
@@ -165,7 +170,6 @@ class PromoBannerCard extends StatelessWidget {
                       scale: 0.8,
                       child: Switch(
                         value: banner.isActive,
-                        activeThumbColor: const Color(0xFF1E3A8A),
                         onChanged: onStatusChanged,
                       ),
                     ),
@@ -174,17 +178,17 @@ class PromoBannerCard extends StatelessWidget {
                 Row(
                   children: [
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.edit_outlined,
-                        color: Colors.blueAccent,
+                        color: colors.primary,
                       ),
                       tooltip: 'Editar Banner',
                       onPressed: onEdit,
                     ),
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.delete_outline_rounded,
-                        color: Colors.redAccent,
+                        color: colors.error, // 👈 Reemplaza Colors.redAccent
                       ),
                       tooltip: 'Eliminar Banner',
                       onPressed: onDelete,

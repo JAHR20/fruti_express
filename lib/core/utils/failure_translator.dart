@@ -1,3 +1,6 @@
+import 'package:fruti_express_jahr_admin/core/utils/unit_formatter.dart';
+import 'package:fruti_express_jahr_admin/features/products/domain/enums/measurement_unit.dart';
+
 import '../errors/failure_code.dart';
 import '../errors/failures.dart';
 
@@ -103,8 +106,22 @@ String translateFailure(Failure failure) {
 
     case FailureCode.insufficientStock:
       final productName = params?['productName'] ?? 'producto';
-      final stock = params?['stock'] ?? '0';
-      return 'El producto "$productName" se ha agotado o no tiene suficiente stock. (Disponibles: $stock)';
+      final rawStock = params?['stock'] ?? 0;
+      final stockInt = rawStock is int
+          ? rawStock
+          : int.tryParse(rawStock.toString()) ?? 0;
+      final unitName = params?['unit'] as String?;
+      final unit = MeasurementUnit.values.firstWhere(
+        (e) => e.name == unitName,
+        orElse: () => MeasurementUnit.piece,
+      );
+      final formattedStock = unit.format(stockInt);
+      return 'El producto $productName no tiene suficiente stock. (Solo hay disponibles: $formattedStock)';
+
+    case FailureCode.localCartLoadError:
+      return 'Error al cargar el carrito local.';
+    case FailureCode.branchNotSelected:
+      return 'Selecciona una sucursal de entrega primero.';
 
     // --- Branches (Sucursales) ---
     case FailureCode.missingRequiredFields:
@@ -155,8 +172,8 @@ String translateFailure(Failure failure) {
     case FailureCode.invalidBranchId:
       return 'El ID de la sucursal proporcionado es necesario.';
 
-    case FailureCode.invalidFileName:
-      return 'El nombre del archivo de la imagen no puede estar vacío.';
+    case FailureCode.productNameRequiredForImage:
+      return 'El nombre del producto es obligatorio para agregar la imagen.';
 
     case FailureCode.invalidCategoryName:
       return 'El nombre de la categoría no puede estar vacío.';
@@ -217,6 +234,13 @@ String translateFailure(Failure failure) {
       return 'El radio máximo de entrega debe ser mayor a 0 km.';
     case FailureCode.invalidDistanceRange:
       return 'La distancia mínima no puede ser mayor o igual a la máxima.';
+    case FailureCode.ratesMustCoverFullRadius:
+      return 'Las tarifas deben cubrir el radio completo de entrega.';
+    case FailureCode.ratesHaveGap:
+      return 'Hay un hueco entre las tarifas de envío.';
+    case FailureCode.ratesBranchMismatch:
+      return 'La tarifa no corresponde a esta sucursal.';
+
     case FailureCode.invalidShippingCost:
       return 'El costo de envío no puede ser negativo.';
     case FailureCode.invalidAmount:
@@ -227,6 +251,15 @@ String translateFailure(Failure failure) {
       return 'No hay tarifas de envío activas en esta sucursal.';
     case FailureCode.noRateForDistance:
       return 'No se encontró una tarifa que cubra esta distancia. El domicilio está fuera del rango de tarifas.';
+    case FailureCode.outsideCoverage:
+      return 'Tu código postal no tiene cobertura en esta sucursal. '
+          'Elige otra dirección o pasa a recoger.';
+    case FailureCode.outsideDeliveryZone:
+      return 'Tu dirección está fuera de la zona de entrega. '
+          'Elige otra dirección o pasa a recoger.';
+    case FailureCode.invalidDeliveryAddress:
+      return 'No pudimos validar tu dirección de entrega. '
+          'Revisa o elige otra dirección.';
 
     case FailureCode.invalidDiscountValue:
       return 'El valor del descuento debe ser mayor a cero.';
@@ -255,5 +288,7 @@ String translateFailure(Failure failure) {
 
     case FailureCode.invalidUsageLimit:
       return 'El límite de usos debe ser mayor a cero.';
+    case FailureCode.orderPreviewUnavailable:
+      return 'No se pudo calcular la vista previa del pedido. Intenta de nuevo.';
   }
 }

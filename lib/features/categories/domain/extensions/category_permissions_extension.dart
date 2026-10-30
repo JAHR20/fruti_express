@@ -1,8 +1,8 @@
 import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 
-extension CategoryPermissionsX on Profile {
+extension CategoryPermissionsX on AppUser {
   bool get canCreateCategory => isAdmin;
 
   bool get canEditCategory => isAdmin;

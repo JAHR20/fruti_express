@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
-import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart'; // Asegúrate de importar tus códigos
+import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/promo_banner.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/repositories/promo_banner_repository.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart'; // Perfil -> Profile
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 
 class UpdatePromoBannerUseCase { 
@@ -13,7 +13,7 @@ class UpdatePromoBannerUseCase {
   UpdatePromoBannerUseCase(this._repository);
 
   ResultTask<PromoBanner> execute({ 
-    required Profile currentUser, 
+    required AppUser currentUser, 
     required PromoBanner banner,
     File? imageFile, 
   }) {

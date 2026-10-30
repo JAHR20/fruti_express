@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/inventory/domain/use_cases/get_inventory_by_branch_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/inventory/domain/use_cases/increase_stock_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/inventory/domain/use_cases/decrease_stock_use_case.dart';
@@ -58,11 +58,11 @@ class InventoryCubit extends Cubit<InventoryState> {
   }
 
   Future<void> adjustManualStock({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String productId,
     required String branchId,
     required int quantity,
-    required bool isIncrease, // esAumento -> isIncrease
+    required bool isIncrease, 
   }) async {
     emit(
       state.copyWith(
@@ -112,7 +112,6 @@ class InventoryCubit extends Cubit<InventoryState> {
 
         await loadInventory(branchId);
 
-        // Limpiamos la bandera de éxito para futuros eventos en la UI
         emit(state.copyWith(operationSuccessful: false));
       },
     );

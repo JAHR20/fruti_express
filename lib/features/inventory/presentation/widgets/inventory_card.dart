@@ -8,8 +8,8 @@ class InventoryCard extends StatelessWidget {
   final Inventory item;
   final Product product;
   final bool isUpdating;
-  final VoidCallback onIncrease; 
-  final VoidCallback onDecrease; 
+  final VoidCallback onIncrease;
+  final VoidCallback onDecrease;
 
   const InventoryCard({
     super.key,
@@ -22,17 +22,23 @@ class InventoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     final isCritical = item.isCriticalStock(product);
-    final themeColor = isCritical ? Colors.red : Colors.green.shade700;
-    final figureBgColor = isCritical ? Colors.red.shade50 : Colors.green.shade50;
+    final themeColor = isCritical ? colors.error : colors.onPrimaryContainer;
+    final figureBgColor = isCritical
+        ? colors.errorContainer
+        : colors.primaryContainer;
     final figureBorderColor = isCritical
-        ? Colors.red.shade200
-        : Colors.green.shade200;
+        ? colors.error.withValues(alpha: 0.5)
+        : colors.primary.withValues(alpha: 0.5);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12, left: 16, right: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
+      color: colors.surface,
+      shadowColor: colors.shadow.withValues(alpha: 0.7),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
@@ -43,16 +49,17 @@ class InventoryCard extends StatelessWidget {
               child: Container(
                 width: 60,
                 height: 60,
-                color: Colors.grey.shade200,
-                child:
-                    product.imageUrl != null && product.imageUrl!.isNotEmpty
+                color: colors.surfaceContainerHighest,
+                child: product.imageUrl != null && product.imageUrl!.isNotEmpty
                     ? Image.network(
                         product.imageUrl!.trim(),
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) =>
-                            const Icon(Icons.broken_image, color: Colors.grey),
+                        errorBuilder: (_, __, ___) => Icon(
+                          Icons.broken_image,
+                          color: colors.onSurfaceVariant,
+                        ),
                       )
-                    : const Icon(Icons.image, color: Colors.grey),
+                    : Icon(Icons.image, color: colors.onSurfaceVariant),
               ),
             ),
             const SizedBox(width: 12),
@@ -62,9 +69,10 @@ class InventoryCard extends StatelessWidget {
                 children: [
                   Text(
                     product.name,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
+                      color: colors.onSurface,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -73,9 +81,9 @@ class InventoryCard extends StatelessWidget {
                   Row(
                     children: [
                       Text(
-                        item.finalPrice(product).toCurrencyFormat, 
+                        item.finalPrice(product).toCurrencyFormat,
                         style: TextStyle(
-                          color: Colors.green.shade800,
+                          color: colors.primary,
                           fontSize: 15,
                           fontWeight: FontWeight.bold,
                         ),
@@ -84,8 +92,8 @@ class InventoryCard extends StatelessWidget {
                         const SizedBox(width: 8),
                         Text(
                           product.currentPrice.toCurrencyFormat,
-                          style: const TextStyle(
-                            color: Colors.grey,
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
                             fontSize: 12,
                             decoration: TextDecoration.lineThrough,
                           ),
@@ -97,13 +105,13 @@ class InventoryCard extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.orange.shade100,
+                            color: colors.secondaryContainer,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Local',
                             style: TextStyle(
-                              color: Colors.orange,
+                              color: colors.onSecondaryContainer,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -112,9 +120,9 @@ class InventoryCard extends StatelessWidget {
                       ] else if (item.hasGlobalDiscount(product)) ...[
                         const SizedBox(width: 8),
                         Text(
-                          product.comparisonPrice!.toCurrencyFormat, 
-                          style: const TextStyle(
-                            color: Colors.grey,
+                          product.comparisonPrice!.toCurrencyFormat,
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
                             fontSize: 12,
                             decoration: TextDecoration.lineThrough,
                           ),
@@ -126,13 +134,13 @@ class InventoryCard extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.blue.shade100,
+                            color: colors.tertiaryContainer,
                             borderRadius: BorderRadius.circular(4),
                           ),
-                          child: const Text(
+                          child: Text(
                             'Oferta',
                             style: TextStyle(
-                              color: Colors.blue,
+                              color: colors.onTertiaryContainer,
                               fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
@@ -150,48 +158,49 @@ class InventoryCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.remove_circle_outline,
-                    color: Colors.orange,
+                    color: colors.secondary,
                   ),
                   onPressed: isUpdating ? null : onDecrease,
                 ),
-                Container(
-                  width: 60,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: figureBgColor,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: figureBorderColor),
-                  ),
-                  child: isUpdating
-                      ? SizedBox(
-                          width: 16,
-                          height: 16,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: themeColor,
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minWidth: 60),
+                  child: Container(
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 5,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: figureBgColor,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: figureBorderColor),
+                    ),
+                    child: isUpdating
+                        ? SizedBox(
+                            width: 16,
+                            height: 16,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: themeColor,
+                            ),
+                          )
+                        : Text(
+                            product.measurementUnit.format(item.availableStock),
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: themeColor,
+                            ),
                           ),
-                        )
-                      : Text(
-                          product.measurementUnit.format(item.availableStock),
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: themeColor,
-                          ),
-                        ),
+                  ),
                 ),
 
                 IconButton(
-                  icon: const Icon(
-                    Icons.add_circle_outline,
-                    color: Colors.green,
-                  ),
+                  icon: Icon(Icons.add_circle_outline, color: colors.primary),
                   onPressed: isUpdating ? null : onIncrease,
                 ),
               ],

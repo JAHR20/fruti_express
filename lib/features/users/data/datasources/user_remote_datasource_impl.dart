@@ -1,96 +1,114 @@
-import 'package:fruti_express_jahr_admin/features/users/data/models/profile_model.dart';
+import 'package:flutter/widgets.dart';
+import 'package:fruti_express_jahr_admin/features/users/data/models/app_user_model.dart';
+import 'package:fruti_express_jahr_admin/features/users/data/models/user_profile_model.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'user_remote_datasource.dart';
 
 class UserRemoteDatasourceImpl implements UserRemoteDatasource {
   final SupabaseClient supabase;
-  
-  static const String _tableName = 'profiles'; 
+
+  static const String _tableName = 'app_users';
+  static const String _profileTable = 'user_profiles';
+  static const String _joinSelect = '*, user_profiles(*)';
   static const String _colId = 'id';
-  static const String _colFirstName = 'first_name';
-  static const String _colEmail = 'email';
+  static const String _searchAppUsers = 'search_app_users';
+  static const String _searchQuery = 'search_query';
   static const String _colRole = 'role';
   static const String _colBranchId = 'branch_id';
   static const String _colIsActive = 'is_active';
+  static const String _colFirstName = 'first_name';
 
   UserRemoteDatasourceImpl(this.supabase);
 
   @override
-  Future<List<ProfileModel>> getAll() async {
-    final response = await supabase.from(_tableName).select().order(_colFirstName);
+  Future<List<AppUserModel>> getAll() async {
+    final response = await supabase
+        .from(_tableName)
+        .select(_joinSelect)
+        .order(_colFirstName, referencedTable: _profileTable);
 
     return (response as List)
-        .map((json) => ProfileModel.fromJson(json))
+        .map((json) => AppUserModel.fromJson(json))
         .toList();
   }
 
   @override
-  Future<ProfileModel?> getById(String id) async {
+  Future<AppUserModel?> getById(String id) async {
     final response = await supabase
         .from(_tableName)
-        .select()
+        .select(_joinSelect)
         .eq(_colId, id)
         .maybeSingle();
 
-    return response != null ? ProfileModel.fromJson(response) : null;
+    return response != null ? AppUserModel.fromJson(response) : null;
   }
 
   @override
-  Future<List<ProfileModel>> searchUsers(String query) async {
-    final response = await supabase
-        .from(_tableName)
-        .select()
-        .or('$_colFirstName.ilike.%$query%,$_colEmail.ilike.%$query%')
-        .order(_colFirstName);
+  Future<List<AppUserModel>> searchUsers(String query) async {
+    final response = await supabase.rpc(
+      _searchAppUsers,
+      params: {_searchQuery: query},
+    );
 
     return (response as List)
-        .map((json) => ProfileModel.fromJson(json))
+        .map(
+          (row) => AppUserModel.fromJson(row['result'] as Map<String, dynamic>),
+        )
         .toList();
   }
 
   @override
-  Future<List<ProfileModel>> getDeliveryPersons({String? branchId}) async {
-    var query = supabase.from(_tableName).select().eq(_colRole, 'deliveryPerson');
-    
+  Future<List<AppUserModel>> getDeliveryPersons({String? branchId}) async {
+    var query = supabase
+        .from(_tableName)
+        .select(_joinSelect)
+        .eq(_colRole, UserRole.deliveryPerson.name);
+
     if (branchId != null) {
       query = query.eq(_colBranchId, branchId);
     }
 
-    final response = await query.order(_colFirstName);
+    final response = await query.order(
+      _colFirstName,
+      referencedTable: _profileTable,
+    );
     return (response as List)
-        .map((json) => ProfileModel.fromJson(json))
+        .map((json) => AppUserModel.fromJson(json))
         .toList();
   }
 
   @override
-  Future<ProfileModel> updateProfile(ProfileModel model) async {
+  Future<UserProfileModel> updateProfile(UserProfileModel model) async {
     final response = await supabase
-        .from(_tableName)
+        .from(_profileTable)
         .update(model.toJson())
         .eq(_colId, model.id)
         .select()
         .single();
 
-    return ProfileModel.fromJson(response);
+    return UserProfileModel.fromJson(response);
   }
 
   @override
-  Future<ProfileModel> changeRole({
+  Future<AppUserModel> changeRole({
     required String id,
     required String role,
+    String? branchId,
   }) async {
+    debugPrint('changeRole -> id=$id role=$role branchId=$branchId');
     final response = await supabase
         .from(_tableName)
-        .update({_colRole: role})
+        .update({_colRole: role, _colBranchId: branchId})
         .eq(_colId, id)
-        .select()
+        .select(_joinSelect)
         .single();
 
-    return ProfileModel.fromJson(response);
+    return AppUserModel.fromJson(response);
   }
 
   @override
-  Future<ProfileModel> changeStatus({
+  Future<AppUserModel> changeStatus({
     required String id,
     required bool active,
   }) async {
@@ -98,10 +116,10 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource {
         .from(_tableName)
         .update({_colIsActive: active})
         .eq(_colId, id)
-        .select()
+        .select(_joinSelect)
         .single();
 
-    return ProfileModel.fromJson(response);
+    return AppUserModel.fromJson(response);
   }
 
   @override
@@ -124,7 +142,7 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource {
     final response = await supabase
         .from(_tableName)
         .select(_colId)
-        .eq(_colRole, 'manager')
+        .eq(_colRole, UserRole.manager.name)
         .eq(_colBranchId, branchId)
         .maybeSingle();
 
@@ -132,15 +150,15 @@ class UserRemoteDatasourceImpl implements UserRemoteDatasource {
   }
 
   @override
-  Future<List<ProfileModel>> getByBranch(String branchId) async {
+  Future<List<AppUserModel>> getByBranch(String branchId) async {
     final response = await supabase
         .from(_tableName)
-        .select()
+        .select(_joinSelect)
         .eq(_colBranchId, branchId)
-        .eq(_colRole, 'customer');
+        .eq(_colRole, UserRole.customer.name);
 
     return (response as List)
-        .map((json) => ProfileModel.fromJson(json))
+        .map((json) => AppUserModel.fromJson(json))
         .toList();
   }
 }

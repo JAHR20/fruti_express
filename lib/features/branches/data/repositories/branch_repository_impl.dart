@@ -35,27 +35,24 @@ class BranchRepositoryImpl
   }, handleException);
 
   @override
-  ResultTask<Branch> create(Branch branch) =>
-      TaskEither.tryCatch(() async {
-        final model = BranchModelX.fromDomain(branch);
-        final created = await remoteDatasource.create(model);
-        return created.toDomain();
-      }, handleException);
+  ResultTask<Branch> create(Branch branch) => TaskEither.tryCatch(() async {
+    final model = BranchModelX.fromDomain(branch);
+    final created = await remoteDatasource.create(model);
+    return created.toDomain();
+  }, handleException);
 
   @override
-  ResultTask<Branch> update(Branch branch) =>
-      TaskEither.tryCatch(() async {
-        final model = BranchModelX.fromDomain(branch);
-        final updated = await remoteDatasource.update(model);
-        return updated.toDomain();
-      }, handleException);
+  ResultTask<Branch> update(Branch branch) => TaskEither.tryCatch(() async {
+    final model = BranchModelX.fromDomain(branch);
+    final updated = await remoteDatasource.update(model);
+    return updated.toDomain();
+  }, handleException);
 
   @override
-  ResultTask<Branch?> getByName(String name) =>
-      TaskEither.tryCatch(() async {
-        final model = await remoteDatasource.getByName(name);
-        return model?.toDomain();
-      }, handleException);
+  ResultTask<Branch?> getByName(String name) => TaskEither.tryCatch(() async {
+    final model = await remoteDatasource.getByName(name);
+    return model?.toDomain();
+  }, handleException);
 
   @override
   ResultStream<List<Branch>> watchAll() {
@@ -70,11 +67,16 @@ class BranchRepositoryImpl
   }
 
   @override
-  ResultTask<List<String>> getCoverage(String branchId) =>
-      TaskEither.tryCatch(
-        () => remoteDatasource.getCoverage(branchId),
-        handleException,
-      );
+  ResultTask<List<String>> getCoverage(String branchId) => TaskEither.tryCatch(
+    () => remoteDatasource.getCoverage(branchId),
+    handleException,
+  );
+  
+  @override
+  ResultTask<Set<String>> getBranchesWithConfiguredRates() =>
+      TaskEither.tryCatch(() async {
+        return await remoteDatasource.getBranchesWithRates();
+      }, handleException);
 
   @override
   ResultTask<Unit> updateCoverage({
@@ -91,9 +93,7 @@ class BranchRepositoryImpl
   @override
   ResultTask<Branch?> getByPostalCode(String postalCode) =>
       TaskEither.tryCatch(() async {
-        final model = await remoteDatasource.getByPostalCode(
-          postalCode,
-        );
+        final model = await remoteDatasource.getByPostalCode(postalCode);
         return model?.toDomain();
       }, handleException);
 }

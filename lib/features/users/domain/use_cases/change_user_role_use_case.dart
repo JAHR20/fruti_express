@@ -2,7 +2,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/repositories/user_repository.dart';
@@ -12,8 +12,8 @@ class ChangeUserRoleUseCase {
 
   ChangeUserRoleUseCase(this.repository);
 
-  ResultTask<Profile> execute({
-    required Profile currentUser,
+  ResultTask<AppUser> execute({
+    required AppUser currentUser,
     required String targetUserId,
     required UserRole newRole,
     String? assignedBranchId,
@@ -23,7 +23,7 @@ class ChangeUserRoleUseCase {
 
       await $(_validateLastAdmin(targetUser, newRole));
 
-      final updatedProfile = await $(
+      final updatedUser = await $(
         _processRoleChange(
           editor: currentUser,
           target: targetUser,
@@ -32,11 +32,16 @@ class ChangeUserRoleUseCase {
         ),
       );
 
-      return await $(repository.update(updatedProfile));
+      // 👇 antes: repository.update(updatedProfile)
+      return await $(repository.changeRole(
+        id: updatedUser.id,
+        newRole: updatedUser.role,
+        branchId: updatedUser.branchId,
+      ));
     });
   }
 
-  ResultTask<Unit> _validateLastAdmin(Profile target, UserRole newRole) {
+  ResultTask<Unit> _validateLastAdmin(AppUser target, UserRole newRole) {
     if (target.isAdmin && newRole != UserRole.admin) {
       return repository.countActiveAdmins().flatMap(
         (total) => total > 1
@@ -49,9 +54,9 @@ class ChangeUserRoleUseCase {
     return TaskEither.right(unit);
   }
 
-  ResultTask<Profile> _processRoleChange({
-    required Profile editor,
-    required Profile target,
+  ResultTask<AppUser> _processRoleChange({
+    required AppUser editor,
+    required AppUser target,
     required UserRole newRole,
     String? branchId,
   }) {
@@ -67,16 +72,16 @@ class ChangeUserRoleUseCase {
     }
   }
 
-  ResultTask<Profile> _assignAdmin(Profile editor, Profile target) =>
+  ResultTask<AppUser> _assignAdmin(AppUser editor, AppUser target) =>
       editor.canMakeUserAdmin
-      ? TaskEither.right(target.copyWith(role: UserRole.admin, branchId: null))
-      : TaskEither.left(
-          const Failure.unauthorized(FailureCode.onlyAdminCanAssignRole),
-        );
+          ? TaskEither.right(target.copyWith(role: UserRole.admin, branchId: null))
+          : TaskEither.left(
+              const Failure.unauthorized(FailureCode.onlyAdminCanAssignRole),
+            );
 
-  ResultTask<Profile> _assignManager(
-    Profile editor,
-    Profile target,
+  ResultTask<AppUser> _assignManager(
+    AppUser editor,
+    AppUser target,
     String? branchId,
   ) {
     if (!editor.canMakeUserManager) {
@@ -95,9 +100,7 @@ class ChangeUserRoleUseCase {
         .flatMap(
           (exists) => exists
               ? TaskEither.left(
-                  const Failure.alreadyExists(
-                    FailureCode.branchAlreadyHasManager,
-                  ),
+                  const Failure.alreadyExists(FailureCode.branchAlreadyHasManager),
                 )
               : TaskEither.right(
                   target.copyWith(role: UserRole.manager, branchId: branchId),
@@ -105,9 +108,9 @@ class ChangeUserRoleUseCase {
         );
   }
 
-  ResultTask<Profile> _assignDeliveryPerson(
-    Profile editor,
-    Profile target,
+  ResultTask<AppUser> _assignDeliveryPerson(
+    AppUser editor,
+    AppUser target,
     String? branchId,
   ) {
     if (branchId == null) {
@@ -125,9 +128,9 @@ class ChangeUserRoleUseCase {
           );
   }
 
-  ResultTask<Profile> _assignBasicRole(
-    Profile editor,
-    Profile target,
+  ResultTask<AppUser> _assignBasicRole( // 👈 Profile → AppUser
+    AppUser editor,                     // 👈 Profile → AppUser
+    AppUser target,                     // 👈 Profile → AppUser
     UserRole role,
   ) => editor.isAdmin
       ? TaskEither.right(target.copyWith(role: role, branchId: null))

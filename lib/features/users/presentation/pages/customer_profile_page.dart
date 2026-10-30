@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fruti_express_jahr_admin/features/addresses/presentation/router/address_routes.dart';
-import 'package:fruti_express_jahr_admin/features/users/presentation/router/user_routes.dart';
+import 'package:fruti_express_jahr_admin/config/menu/customer_profile_menu_items.dart';
+import 'package:fruti_express_jahr_admin/core/widgets/confirm_dialog.dart';
 import 'package:fruti_express_jahr_admin/features/users/presentation/widgets/profile_option_tile.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
@@ -13,68 +13,75 @@ class CustomerProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final profile =
-        (context.read<AuthCubit>().state as AuthAuthenticated).profile;
+    final profile = (context.read<AuthCubit>().state as AuthAuthenticated).user;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: colorScheme.surfaceContainerHighest,
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Mi Perfil',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(
+            color: colorScheme.onPrimary, 
+            fontWeight: FontWeight.bold
+          ),
         ),
-        backgroundColor: const Color(0xFF1E3A8A),
+        backgroundColor: colorScheme.primary,
         automaticallyImplyLeading: false,
       ),
+      // 1. Garantizamos que toda la pantalla sea scrolleable para evitar overflows
       body: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 100, top: 0), // Espacio inferior para el scroll
+        
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ProfileHeader(profile: profile),
+            ProfileHeader(user: profile),
             const SizedBox(height: 8),
+
+            // 2. SECCIÓN: MI CUENTA (Generada dinámicamente con los ítems)
             const ProfileSectionTitle(title: 'Mi cuenta'),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: colorScheme.shadow.withValues(alpha: 0.04),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
               child: Column(
-                children: [
-                  ProfileOptionTile(
-                    icon: Icons.person_outline,
-                    title: 'Editar perfil',
-                    subtitle: 'Nombre, teléfono, alias',
-                    onTap: () => context.pushNamed(UserRoutes.editProfileName),
-                  ),
-                  const Divider(height: 1, indent: 56),
-
-                  ProfileOptionTile(
-                    icon: Icons.location_on_outlined,
-                    title: 'Mis direcciones',
-                    subtitle: 'Agrega o edita tus direcciones',
-                    onTap: () => context.pushNamed(AddressRoutes.myAddressesName),
-                  ),
-                ],
+                children: customerAccountItems.map((item) {
+                  final bool isLast = item == customerAccountItems.last;
+                  return Column(
+                    children: [
+                      ProfileOptionTile(
+                        icon: item.icon,
+                        title: item.title,
+                        subtitle: item.subtitle,
+                        onTap: () => context.pushNamed(item.routeName),
+                      ),
+                      if (!isLast) const Divider(height: 1, indent: 56),
+                    ],
+                  );
+                }).toList(),
               ),
             ),
 
+            // 3. SECCIÓN: SESIÓN (¡Aquí está de regreso el botón de cerrar sesión con su tarjeta y diálogo!)
             const ProfileSectionTitle(title: 'Sesión'),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.04),
+                    color: colorScheme.shadow.withValues(alpha: 0.04),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),
@@ -83,37 +90,30 @@ class CustomerProfilePage extends StatelessWidget {
               child: ProfileOptionTile(
                 icon: Icons.logout,
                 title: 'Cerrar sesión',
+                subtitle: 'Salir de tu cuenta actual',
                 isDestructive: true,
-                onTap: () => _confirmLogout(context),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return ConfirmDialog(
+                        title: 'Cerrar Sesión',
+                        message:
+                            '¿Estás seguro de que deseas cerrar tu sesión en Fruti Express?',
+                        confirmText: 'Salir',
+                        cancelText: 'Cancelar',
+                        confirmColor: colorScheme.error,
+                        onConfirm: () {
+                          context.read<AuthCubit>().logout();
+                        },
+                      );
+                    },
+                  );
+                },
               ),
             ),
-            const SizedBox(height: 32),
           ],
         ),
-      ),
-    );
-  }
-
-  void _confirmLogout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Cerrar sesión'),
-        content: const Text('¿Estás seguro que deseas cerrar sesión?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancelar'),
-          ),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              context.read<AuthCubit>().logout();
-            },
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Cerrar sesión'),
-          ),
-        ],
       ),
     );
   }

@@ -4,11 +4,11 @@ import 'package:fruti_express_jahr_admin/core/enums/delivery_method.dart';
 import 'package:fruti_express_jahr_admin/features/cart/presentation/cubits/cart_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/delivery_preferences/domain/use_cases/get_selected_address_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/delivery_preferences/domain/use_cases/save_selected_address_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/presentation/cubits/product_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/addresses/domain/entities/address.dart';
 import 'package:fruti_express_jahr_admin/features/addresses/presentation/cubits/address_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/entities/branch.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/customer/cubits/customer_products_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/shipping_quote.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/calculate_shipping_quote_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_shipping_cubit.dart';
@@ -17,7 +17,7 @@ import 'customer_coordinator_state.dart';
 
 class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
   final CartCubit _cartCubit;
-  final ProductCubit _productsCubit;
+  final CustomerProductsCubit _customerProductsCubit;
   final BranchCubit _branchCubit;
   final CustomerShippingCubit _customerShippingCubit;
   final AddressCubit _addressCubit;
@@ -35,7 +35,7 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
 
   CustomerCoordinatorCubit({
     required CartCubit cartCubit,
-    required ProductCubit productsCubit,
+    required CustomerProductsCubit customerProductsCubit,
     required BranchCubit branchCubit,
     required CustomerShippingCubit customerShippingCubit,
     required AddressCubit addressCubit,
@@ -43,7 +43,7 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
     required SaveSelectedAddressUseCase saveSelectedAddressUseCase,
     required CalculateShippingQuoteUseCase calculateShippingQuoteUseCase,
   }) : _cartCubit = cartCubit,
-       _productsCubit = productsCubit,
+       _customerProductsCubit = customerProductsCubit,
        _branchCubit = branchCubit,
        _customerShippingCubit = customerShippingCubit,
        _addressCubit = addressCubit,
@@ -207,7 +207,7 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
       _cartCubit.setDeliveryAddress(address);
       _cartCubit.setActiveBranch(winningBranch!.id);
 
-      _productsCubit.loadProductsByBranch(winningBranch!.id);
+      _customerProductsCubit.loadProductsByBranch(winningBranch!.id);
       _saveSelectedAddressUseCase(address.id);
 
       // 3. Buscamos la regla de "Envío Gratis" para la sucursal ganadora

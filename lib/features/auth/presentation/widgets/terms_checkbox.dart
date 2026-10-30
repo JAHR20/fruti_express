@@ -39,7 +39,7 @@ class _TermsCheckboxState extends State<TermsCheckbox> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Terms of Service',
+                'Términos del servicio',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
               ),
               const SizedBox(height: 4),
@@ -51,9 +51,9 @@ class _TermsCheckboxState extends State<TermsCheckbox> {
                     height: 1.4,
                   ),
                   children: [
-                    TextSpan(text: 'I accept the '),
+                    TextSpan(text: 'Acepto los '),
                     TextSpan(
-                      text: 'terms and conditions',
+                      text: 'términos y condiciones',
                       style: TextStyle(
                         color: Color(0xFF1E3A8A),
                         fontWeight: FontWeight.w600,
@@ -61,7 +61,7 @@ class _TermsCheckboxState extends State<TermsCheckbox> {
                     ),
                     TextSpan(
                       text:
-                          ' as well as the privacy policy of this application',
+                          ' así como la política de privacidad de esta aplicación',
                     ),
                   ],
                 ),

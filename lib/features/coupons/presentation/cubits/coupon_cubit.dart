@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import '../../domain/entities/coupon.dart';
 import '../../domain/use_cases/get_coupons_use_case.dart';
 import '../../domain/use_cases/create_coupon_use_case.dart';
@@ -26,7 +26,7 @@ class CouponCubit extends Cubit<CouponState> {
        super(const CouponState());
 
   /// Carga inicial de cupones
-  Future<void> loadCoupons(Profile currentUser) async {
+  Future<void> loadCoupons(AppUser currentUser) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final result = await _getCouponsUseCase
@@ -52,7 +52,7 @@ class CouponCubit extends Cubit<CouponState> {
 
   /// Crea un nuevo cupón
   Future<void> createCoupon({
-    required Profile currentUser,
+    required AppUser currentUser,
     required Coupon coupon,
   }) async {
     emit(
@@ -88,7 +88,7 @@ class CouponCubit extends Cubit<CouponState> {
 
   /// Actualiza un cupón existente
   Future<void> updateCoupon({
-    required Profile currentUser,
+    required AppUser currentUser,
     required Coupon coupon,
   }) async {
     emit(
@@ -124,7 +124,7 @@ class CouponCubit extends Cubit<CouponState> {
 
   /// Desactiva o borra un cupón
   Future<void> changeCouponStatus({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String couponId,
     required bool newState,
   }) async {

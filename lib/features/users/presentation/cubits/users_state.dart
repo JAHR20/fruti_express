@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 part 'users_state.freezed.dart';
 
@@ -12,7 +12,7 @@ enum UsersTab {
 @freezed
 abstract class UsersState with _$UsersState {
   const factory UsersState({
-    @Default([]) List<Profile> users,
+    @Default([]) List<AppUser> users,
     @Default(false) bool isLoading,
     @Default(UsersTab.all) UsersTab tab,
     String? processingUserId,

@@ -4,7 +4,7 @@ import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/entities/product.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/repositories/product_repository.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 
 class ChangeProductStatusUseCase {
@@ -13,7 +13,7 @@ class ChangeProductStatusUseCase {
   ChangeProductStatusUseCase({required this.repository});
 
   ResultTask<Product> execute({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String productId,
     required bool newState,
   }) {
@@ -30,7 +30,7 @@ class ChangeProductStatusUseCase {
     });
   }
 
-  ResultTask<Unit> _validatePermissions(Profile u) => u.canManageCatalog 
+  ResultTask<Unit> _validatePermissions(AppUser u) => u.canManageCatalog 
       ? TaskEither.right(unit)
       : TaskEither.left(const Failure.unauthorized(FailureCode.noPermissionToPerformAction));
 

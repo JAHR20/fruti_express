@@ -7,14 +7,14 @@ import 'package:fruti_express_jahr_admin/core/types/coordinates.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/entities/branch.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/wizard_branch_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/wizard_branch_state.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart'; // Perfil -> Profile
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
-import 'branch_form_widget.dart'; // Tu nuevo widget del paso 2
+import 'branch_form_widget.dart';
 
 class BranchFormBottomSheet extends StatefulWidget {
-  final Branch? branchToEdit; // sucursalAEditar -> branchToEdit
-  final Profile userProfile; // perfilUsuario -> userProfile
-  final VoidCallback onSaveSuccess; // onGuardadoExitoso -> onSaveSuccess
+  final Branch? branchToEdit;
+  final AppUser userProfile;
+  final VoidCallback onSaveSuccess;
 
   const BranchFormBottomSheet({
     super.key,
@@ -24,8 +24,7 @@ class BranchFormBottomSheet extends StatefulWidget {
   });
 
   @override
-  State<BranchFormBottomSheet> createState() =>
-      _BranchFormBottomSheetState();
+  State<BranchFormBottomSheet> createState() => _BranchFormBottomSheetState();
 }
 
 class _BranchFormBottomSheetState extends State<BranchFormBottomSheet> {
@@ -44,33 +43,16 @@ class _BranchFormBottomSheetState extends State<BranchFormBottomSheet> {
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController(
-      text: widget.branchToEdit?.name ?? '',
-    );
-    _streetController = TextEditingController(
-      text: widget.branchToEdit?.street ?? '',
-    );
-    _exteriorNumberController = TextEditingController(
-      text: widget.branchToEdit?.exteriorNumber ?? '',
-    );
-    _postalCodeController = TextEditingController(
-      text: widget.branchToEdit?.postalCode ?? '',
-    );
-    _neighborhoodController = TextEditingController(
-      text: widget.branchToEdit?.neighborhood ?? '',
-    );
-    _municipalityController = TextEditingController(
-      text: widget.branchToEdit?.municipality ?? '',
-    );
-    _stateController = TextEditingController(
-      text: widget.branchToEdit?.state ?? '',
-    );
+    _nameController = TextEditingController(text: widget.branchToEdit?.name ?? '');
+    _streetController = TextEditingController(text: widget.branchToEdit?.street ?? '');
+    _exteriorNumberController = TextEditingController(text: widget.branchToEdit?.exteriorNumber ?? '');
+    _postalCodeController = TextEditingController(text: widget.branchToEdit?.postalCode ?? '');
+    _neighborhoodController = TextEditingController(text: widget.branchToEdit?.neighborhood ?? '');
+    _municipalityController = TextEditingController(text: widget.branchToEdit?.municipality ?? '');
+    _stateController = TextEditingController(text: widget.branchToEdit?.state ?? '');
 
     if (widget.branchToEdit != null) {
-      context.read<WizardBranchCubit>().initializeEdition(
-        widget.branchToEdit!,
-        0,
-      );
+      context.read<WizardBranchCubit>().initializeEdition(widget.branchToEdit!, 0);
     } else {
       context.read<WizardBranchCubit>().changeStep(0);
     }
@@ -88,31 +70,22 @@ class _BranchFormBottomSheetState extends State<BranchFormBottomSheet> {
     super.dispose();
   }
 
-  Future<void> _openMap() async { // _abrirMapa -> _openMap
+  Future<void> _openMap() async {
     final wizardCubit = context.read<WizardBranchCubit>();
     final formState = wizardCubit.state;
 
     Coordinates? currentLocation;
     if (formState.latitude != null && formState.longitude != null) {
-      currentLocation = Coordinates(
-        latitude: formState.latitude!,
-        longitude: formState.longitude!,
-      );
+      currentLocation = Coordinates(latitude: formState.latitude!, longitude: formState.longitude!);
     }
 
-    final selection = await _ubicacionService.selectOnMap(
-      context,
-      initialLocation: currentLocation,
-    );
+    final selection = await _ubicacionService.selectOnMap(context, initialLocation: currentLocation);
     if (selection != null) {
-      wizardCubit.updateField(
-        latitude: selection.latitude,
-        longitude: selection.longitude,
-      );
+      wizardCubit.updateField(latitude: selection.latitude, longitude: selection.longitude);
     }
   }
 
-  void _save() { // _guardar -> _save
+  void _save() {
     if (_formKey.currentState!.validate()) {
       final wizardCubit = context.read<WizardBranchCubit>();
 
@@ -123,35 +96,43 @@ class _BranchFormBottomSheetState extends State<BranchFormBottomSheet> {
         neighborhood: _neighborhoodController.text,
       );
 
-      wizardCubit.saveStep1(
-        currentUser: widget.userProfile,
-        branchToEdit: widget.branchToEdit,
-      );
+      wizardCubit.saveStep1(currentUser: widget.userProfile, branchToEdit: widget.branchToEdit);
+    }
+  }
+
+  void _syncReadOnlyFields(WizardBranchState state) {
+    if (_stateController.text != (state.state ?? '')) {
+      _stateController.text = state.state ?? '';
+    }
+    if (_municipalityController.text != (state.municipality ?? '')) {
+      _municipalityController.text = state.municipality ?? '';
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final isEditing = widget.branchToEdit != null; // esEdicion -> isEditing
+    final colorScheme = Theme.of(context).colorScheme;
+    final isEditing = widget.branchToEdit != null;
 
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      ),
+      constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9),
       child: BlocConsumer<WizardBranchCubit, WizardBranchState>(
         listenWhen: (prev, curr) =>
             prev.isStep1Completed != curr.isStep1Completed ||
-            prev.errorMessage != curr.errorMessage,
+            prev.errorMessage != curr.errorMessage ||
+            prev.state != curr.state ||
+            prev.municipality != curr.municipality,
         listener: (context, formState) {
+          _syncReadOnlyFields(formState);
           if (formState.errorMessage != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(formState.errorMessage!),
-                backgroundColor: Colors.red,
+                backgroundColor: colorScheme.error, 
               ),
             );
           }
@@ -159,9 +140,9 @@ class _BranchFormBottomSheetState extends State<BranchFormBottomSheet> {
             widget.onSaveSuccess();
             Navigator.of(context).pop();
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Guardado correctamente'),
-                backgroundColor: Colors.green,
+              SnackBar(
+                content: const Text('Guardado correctamente'),
+                backgroundColor: colorScheme.primary, 
               ),
             );
           }
@@ -173,22 +154,17 @@ class _BranchFormBottomSheetState extends State<BranchFormBottomSheet> {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Colors.grey.shade300),
-                  ),
+                  border: Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       isEditing ? 'Editar Sucursal' : 'Nueva Sucursal',
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colorScheme.onSurface),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: Icon(Icons.close, color: colorScheme.onSurfaceVariant),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -197,9 +173,9 @@ class _BranchFormBottomSheetState extends State<BranchFormBottomSheet> {
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.all(20),
-                  child: BranchFormWidget( // Llamando a tu nuevo widget
+                  child: BranchFormWidget(
                     formKey: _formKey,
-                    formState: formState, // state -> formState
+                    formState: formState,
                     nameController: _nameController,
                     streetController: _streetController,
                     exteriorNumberController: _exteriorNumberController,
@@ -210,16 +186,28 @@ class _BranchFormBottomSheetState extends State<BranchFormBottomSheet> {
                     latitude: formState.latitude,
                     longitude: formState.longitude,
                     onOpenMap: _openMap,
+                    onNameChanged: (val) => context.read<WizardBranchCubit>().updateField(name: val),
+                    onStreetChanged: (val) => context.read<WizardBranchCubit>().updateField(street: val),
+                    onExteriorNumberChanged: (val) =>
+                        context.read<WizardBranchCubit>().updateField(exteriorNumber: val),
+                    onPostalCodeChanged: (val) {
+                      if (val.length == 5) {
+                        context.read<WizardBranchCubit>().searchByPostalCode(val);
+                        FocusScope.of(context).unfocus();
+                      }
+                    },
+                    onNeighborhoodChanged: (val) =>
+                        context.read<WizardBranchCubit>().updateField(neighborhood: val),
                   ),
                 ),
               ),
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colorScheme.surface,
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: colorScheme.shadow.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, -5),
                     ),
@@ -228,16 +216,17 @@ class _BranchFormBottomSheetState extends State<BranchFormBottomSheet> {
                 child: FilledButton(
                   onPressed: formState.isSaving ? null : _save,
                   style: FilledButton.styleFrom(
-                    backgroundColor: const Color(0xFF1E3A8A),
+                    backgroundColor: colorScheme.primary,
+                    foregroundColor: colorScheme.onPrimary,
                     minimumSize: const Size.fromHeight(50),
                   ),
                   child: formState.isSaving
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 20,
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: colorScheme.onPrimary,
                           ),
                         )
                       : Text(isEditing ? 'Guardar Cambios' : 'Crear Sucursal'),

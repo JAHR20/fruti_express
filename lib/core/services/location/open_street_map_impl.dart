@@ -17,9 +17,11 @@ class OpenStreetMapServiceImpl implements LocationService {
     return await Navigator.push<Coordinates>(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            MapSelectorPage(initialLocation: initialLocation), // MapaSelectorPage -> MapSelectorPage
+      builder: (context) => MapSelectorPage(
+        mapProviderUrl: mapProviderUrl,
+        initialLocation: initialLocation,
       ),
+    ),
     );
   }
 

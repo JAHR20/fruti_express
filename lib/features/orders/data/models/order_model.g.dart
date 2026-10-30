@@ -30,6 +30,10 @@ _OrderModel _$OrderModelFromJson(Map<String, dynamic> json) => _OrderModel(
       ? null
       : DateTime.parse(json['delivery_date'] as String),
   idempotencyKey: json['idempotency_key'] as String?,
+  paymentMethod: json['payment_method'] as String?,
+  customerLatitude: (json['customer_latitude'] as num?)?.toDouble(),
+  customerLongitude: (json['customer_longitude'] as num?)?.toDouble(),
+  addressId: json['address_id'] as String?,
   items:
       (json['order_details'] as List<dynamic>?)
           ?.map((e) => OrderItemModel.fromJson(e as Map<String, dynamic>))
@@ -59,6 +63,10 @@ Map<String, dynamic> _$OrderModelToJson(
   'estimated_delivery_date': instance.estimatedDeliveryDate?.toIso8601String(),
   'delivery_date': instance.deliveredAt?.toIso8601String(),
   'idempotency_key': instance.idempotencyKey,
+  'payment_method': instance.paymentMethod,
+  'customer_latitude': instance.customerLatitude,
+  'customer_longitude': instance.customerLongitude,
+  'address_id': instance.addressId,
   'order_details': instance.items,
 };
 

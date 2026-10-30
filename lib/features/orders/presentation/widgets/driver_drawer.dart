@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/enums/driver_section.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 class DriverDrawer extends StatelessWidget {
-  final Profile profile; 
+  final AppUser user; 
   final DriverSection activeSection; 
   final ValueChanged<DriverSection> onNavigate; 
   final VoidCallback onLogout;
 
   const DriverDrawer({
     super.key,
-    required this.profile,
+    required this.user,
     required this.activeSection,
     required this.onNavigate,
     required this.onLogout,
@@ -24,18 +24,18 @@ class DriverDrawer extends StatelessWidget {
           UserAccountsDrawerHeader(
             decoration: const BoxDecoration(color: Color(0xFF1E3A8A)),
             accountName: Text(
-              '${profile.firstName} ${profile.paternalLastName}',
+              '${user.profile.firstName} ${user.profile.paternalLastName}',
               style: const TextStyle(fontWeight: FontWeight.bold),
             ),
-            accountEmail: Text(profile.email),
+            accountEmail: Text(user.email),
             currentAccountPicture: CircleAvatar(
               backgroundColor: Colors.white,
-              backgroundImage: profile.avatarUrl != null
-                  ? NetworkImage(profile.avatarUrl!)
+              backgroundImage: user.profile.avatarUrl != null
+                  ? NetworkImage(user.profile.avatarUrl!)
                   : null,
-              child: profile.avatarUrl == null
+              child: user.profile.avatarUrl == null
                   ? Text(
-                      profile.firstName[0].toUpperCase(),
+                      user.profile.firstName[0].toUpperCase(),
                       style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,

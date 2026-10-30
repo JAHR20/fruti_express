@@ -7,6 +7,7 @@ class BranchRemoteDatasourceImpl implements BranchRemoteDatasource {
 
   static const String _tableName = 'branches';
   static const String _tableCoverage = 'branch_coverage';
+  static const String _tableShippingRates = 'shipping_rates';
   static const String _colId = 'id';
   static const String _colName = 'name';
   static const String _colBranchId = 'branch_id';
@@ -45,9 +46,7 @@ class BranchRemoteDatasourceImpl implements BranchRemoteDatasource {
         .from(_tableName)
         .stream(primaryKey: [_colId])
         .order(_colName)
-        .map(
-          (data) => data.map((json) => BranchModel.fromJson(json)).toList(),
-        );
+        .map((data) => data.map((json) => BranchModel.fromJson(json)).toList());
   }
 
   @override
@@ -96,10 +95,19 @@ class BranchRemoteDatasourceImpl implements BranchRemoteDatasource {
         .from(_tableCoverage)
         .select(_colZipCode)
         .eq(_colBranchId, branchId);
-        
+
+    return (response as List).map((row) => row[_colZipCode] as String).toList();
+  }
+
+  @override
+  Future<Set<String>> getBranchesWithRates() async {
+    final response = await supabase
+        .from(_tableShippingRates)
+        .select(_colBranchId);
+
     return (response as List)
-        .map((row) => row[_colZipCode] as String)
-        .toList();
+        .map((row) => row[_colBranchId].toString())
+        .toSet();
   }
 
   @override
@@ -122,10 +130,7 @@ class BranchRemoteDatasourceImpl implements BranchRemoteDatasource {
     required String branchId,
     required List<String> postalCodes,
   }) async {
-    await supabase
-        .from(_tableCoverage)
-        .delete()
-        .eq(_colBranchId, branchId);
+    await supabase.from(_tableCoverage).delete().eq(_colBranchId, branchId);
 
     if (postalCodes.isNotEmpty) {
       final insertList = postalCodes

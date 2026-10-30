@@ -1,7 +1,9 @@
 import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/search_products_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_products_by_branch_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/upload_product_image_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/products/presentation/cubits/product_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/watch_inventory_changes_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/admin/cubits/admin_products_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/customer/cubits/customer_products_cubit.dart';
 import 'package:get_it/get_it.dart';
 import '../data/datasources/product_remote_datasource.dart';
 import '../data/datasources/product_remote_datasource_impl.dart';
@@ -33,6 +35,7 @@ void initProducts(GetIt sl) {
   sl.registerLazySingleton(() => UploadProductImageUseCase(repository: sl()));
   sl.registerLazySingleton(() => SearchProductsUseCase(repository:  sl()));
   sl.registerLazySingleton(() => GetProductsByBranchUseCase(repository: sl()));
+  sl.registerLazySingleton(() => WatchInventoryChangesUseCase(repository: sl()));
 
   // --- REPOSITORIO ---
   sl.registerLazySingleton<ProductRepository>(
@@ -44,19 +47,25 @@ void initProducts(GetIt sl) {
     () => ProductRemoteDataSourceImpl(sl()),
   );
 
-  // --- CUBIT ---
-  sl.registerFactory<ProductCubit>(
-    () => ProductCubit(
+  // --- CUBITS ---
+  sl.registerFactory<AdminProductsCubit>(
+    () => AdminProductsCubit(
       updateProductUseCase: sl(),
       changeProductStatusUseCase: sl(),
       createProductUseCase: sl(),
+      getAllProductsUseCase: sl(),
+      uploadProductImageUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory<CustomerProductsCubit>(
+    () => CustomerProductsCubit(
       getProductByIdUseCase: sl(),
       getProductByNameUseCase: sl(),
       getProductsByCategoryUseCase: sl(),
-      getAllProductsUseCase: sl(),
-      uploadProductImageUseCase: sl(),
       searchProductsUseCase: sl(),
       getProductsByBranchUseCase: sl(),
+      watchInventoryChangesUseCase: sl(),
     ),
   );
 }

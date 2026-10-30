@@ -5,7 +5,7 @@ import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/extensions/category_permissions_extension.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/repositories/category_repository.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 class UpdateCategoryUseCase {
   final CategoryRepository repository;
@@ -13,7 +13,7 @@ class UpdateCategoryUseCase {
   UpdateCategoryUseCase(this.repository);
 
   ResultTask<Category> execute({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String categoryId,
     String? name,
     String? description,
@@ -54,7 +54,7 @@ class UpdateCategoryUseCase {
     });
   }
 
-  ResultTask<Unit> _validatePermissions(Profile user) =>
+  ResultTask<Unit> _validatePermissions(AppUser user) =>
       user.canEditCategory
       ? TaskEither.right(unit)
       : TaskEither.left(

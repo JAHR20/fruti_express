@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class PrimaryAuthButton extends StatelessWidget {
   final String text;
+  final double fontSize;
   final VoidCallback onPressed;
   final Color backgroundColor;
   final Color textColor;
@@ -12,6 +13,7 @@ class PrimaryAuthButton extends StatelessWidget {
     required this.onPressed,
     this.backgroundColor = const Color(0xFF2C2C4E),
     this.textColor = Colors.white,
+    this.fontSize = 16,
   });
 
   @override
@@ -29,7 +31,7 @@ class PrimaryAuthButton extends StatelessWidget {
         ),
         child: Text(
           text,
-          style: TextStyle(color: textColor, fontWeight: FontWeight.bold),
+          style: TextStyle(color: textColor, fontWeight: FontWeight.bold, fontSize: fontSize),
         ),
       ),
     );

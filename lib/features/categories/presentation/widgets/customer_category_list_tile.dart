@@ -13,17 +13,18 @@ class CustomerCategoryListTile extends StatelessWidget { // CategoriaListTile ->
 
   @override
   Widget build(BuildContext context) {
+    final colorTheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
         height: 70,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: colorTheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withValues(alpha: 0.08),
+              color: colorTheme.outlineVariant,
               blurRadius: 8,
               offset: const Offset(0, 3),
             ),
@@ -44,8 +45,8 @@ class CustomerCategoryListTile extends StatelessWidget { // CategoriaListTile ->
                             const Icon(Icons.broken_image, color: Colors.grey),
                       )
                     : Container(
-                        color: Colors.grey.shade100,
-                        child: const Icon(Icons.category_outlined, color: Colors.grey),
+                        color: colorTheme.surfaceContainer,
+                        child: Icon(Icons.category_outlined, color: colorTheme.outline),
                       ),
               ),
             ),
@@ -58,7 +59,7 @@ class CustomerCategoryListTile extends StatelessWidget { // CategoriaListTile ->
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const Icon(Icons.chevron_right, color: Colors.grey),
+            Icon(Icons.chevron_right, color: colorTheme.outline),
             const SizedBox(width: 12),
           ],
         ),

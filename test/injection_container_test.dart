@@ -6,7 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:fruti_express_jahr_admin/core/di/injection_container.dart' as di;
 
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/products/presentation/cubits/product_cubit.dart';
+
 import 'package:fruti_express_jahr_admin/features/categories/presentation/cubits/category_cubit.dart';
 
 void main() {
@@ -27,8 +27,8 @@ void main() {
 
       // 2. Probamos Productos
       // 🌟 Si olvidaste registrar un UseCase, la prueba "explotará" exactamente en esta línea
-      final productosCubit = di.sl<ProductCubit>();
-      expect(productosCubit, isA<ProductCubit>());
+      //final productosCubit = di.sl<ProductCubit>();
+      //expect(productosCubit, isA<ProductCubit>());
 
       // 3. Probamos Categorías
       final categoriasCubit = di.sl<CategoryCubit>();

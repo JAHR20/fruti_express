@@ -1,19 +1,17 @@
-import 'package:fruti_express_jahr_admin/features/users/data/models/profile_model.dart'; 
+import 'package:fruti_express_jahr_admin/features/users/data/models/app_user_model.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<ProfileModel> login(String email, String password);
+  Future<AppUserModel> login(String email, String password);
   
-  Future<ProfileModel> register({
+  Future<AppUserModel?> register({
     required String email,
     required String password,
-    required String firstName,
-    required String paternalLastName,
-    String? maternalLastName,
-    String? alias,
-    required String phone,
   });
   
   Future<void> logout();
   
-  Future<ProfileModel?> getCurrentUser();
+  Future<AppUserModel?> getCurrentUser();
+
+  Future<AppUserModel> signInWithGoogle();
+  Stream<AppUserModel?> get authStateChanges;
 }

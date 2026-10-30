@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/use_cases/search_users_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/use_cases/change_user_status_use_case.dart';
@@ -48,7 +48,7 @@ class UsersCubit extends Cubit<UsersState> {
        _searchUsersUseCase = searchUsersUseCase,
        super(const UsersState());
 
-  Future<void> loadUsers(Profile currentUser) async {
+  Future<void> loadUsers(AppUser currentUser) async {
     emit(
       state.copyWith(isLoading: true, errorMessage: null, tab: UsersTab.all),
     );
@@ -73,7 +73,7 @@ class UsersCubit extends Cubit<UsersState> {
     );
   }
 
-  Future<void> loadCustomers(Profile currentUser) async {
+  Future<void> loadCustomers(AppUser currentUser) async {
     emit(
       state.copyWith(
         isLoading: true,
@@ -101,7 +101,7 @@ class UsersCubit extends Cubit<UsersState> {
   }
 
   Future<void> loadDeliveryPersons({
-    required Profile currentUser,
+    required AppUser currentUser,
     String? branchIdFilter,
   }) async {
     emit(
@@ -111,7 +111,6 @@ class UsersCubit extends Cubit<UsersState> {
         tab: UsersTab.deliveryPersons,
       ),
     );
-    // Usamos 'call' porque tu caso de uso lo definió así
     final result = await _getDeliveryPersonsUseCase(
       requester: currentUser,
       optionalBranchId: branchIdFilter,
@@ -135,7 +134,7 @@ class UsersCubit extends Cubit<UsersState> {
   }
 
   Future<void> searchUsers({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String query,
   }) async {
     final cleanQuery = query.trim();
@@ -181,7 +180,7 @@ class UsersCubit extends Cubit<UsersState> {
   }
 
   Future<void> changeUserStatus({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String targetUserId,
     required bool activate,
   }) async {
@@ -215,7 +214,7 @@ class UsersCubit extends Cubit<UsersState> {
   }
 
   Future<void> changeRole({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String targetUserId,
     required UserRole newRole,
     String? assignedBranchId,
@@ -251,7 +250,7 @@ class UsersCubit extends Cubit<UsersState> {
   }
 
   Future<void> verifyBranchManager({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String branchId,
   }) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
@@ -281,7 +280,7 @@ class UsersCubit extends Cubit<UsersState> {
   }
 
   Future<void> loadUserById({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String targetId,
   }) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
@@ -301,7 +300,7 @@ class UsersCubit extends Cubit<UsersState> {
     );
   }
 
-  Future<bool> checkIfLastAdmin({required Profile currentUser}) async {
+  Future<bool> checkIfLastAdmin({required AppUser currentUser}) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final result = await _countActiveAdminsUseCase.execute(currentUser).run();

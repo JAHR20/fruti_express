@@ -28,7 +28,7 @@ extension OrderItemX on OrderItem {
   
   String get formattedQuantity {
     return measurementUnit != null 
-        ? measurementUnit!.format(quantity) // formatear -> format
+        ? measurementUnit!.format(quantity)
         : '$quantity';
   }
 }

@@ -40,6 +40,7 @@ void initCart(GetIt sl) async {
       locationService: sl(),
       getCurrentStockUseCase: sl(),
       validateAndApplyCouponUseCase: sl(),
+      getOrderPreviewUseCase: sl()
     ),
   );
 }

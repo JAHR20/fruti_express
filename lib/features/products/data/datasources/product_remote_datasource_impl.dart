@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:fruti_express_jahr_admin/features/products/data/models/product_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -60,14 +61,19 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   }
 
   @override
-  Future<List<ProductModel>> searchProducts(String query, String branchId) async {
+  Future<List<ProductModel>> searchProducts(
+    String query,
+    String branchId,
+  ) async {
     final response = await supabase
         .from(_tableName)
         .select('*, $_relInventory')
         .ilike(_colName, '%$query%')
         .eq(_colInventoryBranchId, branchId);
 
-    return (response as List).map((json) => ProductModel.fromJson(json)).toList();
+    return (response as List)
+        .map((json) => ProductModel.fromJson(json))
+        .toList();
   }
 
   @override
@@ -99,18 +105,26 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
   @override
   Future<void> delete(String id) async {
-    await supabase.from(_tableName).update({_colIsActive: false}).eq(_colId, id);
+    await supabase
+        .from(_tableName)
+        .update({_colIsActive: false})
+        .eq(_colId, id);
   }
 
   @override
-  Future<List<ProductModel>> getByCategory(String categoryId, String branchId) async {
+  Future<List<ProductModel>> getByCategory(
+    String categoryId,
+    String branchId,
+  ) async {
     final response = await supabase
         .from(_tableName)
         .select('*, $_relInventory')
         .eq(_colCategoryId, categoryId)
         .eq(_colInventoryBranchId, branchId);
 
-    return (response as List).map((json) => ProductModel.fromJson(json)).toList();
+    return (response as List)
+        .map((json) => ProductModel.fromJson(json))
+        .toList();
   }
 
   @override
@@ -118,10 +132,10 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     final String storagePath = 'catalogo/$fileName';
     final extension = fileName.split('.').last.toLowerCase();
 
-    String contentType = 'image/jpeg'; 
+    String contentType = 'image/jpeg';
     if (extension == 'png') contentType = 'image/png';
     if (extension == 'webp') contentType = 'image/webp';
-    if (extension == 'heic') contentType = 'image/heic'; 
+    if (extension == 'heic') contentType = 'image/heic';
 
     await supabase.storage
         .from('imagenes_productos')
@@ -131,7 +145,7 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
           fileOptions: FileOptions(
             cacheControl: '3600',
             upsert: true,
-            contentType: contentType, 
+            contentType: contentType,
           ),
         );
 
@@ -145,10 +159,40 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     final response = await supabase
         .from(_tableName)
         .select('*, $_relInventory')
-        .eq(_colInventoryBranchId, branchId); 
+        .eq(_colInventoryBranchId, branchId);
 
     return (response as List)
         .map((json) => ProductModel.fromJson(json))
         .toList();
+  }
+
+  @override
+  Stream<void> watchInventoryChanges(String branchId) {
+    final controller = StreamController<void>.broadcast();
+
+    final channel = supabase.channel('inventory_changes_$branchId');
+
+    channel
+        .onPostgresChanges(
+          event: PostgresChangeEvent.update,
+          schema: 'public',
+          table: 'inventory',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'branch_id',
+            value: branchId,
+          ),
+          callback: (payload) {
+            controller.add(null);
+          },
+        )
+        .subscribe();
+
+    controller.onCancel = () {
+      supabase.removeChannel(channel);
+      controller.close();
+    };
+
+    return controller.stream;
   }
 }

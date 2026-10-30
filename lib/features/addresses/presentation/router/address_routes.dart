@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_coordinator_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_shipping_cubit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fruti_express_jahr_admin/core/di/injection_container.dart';
@@ -20,7 +21,7 @@ abstract class AddressRoutes {
         path: myAddressesPath,
         name: myAddressesName,
         builder: (context, state) {
-          final profile = (sl<AuthCubit>().state as AuthAuthenticated).profile;
+          final profile = (sl<AuthCubit>().state as AuthAuthenticated).user;
 
           return MultiBlocProvider(
             providers: [
@@ -29,6 +30,7 @@ abstract class AddressRoutes {
               ),
               BlocProvider(create: (_) => sl<BranchCubit>()..loadBranches()),
               BlocProvider(create: (_) => sl<CustomerShippingCubit>()),
+              BlocProvider(create: (_) => sl<CustomerCoordinatorCubit>()),
             ],
             child: BlocListener<BranchCubit, BranchState>(
               listener: (context, branchState) {

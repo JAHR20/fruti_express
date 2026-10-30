@@ -4,7 +4,7 @@ import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/entities/branch.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/repositories/branch_repository.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 
 class UpdateBranchUseCase {
@@ -13,7 +13,7 @@ class UpdateBranchUseCase {
   UpdateBranchUseCase(this.repository);
 
   ResultTask<Branch> execute({
-    required Profile currentUser,
+    required AppUser currentUser,
     required Branch modifiedBranch,
   }) {
     return TaskEither.Do(($) async {

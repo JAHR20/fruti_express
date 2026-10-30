@@ -12,25 +12,24 @@ class OrderDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final bottomPadding = MediaQuery.paddingOf(context).bottom;
+
     final isActive =
         order.status != OrderStatus.delivered &&
         order.status != OrderStatus.cancelled;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
-      appBar: AppBar(
-        title: Text(
-          '#${order.id.substring(0, 8).toUpperCase()}',
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: const Color(0xFF1E3A8A),
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
+      backgroundColor: colorScheme.surfaceContainerLow,
+      appBar: AppBar(title: Text('#${order.id.substring(0, 8).toUpperCase()}')),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.only(
+          left: 16,
+          right: 16,
+          top: 16,
+          bottom: bottomPadding,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -47,7 +46,7 @@ class OrderDetailPage extends StatelessWidget {
               icon: Icons.location_on_outlined,
               child: Text(
                 order.addressSnapshot,
-                style: const TextStyle(fontSize: 14),
+                style: theme.textTheme.bodyMedium,
               ),
             ),
             const SizedBox(height: 12),
@@ -65,13 +64,12 @@ class OrderDetailPage extends StatelessWidget {
                         Expanded(
                           child: Text(
                             '${item.formattedQuantity} x ${item.productNameSnapshot}',
-                            style: const TextStyle(fontSize: 14),
+                            style: theme.textTheme.bodyMedium,
                           ),
                         ),
                         Text(
                           CurrencyFormatter.format(item.calculatedSubtotal),
-                          style: const TextStyle(
-                            fontSize: 14,
+                          style: theme.textTheme.bodyMedium?.copyWith(
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -89,9 +87,7 @@ class OrderDetailPage extends StatelessWidget {
                 children: [
                   _SummaryRow(
                     label: 'Subtotal',
-                    value: CurrencyFormatter.format(
-                      order.subtotal,
-                    ), // valor -> value
+                    value: CurrencyFormatter.format(order.subtotal),
                   ),
                   _SummaryRow(
                     label: 'Envío',
@@ -103,14 +99,14 @@ class OrderDetailPage extends StatelessWidget {
                     _SummaryRow(
                       label: 'Descuentos',
                       value: CurrencyFormatter.format(order.appliedDiscounts),
-                      color: Colors.green,
+                      color: colorScheme.primary,
                     ),
                   const Divider(height: 16),
                   _SummaryRow(
                     label: 'Total',
                     value: CurrencyFormatter.format(order.total),
-                    isBold: true, // esBold -> isBold
-                    color: const Color(0xFF1E3A8A),
+                    isBold: true,
+                    color: colorScheme.primary,
                   ),
                 ],
               ),
@@ -171,41 +167,50 @@ class _StatusSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Estado actual',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-                const SizedBox(height: 4),
-                OrderStatusChip(status: order.status),
-              ],
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.shadow.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
             ),
-          ),
-          Icon(
-            _statusIcon(order.status),
-            size: 48,
-            color: _statusColor(order.status).withValues(alpha: 0.3),
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Estado actual',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  OrderStatusChip(status: order.status),
+                ],
+              ),
+            ),
+            Icon(
+              _statusIcon(order.status),
+              size: 48,
+              color: _statusColor(context, order.status).withValues(alpha: 0.3),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -219,14 +224,17 @@ class _StatusSection extends StatelessWidget {
     OrderStatus.cancelled => Icons.cancel_outlined,
   };
 
-  Color _statusColor(OrderStatus status) => switch (status) {
-    OrderStatus.pendingPayment => Colors.orange,
-    OrderStatus.confirmed => Colors.blue,
-    OrderStatus.preparing => Colors.purple,
-    OrderStatus.onTheWay => Colors.teal,
-    OrderStatus.delivered => Colors.green,
-    OrderStatus.cancelled => Colors.red,
-  };
+  Color _statusColor(BuildContext context, OrderStatus status) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return switch (status) {
+      OrderStatus.pendingPayment => Colors.orange,
+      OrderStatus.confirmed => colorScheme.primary,
+      OrderStatus.preparing => Colors.purple,
+      OrderStatus.onTheWay => Colors.teal,
+      OrderStatus.delivered => Colors.green,
+      OrderStatus.cancelled => colorScheme.error,
+    };
+  }
 }
 
 class _OrderTimeline extends StatelessWidget {
@@ -246,108 +254,117 @@ class _OrderTimeline extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Seguimiento',
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-          ),
-          const SizedBox(height: 16),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: List.generate(_steps.length * 2 - 1, (i) {
-              if (i.isOdd) {
-                final stepIndex = i ~/ 2;
-                final isCompleted = stepIndex < _currentIndex;
-                return Expanded(
-                  child: SizedBox(
-                    height: 32,
-                    child: Center(
-                      child: Container(
-                        height: 2,
-                        color: isCompleted
-                            ? const Color(0xFF1E3A8A)
-                            : Colors.grey.shade200,
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.shadow.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Seguimiento',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: List.generate(_steps.length * 2 - 1, (i) {
+                if (i.isOdd) {
+                  final stepIndex = i ~/ 2;
+                  final isCompleted = stepIndex < _currentIndex;
+                  return Expanded(
+                    child: SizedBox(
+                      height: 32,
+                      child: Center(
+                        child: Container(
+                          height: 2,
+                          color: isCompleted
+                              ? colorScheme.primary
+                              : colorScheme.outlineVariant,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              }
+                  );
+                }
 
-              final stepIndex = i ~/ 2;
-              final step = _steps[stepIndex];
-              final isCompleted = stepIndex <= _currentIndex;
-              final isCurrent = stepIndex == _currentIndex;
+                final stepIndex = i ~/ 2;
+                final step = _steps[stepIndex];
+                final isCompleted = stepIndex <= _currentIndex;
+                final isCurrent = stepIndex == _currentIndex;
 
-              return Column(
-                children: [
-                  SizedBox(
-                    height: 32,
-                    child: Center(
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-                        width: isCurrent ? 32 : 24,
-                        height: isCurrent ? 32 : 24,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isCompleted
-                              ? const Color(0xFF1E3A8A)
-                              : Colors.grey.shade200,
-                          border: isCurrent
-                              ? Border.all(
-                                  color: const Color(
-                                    0xFF1E3A8A,
-                                  ).withValues(alpha: 0.3),
-                                  width: 4,
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: 32,
+                      child: Center(
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 300),
+                          width: isCurrent ? 32 : 24,
+                          height: isCurrent ? 32 : 24,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isCompleted
+                                ? colorScheme.primary
+                                : colorScheme.outlineVariant,
+                            border: isCurrent
+                                ? Border.all(
+                                    color: colorScheme.primary.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                    width: 4,
+                                  )
+                                : null,
+                          ),
+                          child: isCompleted
+                              ? Icon(
+                                  Icons.check,
+                                  color: colorScheme.onPrimary,
+                                  size: 14,
                                 )
                               : null,
                         ),
-                        child: isCompleted
-                            ? const Icon(
-                                Icons.check,
-                                color: Colors.white,
-                                size: 14,
-                              )
-                            : null,
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  SizedBox(
-                    height: 28,
-                    child: Text(
-                      step.label,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 10,
-                        color: isCompleted
-                            ? const Color(0xFF1E3A8A)
-                            : Colors.grey.shade400,
-                        fontWeight: isCurrent
-                            ? FontWeight.bold
-                            : FontWeight.normal,
+                    const SizedBox(height: 6),
+                    SizedBox(
+                      height: 28,
+                      child: Text(
+                        step.label,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isCompleted
+                              ? colorScheme.primary
+                              : colorScheme.onSurfaceVariant,
+                          fontWeight: isCurrent
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              );
-            }),
-          ),
-        ],
+                  ],
+                );
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -366,31 +383,28 @@ class _ConfirmationCodeState extends State<_ConfirmationCode> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E3A8A).withValues(alpha: 0.05),
+        color: colorScheme.primary.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: const Color(0xFF1E3A8A).withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.lock_outline,
-                size: 18,
-                color: Color(0xFF1E3A8A),
-              ),
+              Icon(Icons.lock_outline, size: 18, color: colorScheme.primary),
               const SizedBox(width: 8),
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Código de confirmación',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E3A8A),
+                    color: colorScheme.primary,
                   ),
                 ),
               ),
@@ -408,15 +422,17 @@ class _ConfirmationCodeState extends State<_ConfirmationCode> {
               fontWeight: FontWeight.bold,
               letterSpacing: 20,
               color: _isVisible
-                  ? const Color(0xFF1E3A8A)
-                  : Colors.grey.shade300,
+                  ? colorScheme.primary
+                  : colorScheme.outlineVariant,
             ),
           ),
           const SizedBox(height: 8),
           Text(
             'Muéstrale este código al repartidor cuando llegue',
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -437,38 +453,45 @@ class _SectionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.04),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: const Color(0xFF1E3A8A)),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: colorScheme.shadow.withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(icon, size: 18, color: colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const Divider(height: 16),
-          child,
-        ],
+              ],
+            ),
+            const Divider(height: 16),
+            child,
+          ],
+        ),
       ),
     );
   }
@@ -489,6 +512,8 @@ class _SummaryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 3),
       child: Row(
@@ -496,15 +521,13 @@ class _SummaryRow extends StatelessWidget {
         children: [
           Text(
             label,
-            style: TextStyle(
-              fontSize: 14,
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
             ),
           ),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 14,
+            style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
               color: color,
             ),
@@ -523,13 +546,25 @@ class _InfoRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 13, color: Colors.grey)),
-          Text(value, style: const TextStyle(fontSize: 13)),
+          Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontSize: 13,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          Text(
+            value,
+            style: theme.textTheme.bodyMedium?.copyWith(fontSize: 13),
+          ),
         ],
       ),
     );

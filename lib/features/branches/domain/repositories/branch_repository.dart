@@ -8,6 +8,8 @@ abstract class BranchRepository {
   ResultTask<Branch> update(Branch branch);
   
   ResultTask<List<String>> getCoverage(String branchId);
+
+  ResultTask<Set<String>> getBranchesWithConfiguredRates();
   
   ResultTask<Unit> updateCoverage({
     required String branchId,

@@ -1,8 +1,10 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fruti_express_jahr_admin/core/enums/delivery_method.dart';
+import 'package:fruti_express_jahr_admin/core/enums/payment_method_type.dart';
 import 'package:fruti_express_jahr_admin/features/cart/domain/entities/cart_item.dart';
 import 'package:fruti_express_jahr_admin/features/addresses/domain/entities/address.dart';
 import 'package:fruti_express_jahr_admin/features/coupons/domain/entities/coupon.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order_preview.dart';
 
 part 'cart_state.freezed.dart';
 
@@ -11,9 +13,11 @@ abstract class CartState with _$CartState {
   const factory CartState({
     @Default(<CartItem>[]) List<CartItem> items,
     DeliveryMethod? deliveryMethod, 
+    @Default(PaymentMethodType.cashOnDelivery) PaymentMethodType paymentMethod,
     Address? selectedAddress, 
     String? branchId, 
     @Default(false) bool isLoading,
+    @Default(false) isCalculating,
     String? processingProductId, 
     String? errorMessage,
     String? operationError,
@@ -22,6 +26,7 @@ abstract class CartState with _$CartState {
     int? freeShippingThreshold,
     Coupon? appliedCoupon, 
     @Default(0) int discountAmount,
+    OrderPreview? orderPreview,
   }) = _CartState;
 
   const CartState._();
@@ -41,4 +46,5 @@ abstract class CartState with _$CartState {
   bool get isHomeDelivery => deliveryMethod == DeliveryMethod.homeDelivery;
 
   bool get isPickup => deliveryMethod == DeliveryMethod.pickUp;
+
 }

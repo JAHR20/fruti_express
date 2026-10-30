@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/core/widgets/animated_empty_state.dart';
 import 'package:fruti_express_jahr_admin/features/addresses/domain/entities/address.dart';
 import 'package:fruti_express_jahr_admin/features/addresses/presentation/cubits/address_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/addresses/presentation/cubits/address_state.dart';
@@ -20,14 +21,76 @@ class MyAddressesPage extends StatelessWidget {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      builder: (ctx) => BlocProvider.value(
+      builder: (dialogContext) => BlocProvider.value(
         value: cubit,
-        child: AddressFormBottomSheet(userId: userId),
+        child: BlocConsumer<AddressCubit, AddressState>(
+          listenWhen: (previous, current) =>
+              previous.operationSuccessful != current.operationSuccessful,
+          listener: (ctx, state) {
+            if (state.operationSuccessful) {
+              final colorScheme = Theme.of(ctx).colorScheme;
+
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(ctx).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    'Dirección guardada correctamente',
+                    style: TextStyle(color: colorScheme.onPrimary),
+                  ),
+                  backgroundColor: colorScheme.primary,
+                ),
+              );
+            }
+          },
+          builder: (ctx, state) {
+            final isSaving = state.isLoading || state.processingAddressId != null;
+
+            return AddressFormBottomSheet(
+              isSaving: isSaving,
+              onSave: (
+                alias,
+                street,
+                exteriorNumber,
+                interiorNumber,
+                neighborhood,
+                zipCode,
+                municipality,
+                stateStr,
+                references,
+                isMain,
+                latitude,
+                longitude,
+              ) {
+                final newAddress = Address(
+                  id: '',
+                  userId: userId,
+                  alias: alias,
+                  street: street,
+                  exteriorNumber: exteriorNumber,
+                  interiorNumber: interiorNumber,
+                  neighborhood: neighborhood,
+                  zipCode: zipCode,
+                  municipality: municipality,
+                  state: stateStr,
+                  references: references,
+                  isMain: isMain,
+                  createdAt: DateTime.now(),
+                  latitude: latitude,
+                  longitude: longitude,
+                );
+
+                ctx.read<AddressCubit>().createAddress(newAddress);
+              },
+            );
+          },
+        ),
       ),
     );
   }
 
   void _confirmDelete(BuildContext context, Address address) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -36,15 +99,20 @@ class MyAddressesPage extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancelar'),
+            child: Text(
+              'Cancelar',
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
+            ),
           ),
           FilledButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-
               context.read<AddressCubit>().deleteAddress(address.id);
             },
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(
+              backgroundColor: colorScheme.error,
+              foregroundColor: colorScheme.onError,
+            ),
             child: const Text('Eliminar'),
           ),
         ],
@@ -54,129 +122,131 @@ class MyAddressesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+    final colorScheme = Theme.of(context).colorScheme;
 
+    return Scaffold(
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: const Text(
           'Mis Direcciones',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF1E3A8A),
-        iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add, color: Colors.white),
-            onPressed: () => _openForm(context),
-            tooltip: 'Agregar dirección',
-          ),
-        ],
       ),
-
       body: BlocConsumer<AddressCubit, AddressState>(
         listenWhen: (previous, current) =>
             previous.operationError != current.operationError ||
             previous.operationSuccessful != current.operationSuccessful,
-
         listener: (context, state) {
           if (state.operationError != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.operationError!),
-                backgroundColor: Colors.red,
+                content: Text(
+                  state.operationError!,
+                  style: TextStyle(color: colorScheme.onError),
+                ),
+                backgroundColor: colorScheme.error,
               ),
             );
           }
         },
-
         builder: (context, state) {
           if (state.isLoading && state.addresses.isEmpty) {
-            return const Center(
-              child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+            return Center(
+              child: CircularProgressIndicator(color: colorScheme.primary),
             );
           }
 
+          // 2. ESTADO DE ERROR
           if (state.errorMessage != null && state.addresses.isEmpty) {
             return _ErrorView(
               message: state.errorMessage!,
-              onRetry: () {
-                context.read<AddressCubit>().loadAddresses(userId);
-              },
+              onRetry: () => context.read<AddressCubit>().loadAddresses(userId),
             );
           }
 
-          if (state.addresses.isEmpty) {
-            return _EmptyAddresses(onAdd: () => _openForm(context));
-          }
-
           return RefreshIndicator(
-            onRefresh: () {
-              return context.read<AddressCubit>().loadAddresses(userId);
-            },
+            onRefresh: () => context.read<AddressCubit>().loadAddresses(userId),
             child: Builder(
               builder: (context) {
                 final cartState = context.watch<CartCubit>().state;
                 final activeAddressId = cartState.selectedAddress?.id;
 
-                return ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: state.addresses.length,
-                  itemBuilder: (_, index) {
-                    final address = state.addresses[index];
-                    final isProcessing =
-                        state.processingAddressId == address.id;
+                return CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    
+                    // CASO A: ESTADO VACÍO (SliverFillRemaining)
+                    if (state.addresses.isEmpty)
+                      const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: AnimatedEmptyState(
+                          icon: Icon(Icons.location_off_outlined),
+                          title: 'Sin direcciones guardadas',
+                          subtitle: 'Agrega una dirección para recibir tus pedidos',
+                        ),
+                      )
+                      
+                    // CASO B: LISTA DE DIRECCIONES (SliverList)
+                    else
+                      SliverPadding(
+                        padding: const EdgeInsets.all(16),
+                        sliver: SliverList.builder(
+                          itemCount: state.addresses.length,
+                          itemBuilder: (_, index) {
+                            final address = state.addresses[index];
+                            final isProcessing = state.processingAddressId == address.id;
+                            final isActiveInSession = address.id == activeAddressId;
 
-                    final isActiveInSession = address.id == activeAddressId;
+                            return _AddressManagementItem(
+                              address: address,
+                              isProcessing: isProcessing,
+                              isActiveInSession: isActiveInSession,
+                              onTap: isActiveInSession
+                                  ? () {}
+                                  : () {
+                                      context.read<CartCubit>().setDeliveryAddress(address);
+                                      context.read<CustomerCoordinatorCubit>().changeAddressManually(address);
 
-                    return _AddressManagementItem(
-                      address: address,
-                      isProcessing: isProcessing,
-                      isActiveInSession: isActiveInSession,
-                      onTap: isActiveInSession
-                          ? () {} 
-                          : () {
-                              context.read<CartCubit>().setDeliveryAddress(address);
-                              context
-                                  .read<CustomerCoordinatorCubit>()
-                                  .changeAddressManually(address);
-
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    'Usando dirección: ${address.alias}',
-                                  ),
-                                  backgroundColor: const Color(0xFF1E3A8A),
-                                  duration: const Duration(seconds: 2),
-                                ),
-                              );
-                            },
-                      onSetAsMain: address.isMain || isProcessing
-                          ? null
-                          : () {
-                              context.read<AddressCubit>().setAsMainAddress(
-                                userId,
-                                address.id,
-                              );
-                            },
-                      onDelete: isProcessing
-                          ? null
-                          : () => _confirmDelete(context, address),
-                    );
-                  },
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            'Usando dirección: ${address.alias}',
+                                            style: TextStyle(color: colorScheme.onPrimary),
+                                          ),
+                                          backgroundColor: colorScheme.primary,
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                    },
+                              onSetAsMain: address.isMain || isProcessing
+                                  ? null
+                                  : () {
+                                      context.read<AddressCubit>().setAsMainAddress(
+                                        userId,
+                                        address.id,
+                                      );
+                                    },
+                              onDelete: isProcessing
+                                  ? null
+                                  : () => _confirmDelete(context, address),
+                            );
+                          },
+                        ),
+                      ),
+                  ],
                 );
               },
             ),
           );
         },
       ),
-
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => _openForm(context),
-        backgroundColor: const Color(0xFF1E3A8A),
-        icon: const Icon(Icons.add, color: Colors.white),
-        label: const Text(
+        backgroundColor: colorScheme.primary,
+        icon: Icon(Icons.add, color: colorScheme.onPrimary),
+        label: Text(
           'Nueva dirección',
-          style: TextStyle(color: Colors.white),
+          style: TextStyle(color: colorScheme.onPrimary),
         ),
       ),
     );
@@ -202,6 +272,8 @@ class _AddressManagementItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         Stack(
@@ -211,22 +283,22 @@ class _AddressManagementItem extends StatelessWidget {
               isSelected: isActiveInSession,
               onTap: onTap,
             ),
-
             if (isProcessing)
               Positioned.fill(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: colorScheme.surface.withValues(alpha: 0.7),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Center(
-                    child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: colorScheme.primary,
+                    ),
                   ),
                 ),
               ),
           ],
         ),
-
         Padding(
           padding: const EdgeInsets.only(bottom: 8),
           child: Row(
@@ -238,62 +310,22 @@ class _AddressManagementItem extends StatelessWidget {
                   icon: const Icon(Icons.star_outline, size: 16),
                   label: const Text('Establecer principal'),
                   style: TextButton.styleFrom(
-                    foregroundColor: const Color(0xFF1E3A8A),
+                    foregroundColor: colorScheme.primary,
                   ),
                 ),
-
               if (onDelete != null)
                 TextButton.icon(
                   onPressed: onDelete,
                   icon: const Icon(Icons.delete_outline, size: 16),
                   label: const Text('Eliminar'),
-                  style: TextButton.styleFrom(foregroundColor: Colors.red),
+                  style: TextButton.styleFrom(
+                    foregroundColor: colorScheme.error,
+                  ),
                 ),
             ],
           ),
         ),
       ],
-    );
-  }
-}
-
-class _EmptyAddresses extends StatelessWidget {
-  final VoidCallback onAdd;
-  const _EmptyAddresses({required this.onAdd});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.location_off_outlined,
-            size: 80,
-            color: Colors.grey.shade300,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Sin direcciones guardadas',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Agrega una dirección para\nrecibir tus pedidos',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey.shade500),
-          ),
-          const SizedBox(height: 24),
-          FilledButton.icon(
-            onPressed: onAdd,
-            icon: const Icon(Icons.add_location_alt_outlined),
-            label: const Text('Agregar dirección'),
-            style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFF1E3A8A),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -305,13 +337,23 @@ class _ErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 48, color: Colors.red),
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: colorScheme.error,
+          ),
           const SizedBox(height: 12),
-          Text(message, textAlign: TextAlign.center),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: colorScheme.onSurface),
+          ),
           const SizedBox(height: 16),
           FilledButton(onPressed: onRetry, child: const Text('Reintentar')),
         ],

@@ -1,4 +1,5 @@
 {
   "CLOUDINARY_CLOUD_NAME": "tu_nombre",
-  "CLOUDINARY_UPLOAD_PRESET": "tu_preset"
+  "CLOUDINARY_UPLOAD_PRESET": "tu_preset",
+  "GOOGLE_WEB_CLIENT_ID": "447218684599-j9apa1evqr0itkq7p1jdg56dd65e6haj.apps.googleusercontent.com"
 }

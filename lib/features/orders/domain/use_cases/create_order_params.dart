@@ -1,18 +1,23 @@
 import 'package:fruti_express_jahr_admin/core/enums/delivery_method.dart';
+import 'package:fruti_express_jahr_admin/core/enums/payment_method_type.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/enums/measurement_unit.dart';
 
 class CreateOrderParams {
-  final String customerId; 
-  final String branchId; 
+  final String customerId;
+  final String branchId;
   final String customerNameSnapshot;
   final String customerPhoneSnapshot;
   final String addressSnapshot;
   final int subtotal;
-  final int shippingCost; 
-  final int appliedDiscounts; 
+  final int shippingCost;
+  final int appliedDiscounts;
   final int total;
   final DeliveryMethod deliveryMethod;
-  final String? couponId; 
+  final PaymentMethodType paymentMethod;
+  final String? couponId;
+  final double? customerLatitude;
+  final double? customerLongitude;
+  final String? addressId;
   final List<CreateOrderItemParams> items;
 
   const CreateOrderParams({
@@ -26,15 +31,19 @@ class CreateOrderParams {
     required this.appliedDiscounts,
     required this.total,
     required this.deliveryMethod,
+    required this.paymentMethod,
     this.couponId,
+    this.customerLatitude,
+    this.customerLongitude,
+    this.addressId,
     required this.items,
   });
 }
 
 class CreateOrderItemParams {
-  final String productId; 
+  final String productId;
   final String productNameSnapshot;
-  final int quantity; 
+  final int quantity;
   final int unitPriceSnapshot;
   final MeasurementUnit? measurementUnit;
 

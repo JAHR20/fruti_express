@@ -1,7 +1,8 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/user_profile.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/use_cases/update_profile_use_case.dart';
 
 import 'edit_profile_state.dart';
@@ -15,8 +16,8 @@ class EditProfileCubit extends Cubit<EditProfileState> {
         super(const EditProfileState.initial());
 
   Future<void> updateProfile({
-    required Profile currentUser, 
-    required Profile profileToEdit,
+    required AppUser currentUser, 
+    required UserProfile profileToEdit,
   }) async {
     emit(const EditProfileState.saving());
 

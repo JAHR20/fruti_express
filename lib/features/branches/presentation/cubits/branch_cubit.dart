@@ -2,29 +2,39 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
-import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_branches_with_configured_shipping_use_case.dart'; 
+import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/get_branches_with_configured_shipping_rates_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_branches_with_configured_shipping_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/change_branch_status_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/get_all_branches_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/watch_branches_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'branch_state.dart';
 
 class BranchCubit extends Cubit<BranchState> {
   final GetAllBranchesUseCase _getAllBranchesUseCase;
   final ChangeBranchStatusUseCase _changeBranchStatusUseCase;
-  final GetBranchesWithConfiguredShippingUseCase _getBranchesWithConfiguredShippingUseCase;
+  final GetBranchesWithConfiguredShippingUseCase
+  _getBranchesWithConfiguredShippingUseCase;
   final WatchBranchesUseCase _watchBranchesUseCase;
+  final GetBranchesWithConfiguredShippingRatesUseCase
+  _getBranchesWithConfiguredShippingRatesUseCase;
   StreamSubscription? _realtimeSubscription;
 
   BranchCubit({
     required GetAllBranchesUseCase getAllBranchesUseCase,
     required ChangeBranchStatusUseCase changeBranchStatusUseCase,
-    required GetBranchesWithConfiguredShippingUseCase getBranchesWithConfiguredShippingUseCase,
+    required GetBranchesWithConfiguredShippingUseCase
+    getBranchesWithConfiguredShippingUseCase,
     required WatchBranchesUseCase watchBranchesUseCase,
+    required GetBranchesWithConfiguredShippingRatesUseCase
+    getBranchesWithConfiguredShippingRatesUseCase,
   }) : _changeBranchStatusUseCase = changeBranchStatusUseCase,
        _getAllBranchesUseCase = getAllBranchesUseCase,
-       _getBranchesWithConfiguredShippingUseCase = getBranchesWithConfiguredShippingUseCase,
+       _getBranchesWithConfiguredShippingUseCase =
+           getBranchesWithConfiguredShippingUseCase,
        _watchBranchesUseCase = watchBranchesUseCase,
+       _getBranchesWithConfiguredShippingRatesUseCase =
+           getBranchesWithConfiguredShippingRatesUseCase,
        super(const BranchState());
 
   void startRealtime() {
@@ -61,9 +71,15 @@ class BranchCubit extends Cubit<BranchState> {
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final futureBranches = _getAllBranchesUseCase.execute().run();
-    final futureShipments = _getBranchesWithConfiguredShippingUseCase.execute().run();
+    final futureShipments = _getBranchesWithConfiguredShippingUseCase
+        .execute()
+        .run();
+    final futureRates = _getBranchesWithConfiguredShippingRatesUseCase
+        .execute()
+        .run();
     final resultsBranches = await futureBranches;
     final shippingResults = await futureShipments;
+    final ratesResults = await futureRates;
 
     if (resultsBranches.isLeft()) {
       final message = resultsBranches.match(
@@ -79,10 +95,14 @@ class BranchCubit extends Cubit<BranchState> {
     final branchesWithShipping =
         shippingResults.getRight().toNullable() ?? <String>{};
 
+    final branchesWithRates =
+        ratesResults.getRight().toNullable() ?? <String>{};
+
     emit(
       state.copyWith(
         branches: list,
         branchesWithShippingConfigured: branchesWithShipping,
+        branchesWithRatesConfigured: branchesWithRates,
         isLoading: false,
         errorMessage: null,
       ),
@@ -90,7 +110,7 @@ class BranchCubit extends Cubit<BranchState> {
   }
 
   Future<void> changeBranchStatus({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String branchId,
     required bool newState,
   }) async {
@@ -113,7 +133,7 @@ class BranchCubit extends Cubit<BranchState> {
           ),
         );
       },
-      (updatedBranch) { 
+      (updatedBranch) {
         final newBranches = state.branches.map((branch) {
           if (branch.id == updatedBranch.id) {
             return updatedBranch;

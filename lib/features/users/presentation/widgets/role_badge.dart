@@ -1,31 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:fruti_express_jahr_admin/core/theme/app_colors_extension.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 
 class RoleBadge extends StatelessWidget {
-  final UserRole? role; // rol -> role
+  final UserRole? role; 
 
   const RoleBadge({super.key, required this.role});
 
   @override
   Widget build(BuildContext context) {
-    Color badgeColor; // color -> badgeColor
-    String badgeText; // texto -> badgeText
+    final colorScheme = Theme.of(context).colorScheme;
+    final customColors = Theme.of(context).extension<AppColorsExtension>()!;
+
+    Color badgeColor; 
+    String badgeText; 
 
     switch (role) {
       case UserRole.admin:
-        badgeColor = Colors.red.shade700;
+        badgeColor = colorScheme.tertiary;
         badgeText = 'ADMIN';
         break;
       case UserRole.manager:
-        badgeColor = Colors.orange.shade700;
+        badgeColor = colorScheme.secondary;
         badgeText = 'ENCARGADO';
         break;
       case UserRole.deliveryPerson:
-        badgeColor = Colors.blue.shade700;
+        badgeColor = customColors.logistics;
         badgeText = 'REPARTIDOR';
         break;
       default:
-        badgeColor = Colors.green.shade700;
+        badgeColor = colorScheme.primary; 
         badgeText = 'CLIENTE';
     }
 

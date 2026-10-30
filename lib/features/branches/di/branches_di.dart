@@ -1,4 +1,5 @@
 import 'package:fruti_express_jahr_admin/features/branches/data/repositories/branch_repository_impl.dart';
+import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/get_branches_with_configured_shipping_rates_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/update_branch_coverage_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/change_branch_status_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/get_coverage_use_case.dart';
@@ -24,6 +25,7 @@ void initBranches(GetIt sl) {
   sl.registerLazySingleton(() => UpdateBranchUseCase(sl()));
   sl.registerLazySingleton(() => GetLocationByPostalCodeUseCase(sl()));
   sl.registerLazySingleton(() => WatchBranchesUseCase(sl()));
+  sl.registerLazySingleton(() => GetBranchesWithConfiguredShippingRatesUseCase(sl()));
 
   // --- REPOSITORIO ---
   sl.registerLazySingleton<BranchRepository>(() => BranchRepositoryImpl(sl()));
@@ -40,6 +42,7 @@ void initBranches(GetIt sl) {
       changeBranchStatusUseCase: sl(),
       getBranchesWithConfiguredShippingUseCase: sl(),
       watchBranchesUseCase: sl(),
+      getBranchesWithConfiguredShippingRatesUseCase: sl(),
     ),
   );
 
@@ -52,6 +55,7 @@ void initBranches(GetIt sl) {
       updateBranchCoverageUseCase: sl(),
       saveShippingConfigUseCase: sl(),
       getShippingConfigUseCase: sl(),
+      logger: sl()
     ),
   );
 }

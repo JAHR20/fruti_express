@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:fruti_express_jahr_admin/core/types/coordinates.dart'; 
+import 'package:fruti_express_jahr_admin/core/types/coordinates.dart';
 
 class MapSelectorPage extends StatefulWidget {
   final Coordinates? initialLocation;
+  final String mapProviderUrl;
 
   const MapSelectorPage({
     super.key,
+    required this.mapProviderUrl,
     this.initialLocation,
   });
 
@@ -28,7 +30,7 @@ class _MapSelectorPageState extends State<MapSelectorPage> {
         widget.initialLocation!.longitude,
       );
     } else {
-      _currentPosition = const LatLng(19.4326, -99.1332); 
+      _currentPosition = const LatLng(17.8586, -94.7264);
     }
   }
 
@@ -54,8 +56,8 @@ class _MapSelectorPageState extends State<MapSelectorPage> {
             ),
             children: [
               TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.tuempresa.frutiexpressadmin', 
+                urlTemplate: widget.mapProviderUrl,
+                userAgentPackageName: 'com.frutiexpress.frutiexpressadmin',
               ),
               MarkerLayer(
                 markers: [
@@ -79,10 +81,10 @@ class _MapSelectorPageState extends State<MapSelectorPage> {
             right: 16,
             child: Card(
               elevation: 4,
-              child: Padding(
-                padding: const EdgeInsets.all(12.0),
+              child: const Padding(
+                padding: EdgeInsets.all(12.0),
                 child: Row(
-                  children: const [
+                  children: [
                     Icon(Icons.touch_app, color: Color(0xFF1E3A8A)),
                     SizedBox(width: 8),
                     Expanded(
@@ -96,10 +98,9 @@ class _MapSelectorPageState extends State<MapSelectorPage> {
               ),
             ),
           ),
-
           Positioned(
             right: 16,
-            bottom: 80, 
+            bottom: 80,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -127,7 +128,6 @@ class _MapSelectorPageState extends State<MapSelectorPage> {
               ],
             ),
           ),
-
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

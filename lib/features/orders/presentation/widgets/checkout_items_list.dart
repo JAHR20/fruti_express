@@ -15,6 +15,7 @@ class CheckoutItemsList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorTheme = Theme.of(context).colorScheme;
     if (items.isEmpty) return const SizedBox.shrink();
 
     return Column(
@@ -62,8 +63,8 @@ class CheckoutItemsList extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) => Container(
                       width: 55,
                       height: 55,
-                      color: Colors.grey.shade200,
-                      child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                      color: colorTheme.outline,
+                      child: Icon(Icons.image_not_supported, color: colorTheme.outline),
                     ),
                   ),
                 ),
@@ -74,14 +75,14 @@ class CheckoutItemsList extends StatelessWidget {
                 ),
                 subtitle: Text(
                   'Cantidad: $displayQuantity',
-                  style: TextStyle(color: Colors.grey.shade600),
+                  style: TextStyle(color: colorTheme.onSurfaceVariant),
                 ),
                 trailing: Text(
                   itemTotal.toCurrencyFormat,
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: Color(0xFF1E3A8A),
+                    color: colorTheme.secondaryContainer,
                   ),
                 ),
               );

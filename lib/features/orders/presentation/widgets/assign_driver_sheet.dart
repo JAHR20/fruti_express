@@ -5,7 +5,7 @@ import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_
 import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/drivers_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/drivers_state.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/manager_orders_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 class AssignDriverSheet extends StatefulWidget {
   final String orderId;
@@ -120,7 +120,7 @@ class _AssignDriverSheetState extends State<AssignDriverSheet> {
 }
 
 class _DriverTile extends StatelessWidget {
-  final Profile driver; 
+  final AppUser driver; 
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -136,23 +136,23 @@ class _DriverTile extends StatelessWidget {
       onTap: onTap,
       leading: CircleAvatar(
         backgroundColor: const Color(0xFF1E3A8A).withValues(alpha: 0.1),
-        backgroundImage: driver.avatarUrl != null
-            ? NetworkImage(driver.avatarUrl!)
+        backgroundImage: driver.profile.avatarUrl != null
+            ? NetworkImage(driver.profile.avatarUrl!)
             : null,
-        child: driver.avatarUrl == null
+        child: driver.profile.avatarUrl == null
             ? Text(
-                driver.firstName[0].toUpperCase(),
+                driver.profile.firstName[0].toUpperCase(),
                 style: const TextStyle(
                     color: Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
               )
             : null,
       ),
       title: Text(
-        '${driver.paternalLastName} ${driver.maternalLastName}',
+        '${driver.profile.paternalLastName} ${driver.profile.maternalLastName}',
         style: const TextStyle(fontWeight: FontWeight.w500),
       ),
-      subtitle: driver.phone != null
-          ? Text(driver.phone!, style: const TextStyle(fontSize: 12))
+      subtitle: driver.profile.phone != null
+          ? Text(driver.profile.phone!, style: const TextStyle(fontSize: 12))
           : null,
       trailing: isSelected
           ? const Icon(Icons.check_circle, color: Colors.purple)

@@ -1,8 +1,8 @@
 
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 
-extension UserPermissions on Profile {
+extension UserPermissions on AppUser {
   // Roles
   bool get isAdmin => role == UserRole.admin;
   bool get isManager => role == UserRole.manager;
@@ -27,7 +27,7 @@ extension UserPermissions on Profile {
   bool get canCreateBranch => isAdmin;
 
   // Actions
-  bool canDeactivateReactivateUser(Profile target) {
+  bool canDeactivateReactivateUser(AppUser target) {
     if (isAdmin) return true;
     if (isManager &&
         target.isDeliveryPerson &&

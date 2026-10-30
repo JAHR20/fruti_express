@@ -38,24 +38,25 @@ class AppRouter {
       ...CartRoutes.buildRoutes(),
       ...AddressRoutes.buildRoutes(),
       ...OrderRoutes.buildCustomerRoutes(),
+      ...UserRoutes.buildCustomerRoutes(),
 
       CustomerShellRoutes.buildRoute(),
+      ...BranchRoutes.buildStandaloneRoutes(),
 
       // Admin - Shell
       AdminShellRoutes.buildRoute([
         ...ProductRoutes.buildAdminRoutes(),
         ...CategoryRoutes.buildAdminRoutes(),
-        ...BranchRoutes.buildRoutes(),
+        ...BranchRoutes.buildShellRoutes(),
         ...InventoryRoutes.buildRoutes(),
         ...BannerRoutes.buildRoutes(),
-        ...UserRoutes.buildRoutes(),
+        ...UserRoutes.buildAdminRoutes(),
         ...OrderRoutes.buildAdminRoutes(),
-        ...CouponsRouter.buildRoutes()
+        ...CouponsRouter.buildRoutes(),
       ]),
 
       // Repartidor
       ...OrderRoutes.buildDeliveryRoutes(),
-
     ],
   );
 }

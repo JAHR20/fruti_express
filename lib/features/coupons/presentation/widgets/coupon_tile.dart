@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/coupons/domain/enums/discount_type.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:intl/intl.dart';
 import '../../domain/entities/coupon.dart';
 import '../cubits/coupon_cubit.dart';
@@ -9,7 +9,7 @@ import '../cubits/coupon_state.dart';
 
 class CouponTile extends StatelessWidget {
   final Coupon coupon;
-  final Profile currentUser;
+  final AppUser currentUser;
   final VoidCallback onEdit;
 
   const CouponTile({
@@ -21,6 +21,8 @@ class CouponTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    
     final symbol = coupon.discountType == DiscountType.percentage ? '%' : '\$';
     final valueDisplay = coupon.discountType == DiscountType.percentage 
         ? '${coupon.discountValue}$symbol'
@@ -37,18 +39,18 @@ class CouponTile extends StatelessWidget {
           children: [
             Text(
               coupon.code, 
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: colors.secondary),
             ),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
-                color: coupon.isValidNow ? Colors.green.shade100 : Colors.red.shade100,
+                color: coupon.isValidNow ? colors.primaryContainer : colors.errorContainer,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
                 coupon.isValidNow ? 'Válido' : 'Inválido',
                 style: TextStyle(
-                  color: coupon.isValidNow ? Colors.green.shade700 : Colors.red.shade700,
+                  color: coupon.isValidNow ? colors.onPrimaryContainer : colors.onErrorContainer,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                 ),
@@ -70,8 +72,8 @@ class CouponTile extends StatelessWidget {
                   'Expira: ${DateFormat('dd/MM/yyyy').format(coupon.validUntil!)}', 
                   style: TextStyle(
                     color: coupon.validUntil!.isBefore(DateTime.now()) 
-                        ? Colors.red 
-                        : Colors.grey.shade700,
+                        ? colors.error 
+                        : colors.onSurfaceVariant,
                   ),
                 ),
               ],
@@ -97,24 +99,26 @@ class CouponTile extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.blue),
+                      iconSize: 30,
+                      icon: Icon(Icons.edit, color: colors.secondaryContainer),
                       onPressed: onEdit,
                       tooltip: 'Editar Cupón',
                     ),
-                    IconButton(
-                      icon: Icon(
-                        coupon.isActive ? Icons.toggle_on : Icons.toggle_off, 
-                        color: coupon.isActive ? Colors.green : Colors.grey, 
-                        size: 32,
+                    const SizedBox(width: 4),
+                    Tooltip(
+                      message: coupon.isActive ? 'Desactivar' : 'Activar',
+                      child: Switch(
+                        activeThumbColor: colors.primary,
+                        activeTrackColor: colors.primaryFixedDim,
+                        value: coupon.isActive,
+                        onChanged: (bool newValue) {
+                          context.read<CouponCubit>().changeCouponStatus(
+                            currentUser: currentUser, 
+                            couponId: coupon.id,
+                            newState: newValue, 
+                          );
+                        },
                       ),
-                      tooltip: coupon.isActive ? 'Desactivar' : 'Activar',
-                      onPressed: () {
-                        context.read<CouponCubit>().changeCouponStatus(
-                          currentUser: currentUser, 
-                          couponId: coupon.id,
-                          newState: !coupon.isActive, 
-                        );
-                      },
                     ),
                   ],
                 ),

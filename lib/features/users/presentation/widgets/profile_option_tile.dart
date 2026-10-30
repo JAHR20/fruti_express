@@ -20,9 +20,11 @@ class ProfileOptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     final color = isDestructive
-        ? Colors.red
-        : iconColor ?? const Color(0xFF1E3A8A);
+        ? colorScheme.error
+        : iconColor ?? colorScheme.tertiary;
 
     return ListTile(
       onTap: onTap,
@@ -39,27 +41,38 @@ class ProfileOptionTile extends StatelessWidget {
         title,
         style: TextStyle(
           fontWeight: FontWeight.w500,
-          color: isDestructive ? Colors.red : null,
+          // 👇 Texto principal o texto de error
+          color: isDestructive ? colorScheme.error : colorScheme.onSurface,
         ),
       ),
       subtitle: subtitle != null
-          ? Text(subtitle!,
-              style: TextStyle(fontSize: 12, color: Colors.grey.shade500))
+          ? Text(
+              subtitle!,
+              style: TextStyle(
+                fontSize: 12, 
+                color: colorScheme.onSurfaceVariant, // 👈 Gris para textos secundarios
+              ),
+            )
           : null,
       trailing: isDestructive
           ? null
-          : Icon(Icons.chevron_right, color: Colors.grey.shade400),
+          : Icon(
+              Icons.chevron_right, 
+              color: colorScheme.onSurfaceVariant, // 👈 Flecha adaptable
+            ),
     );
   }
 }
 
 class ProfileSectionTitle extends StatelessWidget { 
-  final String title; // titulo -> title
+  final String title; 
 
   const ProfileSectionTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme; // 👈 Extraemos el tema
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
       child: Text(
@@ -67,7 +80,7 @@ class ProfileSectionTitle extends StatelessWidget {
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.bold,
-          color: Colors.grey.shade500,
+          color: colorScheme.onSurfaceVariant, // 👈 Sustituye a Colors.grey.shade500
           letterSpacing: 1.2,
         ),
       ),

@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fruti_express_jahr_admin/core/utils/currency_formatter.dart'; // FormatoMoneda -> CurrencyFormatter
+import 'package:fruti_express_jahr_admin/core/utils/currency_formatter.dart';
+import 'package:fruti_express_jahr_admin/core/widgets/animated_empty_state.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
-import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/order_detail_page.dart'; // PedidoDetallePage -> OrderDetailPage
-import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart'; // Pedido -> Order
+import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/order_detail_page.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order_item.dart';
-import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart'; // EstadoPedido -> OrderStatus
-import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/customer_orders_cubit.dart'; // PedidosClienteCubit -> CustomerOrdersCubit
-import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/customer_orders_state.dart'; // PedidosClienteState -> CustomerOrdersState
-import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/order_status_chip.dart'; // EstadoChip -> OrderStatusChip
+import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/customer_orders_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/customer_orders_state.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/order_status_chip.dart';
 
-class CustomerOrdersPage extends StatefulWidget { // PedidosClienteView -> CustomerOrdersPage
+class CustomerOrdersPage extends StatefulWidget {
   const CustomerOrdersPage({super.key});
 
   @override
@@ -22,53 +23,82 @@ class _CustomerOrdersPageState extends State<CustomerOrdersPage> {
   @override
   void initState() {
     super.initState();
-    final profile = // perfil -> profile
-        (context.read<AuthCubit>().state as AuthAuthenticated).profile;
+    final profile = (context.read<AuthCubit>().state as AuthAuthenticated).user;
     context.read<CustomerOrdersCubit>().load(profile.id);
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
+    Future<void> handleRefresh() async {
+      final authState = context.read<AuthCubit>().state;
+      if (authState is AuthAuthenticated) {
+        final ordersCubit = context.read<CustomerOrdersCubit>();
+        await ordersCubit.load(authState.user.id);
+      }
+    }
+
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         title: const Text(
           'Mis Pedidos',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF1E3A8A),
         automaticallyImplyLeading: false,
       ),
       body: BlocBuilder<CustomerOrdersCubit, CustomerOrdersState>(
         builder: (context, state) {
           return state.when(
-            initial: () => const SizedBox.shrink(), // inicial -> initial
-            loading: () => const Center( // cargando -> loading
-              child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+            initial: () => const SizedBox.shrink(),
+            loading: () => Center(
+              child: CircularProgressIndicator(color: colorScheme.primary),
             ),
-            error: (msg) => _ErrorView(
-              message: msg, // mensaje -> message
-              onRetry: () { // onReintentar -> onRetry
-                final profile =
-                    (context.read<AuthCubit>().state as AuthAuthenticated)
-                        .profile;
-                context.read<CustomerOrdersCubit>().load(profile.id);
-              },
+
+            error: (msg) => RefreshIndicator(
+              color: colorScheme.primary,
+              onRefresh: handleRefresh,
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                slivers: [
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: _ErrorView(message: msg, onRetry: handleRefresh),
+                  ),
+                ],
+              ),
             ),
-            loaded: (orders) { // cargado -> loaded, pedidos -> orders
-              if (orders.isEmpty) return const _EmptyOrdersView(); // _SinPedidos -> _EmptyOrdersView
+
+            loaded: (orders) {
               return RefreshIndicator(
-                color: const Color(0xFF1E3A8A),
-                onRefresh: () async {
-                  final profile =
-                      (context.read<AuthCubit>().state as AuthAuthenticated)
-                          .profile;
-                  await context.read<CustomerOrdersCubit>().load(profile.id);
-                },
-                child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  itemCount: orders.length,
-                  itemBuilder: (_, i) => _CustomerOrderCard(order: orders[i]), // _PedidoCardCliente -> _CustomerOrderCard
+                color: colorScheme.primary,
+                onRefresh: handleRefresh,
+                child: CustomScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  slivers: [
+                    // CASO A: VACÍO
+                    if (orders.isEmpty)
+                      const SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: AnimatedEmptyState(
+                          icon: Icon(Icons.shopping_bag_outlined),
+                          title: 'Aún no tienes pedidos',
+                          subtitle:
+                              'Cuando realices tu primer pedido, aparecerá aquí.',
+                        ),
+                      )
+                    // CASO B: CON DATOS
+                    else
+                      SliverPadding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        sliver: SliverList.builder(
+                          itemCount: orders.length,
+                          itemBuilder: (_, i) =>
+                              _CustomerOrderCard(order: orders[i]),
+                        ),
+                      ),
+                  ],
                 ),
               );
             },
@@ -85,18 +115,20 @@ class _CustomerOrderCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isActive = // estaActivo -> isActive
+    final colorScheme = Theme.of(context).colorScheme;
+    final isActive =
         order.status != OrderStatus.delivered &&
         order.status != OrderStatus.cancelled;
 
     return InkWell(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => OrderDetailPage(order: order)),
-      ),
+      onTap: () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => OrderDetailPage(order: order))),
       borderRadius: BorderRadius.circular(12),
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        // En M3, Card toma automáticamente colorScheme.surfaceContainer u onSurface
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -107,9 +139,10 @@ class _CustomerOrderCard extends StatelessWidget {
                 children: [
                   Text(
                     '#${order.id.substring(0, 8).toUpperCase()}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
+                      color: colorScheme.onSurface,
                     ),
                   ),
                   OrderStatusChip(status: order.status),
@@ -117,8 +150,11 @@ class _CustomerOrderCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                _formatDate(order.createdAt), // _formatearFecha -> _formatDate
-                style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                _formatDate(order.createdAt),
+                style: TextStyle(
+                  color: colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
               ),
               const Divider(height: 20),
 
@@ -131,12 +167,18 @@ class _CustomerOrderCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           '${item.formattedQuantity} x ${item.productNameSnapshot}',
-                          style: const TextStyle(fontSize: 13),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: colorScheme.onSurface,
+                          ),
                         ),
                       ),
                       Text(
-                        CurrencyFormatter.format(item.calculatedSubtotal), // formatoMoneda -> CurrencyFormatter.format()
-                        style: const TextStyle(fontSize: 13),
+                        CurrencyFormatter.format(item.calculatedSubtotal),
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: colorScheme.onSurface,
+                        ),
                       ),
                     ],
                   ),
@@ -146,23 +188,27 @@ class _CustomerOrderCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Total',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                      color: colorScheme.onSurface,
+                    ),
                   ),
                   Text(
                     CurrencyFormatter.format(order.total),
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
-                      color: Color(0xFF1E3A8A),
+                      color: colorScheme.primary,
                     ),
                   ),
                 ],
               ),
-              if (isActive && order.confirmationCode != null) ...[ // codigoConfirmacion -> confirmationCode
+              if (isActive && order.confirmationCode != null) ...[
                 const SizedBox(height: 16),
-                _ConfirmationCode(code: order.confirmationCode!), // _CodigoConfirmacion -> _ConfirmationCode
+                _ConfirmationCode(code: order.confirmationCode!),
               ],
             ],
           ),
@@ -171,7 +217,7 @@ class _CustomerOrderCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) { // _formatearFecha -> _formatDate
+  String _formatDate(DateTime date) {
     const months = [
       'ene',
       'feb',
@@ -203,42 +249,42 @@ class _ConfirmationCodeState extends State<_ConfirmationCode> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E3A8A).withValues(alpha: 0.05),
+        color: colorScheme.primaryContainer,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          color: const Color(0xFF1E3A8A).withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: colorScheme.primary.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.lock_outline,
                 size: 16,
-                color: Color(0xFF1E3A8A),
+                color: colorScheme.onPrimaryContainer,
               ),
               const SizedBox(width: 6),
-              const Text(
+              Text(
                 'Código de confirmación',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Color(0xFF1E3A8A),
+                  color: colorScheme.onPrimaryContainer,
                   fontWeight: FontWeight.w500,
                 ),
               ),
               const Spacer(),
               GestureDetector(
-                onTap: () => setState(() => _isVisible = !_isVisible), // _visible -> _isVisible
+                onTap: () => setState(() => _isVisible = !_isVisible),
                 child: Text(
                   _isVisible ? 'Ocultar' : 'Mostrar',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 12,
-                    color: Color(0xFF1E3A8A),
+                    color: colorScheme.onPrimaryContainer,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -254,8 +300,8 @@ class _ConfirmationCodeState extends State<_ConfirmationCode> {
                 fontWeight: FontWeight.bold,
                 letterSpacing: 16,
                 color: _isVisible
-                    ? const Color(0xFF1E3A8A)
-                    : Colors.grey.shade400,
+                    ? colorScheme.onPrimaryContainer
+                    : colorScheme.primaryFixed.withValues(alpha: 1),
               ),
             ),
           ),
@@ -265,7 +311,10 @@ class _ConfirmationCodeState extends State<_ConfirmationCode> {
               child: Text(
                 'Muéstraselo al repartidor al recibir tu pedido',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
+                ),
               ),
             ),
           ],
@@ -275,56 +324,28 @@ class _ConfirmationCodeState extends State<_ConfirmationCode> {
   }
 }
 
-class _EmptyOrdersView extends StatelessWidget { // _SinPedidos -> _EmptyOrdersView
-  const _EmptyOrdersView();
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.receipt_long_outlined,
-            size: 80,
-            color: Colors.grey.shade300,
-          ),
-          const SizedBox(height: 16),
-          const Text(
-            'Aún no tienes pedidos',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Cuando hagas tu primer pedido\naparecerá aquí',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey.shade500),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _ErrorView extends StatelessWidget {
-  final String message; // mensaje -> message
-  final VoidCallback onRetry; // onReintentar -> onRetry
+  final String message;
+  final VoidCallback onRetry;
   const _ErrorView({required this.message, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 48, color: Colors.red),
+          Icon(Icons.error_outline, size: 48, color: colorScheme.error),
           const SizedBox(height: 12),
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: 16),
-          FilledButton(
-            onPressed: onRetry,
-            child: const Text('Reintentar'),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            style: TextStyle(color: colorScheme.onSurface),
           ),
+          const SizedBox(height: 16),
+          FilledButton(onPressed: onRetry, child: const Text('Reintentar')),
         ],
       ),
     );

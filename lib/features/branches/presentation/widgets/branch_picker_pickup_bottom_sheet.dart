@@ -13,10 +13,11 @@ class BranchPickerPickupBottomSheet extends StatelessWidget {
     final branchCubit = context.read<BranchCubit>();
     final coordinator = context.read<CustomerCoordinatorCubit>();
     final cartCubit = context.read<CartCubit>();
+    final colorScheme = Theme.of(context).colorScheme;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -35,6 +36,7 @@ class BranchPickerPickupBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final cartState = context.watch<CartCubit>().state;
     final coordinator = context.read<CustomerCoordinatorCubit>();
     final selectedBranchId = cartState.branchId;
@@ -46,17 +48,20 @@ class BranchPickerPickupBottomSheet extends StatelessWidget {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
-              padding: EdgeInsets.all(20.0),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
               child: Text(
                 '¿En qué sucursal recogerás?',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: colorScheme.onSurface),
               ),
             ),
             if (activeBranches.isEmpty)
-              const Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Text('No hay sucursales disponibles por el momento.'),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Text(
+                  'No hay sucursales disponibles por el momento.',
+                  style: TextStyle(color: colorScheme.onSurfaceVariant),
+                ),
               )
             else
               Flexible(
@@ -72,29 +77,24 @@ class BranchPickerPickupBottomSheet extends StatelessWidget {
                     return ListTile(
                       leading: Icon(
                         Icons.store,
-                        color: isSelected
-                            ? const Color(0xFF1E3A8A)
-                            : Colors.grey,
+                        color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
                       ),
                       title: Text(
                         branch.name,
                         style: TextStyle(
-                          fontWeight: isSelected
-                              ? FontWeight.bold
-                              : FontWeight.normal,
+                          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                       subtitle: Text(
                         '${branch.street} #${branch.exteriorNumber}',
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
                       ),
                       trailing: isSelected
-                          ? const Icon(
-                              Icons.check_circle,
-                              color: Color(0xFF1E3A8A),
-                            )
-                          : const Icon(Icons.arrow_forward_ios, size: 16),
+                          ? Icon(Icons.check_circle, color: colorScheme.primary)
+                          : Icon(Icons.arrow_forward_ios, size: 16, color: colorScheme.onSurfaceVariant),
                       onTap: () {
                         Navigator.pop(context);
                         coordinator.confirmPickup(branch);

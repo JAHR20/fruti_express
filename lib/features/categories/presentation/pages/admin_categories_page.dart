@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/core/widgets/animated_empty_state.dart';
 import 'package:fruti_express_jahr_admin/core/widgets/confirm_dialog.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
@@ -7,7 +8,7 @@ import 'package:fruti_express_jahr_admin/features/categories/domain/entities/cat
 import 'package:fruti_express_jahr_admin/features/categories/presentation/cubits/category_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/categories/presentation/cubits/category_state.dart';
 import '../widgets/admin_category_list_tile.dart';
-import '../widgets/category_form_dialog.dart';
+import '../widgets/category_form_bottom_sheet.dart';
 
 class AdminCategoriesPage extends StatefulWidget {
   const AdminCategoriesPage({super.key});
@@ -26,7 +27,7 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
   void _loadData() {
     final authState = context.read<AuthCubit>().state;
     if (authState is AuthAuthenticated) {
-      context.read<CategoryCubit>().loadCategories(authState.profile);
+      context.read<CategoryCubit>().loadCategories(authState.user);
     }
   }
 
@@ -34,13 +35,15 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
     final authState = context.read<AuthCubit>().state;
     if (authState is! AuthAuthenticated) return;
 
-    final profile = authState.profile;
+    final profile = authState.user;
     final categoryCubit = context.read<CategoryCubit>();
+    final colors = Theme.of(context).colorScheme;
 
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) {
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (bottomSheetContext) {
         return BlocProvider.value(
           value: categoryCubit,
           child: BlocConsumer<CategoryCubit, CategoryState>(
@@ -51,26 +54,32 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
               if (state.operationError != null) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content: Text(state.operationError!),
-                    backgroundColor: Colors.red,
+                    content: Text(
+                      state.operationError!,
+                      style: TextStyle(color: colors.onError),
+                    ),
+                    backgroundColor: colors.error,
                   ),
                 );
               }
 
               if (state.operationSuccessful) {
-                Navigator.of(dialogContext).pop();
+                Navigator.of(bottomSheetContext).pop();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Guardado correctamente'),
-                    backgroundColor: Colors.green,
+                  SnackBar(
+                    content: Text(
+                      'Guardado correctamente',
+                      style: TextStyle(color: colors.onPrimary),
+                    ),
+                    backgroundColor: colors.primary,
                   ),
                 );
               }
             },
             builder: (context, state) {
-              return CategoryFormDialog(
+              return CategoryFormBottomSheet(
                 categoryToEdit: category,
-                isLoading:
+                isSaving:
                     state.isSavingOperation ||
                     state.processingCategoryId != null,
                 onSave: (name, description, imageFile) {
@@ -103,8 +112,9 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
     final authState = context.read<AuthCubit>().state;
     if (authState is! AuthAuthenticated) return;
 
-    final profile = authState.profile;
+    final profile = authState.user;
     final bool newState = !category.isActive;
+    final colors = Theme.of(context).colorScheme;
 
     showDialog(
       context: context,
@@ -116,7 +126,7 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
             ? 'La categoría volverá a estar visible para todos los clientes en la tienda.'
             : 'Esta categoría se ocultará de la tienda para los clientes, pero se conservará en tu base de datos.',
         confirmText: newState ? 'Activar' : 'Desactivar',
-        confirmColor: newState ? Colors.green : Colors.red,
+        confirmColor: newState ? colors.primary : colors.error,
         onConfirm: () {
           context.read<CategoryCubit>().changeCategoryStatus(
             currentUser: profile,
@@ -130,47 +140,93 @@ class _AdminCategoriesPageState extends State<AdminCategoriesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
-        backgroundColor: const Color(0xFF1E3A8A),
-        foregroundColor: Colors.white,
+        backgroundColor: colors.primary,
+        foregroundColor: colors.onPrimary,
         icon: const Icon(Icons.add),
         label: const Text('Añadir Categoría'),
         onPressed: () => _showFormModal(),
       ),
-      body: BlocBuilder<CategoryCubit, CategoryState>(
+      body: BlocConsumer<CategoryCubit, CategoryState>(
+        listenWhen: (previous, current) =>
+            previous.errorMessage != current.errorMessage,
+        listener: (context, state) {
+          if (state.errorMessage != null && state.categories.isNotEmpty) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  state.errorMessage!,
+                  style: TextStyle(color: colors.onError),
+                ),
+                backgroundColor: colors.error,
+              ),
+            );
+          }
+        },
         builder: (context, state) {
-          if (state.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+          // 1. CARGA INICIAL (Solo si no hay datos)
+          if (state.isLoading && state.categories.isEmpty) {
+            return Center(
+              child: CircularProgressIndicator(color: colors.primary),
             );
           }
 
-          if (state.errorMessage != null) {
+          // 2. ERROR GLOBAL
+          if (state.errorMessage != null && state.categories.isEmpty) {
             return Center(
               child: Text(
                 state.errorMessage!,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: colors.error),
               ),
             );
           }
 
-          if (state.categories.isEmpty) {
-            return const Center(child: Text('No hay categorías registradas.'));
-          }
-
-          return Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ListView.builder(
-              itemCount: state.categories.length,
-              itemBuilder: (context, index) {
-                final category = state.categories[index];
-                return AdminCategoryListTile(
-                  category: category,
-                  onEdit: () => _showFormModal(category: category),
-                  onDeactivate: () => _showStatusDialog(context, category),
-                );
-              },
+          return RefreshIndicator(
+            color: colors.primary,
+            onRefresh: () async {
+              final authState = context.read<AuthCubit>().state;
+              if (authState is! AuthAuthenticated) return;
+              await context.read<CategoryCubit>().loadCategories(
+                authState.user,
+              );
+            },
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(), // 👈 Obligatorio
+              slivers: [
+                // CASO A: ESTADO VACÍO
+                if (state.categories.isEmpty)
+                  const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: AnimatedEmptyState(
+                      icon: Icon(Icons.category_outlined),
+                      title: 'No hay categorías',
+                      subtitle:
+                          'Aún no hay categorías registradas en el sistema.',
+                    ),
+                  )
+                // CASO B: LISTA DE CATEGORÍAS
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.all(
+                      16.0,
+                    ), // Mismo padding que tenías
+                    sliver: SliverList.builder(
+                      itemCount: state.categories.length,
+                      itemBuilder: (context, index) {
+                        final category = state.categories[index];
+                        return AdminCategoryListTile(
+                          category: category,
+                          onEdit: () => _showFormModal(category: category),
+                          onDeactivate: () =>
+                              _showStatusDialog(context, category),
+                        );
+                      },
+                    ),
+                  ),
+              ],
             ),
           );
         },

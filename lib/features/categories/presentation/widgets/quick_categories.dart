@@ -25,7 +25,7 @@ class QuickCategories extends StatelessWidget {
 
     context.pushNamed(
       ProductCategoryRoutes.name,
-      extra: {'categoria': category, 'sucursalId': branchId},
+      extra: {'category': category, 'branchId': branchId},
     );
   }
 

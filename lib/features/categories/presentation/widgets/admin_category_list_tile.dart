@@ -17,6 +17,8 @@ class AdminCategoryListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Card(
       elevation: 2,
       margin: const EdgeInsets.only(bottom: 12),
@@ -26,23 +28,22 @@ class AdminCategoryListTile extends StatelessWidget {
           child: Container(
             width: 48,
             height: 48,
-            color: Colors.grey.shade200,
-            child:
-                (category.imageUrl != null && category.imageUrl!.isNotEmpty)
+            color: colors.surfaceContainerHighest, 
+            child: (category.imageUrl != null && category.imageUrl!.isNotEmpty)
                 ? Image.network(
                     category.imageUrl!,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.image, color: Colors.grey),
+                        Icon(Icons.image, color: colors.onSurfaceVariant),
                   )
-                : const Icon(
+                : Icon(
                     Icons.image,
-                    color: Colors.grey,
+                    color: colors.onSurfaceVariant,
                   ),
           ),
         ),
         title: Text(
-          category.name, // nombre -> name
+          category.name,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Column(
@@ -50,13 +51,13 @@ class AdminCategoryListTile extends StatelessWidget {
           children: [
             Text(
               category.description ?? 'Sin descripción',
-              style: TextStyle(color: Colors.grey.shade600),
+              style: TextStyle(color: colors.onSurfaceVariant), 
             ),
-            if (!category.isActive) // activa -> isActive
-              const Text(
+            if (!category.isActive)
+              Text(
                 'Inactiva',
                 style: TextStyle(
-                  color: Colors.red,
+                  color: colors.error, 
                   fontWeight: FontWeight.bold,
                   fontSize: 12,
                 ),
@@ -77,13 +78,13 @@ class AdminCategoryListTile extends StatelessWidget {
           },
           itemBuilder: (BuildContext context) =>
               <PopupMenuEntry<CategoryAction>>[
-                const PopupMenuItem<CategoryAction>(
+                PopupMenuItem<CategoryAction>(
                   value: CategoryAction.edit,
                   child: Row(
                     children: [
-                      Icon(Icons.edit_outlined, color: Colors.blue, size: 20),
-                      SizedBox(width: 12),
-                      Text('Editar'),
+                      Icon(Icons.edit_outlined, color: colors.primaryContainer, size: 20),
+                      const SizedBox(width: 12),
+                      Text('Editar', style: TextStyle(color: colors.primaryContainer),),
                     ],
                   ),
                 ),
@@ -95,14 +96,14 @@ class AdminCategoryListTile extends StatelessWidget {
                         category.isActive
                             ? Icons.visibility_off_outlined
                             : Icons.visibility_outlined,
-                        color: category.isActive ? Colors.red : Colors.green,
+                        color: category.isActive ? colors.error : colors.primary,
                         size: 20,
                       ),
                       const SizedBox(width: 12),
                       Text(
                         category.isActive ? 'Desactivar' : 'Activar',
                         style: TextStyle(
-                          color: category.isActive ? Colors.red : Colors.green,
+                          color: category.isActive ? colors.error : colors.primary,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

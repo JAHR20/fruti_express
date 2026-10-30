@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; // 📦 IMPORTANTE
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/core/constants/app_assets.dart';
+import 'package:fruti_express_jahr_admin/core/utils/app_formatters.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
+import 'package:fruti_express_jahr_admin/features/auth/presentation/router/auth_routes.dart';
+import 'package:fruti_express_jahr_admin/features/auth/presentation/widgets/login_bottom_clipper.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fruti_express_jahr_admin/core/utils/validators.dart';
 
-import '../widgets/custom_auth_field.dart';
+import '../../../../core/widgets/custom_text_field.dart';
 import '../widgets/primary_auth_button.dart';
 import '../widgets/social_auth_button.dart';
 
@@ -65,7 +69,7 @@ class _LoginPageState extends State<LoginPage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(
-                      top: 80,
+                      top: 60,
                       left: 24,
                       right: 24,
                       bottom: 32,
@@ -75,73 +79,77 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(
-                            Icons.hexagon_outlined,
-                            size: 40,
-                            color: Colors.white,
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            'Fruty\nExpress',
-                            style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              height: 1.2,
+                          Container(
+                            width: double.infinity,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.1),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Center(
+                              child: Icon(
+                                Icons.image,
+                                size: 60,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 40),
-
-                          CustomAuthField(
-                            label: 'Email',
+                          const SizedBox(height: 16),
+                          Text(
+                            '¡Hola! Bienvenido de nuevo',
+                            style: Theme.of(context).textTheme.headlineMedium
+                                ?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 5),
+                          Text(
+                            'Inicia sesión para continuar',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(color: Colors.grey[500]),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 15),
+                          CustomTextField(
+                            label: 'Correo electrónico',
                             hintText: 'ejemplo@correo.com',
                             controller: _emailController,
+                            inputFormatters: [AppFormatters.email],
+                            colorLabel: Colors.white,
                             validator: Validators.email,
                             enabled: !isLoading,
                           ),
                           const SizedBox(height: 16),
-                          CustomAuthField(
-                            label: 'Password',
+                          CustomTextField(
+                            label: 'Contraseña',
                             hintText: '********',
                             controller: _passwordController,
                             isPassword: true,
+                            colorLabel: Colors.white,
                             validator: Validators.loginPassword,
                             enabled: !isLoading,
                           ),
-
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 8),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: 24,
-                                    height: 24,
-                                    child: Checkbox(
-                                      value: false,
-                                      onChanged: (value) {},
-                                      side: const BorderSide(
-                                        color: Colors.white70,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  const Text(
-                                    'Remember me',
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 12,
-                                    ),
-                                  ),
-                                ],
-                              ),
                               TextButton(
+                                style: ButtonStyle(
+                                  padding: WidgetStateProperty.all<EdgeInsets>(
+                                    EdgeInsets.zero,
+                                  ),
+                                  minimumSize: WidgetStateProperty.all<Size>(
+                                    const Size(0, 0),
+                                  ),
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
+                                ),
                                 onPressed: () {},
                                 child: const Text(
-                                  'Forgot Password?',
+                                  '¿Olvidaste tu contraseña?',
                                   style: TextStyle(
-                                    color: Colors.white,
+                                    color: Colors.blueAccent,
                                     fontSize: 12,
                                   ),
                                 ),
@@ -149,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                             ],
                           ),
 
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 25),
 
                           isLoading
                               ? const Center(
@@ -158,7 +166,8 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 )
                               : PrimaryAuthButton(
-                                  text: 'Sign in',
+                                  text: 'Iniciar sesión',
+                                  fontSize: 18,
                                   backgroundColor: Colors.white,
                                   textColor: const Color(0xFF1E3A8A),
                                   onPressed: _submitForm,
@@ -167,54 +176,52 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
+                  ClipPath(
+                    clipper: LoginBottomClipper(),
+                    child: Container(
+                      width: double.infinity,
                       color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
+                      padding: const EdgeInsets.fromLTRB(24, 56, 24, 32),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 16),
+                          const Text(
+                            "¿No tienes una cuenta?",
+                            style: TextStyle(
+                              color: Color.fromARGB(206, 0, 0, 0),
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          Row(
+                            children: [
+                              Expanded(
+                                child: SocialAuthButton(
+                                  iconPath: AppAssets.googleLogo,
+                                  onPressed: () {
+                                    if (!isLoading) {
+                                      context.read<AuthCubit>().signInWithGoogle();
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 16),
+
+                          PrimaryAuthButton(
+                            text: 'Regístrate con tu correo electrónico',
+                            backgroundColor: const Color(0xFF2C2C4E),
+                            textColor: Colors.white,
+                            onPressed: isLoading
+                                ? () {}
+                                : () =>
+                                      context.goNamed(AuthRoutes.registerName),
+                          ),
+                        ],
                       ),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 32,
-                    ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Don't have an account?",
-                          style: TextStyle(color: Color.fromARGB(206, 0, 0, 0)),
-                        ),
-                        const SizedBox(height: 16),
-
-                        Row(
-                          children: [
-                            SocialAuthButton(
-                              text: 'Facebook',
-                              iconPath: 'assets/icons/facebook.png',
-                              onPressed: () => {},
-                            ),
-                            const SizedBox(width: 16),
-                            SocialAuthButton(
-                              text: 'Google',
-                              iconPath: 'assets/icons/google.png',
-                              onPressed: () => {},
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 16),
-
-                        PrimaryAuthButton(
-                          text: 'Sign up with email',
-                          backgroundColor: const Color(0xFF2C2C4E),
-                          textColor: Colors.white,
-                          onPressed: isLoading
-                              ? () {}
-                              : () => context.go('/register'),
-                        ),
-                      ],
                     ),
                   ),
                 ],

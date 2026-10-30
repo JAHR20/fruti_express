@@ -2,49 +2,62 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/presentation/cubits/edit_profile_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/users/presentation/cubits/edit_profile_state.dart';
+import 'package:fruti_express_jahr_admin/features/users/presentation/extensions/tipo_usuario_ui_extension.dart';
 import 'package:fruti_express_jahr_admin/features/users/presentation/widgets/profile_form.dart';
 
-class EditProfilePage extends StatelessWidget { 
-  const EditProfilePage({super.key});
+class EditProfilePage extends StatelessWidget {
+  final VoidCallback? onSaved;
+  const EditProfilePage({super.key, this.onSaved});
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = (context.read<AuthCubit>().state as AuthAuthenticated).profile; 
+    final currentUser =
+        (context.read<AuthCubit>().state as AuthAuthenticated).user;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
+      backgroundColor: colorScheme.surface,
       appBar: AppBar(
-        title: const Text(
-          'Mi Perfil',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        backgroundColor: const Color(0xFF1E3A8A),
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: Text('Mi Perfil', style: TextStyle(fontWeight: FontWeight.bold)),
       ),
       body: BlocConsumer<EditProfileCubit, EditProfileState>(
         listener: (context, state) {
           state.whenOrNull(
             success: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Perfil actualizado correctamente'),
-                  backgroundColor: Colors.green,
+                SnackBar(
+                  content: Text(
+                    'Perfil actualizado correctamente',
+                    style: TextStyle(color: colorScheme.onPrimary),
+                  ),
+                  backgroundColor: colorScheme.primary,
                 ),
               );
-              Navigator.of(context).pop();
+
+              if (onSaved != null) {
+                onSaved!();
+              } else {
+                Navigator.of(context).pop();
+              }
             },
             error: (msg) {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(msg), backgroundColor: Colors.red),
+                SnackBar(
+                  content: Text(
+                    msg,
+                    style: TextStyle(color: colorScheme.onError),
+                  ),
+                  backgroundColor: colorScheme.error,
+                ),
               );
             },
           );
         },
         builder: (context, state) {
-          final isLoading = state.maybeWhen( 
+          final isLoading = state.maybeWhen(
             saving: () => true,
             orElse: () => false,
           );
@@ -56,13 +69,13 @@ class EditProfilePage extends StatelessWidget {
                 _Avatar(profile: currentUser),
                 const SizedBox(height: 32),
                 ProfileForm(
-                  profile: currentUser,
+                  user: currentUser,
                   isLoading: isLoading,
-                  onSave: (updatedProfile) { 
-                    context.read<EditProfileCubit>().updateProfile( 
-                          currentUser: currentUser,
-                          profileToEdit: updatedProfile,
-                        );
+                  onSave: (updatedProfile) {
+                    context.read<EditProfileCubit>().updateProfile(
+                      currentUser: currentUser,
+                      profileToEdit: updatedProfile,
+                    );
                   },
                 ),
               ],
@@ -75,39 +88,44 @@ class EditProfilePage extends StatelessWidget {
 }
 
 class _Avatar extends StatelessWidget {
-  final Profile profile;
+  final AppUser profile;
   const _Avatar({required this.profile});
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Column(
       children: [
         CircleAvatar(
           radius: 48,
-          backgroundColor: const Color(0xFF1E3A8A).withValues(alpha: 0.1), 
-          backgroundImage: profile.avatarUrl != null
-              ? NetworkImage(profile.avatarUrl!)
+          backgroundColor: colorScheme.primaryContainer,
+          backgroundImage: profile.profile.avatarUrl != null
+              ? NetworkImage(profile.profile.avatarUrl!)
               : null,
-          child: profile.avatarUrl == null
+          child: profile.profile.avatarUrl == null
               ? Text(
-                  profile.firstName[0].toUpperCase(), 
-                  style: const TextStyle(
+                  profile.profile.firstName[0].toUpperCase(),
+                  style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E3A8A),
+                    color: colorScheme.onPrimaryContainer,
                   ),
                 )
               : null,
         ),
         const SizedBox(height: 12),
         Text(
-          // Asumo firstName y lastName
-          '${profile.firstName} ${profile.paternalLastName}', 
-          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          '${profile.profile.firstName} ${profile.profile.paternalLastName}',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+          ),
         ),
         Text(
-          profile.role.name, // rol -> role
-          style: TextStyle(color: Colors.grey.shade600),
+          profile.role.displayName,
+          style: TextStyle(color: colorScheme.onSurfaceVariant),
         ),
       ],
     );

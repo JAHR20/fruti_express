@@ -1,9 +1,9 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/admin/cubits/admin_products_cubit.dart';
 import 'package:go_router/go_router.dart';
 import 'package:fruti_express_jahr_admin/core/di/injection_container.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
-import 'package:fruti_express_jahr_admin/features/products/presentation/cubits/product_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_cubit.dart';
 
 import '../cubits/inventory_cubit.dart';
@@ -20,7 +20,7 @@ abstract class InventoryRoutes {
         name: adminInventoryName,
         builder: (context, state) {
           final currentUser =
-              (sl<AuthCubit>().state as AuthAuthenticated).profile;
+              (sl<AuthCubit>().state as AuthAuthenticated).user;
 
           return MultiBlocProvider(
             providers: [
@@ -36,7 +36,7 @@ abstract class InventoryRoutes {
               ),
               BlocProvider(
                 create: (context) =>
-                    sl<ProductCubit>()..loadAllProducts(), 
+                    sl<AdminProductsCubit>()..loadAllProducts(), 
               ),
               BlocProvider(
                 create: (context) {

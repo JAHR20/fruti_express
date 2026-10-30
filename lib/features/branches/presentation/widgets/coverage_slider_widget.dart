@@ -12,16 +12,18 @@ class CoverageSliderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       children: [
-        const Icon(Icons.radar, color: Colors.grey),
+        Icon(Icons.radar, color: colorScheme.onSurfaceVariant),
         Expanded(
           child: Slider(
             value: radiusKmCurrent,
             min: 1.0,
             max: 30.0,
             divisions: 58,
-            activeColor: Colors.blue,
+            activeColor: colorScheme.primary,
             onChanged: onChanged,
           ),
         ),
@@ -29,7 +31,7 @@ class CoverageSliderWidget extends StatelessWidget {
           width: 60,
           child: Text(
             '${radiusKmCurrent.toStringAsFixed(1)} km',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: TextStyle(fontWeight: FontWeight.bold, color: colorScheme.onSurface),
           ),
         ),
       ],

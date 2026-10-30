@@ -13,4 +13,5 @@ abstract class ProductRemoteDataSource {
   Future<String> uploadImage(File file, String fileName);
   Future<void> delete(String id);
   Future<List<ProductModel>> getByBranch(String branchId);
+  Stream<void> watchInventoryChanges(String branchId);
 }

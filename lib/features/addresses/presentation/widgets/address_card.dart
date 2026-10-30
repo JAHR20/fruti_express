@@ -20,6 +20,8 @@ class AddressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme; // 👈 Extraemos el tema
+    
     final branchState = context.watch<BranchCubit>().state;
     final shippingState = context.watch<CustomerShippingCubit>().state; 
     final branches = branchState.branches;
@@ -102,17 +104,17 @@ class AddressCard extends StatelessWidget {
         opacity: hasCoverage ? 1.0 : 0.55,
         child: Card(
           elevation: isSelected ? 4 : (hasCoverage ? 2 : 0),
-          color: isSelected ? const Color(0xFFEFF6FF) : Colors.white,
+          color: isSelected ? colorScheme.surfaceContainer : colorScheme.surface, // 👈 Fondo dinámico
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
             side: BorderSide(
               color: !hasCoverage
                   ? (inactiveBranchCoversAddress
-                        ? Colors.amber.shade400
-                        : Colors.red.shade300)
+                        ? colorScheme.tertiary // 👈 Usado como advertencia en M3
+                        : colorScheme.error) // 👈 Usado para errores de cobertura
                   : (isSelected
-                        ? const Color(0xFF1E3A8A)
+                        ? colorScheme.secondaryContainer
                         : Colors.transparent),
               width: isSelected ? 2.0 : 1.5,
             ),
@@ -136,8 +138,8 @@ class AddressCard extends StatelessWidget {
                                 ? Icons.home
                                 : Icons.location_on,
                             color: hasCoverage
-                                ? const Color(0xFF1E3A8A)
-                                : Colors.grey,
+                                ? colorScheme.primary // 👈 Ícono activo
+                                : colorScheme.outline, // 👈 Ícono inactivo
                           ),
                           const SizedBox(width: 8),
                           Flexible(
@@ -166,8 +168,8 @@ class AddressCard extends StatelessWidget {
                           ),
                           decoration: BoxDecoration(
                             color: inactiveBranchCoversAddress
-                                ? Colors.amber.shade50
-                                : Colors.red.shade50,
+                                ? colorScheme.tertiaryContainer // 👈 Fondo de advertencia
+                                : colorScheme.errorContainer, // 👈 Fondo de error
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -179,8 +181,8 @@ class AddressCard extends StatelessWidget {
                                     : Icons.block,
                                 size: 14,
                                 color: inactiveBranchCoversAddress
-                                    ? Colors.amber.shade800
-                                    : Colors.red.shade700,
+                                    ? colorScheme.onTertiaryContainer // 👈 Ícono de advertencia
+                                    : colorScheme.onErrorContainer, // 👈 Ícono de error
                               ),
                               const SizedBox(width: 4),
                               Flexible(
@@ -191,8 +193,8 @@ class AddressCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: inactiveBranchCoversAddress
-                                        ? Colors.amber.shade800
-                                        : Colors.red.shade700,
+                                        ? colorScheme.onTertiaryContainer // 👈 Texto de advertencia
+                                        : colorScheme.onErrorContainer, // 👈 Texto de error
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -212,21 +214,21 @@ class AddressCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'Col. ${address.neighborhood}, C.P. ${address.zipCode}',
-                  style: TextStyle(color: Colors.grey.shade700),
+                  style: TextStyle(color: colorScheme.onSurfaceVariant), // 👈 Reemplaza gris fijo
                 ),
                 Text(
                   '${address.municipality}, ${address.state}',
-                  style: TextStyle(color: Colors.grey.shade700),
+                  style: TextStyle(color: colorScheme.onSurfaceVariant), // 👈 Reemplaza gris fijo
                 ),
                 if (address.references != null &&
                     address.references!.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Text(
                     'Ref: ${address.references}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 13,
                       fontStyle: FontStyle.italic,
-                      color: Colors.grey,
+                      color: colorScheme.outline, // 👈 Reemplaza gris fijo
                     ),
                   ),
                 ],

@@ -1,8 +1,10 @@
+import 'package:fruti_express_jahr_admin/core/logging/app_logger.dart';
+import 'package:fruti_express_jahr_admin/core/logging/console_logger.dart';
+import 'package:fruti_express_jahr_admin/core/services/location/mapbox_service_impl.dart';
 import 'package:fruti_express_jahr_admin/core/services/postali/postali_service.dart';
 import 'package:fruti_express_jahr_admin/core/services/postali/postali_service_impl.dart';
 import 'package:fruti_express_jahr_admin/core/services/storage/storage_service.dart';
 import 'package:fruti_express_jahr_admin/core/services/storage/supabase_storage_impl.dart';
-import 'package:fruti_express_jahr_admin/core/services/location/open_street_map_impl.dart';
 import 'package:fruti_express_jahr_admin/core/services/location/location_service.dart';
 import 'package:fruti_express_jahr_admin/features/auth/di/auth_di.dart';
 import 'package:fruti_express_jahr_admin/features/banners/di/banners_di.dart';
@@ -11,6 +13,7 @@ import 'package:fruti_express_jahr_admin/features/categories/di/categories_di.da
 import 'package:fruti_express_jahr_admin/features/coupons/di/coupons_di.dart';
 import 'package:fruti_express_jahr_admin/features/delivery_preferences/di/delivery_preferences_di.dart';
 import 'package:fruti_express_jahr_admin/features/addresses/di/address_di.dart';
+import 'package:fruti_express_jahr_admin/features/payments/di/payments.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/di/shipping_di.dart';
 import 'package:fruti_express_jahr_admin/features/inventory/di/inventory_di.dart';
 import 'package:fruti_express_jahr_admin/features/orders/di/orders_di.dart';
@@ -27,11 +30,13 @@ Future<void> init() async {
   final supabaseClient = Supabase.instance.client;
   sl.registerLazySingleton(() => supabaseClient);
 
-  sl.registerLazySingleton<LocationService>(() => OpenStreetMapServiceImpl());
+  sl.registerLazySingleton<LocationService>(() => MapboxServiceImpl());
 
   sl.registerLazySingleton<StorageService>(() => SupabaseStorageImpl(sl()));
 
   sl.registerLazySingleton<PostaliService>(() => PostaliServiceImpl());
+
+  sl.registerLazySingleton<AppLogger>(() => ConsoleLogger());
 
   // --- REGISTRO DE FEATURES ---
   initAuth(sl);
@@ -47,5 +52,6 @@ Future<void> init() async {
   initShipping(sl);
   initDeliveryPreferences(sl);
   initCoupons(sl);
+  initPayments(sl);
 
 }

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-// Asume que traduciste Sucursal a Branch. Ajusta el import si es necesario.
 import 'package:fruti_express_jahr_admin/features/branches/domain/entities/branch.dart'; 
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_state.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 
 class BranchDialog extends StatefulWidget { 
   final UserRole role;
   final BranchCubit branchCubit;
-  final Profile currentUser;
+  final AppUser currentUser;
 
   const BranchDialog({
     super.key,
@@ -35,6 +34,8 @@ class _BranchDialogState extends State<BranchDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme; // 👈 Extraemos el tema
+
     return BlocProvider.value(
       value: widget.branchCubit,
       child: AlertDialog(
@@ -53,7 +54,7 @@ class _BranchDialogState extends State<BranchDialog> {
             if (state.errorMessage != null && state.branches.isEmpty) {
               return Text(
                 'Error: ${state.errorMessage}',
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: colorScheme.error), // 👈 Reemplaza Colors.red
               );
             }
             
@@ -94,24 +95,25 @@ class _BranchDialogState extends State<BranchDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(null),
-            child: const Text('Cancelar', style: TextStyle(color: Colors.grey)),
+            child: Text(
+              'Cancelar', 
+              style: TextStyle(color: colorScheme.onSurfaceVariant), // 👈 Reemplaza Colors.grey
+            ),
           ),
           BlocBuilder<BranchCubit, BranchState>(
             builder: (context, state) {
               final bool isBlocked =
                   state.branches.isEmpty || selectedBranchId == null;
 
-              return ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E3A8A),
+              return FilledButton( // 👈 Cambiamos a FilledButton
+                style: FilledButton.styleFrom(
+                  backgroundColor: colorScheme.primary, // 👈 Reemplaza Color(0xFF1E3A8A)
+                  foregroundColor: colorScheme.onPrimary, // 👈 Se encarga del color del texto (blanco)
                 ),
                 onPressed: isBlocked
                     ? null
                     : () => Navigator.of(context).pop(selectedBranchId),
-                child: const Text(
-                  'Confirmar',
-                  style: TextStyle(color: Colors.white),
-                ),
+                child: const Text('Confirmar'),
               );
             },
           ),

@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 part 'auth_state.freezed.dart';
 
@@ -7,7 +7,8 @@ part 'auth_state.freezed.dart';
 sealed class AuthState with _$AuthState {
   const factory AuthState.initial() = AuthInitial;
   const factory AuthState.loading() = AuthLoading;
-  const factory AuthState.authenticated(Profile profile) = AuthAuthenticated;
+  const factory AuthState.authenticated(AppUser user) = AuthAuthenticated;
   const factory AuthState.unauthenticated() = AuthUnauthenticated;
   const factory AuthState.error(String message) = AuthError;
+  const factory AuthState.emailConfirmationPending() = AuthEmailConfirmationPending;
 }

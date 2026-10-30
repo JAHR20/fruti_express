@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/core/widgets/confirm_dialog.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/user_profile.dart';
 
 class ProfileForm extends StatefulWidget {
-  final Profile profile;
+  final AppUser user;
   final bool isLoading;
-  final void Function(Profile updatedProfile) onSave;
+  final void Function(UserProfile updatedProfile) onSave;
 
   const ProfileForm({
     super.key,
-    required this.profile,
+    required this.user,
     required this.isLoading,
     required this.onSave,
   });
@@ -21,19 +23,23 @@ class _ProfileFormState extends State<ProfileForm> {
   final _formKey = GlobalKey<FormState>();
 
   late final TextEditingController _firstNameCtrl;
-  late final TextEditingController _paternalLastNameCtrl; 
-  late final TextEditingController _maternalLastNameCtrl; 
+  late final TextEditingController _paternalLastNameCtrl;
+  late final TextEditingController _maternalLastNameCtrl;
   late final TextEditingController _aliasCtrl;
   late final TextEditingController _phoneCtrl;
 
   @override
   void initState() {
     super.initState();
-    _firstNameCtrl = TextEditingController(text: widget.profile.firstName);
-    _paternalLastNameCtrl = TextEditingController(text: widget.profile.paternalLastName);
-    _maternalLastNameCtrl = TextEditingController(text: widget.profile.maternalLastName ?? '');
-    _aliasCtrl = TextEditingController(text: widget.profile.alias ?? '');
-    _phoneCtrl = TextEditingController(text: widget.profile.phone ?? '');
+    _firstNameCtrl = TextEditingController(text: widget.user.profile.firstName);
+    _paternalLastNameCtrl = TextEditingController(
+      text: widget.user.profile.paternalLastName,
+    );
+    _maternalLastNameCtrl = TextEditingController(
+      text: widget.user.profile.maternalLastName ?? '',
+    );
+    _aliasCtrl = TextEditingController(text: widget.user.profile.alias ?? '');
+    _phoneCtrl = TextEditingController(text: widget.user.profile.phone ?? '');
   }
 
   @override
@@ -46,19 +52,35 @@ class _ProfileFormState extends State<ProfileForm> {
     super.dispose();
   }
 
+  void _confirmSave(BuildContext context) {
+    if (!_formKey.currentState!.validate()) return;
+
+    final colorScheme = Theme.of(context).colorScheme;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => ConfirmDialog(
+        title: 'Guardar cambios',
+        message: '¿Estás seguro de que deseas actualizar tu perfil?',
+        confirmText: 'Guardar',
+        confirmColor: colorScheme.primary,
+        cancelColor: colorScheme.error,
+        onConfirm: _save,
+      ),
+    );
+  }
+
   void _save() {
     if (!_formKey.currentState!.validate()) return;
 
-    final updatedProfile = widget.profile.copyWith(
+    final updatedProfile = widget.user.profile.copyWith(
       firstName: _firstNameCtrl.text.trim(),
-      paternalLastName: _paternalLastNameCtrl.text.trim(), 
-      maternalLastName: _maternalLastNameCtrl.text.trim().isEmpty 
+      paternalLastName: _paternalLastNameCtrl.text.trim(),
+      maternalLastName: _maternalLastNameCtrl.text.trim().isEmpty
           ? null
           : _maternalLastNameCtrl.text.trim(),
       alias: _aliasCtrl.text.trim().isEmpty ? null : _aliasCtrl.text.trim(),
-      phone: _phoneCtrl.text.trim().isEmpty
-          ? null
-          : _phoneCtrl.text.trim(),
+      phone: _phoneCtrl.text.trim().isEmpty ? null : _phoneCtrl.text.trim(),
     );
 
     widget.onSave(updatedProfile);
@@ -66,6 +88,8 @@ class _ProfileFormState extends State<ProfileForm> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Form(
       key: _formKey,
       child: Column(
@@ -80,7 +104,7 @@ class _ProfileFormState extends State<ProfileForm> {
           ),
           const SizedBox(height: 16),
           _Field(
-            controller: _paternalLastNameCtrl, 
+            controller: _paternalLastNameCtrl,
             label: 'Apellido Paterno',
             icon: Icons.person_outline,
             validator: (v) => v == null || v.trim().isEmpty
@@ -89,7 +113,7 @@ class _ProfileFormState extends State<ProfileForm> {
           ),
           const SizedBox(height: 16),
           _Field(
-            controller: _maternalLastNameCtrl, 
+            controller: _maternalLastNameCtrl,
             label: 'Apellido Materno (opcional)',
             icon: Icons.person_outline,
           ),
@@ -113,7 +137,7 @@ class _ProfileFormState extends State<ProfileForm> {
           ),
           const SizedBox(height: 8),
           _ReadOnlyField(
-            value: widget.profile.email,
+            value: widget.user.email,
             label: 'Correo electrónico',
             icon: Icons.email_outlined,
           ),
@@ -122,21 +146,28 @@ class _ProfileFormState extends State<ProfileForm> {
             width: double.infinity,
             height: 50,
             child: FilledButton(
-              onPressed: widget.isLoading ? null : _save,
+              onPressed: widget.isLoading ? null : () => _confirmSave(context),
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF1E3A8A),
+                backgroundColor: colorScheme.primary,
+                foregroundColor: colorScheme.onPrimary,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: widget.isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          color: Colors.white, strokeWidth: 2),
+                        color: colorScheme
+                            .onPrimary, // 👈 Se adapta al color sobre el primario
+                        strokeWidth: 2,
+                      ),
                     )
-                  : const Text('Guardar Cambios',
-                      style: TextStyle(fontSize: 16)),
+                  : const Text(
+                      'Guardar Cambios',
+                      style: TextStyle(fontSize: 16),
+                    ),
             ),
           ),
         ],
@@ -144,7 +175,6 @@ class _ProfileFormState extends State<ProfileForm> {
     );
   }
 }
-
 
 class _Field extends StatelessWidget {
   final TextEditingController controller;
@@ -171,8 +201,10 @@ class _Field extends StatelessWidget {
         labelText: label,
         prefixIcon: Icon(icon),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -191,6 +223,8 @@ class _ReadOnlyField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return TextFormField(
       initialValue: value,
       readOnly: true,
@@ -198,10 +232,13 @@ class _ReadOnlyField extends StatelessWidget {
         labelText: label,
         prefixIcon: Icon(icon),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         filled: true,
-        fillColor: Colors.grey.shade100,
+        fillColor:
+            colorScheme.surfaceContainerHighest, // 👈 Reemplaza al gris fijo
       ),
     );
   }

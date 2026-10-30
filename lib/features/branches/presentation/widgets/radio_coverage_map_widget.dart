@@ -16,6 +16,8 @@ class RadioCoverageMapWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(12),
       child: SizedBox(
@@ -39,8 +41,8 @@ class RadioCoverageMapWidget extends StatelessWidget {
                   point: center,
                   radius: radiusKm * 1000,
                   useRadiusInMeter: true,
-                  color: Colors.blue.withValues(alpha: 0.2),
-                  borderColor: Colors.blue,
+                  color: colorScheme.primary.withValues(alpha: 0.15), 
+                  borderColor: colorScheme.primary, // 👈 Borde sólido
                   borderStrokeWidth: 2,
                 ),
               ],
@@ -51,7 +53,7 @@ class RadioCoverageMapWidget extends StatelessWidget {
                   point: center,
                   width: 40,
                   height: 40,
-                  child: const Icon(Icons.store, color: Colors.red, size: 40),
+                  child: Icon(Icons.store, color: colorScheme.secondary, size: 40),
                 ),
               ],
             ),

@@ -16,7 +16,7 @@ class UploadProductImageUseCase {
     return TaskEither.Do(($) async {
       if (cleanFileName.isEmpty) {
         return await $(
-          TaskEither.left(const Failure.validation(FailureCode.invalidFileName)),
+          TaskEither.left(const Failure.validation(FailureCode.productNameRequiredForImage)),
         );
       }
       

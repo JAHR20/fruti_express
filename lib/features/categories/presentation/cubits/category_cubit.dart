@@ -7,7 +7,7 @@ import 'package:fruti_express_jahr_admin/features/categories/domain/use_cases/ge
 import 'package:fruti_express_jahr_admin/features/categories/domain/use_cases/get_active_categories_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/use_cases/upload_category_image_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/categories/presentation/cubits/category_state.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:image_picker/image_picker.dart';
 
 class CategoryCubit extends Cubit<CategoryState> {
@@ -33,7 +33,7 @@ class CategoryCubit extends Cubit<CategoryState> {
         _getActiveCategoriesUseCase = getActiveCategoriesUseCase,
         super(const CategoryState());
 
-  Future<void> loadCategories(Profile currentUser) async {
+  Future<void> loadCategories(AppUser currentUser) async {
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     final result = await _getCategoriesUseCase.execute().run();
@@ -80,7 +80,7 @@ class CategoryCubit extends Cubit<CategoryState> {
   }
 
   Future<void> changeCategoryStatus({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String categoryId,
     required bool newState,
   }) async {
@@ -120,7 +120,7 @@ class CategoryCubit extends Cubit<CategoryState> {
   }
 
   Future<void> createCategory({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String name,
     String? description,
     XFile? selectedImage,
@@ -187,7 +187,7 @@ class CategoryCubit extends Cubit<CategoryState> {
   }
 
   Future<void> updateCategory({
-    required Profile currentUser,
+    required AppUser currentUser,
     required String categoryId,
     String? name,
     String? description,

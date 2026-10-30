@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
 import 'branch_dialog.dart';
 import 'role_badge.dart';
 
 class UserCard extends StatelessWidget {
-  final Profile targetUser;
-  final Profile currentUser;
+  final AppUser targetUser;
+  final AppUser currentUser;
   final BranchCubit branchCubit;
   final bool isProcessing;
 
@@ -27,10 +27,13 @@ class UserCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme; 
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 2,
+      color: colorScheme.surface, 
       child: ListTile(
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: ClipRRect(
@@ -38,34 +41,39 @@ class UserCard extends StatelessWidget {
           child: Container(
             width: 48,
             height: 48,
-            color: Colors.grey.shade200,
-            child:
-                targetUser.avatarUrl != null &&
-                    targetUser.avatarUrl!.isNotEmpty
-                ? Image.network(targetUser.avatarUrl!, fit: BoxFit.cover)
-                : const Icon(Icons.person, color: Colors.grey),
+            color: colorScheme.surfaceContainerHighest,
+            child: targetUser.profile.avatarUrl != null &&
+                    targetUser.profile.avatarUrl!.isNotEmpty
+                ? Image.network(targetUser.profile.avatarUrl!, fit: BoxFit.cover)
+                : Icon(Icons.person, color: colorScheme.onSurfaceVariant),
           ),
         ),
         title: Text(
-          targetUser.firstName, // Asumo que nombre -> firstName
-          style: const TextStyle(fontWeight: FontWeight.bold),
+          targetUser.profile.firstName, 
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface, 
+          ),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(targetUser.email),
+            Text(
+              targetUser.email,
+              style: TextStyle(color: colorScheme.onSurfaceVariant), 
+            ),
             const SizedBox(height: 4),
             RoleBadge(role: targetUser.role),
           ],
         ),
         trailing: isProcessing
-            ? const SizedBox(
+            ? SizedBox(
                 width: 48,
                 height: 48,
                 child: Center(
                   child: CircularProgressIndicator(
                     strokeWidth: 3,
-                    color: Color(0xFF1E3A8A),
+                    color: colorScheme.secondary, 
                   ),
                 ),
               )
@@ -74,14 +82,16 @@ class UserCard extends StatelessWidget {
                 children: [
                   if (currentUser.isAdmin)
                     Switch(
-                      value: targetUser.active, // activo -> active
-                      activeThumbColor: Colors.green,
+                      activeTrackColor:colorScheme.primaryFixedDim ,
+                      value: targetUser.active,
+                      activeThumbColor: colorScheme.primary, 
                       onChanged: onStatusChanged,
                     ),
                   PopupMenuButton<UserRole>(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.shield_outlined,
-                      color: Color(0xFF1E3A8A),
+                      size: 30,
+                      color: colorScheme.secondaryContainer, 
                     ),
                     tooltip: 'Cambiar Rol',
                     onSelected: (UserRole newRole) async {
@@ -106,11 +116,12 @@ class UserCard extends StatelessWidget {
                               selectedBranchId,
                             )) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
+                            SnackBar(
                               content: Text(
                                 'Solo puedes asignar repartidores en tu propia sucursal.',
+                                style: TextStyle(color: colorScheme.onError),
                               ),
-                              backgroundColor: Colors.red,
+                              backgroundColor: colorScheme.error, 
                             ),
                           );
                           return;

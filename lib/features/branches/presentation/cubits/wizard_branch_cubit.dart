@@ -1,20 +1,17 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart'; 
-
-// --- Envíos (Aún en español) ---
+import 'package:fruti_express_jahr_admin/core/logging/app_logger.dart';
+import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/shipping_config.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/enums/shipping_strategy.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/save_shipping_config_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_shipping_config_use_case.dart';
-
-// --- Sucursales (Traducido) ---
 import 'package:fruti_express_jahr_admin/features/branches/domain/entities/branch.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/update_branch_coverage_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/create_branch_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/update_branch_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/get_coverage_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/branches/domain/use_cases/get_location_by_postal_code_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 import 'wizard_branch_state.dart';
 
@@ -24,10 +21,9 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
   final GetLocationByPostalCodeUseCase _getLocationByPostalCodeUseCase;
   final GetCoverageUseCase _getCoverageUseCase;
   final UpdateBranchCoverageUseCase _updateBranchCoverageUseCase;
-  
-  // Estos se quedan en español temporalmente
   final GetShippingConfigUseCase _getShippingConfigUseCase;
   final SaveShippingConfigUseCase _saveShippingConfigUseCase;
+  final AppLogger _logger;
 
   WizardBranchCubit({
     required CreateBranchUseCase createBranchUseCase,
@@ -37,6 +33,7 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
     required UpdateBranchCoverageUseCase updateBranchCoverageUseCase,
     required GetShippingConfigUseCase getShippingConfigUseCase,
     required SaveShippingConfigUseCase saveShippingConfigUseCase,
+    required AppLogger logger
   }) : _createBranchUseCase = createBranchUseCase,
        _updateBranchUseCase = updateBranchUseCase,
        _getLocationByPostalCodeUseCase = getLocationByPostalCodeUseCase,
@@ -44,7 +41,11 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
        _updateBranchCoverageUseCase = updateBranchCoverageUseCase,
        _getShippingConfigUseCase = getShippingConfigUseCase,
        _saveShippingConfigUseCase = saveShippingConfigUseCase,
+       _logger = logger,
        super(const WizardBranchState());
+
+  static const _incompleteAddressMessage =
+      'Debe ingresar o cargar un C.P. válido antes de guardar.';
 
   void changeStep(int newStep) {
     emit(state.copyWith(currentStep: newStep, errorMessage: null));
@@ -92,7 +93,8 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
         shippingConfig: currentConfig.copyWith(
           maxRadiusKm: maxRadiusKm ?? currentConfig.maxRadiusKm,
           requireZipCodeValidation:
-              requirePostalCodeValidation ?? currentConfig.requireZipCodeValidation,
+              requirePostalCodeValidation ??
+              currentConfig.requireZipCodeValidation,
           minAmountForFreeShipping:
               minAmountFreeShipping ?? currentConfig.minAmountForFreeShipping,
           strategy: strategy ?? currentConfig.strategy,
@@ -107,7 +109,6 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
         isSearchingLocation: true,
         currentStep: initialStep,
         createdBranchId: branch.id,
-        // Paso 1
         name: branch.name,
         street: branch.street,
         exteriorNumber: branch.exteriorNumber,
@@ -117,8 +118,6 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
         municipality: branch.municipality,
         latitude: branch.latitude,
         longitude: branch.longitude,
-
-        // Limpiamos datos anteriores del wizard
         availablePostalCodes: [],
         selectedPostalCodes: [],
         neighborhoodsByPostalCode: {},
@@ -130,9 +129,7 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
 
     List<String> savedCodes = [];
 
-    final coverageResult = await _getCoverageUseCase
-        .execute(branch.id)
-        .run();
+    final coverageResult = await _getCoverageUseCase.execute(branch.id).run();
 
     coverageResult.fold(
       (failure) {
@@ -200,16 +197,11 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
   }
 
   Future<void> saveStep1({
-    required Profile currentUser,
+    required AppUser currentUser,
     Branch? branchToEdit,
   }) async {
     if (state.municipality == null || state.state == null) {
-      emit(
-        state.copyWith(
-          errorMessage:
-              'Debe ingresar o cargar un C.P. válido antes de guardar.',
-        ),
-      );
+      emit(state.copyWith(errorMessage: _incompleteAddressMessage));
       return;
     }
 
@@ -255,8 +247,10 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
 
     result.fold(
       (failure) => emit(
-        // 🌟 Utilizamos la función translateFailure para los errores
-        state.copyWith(isSaving: false, errorMessage: translateFailure(failure)),
+        state.copyWith(
+          isSaving: false,
+          errorMessage: translateFailure(failure),
+        ),
       ),
       (savedBranch) => emit(
         state.copyWith(
@@ -268,12 +262,17 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
     );
   }
 
-  Future<void> finishWizard(Profile currentUser) async {
+  Future<void> finishWizard(AppUser currentUser) async {
     final branchId = state.createdBranchId;
+
     if (branchId == null) {
+      _logger.error(
+        'finishWizard() llamado sin createdBranchId en FormularioSucursalCubit',
+      );
       emit(
         state.copyWith(
-          errorMessage: 'Error crítico: No se encontró la sucursal base.',
+          errorMessage:
+              'Ocurrió un error inesperado. Vuelve a intentar desde el inicio.',
         ),
       );
       return;
@@ -289,11 +288,17 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
         )
         .run();
 
-    if (coverageResult.isLeft()) {
-      final error = coverageResult.match((l) => translateFailure(l), (_) => '');
-      emit(state.copyWith(isSaving: false, errorMessage: error));
+    final failure = coverageResult.fold((l) => l, (_) => null);
+    if (failure != null) {
+      emit(
+        state.copyWith(
+          isSaving: false,
+          errorMessage: translateFailure(failure),
+        ),
+      );
       return;
     }
+
     final configToSave =
         (state.shippingConfig ??
                 ShippingConfig(
@@ -308,14 +313,16 @@ class WizardBranchCubit extends Cubit<WizardBranchState> {
               allowedZipCodes: state.selectedPostalCodes,
             );
 
-    final shippingResult = await _saveShippingConfigUseCase.execute(
-      currentUser: currentUser,
-      config: configToSave,
-    ).run();
+    final shippingResult = await _saveShippingConfigUseCase
+        .execute(currentUser: currentUser, config: configToSave)
+        .run();
 
     shippingResult.fold(
       (failure) => emit(
-        state.copyWith(isSaving: false, errorMessage: translateFailure(failure)),
+        state.copyWith(
+          isSaving: false,
+          errorMessage: translateFailure(failure),
+        ),
       ),
       (_) => emit(state.copyWith(isSaving: false, isSaveSuccessful: true)),
     );

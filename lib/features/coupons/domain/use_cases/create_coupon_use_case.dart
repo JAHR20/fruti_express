@@ -3,8 +3,8 @@ import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/coupons/domain/repositories/coupon_repository.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/extensions/profile_permissions_extension.dart';
-import 'package:fruti_express_jahr_admin/features/users/domain/entities/profile.dart';
 import '../entities/coupon.dart';
 
 class CreateCouponUseCase {
@@ -13,7 +13,7 @@ class CreateCouponUseCase {
   CreateCouponUseCase(this.repository);
 
   ResultTask<Coupon> execute({ 
-    required Profile currentUser, 
+    required AppUser currentUser, 
     required Coupon coupon,
   }) {
     return TaskEither.Do(($) async {
@@ -24,7 +24,7 @@ class CreateCouponUseCase {
     });
   }
 
-  ResultTask<Unit> _validatePermissions(Profile user) =>
+  ResultTask<Unit> _validatePermissions(AppUser user) =>
       (user.isAdmin || user.isManager)
           ? TaskEither.right(unit)
           : TaskEither.left(

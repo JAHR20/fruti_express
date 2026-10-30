@@ -1,7 +1,5 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/entities/product.dart';
-part 'product_state.freezed.dart';
 
+/*
 @freezed
 abstract class ProductState with _$ProductState {
   const factory ProductState({
@@ -16,3 +14,4 @@ abstract class ProductState with _$ProductState {
     @Default(false) bool operationSuccessful,
   }) = _ProductState;
 }
+*/

@@ -16,12 +16,14 @@ class CurrencyFormatter {
     final doubleAmount = double.tryParse(cleanString) ?? 0.0;
     return doubleToCents(doubleAmount);
   }
+
+  static String formatForInput(int cents) => (cents / 100).toStringAsFixed(2);
 }
 
 
-// La que ya tenías
 extension IntCurrencyX on int {
   String get toCurrencyFormat => CurrencyFormatter.format(this);
+  String get toInputFormat => CurrencyFormatter.formatForInput(this);
 }
 
 extension DoubleCurrencyX on double {
@@ -30,4 +32,8 @@ extension DoubleCurrencyX on double {
 
 extension StringCurrencyX on String {
   int get toCents => CurrencyFormatter.stringToCents(this);
+  int? get toCentsOrNull {
+    if (trim().isEmpty) return null;
+    return toCents;
+  }
 }
