@@ -3,7 +3,6 @@ import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.d
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/payments/data/datasources/payment_remote_data_source.dart';
 import 'package:fruti_express_jahr_admin/features/payments/domain/entities/card_payment_result.dart';
-import 'package:fruti_express_jahr_admin/features/payments/domain/entities/payment_order.dart';
 import 'package:fruti_express_jahr_admin/features/payments/domain/repositories/payment_repository.dart';
 
 class PaymentRepositoryImpl
@@ -37,15 +36,6 @@ class PaymentRepositoryImpl
         () => remoteDataSource.verifyPayment(orderId: orderId),
         handleException,
       );
-
-  @override
-  ResultTask<PaymentOrder> createPaymentOrder({required String orderId}) =>
-      TaskEither.tryCatch(() async {
-        final model = await remoteDataSource.createPaymentOrder(
-          orderId: orderId,
-        );
-        return model.toDomain();
-      }, handleException);
 
   @override
   ResultTask<void> cancelUnpaidOrder({required String orderId}) =>

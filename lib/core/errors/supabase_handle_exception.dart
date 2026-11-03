@@ -69,6 +69,18 @@ mixin SupabaseHandleException {
       return const Failure.validation(FailureCode.invalidDeliveryAddress);
     }
 
+    if (msg.contains('motivo de cancelación') ||
+        msg.contains('motivo de cancelacion')) {
+      return const Failure.validation(FailureCode.invalidCancellationReason);
+    }
+    if (msg.contains('ya no se puede cancelar')) {
+      return const Failure.validation(FailureCode.orderNotCancellable);
+    }
+    if (msg.contains('no está listo para salir a ruta') ||
+        msg.contains('no esta listo para salir a ruta')) {
+      return const Failure.validation(FailureCode.orderNotReadyToDepart);
+    }
+
     if (msg.contains('código') || msg.contains('codigo')) {
       return const Failure.validation(FailureCode.incorrectDeliveryCode);
     }
@@ -78,6 +90,33 @@ mixin SupabaseHandleException {
     }
     if (msg.contains('no encontrado')) {
       return const Failure.server(FailureCode.orderNotFound);
+    }
+    if (msg.contains('no te está asignado') ||
+        msg.contains('no te esta asignado')) {
+      return const Failure.unauthorized(FailureCode.orderNotAssigned);
+    }
+    if (msg.contains('no pertenece a tu sucursal')) {
+      return const Failure.unauthorized(FailureCode.orderNotInYourBranch);
+    }
+    if (msg.contains('motivo de entrega fallida')) {
+      return const Failure.validation(FailureCode.invalidFailureReason);
+    }
+    if (msg.contains('requiere un reembolso')) {
+      return const Failure.validation(FailureCode.cardOrderNeedsRefund);
+    }
+    if (msg.contains('se confirman al acreditarse')) {
+      return const Failure.validation(FailureCode.cardOrderNotConfirmable);
+    }
+    if (msg.contains('no está pendiente de confirmación') ||
+        msg.contains('no esta pendiente de confirmacion')) {
+      return const Failure.validation(FailureCode.orderNotPending);
+    }
+    if (msg.contains('debe estar confirmado')) {
+      return const Failure.validation(FailureCode.orderNotConfirmed);
+    }
+    if (msg.contains('repartidor no es válido') ||
+        msg.contains('repartidor no es valido')) {
+      return const Failure.validation(FailureCode.invalidDriverForBranch);
     }
     return const Failure.server(FailureCode.genericError);
   }

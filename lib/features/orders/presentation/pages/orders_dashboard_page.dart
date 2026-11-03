@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/core/widgets/animated_empty_state.dart';
 import 'package:fruti_express_jahr_admin/core/widgets/pill_tab_bar.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
@@ -8,7 +9,9 @@ import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_stat
 import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/drivers_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/manager_orders_cubit.dart'; // Import corregido
 import 'package:fruti_express_jahr_admin/features/orders/presentation/cubits/manager_orders_state.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/pages/order_detail_page.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/assign_driver_sheet.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/cancel_order_dialog.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/manager_order_card.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_state.dart';
@@ -82,6 +85,13 @@ class _OrdersDashboardPageState extends State<OrdersDashboardPage>
         child: AssignDriverSheet(orderId: orderId),
       ),
     );
+  }
+
+  Future<void> handleRefresh() async {
+    if (_selectedBranchId != null) {
+      // Supongamos que tu cubit tiene un método para recargar o re-observar
+      context.read<ManagerOrdersCubit>().startWatching(_selectedBranchId!);
+    }
   }
 
   @override
@@ -200,8 +210,16 @@ class _OrdersDashboardPageState extends State<OrdersDashboardPage>
                   onConfirm: (id) =>
                       context.read<ManagerOrdersCubit>().confirmOrder(id),
                   onAssignDriver: _openAssignDriver,
-                  onCancel: (id) =>
-                      context.read<ManagerOrdersCubit>().cancelOrder(id),
+                  onCancel: (id) async {
+                    final choice = await showCancelOrderDialog(context);
+                    if (choice == null || !context.mounted) return;
+                    context.read<ManagerOrdersCubit>().cancelOrder(
+                      orderId: id,
+                      reason: choice.reason,
+                      note: choice.note,
+                    );
+                  },
+                  onRefresh: handleRefresh,
                 ),
                 performingAction: (orders, orderId) => _TabViews(
                   tabController: _tabController,
@@ -211,6 +229,7 @@ class _OrdersDashboardPageState extends State<OrdersDashboardPage>
                   onConfirm: (_) {},
                   onAssignDriver: (_) {},
                   onCancel: (_) {},
+                  onRefresh: handleRefresh,
                 ),
               );
             },
@@ -229,6 +248,7 @@ class _TabViews extends StatelessWidget {
   final ValueChanged<String> onConfirm;
   final ValueChanged<String> onAssignDriver;
   final ValueChanged<String> onCancel;
+  final Future<void> Function() onRefresh;
 
   const _TabViews({
     required this.tabController,
@@ -238,32 +258,63 @@ class _TabViews extends StatelessWidget {
     required this.onConfirm,
     required this.onAssignDriver,
     required this.onCancel,
+    required this.onRefresh,
   });
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return TabBarView(
       controller: tabController,
       children: tabs.map((tab) {
         final filtered = orders.where((o) => o.status == tab.status).toList();
 
         if (filtered.isEmpty) {
-          return _EmptyState(status: tab.status);
+          return RefreshIndicator(
+            color: colorScheme.primary,
+            onRefresh: onRefresh,
+            child: CustomScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: AnimatedEmptyState(
+                    icon: const Icon(Icons.inbox_outlined, size: 64),
+                    title: 'Sin pedidos',
+                    subtitle:
+                        'No hay pedidos ${tab.status.displayName.toLowerCase()} en este momento',
+                  ),
+                ),
+              ],
+            ),
+          );
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          itemCount: filtered.length,
-          itemBuilder: (_, i) {
-            final order = filtered[i];
-            return ManagerOrderCard(
-              order: order,
-              isLoading: order.id == activeOrderId,
-              onConfirm: () => onConfirm(order.id),
-              onAssignDriver: () => onAssignDriver(order.id),
-              onCancel: () => onCancel(order.id),
-            );
-          },
+        return RefreshIndicator(
+          color: colorScheme.primary,
+          onRefresh: onRefresh,
+          child: ListView.builder(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            itemCount: filtered.length,
+            itemBuilder: (_, i) {
+              final order = filtered[i];
+              return ManagerOrderCard(
+                order: order,
+                isLoading: order.id == activeOrderId,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        OrderDetailPage(order: order, isStaffView: true),
+                  ),
+                ),
+                onConfirm: () => onConfirm(order.id),
+                onAssignDriver: () => onAssignDriver(order.id),
+                onCancel: () => onCancel(order.id),
+              );
+            },
+          ),
         );
       }).toList(),
     );
@@ -286,28 +337,6 @@ class _NoBranchSelected extends StatelessWidget {
           Text(
             'Selecciona una sucursal\npara ver sus pedidos',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 16),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  final OrderStatus status;
-  const _EmptyState({required this.status});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.inbox_outlined, size: 64, color: Colors.grey.shade300),
-          const SizedBox(height: 12),
-          Text(
-            'Sin pedidos ${status.displayName.toLowerCase()}',
             style: TextStyle(color: Colors.grey.shade500, fontSize: 16),
           ),
         ],

@@ -224,6 +224,31 @@ String translateFailure(Failure failure) {
     case FailureCode.invalidOrderTotal:
       return 'El total del pedido no puede ser negativo.';
 
+    case FailureCode.orderNotAssigned:
+      return 'Este pedido no te está asignado.';
+    case FailureCode.orderNotInYourBranch:
+      return 'Este pedido no pertenece a tu sucursal.';
+    case FailureCode.invalidFailureReason:
+      return 'El motivo elegido no es válido.';
+    case FailureCode.cardOrderNeedsRefund:
+      return 'Este pedido está pagado con tarjeta y requiere un reembolso. '
+          'Contacta al administrador.';
+    case FailureCode.cardOrderNotConfirmable:
+      return 'Los pedidos con tarjeta se confirman solos cuando el pago se acredita.';
+    case FailureCode.orderNotPending:
+      return 'Este pedido ya no está pendiente de confirmación.';
+    case FailureCode.orderNotConfirmed:
+      return 'El pedido debe estar confirmado antes de asignar un repartidor.';
+    case FailureCode.invalidDriverForBranch:
+      return 'El repartidor elegido no es válido para esta sucursal.';
+
+    case FailureCode.invalidCancellationReason:
+      return 'El motivo de cancelación no es válido.';
+    case FailureCode.orderNotCancellable:
+      return 'Este pedido ya no se puede cancelar desde aquí.';
+    case FailureCode.orderNotReadyToDepart:
+      return 'Este pedido todavía no está listo para salir a ruta.';
+
     case FailureCode.shippingConfigNotFound:
       return 'No se encontró configuración de envío para esta sucursal.';
     case FailureCode.shippingCalculationError:

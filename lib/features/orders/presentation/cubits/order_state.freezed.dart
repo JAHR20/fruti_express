@@ -55,15 +55,13 @@ extension OrderStatePatterns on OrderState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Processing value)?  processing,TResult Function( _AwaitingPayment value)?  awaitingPayment,TResult Function( _RedirectToPayment value)?  redirectToPayment,TResult Function( _ConfirmingPayment value)?  confirmingPayment,TResult Function( _Completed value)?  completed,TResult Function( _Error value)?  error,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Initial value)?  initial,TResult Function( _Processing value)?  processing,TResult Function( _AwaitingPayment value)?  awaitingPayment,TResult Function( _Completed value)?  completed,TResult Function( _Error value)?  error,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Processing() when processing != null:
 return processing(_that);case _AwaitingPayment() when awaitingPayment != null:
-return awaitingPayment(_that);case _RedirectToPayment() when redirectToPayment != null:
-return redirectToPayment(_that);case _ConfirmingPayment() when confirmingPayment != null:
-return confirmingPayment(_that);case _Completed() when completed != null:
+return awaitingPayment(_that);case _Completed() when completed != null:
 return completed(_that);case _Error() when error != null:
 return error(_that);case _:
   return orElse();
@@ -83,15 +81,13 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Processing value)  processing,required TResult Function( _AwaitingPayment value)  awaitingPayment,required TResult Function( _RedirectToPayment value)  redirectToPayment,required TResult Function( _ConfirmingPayment value)  confirmingPayment,required TResult Function( _Completed value)  completed,required TResult Function( _Error value)  error,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Initial value)  initial,required TResult Function( _Processing value)  processing,required TResult Function( _AwaitingPayment value)  awaitingPayment,required TResult Function( _Completed value)  completed,required TResult Function( _Error value)  error,}){
 final _that = this;
 switch (_that) {
 case _Initial():
 return initial(_that);case _Processing():
 return processing(_that);case _AwaitingPayment():
-return awaitingPayment(_that);case _RedirectToPayment():
-return redirectToPayment(_that);case _ConfirmingPayment():
-return confirmingPayment(_that);case _Completed():
+return awaitingPayment(_that);case _Completed():
 return completed(_that);case _Error():
 return error(_that);case _:
   throw StateError('Unexpected subclass');
@@ -110,15 +106,13 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Processing value)?  processing,TResult? Function( _AwaitingPayment value)?  awaitingPayment,TResult? Function( _RedirectToPayment value)?  redirectToPayment,TResult? Function( _ConfirmingPayment value)?  confirmingPayment,TResult? Function( _Completed value)?  completed,TResult? Function( _Error value)?  error,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Initial value)?  initial,TResult? Function( _Processing value)?  processing,TResult? Function( _AwaitingPayment value)?  awaitingPayment,TResult? Function( _Completed value)?  completed,TResult? Function( _Error value)?  error,}){
 final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial(_that);case _Processing() when processing != null:
 return processing(_that);case _AwaitingPayment() when awaitingPayment != null:
-return awaitingPayment(_that);case _RedirectToPayment() when redirectToPayment != null:
-return redirectToPayment(_that);case _ConfirmingPayment() when confirmingPayment != null:
-return confirmingPayment(_that);case _Completed() when completed != null:
+return awaitingPayment(_that);case _Completed() when completed != null:
 return completed(_that);case _Error() when error != null:
 return error(_that);case _:
   return null;
@@ -137,14 +131,12 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  processing,TResult Function( Order order)?  awaitingPayment,TResult Function( String initPointUrl,  Order order)?  redirectToPayment,TResult Function()?  confirmingPayment,TResult Function( Order order)?  completed,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  processing,TResult Function( Order order)?  awaitingPayment,TResult Function( Order order)?  completed,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Processing() when processing != null:
 return processing();case _AwaitingPayment() when awaitingPayment != null:
-return awaitingPayment(_that.order);case _RedirectToPayment() when redirectToPayment != null:
-return redirectToPayment(_that.initPointUrl,_that.order);case _ConfirmingPayment() when confirmingPayment != null:
-return confirmingPayment();case _Completed() when completed != null:
+return awaitingPayment(_that.order);case _Completed() when completed != null:
 return completed(_that.order);case _Error() when error != null:
 return error(_that.message);case _:
   return orElse();
@@ -164,14 +156,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  processing,required TResult Function( Order order)  awaitingPayment,required TResult Function( String initPointUrl,  Order order)  redirectToPayment,required TResult Function()  confirmingPayment,required TResult Function( Order order)  completed,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  processing,required TResult Function( Order order)  awaitingPayment,required TResult Function( Order order)  completed,required TResult Function( String message)  error,}) {final _that = this;
 switch (_that) {
 case _Initial():
 return initial();case _Processing():
 return processing();case _AwaitingPayment():
-return awaitingPayment(_that.order);case _RedirectToPayment():
-return redirectToPayment(_that.initPointUrl,_that.order);case _ConfirmingPayment():
-return confirmingPayment();case _Completed():
+return awaitingPayment(_that.order);case _Completed():
 return completed(_that.order);case _Error():
 return error(_that.message);case _:
   throw StateError('Unexpected subclass');
@@ -190,14 +180,12 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  processing,TResult? Function( Order order)?  awaitingPayment,TResult? Function( String initPointUrl,  Order order)?  redirectToPayment,TResult? Function()?  confirmingPayment,TResult? Function( Order order)?  completed,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  processing,TResult? Function( Order order)?  awaitingPayment,TResult? Function( Order order)?  completed,TResult? Function( String message)?  error,}) {final _that = this;
 switch (_that) {
 case _Initial() when initial != null:
 return initial();case _Processing() when processing != null:
 return processing();case _AwaitingPayment() when awaitingPayment != null:
-return awaitingPayment(_that.order);case _RedirectToPayment() when redirectToPayment != null:
-return redirectToPayment(_that.initPointUrl,_that.order);case _ConfirmingPayment() when confirmingPayment != null:
-return confirmingPayment();case _Completed() when completed != null:
+return awaitingPayment(_that.order);case _Completed() when completed != null:
 return completed(_that.order);case _Error() when error != null:
 return error(_that.message);case _:
   return null;
@@ -345,115 +333,6 @@ $OrderCopyWith<$Res> get order {
   });
 }
 }
-
-/// @nodoc
-
-
-class _RedirectToPayment extends OrderState {
-  const _RedirectToPayment(this.initPointUrl, this.order): super._();
-  
-
- final  String initPointUrl;
- final  Order order;
-
-/// Create a copy of OrderState
-/// with the given fields replaced by the non-null parameter values.
-@JsonKey(includeFromJson: false, includeToJson: false)
-@pragma('vm:prefer-inline')
-_$RedirectToPaymentCopyWith<_RedirectToPayment> get copyWith => __$RedirectToPaymentCopyWithImpl<_RedirectToPayment>(this, _$identity);
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _RedirectToPayment&&(identical(other.initPointUrl, initPointUrl) || other.initPointUrl == initPointUrl)&&(identical(other.order, order) || other.order == order));
-}
-
-
-@override
-int get hashCode => Object.hash(runtimeType,initPointUrl,order);
-
-@override
-String toString() {
-  return 'OrderState.redirectToPayment(initPointUrl: $initPointUrl, order: $order)';
-}
-
-
-}
-
-/// @nodoc
-abstract mixin class _$RedirectToPaymentCopyWith<$Res> implements $OrderStateCopyWith<$Res> {
-  factory _$RedirectToPaymentCopyWith(_RedirectToPayment value, $Res Function(_RedirectToPayment) _then) = __$RedirectToPaymentCopyWithImpl;
-@useResult
-$Res call({
- String initPointUrl, Order order
-});
-
-
-$OrderCopyWith<$Res> get order;
-
-}
-/// @nodoc
-class __$RedirectToPaymentCopyWithImpl<$Res>
-    implements _$RedirectToPaymentCopyWith<$Res> {
-  __$RedirectToPaymentCopyWithImpl(this._self, this._then);
-
-  final _RedirectToPayment _self;
-  final $Res Function(_RedirectToPayment) _then;
-
-/// Create a copy of OrderState
-/// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? initPointUrl = null,Object? order = null,}) {
-  return _then(_RedirectToPayment(
-null == initPointUrl ? _self.initPointUrl : initPointUrl // ignore: cast_nullable_to_non_nullable
-as String,null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
-as Order,
-  ));
-}
-
-/// Create a copy of OrderState
-/// with the given fields replaced by the non-null parameter values.
-@override
-@pragma('vm:prefer-inline')
-$OrderCopyWith<$Res> get order {
-  
-  return $OrderCopyWith<$Res>(_self.order, (value) {
-    return _then(_self.copyWith(order: value));
-  });
-}
-}
-
-/// @nodoc
-
-
-class _ConfirmingPayment extends OrderState {
-  const _ConfirmingPayment(): super._();
-  
-
-
-
-
-
-
-@override
-bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ConfirmingPayment);
-}
-
-
-@override
-int get hashCode => runtimeType.hashCode;
-
-@override
-String toString() {
-  return 'OrderState.confirmingPayment()';
-}
-
-
-}
-
-
-
 
 /// @nodoc
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/core/utils/currency_formatter.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
-import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart'; 
+import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart';
 
 class DriverSummaryPage extends StatelessWidget {
-  final List<Order> orders; 
+  final List<Order> orders;
 
   const DriverSummaryPage({super.key, required this.orders});
 
@@ -13,11 +13,11 @@ class DriverSummaryPage extends StatelessWidget {
 
     return orders.where((o) {
       if (o.status != OrderStatus.delivered) return false;
-      final date = o.deliveredAt?.toLocal(); 
+      final date = o.deliveredAt?.toLocal();
       if (date == null) return false;
       return date.year == today.year &&
-             date.month == today.month &&
-             date.day == today.day;
+          date.month == today.month &&
+          date.day == today.day;
     }).toList();
   }
 
@@ -32,6 +32,7 @@ class DriverSummaryPage extends StatelessWidget {
     final delivered = _deliveredToday;
     final onTheWay = _onTheWay;
     final preparing = _preparing;
+    var colorTheme = Theme.of(context).colorScheme;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24),
@@ -44,7 +45,7 @@ class DriverSummaryPage extends StatelessWidget {
           ),
           Text(
             _formattedDate(),
-            style: TextStyle(color: Colors.grey.shade600),
+            style: TextStyle(color: colorTheme.surfaceContainerHighest),
           ),
           const SizedBox(height: 24),
 
@@ -53,7 +54,7 @@ class DriverSummaryPage extends StatelessWidget {
               Expanded(
                 child: _MetricCard(
                   icon: Icons.check_circle_outline,
-                  color: Colors.green,
+                  color: colorTheme.primary,
                   value: delivered.length.toString(),
                   label: 'Entregados hoy',
                 ),
@@ -62,7 +63,7 @@ class DriverSummaryPage extends StatelessWidget {
               Expanded(
                 child: _MetricCard(
                   icon: Icons.delivery_dining,
-                  color: Colors.teal,
+                  color: colorTheme.secondary,
                   value: onTheWay.length.toString(),
                   label: 'En camino',
                 ),
@@ -71,7 +72,7 @@ class DriverSummaryPage extends StatelessWidget {
               Expanded(
                 child: _MetricCard(
                   icon: Icons.inventory_2_outlined,
-                  color: Colors.purple,
+                  color: colorTheme.tertiary,
                   value: preparing.length.toString(),
                   label: 'Por recoger',
                 ),
@@ -92,13 +93,18 @@ class DriverSummaryPage extends StatelessWidget {
               child: Column(
                 children: [
                   const SizedBox(height: 32),
-                  Icon(Icons.local_shipping_outlined,
-                      size: 64, color: Colors.grey.shade300),
+                  Icon(
+                    Icons.local_shipping_outlined,
+                    size: 64,
+                    color: colorTheme.surfaceContainerHighest,
+                  ),
                   const SizedBox(height: 12),
                   Text(
                     'Aún no has completado entregas hoy',
                     style: TextStyle(
-                        color: Colors.grey.shade500, fontSize: 15),
+                      color: colorTheme.surfaceContainerHighest,
+                      fontSize: 15,
+                    ),
                   ),
                 ],
               ),
@@ -112,14 +118,24 @@ class DriverSummaryPage extends StatelessWidget {
   String _formattedDate() {
     final now = DateTime.now();
     const months = [
-      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
     ];
     return '${now.day} de ${months[now.month - 1]} de ${now.year}';
   }
 }
 
-class _MetricCard extends StatelessWidget { 
+class _MetricCard extends StatelessWidget {
   final IconData icon;
   final Color color;
   final String value;
@@ -157,7 +173,10 @@ class _MetricCard extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+            style: TextStyle(
+              fontSize: 11,
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            ),
           ),
         ],
       ),
@@ -165,19 +184,20 @@ class _MetricCard extends StatelessWidget {
   }
 }
 
-class _DeliveryItem extends StatelessWidget { 
+class _DeliveryItem extends StatelessWidget {
   final Order order;
   const _DeliveryItem({required this.order});
 
   @override
   Widget build(BuildContext context) {
+    var colorTheme = Theme.of(context).colorScheme;
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: ListTile(
-        leading: const CircleAvatar(
-          backgroundColor: Color(0xFFDCFCE7),
-          child: Icon(Icons.check, color: Colors.green, size: 20),
+        leading: CircleAvatar(
+          backgroundColor: colorTheme.surface,
+          child: Icon(Icons.check, color: colorTheme.primary, size: 20),
         ),
         title: Text(
           order.customerNameSnapshot,
@@ -191,9 +211,9 @@ class _DeliveryItem extends StatelessWidget {
         ),
         trailing: Text(
           CurrencyFormatter.format(order.total),
-          style: const TextStyle(
+          style: TextStyle(
             fontWeight: FontWeight.bold,
-            color: Color(0xFF1E3A8A),
+            color: colorTheme.secondaryContainer,
           ),
         ),
       ),

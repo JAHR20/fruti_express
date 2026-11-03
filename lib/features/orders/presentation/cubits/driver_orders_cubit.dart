@@ -4,9 +4,11 @@ import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/enums/delivery_failure_reason.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/confirm_delivery_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/confirm_delivery_params.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/depart_for_delivery_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/fail_delivery_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/upload_delivery_evidence_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/watch_driver_orders_use_case.dart';
 import 'driver_orders_state.dart';
@@ -16,6 +18,7 @@ class DriverOrdersCubit extends Cubit<DriverOrdersState> {
   final DepartForDeliveryUseCase _departForDeliveryUseCase;
   final ConfirmDeliveryUseCase _confirmDeliveryUseCase;
   final UploadDeliveryEvidenceUseCase _uploadEvidenceUseCase;
+  final FailDeliveryUseCase _failDeliveryUseCase;
 
   StreamSubscription<Either<Failure, List<Order>>>? _subscription;
 
@@ -24,10 +27,12 @@ class DriverOrdersCubit extends Cubit<DriverOrdersState> {
     required DepartForDeliveryUseCase departForDeliveryUseCase,
     required ConfirmDeliveryUseCase confirmDeliveryUseCase,
     required UploadDeliveryEvidenceUseCase uploadEvidenceUseCase,
+    required FailDeliveryUseCase failDeliveryUseCase,
   }) : _watchOrdersUseCase = watchOrdersUseCase,
        _departForDeliveryUseCase = departForDeliveryUseCase,
        _confirmDeliveryUseCase = confirmDeliveryUseCase,
        _uploadEvidenceUseCase = uploadEvidenceUseCase,
+       _failDeliveryUseCase = failDeliveryUseCase,
        super(const DriverOrdersState.initial());
 
   void startWatching(String driverId) {
@@ -131,6 +136,34 @@ class DriverOrdersCubit extends Cubit<DriverOrdersState> {
           message: translateFailure(failure),
         ),
       ),
+      (_) => emit(DriverOrdersState.loaded(currentList)),
+    );
+  }
+
+  Future<void> failDelivery({
+    required String orderId,
+    required DeliveryFailureReason reason,
+    String? note,
+  }) async {
+    final currentList = _currentOrders();
+    if (currentList == null) return;
+
+    emit(
+      DriverOrdersState.performingAction(orders: currentList, orderId: orderId),
+    );
+
+    final result = await _failDeliveryUseCase
+        .execute(orderId: orderId, reason: reason, note: note)
+        .run();
+
+    result.fold(
+      (failure) => emit(
+        DriverOrdersState.errorWithOrders(
+          orders: currentList,
+          message: translateFailure(failure),
+        ),
+      ),
+      // El pedido cancelado desaparece de la lista por el stream.
       (_) => emit(DriverOrdersState.loaded(currentList)),
     );
   }

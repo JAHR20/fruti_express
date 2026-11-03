@@ -9,8 +9,6 @@ class OrderState with _$OrderState {
   const factory OrderState.initial() = _Initial;
   const factory OrderState.processing() = _Processing; 
   const factory OrderState.awaitingPayment(Order order) = _AwaitingPayment;
-  const factory OrderState.redirectToPayment(String initPointUrl, Order order) = _RedirectToPayment;
-  const factory OrderState.confirmingPayment() = _ConfirmingPayment; 
   const factory OrderState.completed(Order order) = _Completed;
   const factory OrderState.error(String message) = _Error;
 }

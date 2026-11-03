@@ -30,6 +30,17 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   static const String _proofUrlParam = 'p_proof_url';
   static const String _confirmCashOrderRpc = 'confirm_cash_order';
 
+  static const String _assignDriverAndPrepareRpc = 'assign_driver_and_prepare';
+  static const String _driverIdParam = 'p_driver_id';
+
+  static const String _failDeliveryRpc = 'fail_delivery';
+  static const String _reasonParam = 'p_reason';
+  static const String _noteParam = 'p_note';
+
+  static const String _cancelCashOrderRpc = 'cancel_cash_order';
+
+  static const String _departForDeliveryRpc = 'depart_for_delivery';
+
   OrderRemoteDataSourceImpl(this.supabase);
 
   @override
@@ -93,50 +104,6 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   }
 
   @override
-  Future<String?> getConfirmationCode(String orderId) async {
-    final response = await supabase
-        .from(_tableConfirmation)
-        .select(_colCode)
-        .eq(_colOrderId, orderId)
-        .maybeSingle();
-
-    return response?[_colCode] as String?;
-  }
-
-  @override
-  Future<List<OrderModel>> getAll() async {
-    final response = await supabase
-        .from(_tableName)
-        .select('*, $_relOrderDetails')
-        .order(_colCreatedAt, ascending: false);
-
-    return (response as List).map((json) => OrderModel.fromJson(json)).toList();
-  }
-
-  @override
-  Future<List<OrderModel>> getByBranch(String branchId) async {
-    final response = await supabase
-        .from(_tableName)
-        .select('*, $_relOrderDetails')
-        .eq(_colBranchId, branchId)
-        .order(_colCreatedAt, ascending: false);
-
-    return (response as List).map((json) => OrderModel.fromJson(json)).toList();
-  }
-
-  @override
-  Future<List<OrderModel>> getByStatus(String branchId, String status) async {
-    final response = await supabase
-        .from(_tableName)
-        .select('*, $_relOrderDetails')
-        .eq(_colBranchId, branchId)
-        .eq(_colStatus, status)
-        .order(_colCreatedAt, ascending: false);
-
-    return (response as List).map((json) => OrderModel.fromJson(json)).toList();
-  }
-
-  @override
   Future<OrderModel?> getById(String id) async {
     final response = await supabase
         .from(_tableName)
@@ -145,18 +112,6 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         .maybeSingle();
 
     return response != null ? OrderModel.fromJson(response) : null;
-  }
-
-  @override
-  Future<OrderModel> updateStatus(String id, String newStatus) async {
-    final response = await supabase
-        .from(_tableName)
-        .update({_colStatus: newStatus})
-        .eq(_colId, id)
-        .select('*, $_relOrderDetails')
-        .single();
-
-    return OrderModel.fromJson(response);
   }
 
   @override
@@ -183,14 +138,14 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   }
 
   @override
-  Future<OrderModel> assignDriver(String orderId, String driverId) async {
-    final response = await supabase
-        .from(_tableName)
-        .update({_colDeliveryPersonId: driverId})
-        .eq(_colId, orderId)
-        .select('*, $_relOrderDetails')
-        .single();
-    return OrderModel.fromJson(response);
+  Future<void> assignDriverAndPrepare({
+    required String orderId,
+    required String driverId,
+  }) async {
+    await supabase.rpc(
+      _assignDriverAndPrepareRpc,
+      params: {_orderIdParam: orderId, _driverIdParam: driverId},
+    );
   }
 
   @override
@@ -199,8 +154,16 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         .from(_tableName)
         .stream(primaryKey: [_colId])
         .eq(_colBranchId, branchId)
-        .order(_colCreatedAt)
-        .map((data) => data.map((json) => OrderModel.fromJson(json)).toList());
+        .asyncMap((_) async {
+          final response = await supabase
+              .from(_tableName)
+              .select('*, $_relOrderDetails')
+              .eq(_colBranchId, branchId)
+              .order(_colCreatedAt);
+          return (response as List)
+              .map((json) => OrderModel.fromJson(json))
+              .toList();
+        });
   }
 
   @override
@@ -226,8 +189,16 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
         .from(_tableName)
         .stream(primaryKey: [_colId])
         .eq(_colDeliveryPersonId, driverId)
-        .order(_colCreatedAt, ascending: false)
-        .map((data) => data.map((json) => OrderModel.fromJson(json)).toList());
+        .asyncMap((_) async {
+          final response = await supabase
+              .from(_tableName)
+              .select('*, $_relOrderDetails')
+              .eq(_colDeliveryPersonId, driverId)
+              .order(_colCreatedAt, ascending: false);
+          return (response as List)
+              .map((json) => OrderModel.fromJson(json))
+              .toList();
+        });
   }
 
   @override
@@ -236,8 +207,8 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
     required List<Map<String, dynamic>> items,
     required String deliveryMethod,
     String? couponId,
-    double? customerLatitude, // 👈 nuevo
-    double? customerLongitude, // 👈 nuevo
+    double? customerLatitude,
+    double? customerLongitude,
   }) async {
     final response = await supabase.rpc(
       _calculateOrderTotalsRpc,
@@ -270,7 +241,45 @@ class OrderRemoteDataSourceImpl implements OrderRemoteDataSource {
   }
 
   @override
+  Future<void> failDelivery({
+    required String orderId,
+    required String reason,
+    String? note,
+  }) async {
+    await supabase.rpc(
+      _failDeliveryRpc,
+      params: {_orderIdParam: orderId, _reasonParam: reason, _noteParam: note},
+    );
+  }
+
+  @override
   Future<void> confirmCashOrder({required String orderId}) async {
     await supabase.rpc(_confirmCashOrderRpc, params: {_orderIdParam: orderId});
+  }
+
+  @override
+  Future<void> cancelCashOrder({
+    required String orderId,
+    required String reason,
+    String? note,
+  }) async {
+    await supabase.rpc(
+      _cancelCashOrderRpc,
+      params: {_orderIdParam: orderId, _reasonParam: reason, _noteParam: note},
+    );
+  }
+
+  @override
+  Future<OrderModel> departForDelivery(String orderId) async {
+    await supabase.rpc(_departForDeliveryRpc, params: {_orderIdParam: orderId});
+
+    final result = await getById(orderId);
+    if (result == null) {
+      throw const PostgrestException(
+        message: 'Pedido no encontrado',
+        code: 'PGRST116',
+      );
+    }
+    return result;
   }
 }

@@ -39,7 +39,6 @@ class _UsersPageState extends State<UsersPage> {
       UsersTab.customers,
     ];
 
-    // Helper seguro para refrescar datos (evita warnings de BuildContext post-await)
     Future<void> handleRefresh() async {
       final usersCubit = context.read<UsersCubit>();
       if (widget.currentUser.isAdmin) {
@@ -128,7 +127,6 @@ class _UsersPageState extends State<UsersPage> {
                   );
                 }
 
-                // 3. ESTADO VACÍO (Ahora scrolleable con RefreshIndicator)
                 if (state.users.isEmpty) {
                   return RefreshIndicator(
                     color: colorScheme.primary,
@@ -150,7 +148,6 @@ class _UsersPageState extends State<UsersPage> {
                   );
                 }
 
-                // 4. LISTA CON DATOS (Usando CustomScrollView + SliverList)
                 return RefreshIndicator(
                   color: colorScheme.primary,
                   onRefresh: handleRefresh,

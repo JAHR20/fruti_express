@@ -53,19 +53,13 @@ class _DriverDashboardPageState extends State<DriverDashboardPage> {
   @override
   Widget build(BuildContext context) {
     final profile = (context.read<AuthCubit>().state as AuthAuthenticated).user;
-
+    var colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: Text(
           _title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        backgroundColor: const Color(0xFF1E3A8A),
-        iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: DriverDrawer(
         user: profile,
@@ -77,8 +71,10 @@ class _DriverDashboardPageState extends State<DriverDashboardPage> {
         builder: (context, state) {
           return state.when(
             initial: () => const SizedBox.shrink(),
-            loading: () => const Center(
-              child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+            loading: () => Center(
+              child: CircularProgressIndicator(
+                color: colorScheme.primaryContainer,
+              ),
             ),
             error: (msg) => _ErrorView(
               message: msg,
@@ -91,7 +87,10 @@ class _DriverDashboardPageState extends State<DriverDashboardPage> {
             errorWithOrders: (orders, message) {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(message), backgroundColor: Colors.red),
+                  SnackBar(
+                    content: Text(message),
+                    backgroundColor: colorScheme.error,
+                  ),
                 );
               });
               return _buildSection(orders: orders, actionOrderId: null);
@@ -116,7 +115,7 @@ class _DriverDashboardPageState extends State<DriverDashboardPage> {
       DriverSection.summary => DriverSummaryPage(orders: orders),
       DriverSection.profile => BlocProvider(
         create: (_) => sl<EditProfileCubit>(),
-        child: EditProfilePage(
+        child: EditProfileBody(
           onSaved: () {
             setState(() {
               _section = DriverSection.orders;
@@ -139,7 +138,11 @@ class _ErrorView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 48, color: Colors.red),
+          Icon(
+            Icons.error_outline,
+            size: 48,
+            color: Theme.of(context).colorScheme.error,
+          ),
           const SizedBox(height: 12),
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 16),

@@ -8,9 +8,27 @@ import 'package:fruti_express_jahr_admin/features/users/presentation/cubits/edit
 import 'package:fruti_express_jahr_admin/features/users/presentation/extensions/tipo_usuario_ui_extension.dart';
 import 'package:fruti_express_jahr_admin/features/users/presentation/widgets/profile_form.dart';
 
+/// 1. Página completa con su propio AppBar y Scaffold (para cuando navegas con GoRouter)
 class EditProfilePage extends StatelessWidget {
   final VoidCallback? onSaved;
   const EditProfilePage({super.key, this.onSaved});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        title: const Text('Mi Perfil', style: TextStyle(fontWeight: FontWeight.bold)),
+      ),
+      body: EditProfileBody(onSaved: onSaved),
+    );
+  }
+}
+
+/// 2. Cuerpo reutilizable (SIN Scaffold ni AppBar, ideal para incrustarlo en el Dashboard)
+class EditProfileBody extends StatelessWidget {
+  final VoidCallback? onSaved;
+  const EditProfileBody({super.key, this.onSaved});
 
   @override
   Widget build(BuildContext context) {
@@ -18,71 +36,65 @@ class EditProfilePage extends StatelessWidget {
         (context.read<AuthCubit>().state as AuthAuthenticated).user;
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Scaffold(
-      backgroundColor: colorScheme.surface,
-      appBar: AppBar(
-        title: Text('Mi Perfil', style: TextStyle(fontWeight: FontWeight.bold)),
-      ),
-      body: BlocConsumer<EditProfileCubit, EditProfileState>(
-        listener: (context, state) {
-          state.whenOrNull(
-            success: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Perfil actualizado correctamente',
-                    style: TextStyle(color: colorScheme.onPrimary),
-                  ),
-                  backgroundColor: colorScheme.primary,
+    return BlocConsumer<EditProfileCubit, EditProfileState>(
+      listener: (context, state) {
+        state.whenOrNull(
+          success: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  'Perfil actualizado correctamente',
+                  style: TextStyle(color: colorScheme.onPrimary),
                 ),
-              );
+                backgroundColor: colorScheme.primary,
+              ),
+            );
 
-              if (onSaved != null) {
-                onSaved!();
-              } else {
-                Navigator.of(context).pop();
-              }
-            },
-            error: (msg) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    msg,
-                    style: TextStyle(color: colorScheme.onError),
-                  ),
-                  backgroundColor: colorScheme.error,
+            if (onSaved != null) {
+              onSaved!();
+            } else {
+              Navigator.of(context).pop();
+            }
+          },
+          error: (msg) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  msg,
+                  style: TextStyle(color: colorScheme.onError),
                 ),
-              );
-            },
-          );
-        },
-        builder: (context, state) {
-          final isLoading = state.maybeWhen(
-            saving: () => true,
-            orElse: () => false,
-          );
+                backgroundColor: colorScheme.error,
+              ),
+            );
+          },
+        );
+      },
+      builder: (context, state) {
+        final isLoading = state.maybeWhen(
+          saving: () => true,
+          orElse: () => false,
+        );
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              children: [
-                _Avatar(profile: currentUser),
-                const SizedBox(height: 32),
-                ProfileForm(
-                  user: currentUser,
-                  isLoading: isLoading,
-                  onSave: (updatedProfile) {
-                    context.read<EditProfileCubit>().updateProfile(
-                      currentUser: currentUser,
-                      profileToEdit: updatedProfile,
-                    );
-                  },
-                ),
-              ],
-            ),
-          );
-        },
-      ),
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              _Avatar(profile: currentUser),
+              const SizedBox(height: 32),
+              ProfileForm(
+                user: currentUser,
+                isLoading: isLoading,
+                onSave: (updatedProfile) {
+                  context.read<EditProfileCubit>().updateProfile(
+                    currentUser: currentUser,
+                    profileToEdit: updatedProfile,
+                  );
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

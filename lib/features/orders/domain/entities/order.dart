@@ -26,7 +26,6 @@ abstract class Order with _$Order {
     required DeliveryMethod deliveryMethod,
     DateTime? estimatedDeliveryDate, 
     DateTime? deliveredAt, 
-    String? paymentUrl,
     String? idempotencyKey,
     PaymentMethodType? paymentMethod,
     String? confirmationCode,

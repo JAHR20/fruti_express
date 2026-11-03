@@ -46,6 +46,7 @@ class _AssignDriverSheetState extends State<AssignDriverSheet> {
 
   @override
   Widget build(BuildContext context) {
+    var colorTheme = Theme.of(context).colorScheme;
     return Padding(
       padding: EdgeInsets.only(
         left: 24,
@@ -64,7 +65,7 @@ class _AssignDriverSheetState extends State<AssignDriverSheet> {
           const SizedBox(height: 4),
           Text(
             'Selecciona quién llevará este pedido',
-            style: TextStyle(color: Colors.grey.shade600),
+            style: TextStyle(color: colorTheme.scrim.withValues(alpha: 0.7)),
           ),
           const SizedBox(height: 20),
           BlocBuilder<DriversCubit, DriversState>(
@@ -73,7 +74,7 @@ class _AssignDriverSheetState extends State<AssignDriverSheet> {
                 initial: () => const SizedBox.shrink(),
                 loading: () => const Center(child: CircularProgressIndicator()),
                 error: (msg) => Center(
-                  child: Text(msg, style: const TextStyle(color: Colors.red)),
+                  child: Text(msg, style: TextStyle(color: colorTheme.error)),
                 ),
                 loaded: (drivers) {
                   if (drivers.isEmpty) {
@@ -89,9 +90,8 @@ class _AssignDriverSheetState extends State<AssignDriverSheet> {
                     itemBuilder: (_, i) => _DriverTile(
                       driver: drivers[i],
                       isSelected: drivers[i].id == _selectedDriverId,
-                      onTap: () => setState(
-                        () => _selectedDriverId = drivers[i].id,
-                      ),
+                      onTap: () =>
+                          setState(() => _selectedDriverId = drivers[i].id),
                     ),
                   );
                 },
@@ -105,12 +105,15 @@ class _AssignDriverSheetState extends State<AssignDriverSheet> {
             child: FilledButton(
               onPressed: _selectedDriverId != null ? _confirm : null,
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.purple,
+                backgroundColor: colorTheme.secondaryContainer,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              child: const Text('Asignar y Preparar',
-                  style: TextStyle(fontSize: 16)),
+              child: const Text(
+                'Asignar y Preparar',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
           ),
         ],
@@ -120,7 +123,7 @@ class _AssignDriverSheetState extends State<AssignDriverSheet> {
 }
 
 class _DriverTile extends StatelessWidget {
-  final AppUser driver; 
+  final AppUser driver;
   final bool isSelected;
   final VoidCallback onTap;
 
@@ -132,31 +135,39 @@ class _DriverTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var colorTheme = Theme.of(context).colorScheme;
+    var nameDriver =
+        '${driver.profile.firstName} ${driver.profile.paternalLastName} ${driver.profile.maternalLastName}';
     return ListTile(
       onTap: onTap,
       leading: CircleAvatar(
-        backgroundColor: const Color(0xFF1E3A8A).withValues(alpha: 0.1),
+        backgroundColor: colorTheme.primaryContainer,
         backgroundImage: driver.profile.avatarUrl != null
             ? NetworkImage(driver.profile.avatarUrl!)
             : null,
         child: driver.profile.avatarUrl == null
             ? Text(
                 driver.profile.firstName[0].toUpperCase(),
-                style: const TextStyle(
-                    color: Color(0xFF1E3A8A), fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  color: colorTheme.onPrimaryContainer,
+                  fontWeight: FontWeight.bold,
+                ),
               )
             : null,
       ),
       title: Text(
-        '${driver.profile.paternalLastName} ${driver.profile.maternalLastName}',
+        nameDriver,
         style: const TextStyle(fontWeight: FontWeight.w500),
       ),
       subtitle: driver.profile.phone != null
           ? Text(driver.profile.phone!, style: const TextStyle(fontSize: 12))
           : null,
       trailing: isSelected
-          ? const Icon(Icons.check_circle, color: Colors.purple)
-          : const Icon(Icons.radio_button_unchecked, color: Colors.grey),
+          ? Icon(Icons.check_circle, color: colorTheme.tertiary)
+          : Icon(
+              Icons.radio_button_unchecked,
+              color: colorTheme.outline,
+            ),
     );
   }
 }

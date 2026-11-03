@@ -4,15 +4,15 @@ import 'package:fruti_express_jahr_admin/features/dashboard/presentation/router/
 import 'package:go_router/go_router.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
 
-class OrderSuccessfulPage extends StatelessWidget { 
-  final Order order; 
+class OrderSuccessfulPage extends StatelessWidget {
+  final Order order;
 
   const OrderSuccessfulPage({super.key, required this.order});
 
   @override
   Widget build(BuildContext context) {
+    var colorTheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24.0),
@@ -23,49 +23,52 @@ class OrderSuccessfulPage extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.green.shade50,
+                  color: colorTheme.primaryFixed,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.check_circle,
-                  color: Colors.green,
+                  color: colorTheme.primaryContainer,
                   size: 100,
                 ),
               ),
               const SizedBox(height: 32),
-              const Text(
+              Text(
                 '¡Pedido Confirmado!',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E3A8A),
+                  color: colorTheme.secondaryContainer,
                 ),
               ),
               const SizedBox(height: 12),
-              
+
               Text(
                 'Hemos recibido tu pedido de Fruti Express y ya estamos preparándolo.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
-                  color: Colors.grey.shade600,
+                  color: colorTheme.surfaceContainerHighest,
                 ),
               ),
               const SizedBox(height: 32),
-              
+
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade50,
+                  color: colorTheme.surface,
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: colorTheme.surfaceBright),
                 ),
                 child: Column(
                   children: [
-                    const Text(
+                    Text(
                       'Número de Orden',
-                      style: TextStyle(color: Colors.grey, fontSize: 14),
+                      style: TextStyle(
+                        color: colorTheme.surfaceContainerHighest,
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -80,13 +83,16 @@ class OrderSuccessfulPage extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text('Total pagado:', style: TextStyle(fontSize: 16)),
+                        const Text(
+                          'Total pagado:',
+                          style: TextStyle(fontSize: 16),
+                        ),
                         Text(
                           order.total.toCurrencyFormat,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: colorTheme.primary,
                           ),
                         ),
                       ],
@@ -94,7 +100,7 @@ class OrderSuccessfulPage extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               const Spacer(),
 
               SizedBox(
@@ -102,7 +108,7 @@ class OrderSuccessfulPage extends StatelessWidget {
                 height: 54,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1E3A8A),
+                    backgroundColor: colorTheme.primaryContainer,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -110,9 +116,13 @@ class OrderSuccessfulPage extends StatelessWidget {
                   onPressed: () {
                     context.goNamed(CustomerShellRoutes.homeName);
                   },
-                  child: const Text(
+                  child: Text(
                     'Volver a la Tienda',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: colorTheme.onPrimary,
+                    ),
                   ),
                 ),
               ),

@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Order {
 
- String get id; String get customerId; String get branchId; String? get deliveryDriverId; String get customerNameSnapshot; String get customerPhoneSnapshot; String get addressSnapshot; int get subtotal; int get shippingCost; int get appliedDiscounts; int get total; OrderStatus get status; String? get deliveryEvidenceUrl; DateTime get createdAt; DeliveryMethod get deliveryMethod; DateTime? get estimatedDeliveryDate; DateTime? get deliveredAt; String? get paymentUrl; String? get idempotencyKey; PaymentMethodType? get paymentMethod; String? get confirmationCode; List<OrderItem> get items;
+ String get id; String get customerId; String get branchId; String? get deliveryDriverId; String get customerNameSnapshot; String get customerPhoneSnapshot; String get addressSnapshot; int get subtotal; int get shippingCost; int get appliedDiscounts; int get total; OrderStatus get status; String? get deliveryEvidenceUrl; DateTime get createdAt; DeliveryMethod get deliveryMethod; DateTime? get estimatedDeliveryDate; DateTime? get deliveredAt; String? get idempotencyKey; PaymentMethodType? get paymentMethod; String? get confirmationCode; List<OrderItem> get items;
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $OrderCopyWith<Order> get copyWith => _$OrderCopyWithImpl<Order>(this as Order, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Order&&(identical(other.id, id) || other.id == id)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.branchId, branchId) || other.branchId == branchId)&&(identical(other.deliveryDriverId, deliveryDriverId) || other.deliveryDriverId == deliveryDriverId)&&(identical(other.customerNameSnapshot, customerNameSnapshot) || other.customerNameSnapshot == customerNameSnapshot)&&(identical(other.customerPhoneSnapshot, customerPhoneSnapshot) || other.customerPhoneSnapshot == customerPhoneSnapshot)&&(identical(other.addressSnapshot, addressSnapshot) || other.addressSnapshot == addressSnapshot)&&(identical(other.subtotal, subtotal) || other.subtotal == subtotal)&&(identical(other.shippingCost, shippingCost) || other.shippingCost == shippingCost)&&(identical(other.appliedDiscounts, appliedDiscounts) || other.appliedDiscounts == appliedDiscounts)&&(identical(other.total, total) || other.total == total)&&(identical(other.status, status) || other.status == status)&&(identical(other.deliveryEvidenceUrl, deliveryEvidenceUrl) || other.deliveryEvidenceUrl == deliveryEvidenceUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deliveryMethod, deliveryMethod) || other.deliveryMethod == deliveryMethod)&&(identical(other.estimatedDeliveryDate, estimatedDeliveryDate) || other.estimatedDeliveryDate == estimatedDeliveryDate)&&(identical(other.deliveredAt, deliveredAt) || other.deliveredAt == deliveredAt)&&(identical(other.paymentUrl, paymentUrl) || other.paymentUrl == paymentUrl)&&(identical(other.idempotencyKey, idempotencyKey) || other.idempotencyKey == idempotencyKey)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.confirmationCode, confirmationCode) || other.confirmationCode == confirmationCode)&&const DeepCollectionEquality().equals(other.items, items));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Order&&(identical(other.id, id) || other.id == id)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.branchId, branchId) || other.branchId == branchId)&&(identical(other.deliveryDriverId, deliveryDriverId) || other.deliveryDriverId == deliveryDriverId)&&(identical(other.customerNameSnapshot, customerNameSnapshot) || other.customerNameSnapshot == customerNameSnapshot)&&(identical(other.customerPhoneSnapshot, customerPhoneSnapshot) || other.customerPhoneSnapshot == customerPhoneSnapshot)&&(identical(other.addressSnapshot, addressSnapshot) || other.addressSnapshot == addressSnapshot)&&(identical(other.subtotal, subtotal) || other.subtotal == subtotal)&&(identical(other.shippingCost, shippingCost) || other.shippingCost == shippingCost)&&(identical(other.appliedDiscounts, appliedDiscounts) || other.appliedDiscounts == appliedDiscounts)&&(identical(other.total, total) || other.total == total)&&(identical(other.status, status) || other.status == status)&&(identical(other.deliveryEvidenceUrl, deliveryEvidenceUrl) || other.deliveryEvidenceUrl == deliveryEvidenceUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deliveryMethod, deliveryMethod) || other.deliveryMethod == deliveryMethod)&&(identical(other.estimatedDeliveryDate, estimatedDeliveryDate) || other.estimatedDeliveryDate == estimatedDeliveryDate)&&(identical(other.deliveredAt, deliveredAt) || other.deliveredAt == deliveredAt)&&(identical(other.idempotencyKey, idempotencyKey) || other.idempotencyKey == idempotencyKey)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.confirmationCode, confirmationCode) || other.confirmationCode == confirmationCode)&&const DeepCollectionEquality().equals(other.items, items));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,id,customerId,branchId,deliveryDriverId,customerNameSnapshot,customerPhoneSnapshot,addressSnapshot,subtotal,shippingCost,appliedDiscounts,total,status,deliveryEvidenceUrl,createdAt,deliveryMethod,estimatedDeliveryDate,deliveredAt,paymentUrl,idempotencyKey,paymentMethod,confirmationCode,const DeepCollectionEquality().hash(items)]);
+int get hashCode => Object.hashAll([runtimeType,id,customerId,branchId,deliveryDriverId,customerNameSnapshot,customerPhoneSnapshot,addressSnapshot,subtotal,shippingCost,appliedDiscounts,total,status,deliveryEvidenceUrl,createdAt,deliveryMethod,estimatedDeliveryDate,deliveredAt,idempotencyKey,paymentMethod,confirmationCode,const DeepCollectionEquality().hash(items)]);
 
 @override
 String toString() {
-  return 'Order(id: $id, customerId: $customerId, branchId: $branchId, deliveryDriverId: $deliveryDriverId, customerNameSnapshot: $customerNameSnapshot, customerPhoneSnapshot: $customerPhoneSnapshot, addressSnapshot: $addressSnapshot, subtotal: $subtotal, shippingCost: $shippingCost, appliedDiscounts: $appliedDiscounts, total: $total, status: $status, deliveryEvidenceUrl: $deliveryEvidenceUrl, createdAt: $createdAt, deliveryMethod: $deliveryMethod, estimatedDeliveryDate: $estimatedDeliveryDate, deliveredAt: $deliveredAt, paymentUrl: $paymentUrl, idempotencyKey: $idempotencyKey, paymentMethod: $paymentMethod, confirmationCode: $confirmationCode, items: $items)';
+  return 'Order(id: $id, customerId: $customerId, branchId: $branchId, deliveryDriverId: $deliveryDriverId, customerNameSnapshot: $customerNameSnapshot, customerPhoneSnapshot: $customerPhoneSnapshot, addressSnapshot: $addressSnapshot, subtotal: $subtotal, shippingCost: $shippingCost, appliedDiscounts: $appliedDiscounts, total: $total, status: $status, deliveryEvidenceUrl: $deliveryEvidenceUrl, createdAt: $createdAt, deliveryMethod: $deliveryMethod, estimatedDeliveryDate: $estimatedDeliveryDate, deliveredAt: $deliveredAt, idempotencyKey: $idempotencyKey, paymentMethod: $paymentMethod, confirmationCode: $confirmationCode, items: $items)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $OrderCopyWith<$Res>  {
   factory $OrderCopyWith(Order value, $Res Function(Order) _then) = _$OrderCopyWithImpl;
 @useResult
 $Res call({
- String id, String customerId, String branchId, String? deliveryDriverId, String customerNameSnapshot, String customerPhoneSnapshot, String addressSnapshot, int subtotal, int shippingCost, int appliedDiscounts, int total, OrderStatus status, String? deliveryEvidenceUrl, DateTime createdAt, DeliveryMethod deliveryMethod, DateTime? estimatedDeliveryDate, DateTime? deliveredAt, String? paymentUrl, String? idempotencyKey, PaymentMethodType? paymentMethod, String? confirmationCode, List<OrderItem> items
+ String id, String customerId, String branchId, String? deliveryDriverId, String customerNameSnapshot, String customerPhoneSnapshot, String addressSnapshot, int subtotal, int shippingCost, int appliedDiscounts, int total, OrderStatus status, String? deliveryEvidenceUrl, DateTime createdAt, DeliveryMethod deliveryMethod, DateTime? estimatedDeliveryDate, DateTime? deliveredAt, String? idempotencyKey, PaymentMethodType? paymentMethod, String? confirmationCode, List<OrderItem> items
 });
 
 
@@ -62,7 +62,7 @@ class _$OrderCopyWithImpl<$Res>
 
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? customerId = null,Object? branchId = null,Object? deliveryDriverId = freezed,Object? customerNameSnapshot = null,Object? customerPhoneSnapshot = null,Object? addressSnapshot = null,Object? subtotal = null,Object? shippingCost = null,Object? appliedDiscounts = null,Object? total = null,Object? status = null,Object? deliveryEvidenceUrl = freezed,Object? createdAt = null,Object? deliveryMethod = null,Object? estimatedDeliveryDate = freezed,Object? deliveredAt = freezed,Object? paymentUrl = freezed,Object? idempotencyKey = freezed,Object? paymentMethod = freezed,Object? confirmationCode = freezed,Object? items = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? customerId = null,Object? branchId = null,Object? deliveryDriverId = freezed,Object? customerNameSnapshot = null,Object? customerPhoneSnapshot = null,Object? addressSnapshot = null,Object? subtotal = null,Object? shippingCost = null,Object? appliedDiscounts = null,Object? total = null,Object? status = null,Object? deliveryEvidenceUrl = freezed,Object? createdAt = null,Object? deliveryMethod = null,Object? estimatedDeliveryDate = freezed,Object? deliveredAt = freezed,Object? idempotencyKey = freezed,Object? paymentMethod = freezed,Object? confirmationCode = freezed,Object? items = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,customerId: null == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
@@ -81,8 +81,7 @@ as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore:
 as DateTime,deliveryMethod: null == deliveryMethod ? _self.deliveryMethod : deliveryMethod // ignore: cast_nullable_to_non_nullable
 as DeliveryMethod,estimatedDeliveryDate: freezed == estimatedDeliveryDate ? _self.estimatedDeliveryDate : estimatedDeliveryDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,deliveredAt: freezed == deliveredAt ? _self.deliveredAt : deliveredAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,paymentUrl: freezed == paymentUrl ? _self.paymentUrl : paymentUrl // ignore: cast_nullable_to_non_nullable
-as String?,idempotencyKey: freezed == idempotencyKey ? _self.idempotencyKey : idempotencyKey // ignore: cast_nullable_to_non_nullable
+as DateTime?,idempotencyKey: freezed == idempotencyKey ? _self.idempotencyKey : idempotencyKey // ignore: cast_nullable_to_non_nullable
 as String?,paymentMethod: freezed == paymentMethod ? _self.paymentMethod : paymentMethod // ignore: cast_nullable_to_non_nullable
 as PaymentMethodType?,confirmationCode: freezed == confirmationCode ? _self.confirmationCode : confirmationCode // ignore: cast_nullable_to_non_nullable
 as String?,items: null == items ? _self.items : items // ignore: cast_nullable_to_non_nullable
@@ -171,10 +170,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? paymentUrl,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
-return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,_that.customerNameSnapshot,_that.customerPhoneSnapshot,_that.addressSnapshot,_that.subtotal,_that.shippingCost,_that.appliedDiscounts,_that.total,_that.status,_that.deliveryEvidenceUrl,_that.createdAt,_that.deliveryMethod,_that.estimatedDeliveryDate,_that.deliveredAt,_that.paymentUrl,_that.idempotencyKey,_that.paymentMethod,_that.confirmationCode,_that.items);case _:
+return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,_that.customerNameSnapshot,_that.customerPhoneSnapshot,_that.addressSnapshot,_that.subtotal,_that.shippingCost,_that.appliedDiscounts,_that.total,_that.status,_that.deliveryEvidenceUrl,_that.createdAt,_that.deliveryMethod,_that.estimatedDeliveryDate,_that.deliveredAt,_that.idempotencyKey,_that.paymentMethod,_that.confirmationCode,_that.items);case _:
   return orElse();
 
 }
@@ -192,10 +191,10 @@ return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? paymentUrl,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)  $default,) {final _that = this;
 switch (_that) {
 case _Order():
-return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,_that.customerNameSnapshot,_that.customerPhoneSnapshot,_that.addressSnapshot,_that.subtotal,_that.shippingCost,_that.appliedDiscounts,_that.total,_that.status,_that.deliveryEvidenceUrl,_that.createdAt,_that.deliveryMethod,_that.estimatedDeliveryDate,_that.deliveredAt,_that.paymentUrl,_that.idempotencyKey,_that.paymentMethod,_that.confirmationCode,_that.items);case _:
+return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,_that.customerNameSnapshot,_that.customerPhoneSnapshot,_that.addressSnapshot,_that.subtotal,_that.shippingCost,_that.appliedDiscounts,_that.total,_that.status,_that.deliveryEvidenceUrl,_that.createdAt,_that.deliveryMethod,_that.estimatedDeliveryDate,_that.deliveredAt,_that.idempotencyKey,_that.paymentMethod,_that.confirmationCode,_that.items);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +211,10 @@ return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? paymentUrl,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)?  $default,) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
-return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,_that.customerNameSnapshot,_that.customerPhoneSnapshot,_that.addressSnapshot,_that.subtotal,_that.shippingCost,_that.appliedDiscounts,_that.total,_that.status,_that.deliveryEvidenceUrl,_that.createdAt,_that.deliveryMethod,_that.estimatedDeliveryDate,_that.deliveredAt,_that.paymentUrl,_that.idempotencyKey,_that.paymentMethod,_that.confirmationCode,_that.items);case _:
+return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,_that.customerNameSnapshot,_that.customerPhoneSnapshot,_that.addressSnapshot,_that.subtotal,_that.shippingCost,_that.appliedDiscounts,_that.total,_that.status,_that.deliveryEvidenceUrl,_that.createdAt,_that.deliveryMethod,_that.estimatedDeliveryDate,_that.deliveredAt,_that.idempotencyKey,_that.paymentMethod,_that.confirmationCode,_that.items);case _:
   return null;
 
 }
@@ -227,7 +226,7 @@ return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,
 
 
 class _Order implements Order {
-  const _Order({required this.id, required this.customerId, required this.branchId, this.deliveryDriverId, required this.customerNameSnapshot, required this.customerPhoneSnapshot, required this.addressSnapshot, required this.subtotal, required this.shippingCost, required this.appliedDiscounts, required this.total, required this.status, this.deliveryEvidenceUrl, required this.createdAt, required this.deliveryMethod, this.estimatedDeliveryDate, this.deliveredAt, this.paymentUrl, this.idempotencyKey, this.paymentMethod, this.confirmationCode, required final  List<OrderItem> items}): _items = items;
+  const _Order({required this.id, required this.customerId, required this.branchId, this.deliveryDriverId, required this.customerNameSnapshot, required this.customerPhoneSnapshot, required this.addressSnapshot, required this.subtotal, required this.shippingCost, required this.appliedDiscounts, required this.total, required this.status, this.deliveryEvidenceUrl, required this.createdAt, required this.deliveryMethod, this.estimatedDeliveryDate, this.deliveredAt, this.idempotencyKey, this.paymentMethod, this.confirmationCode, required final  List<OrderItem> items}): _items = items;
   
 
 @override final  String id;
@@ -247,7 +246,6 @@ class _Order implements Order {
 @override final  DeliveryMethod deliveryMethod;
 @override final  DateTime? estimatedDeliveryDate;
 @override final  DateTime? deliveredAt;
-@override final  String? paymentUrl;
 @override final  String? idempotencyKey;
 @override final  PaymentMethodType? paymentMethod;
 @override final  String? confirmationCode;
@@ -269,16 +267,16 @@ _$OrderCopyWith<_Order> get copyWith => __$OrderCopyWithImpl<_Order>(this, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Order&&(identical(other.id, id) || other.id == id)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.branchId, branchId) || other.branchId == branchId)&&(identical(other.deliveryDriverId, deliveryDriverId) || other.deliveryDriverId == deliveryDriverId)&&(identical(other.customerNameSnapshot, customerNameSnapshot) || other.customerNameSnapshot == customerNameSnapshot)&&(identical(other.customerPhoneSnapshot, customerPhoneSnapshot) || other.customerPhoneSnapshot == customerPhoneSnapshot)&&(identical(other.addressSnapshot, addressSnapshot) || other.addressSnapshot == addressSnapshot)&&(identical(other.subtotal, subtotal) || other.subtotal == subtotal)&&(identical(other.shippingCost, shippingCost) || other.shippingCost == shippingCost)&&(identical(other.appliedDiscounts, appliedDiscounts) || other.appliedDiscounts == appliedDiscounts)&&(identical(other.total, total) || other.total == total)&&(identical(other.status, status) || other.status == status)&&(identical(other.deliveryEvidenceUrl, deliveryEvidenceUrl) || other.deliveryEvidenceUrl == deliveryEvidenceUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deliveryMethod, deliveryMethod) || other.deliveryMethod == deliveryMethod)&&(identical(other.estimatedDeliveryDate, estimatedDeliveryDate) || other.estimatedDeliveryDate == estimatedDeliveryDate)&&(identical(other.deliveredAt, deliveredAt) || other.deliveredAt == deliveredAt)&&(identical(other.paymentUrl, paymentUrl) || other.paymentUrl == paymentUrl)&&(identical(other.idempotencyKey, idempotencyKey) || other.idempotencyKey == idempotencyKey)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.confirmationCode, confirmationCode) || other.confirmationCode == confirmationCode)&&const DeepCollectionEquality().equals(other._items, _items));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Order&&(identical(other.id, id) || other.id == id)&&(identical(other.customerId, customerId) || other.customerId == customerId)&&(identical(other.branchId, branchId) || other.branchId == branchId)&&(identical(other.deliveryDriverId, deliveryDriverId) || other.deliveryDriverId == deliveryDriverId)&&(identical(other.customerNameSnapshot, customerNameSnapshot) || other.customerNameSnapshot == customerNameSnapshot)&&(identical(other.customerPhoneSnapshot, customerPhoneSnapshot) || other.customerPhoneSnapshot == customerPhoneSnapshot)&&(identical(other.addressSnapshot, addressSnapshot) || other.addressSnapshot == addressSnapshot)&&(identical(other.subtotal, subtotal) || other.subtotal == subtotal)&&(identical(other.shippingCost, shippingCost) || other.shippingCost == shippingCost)&&(identical(other.appliedDiscounts, appliedDiscounts) || other.appliedDiscounts == appliedDiscounts)&&(identical(other.total, total) || other.total == total)&&(identical(other.status, status) || other.status == status)&&(identical(other.deliveryEvidenceUrl, deliveryEvidenceUrl) || other.deliveryEvidenceUrl == deliveryEvidenceUrl)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.deliveryMethod, deliveryMethod) || other.deliveryMethod == deliveryMethod)&&(identical(other.estimatedDeliveryDate, estimatedDeliveryDate) || other.estimatedDeliveryDate == estimatedDeliveryDate)&&(identical(other.deliveredAt, deliveredAt) || other.deliveredAt == deliveredAt)&&(identical(other.idempotencyKey, idempotencyKey) || other.idempotencyKey == idempotencyKey)&&(identical(other.paymentMethod, paymentMethod) || other.paymentMethod == paymentMethod)&&(identical(other.confirmationCode, confirmationCode) || other.confirmationCode == confirmationCode)&&const DeepCollectionEquality().equals(other._items, _items));
 }
 
 
 @override
-int get hashCode => Object.hashAll([runtimeType,id,customerId,branchId,deliveryDriverId,customerNameSnapshot,customerPhoneSnapshot,addressSnapshot,subtotal,shippingCost,appliedDiscounts,total,status,deliveryEvidenceUrl,createdAt,deliveryMethod,estimatedDeliveryDate,deliveredAt,paymentUrl,idempotencyKey,paymentMethod,confirmationCode,const DeepCollectionEquality().hash(_items)]);
+int get hashCode => Object.hashAll([runtimeType,id,customerId,branchId,deliveryDriverId,customerNameSnapshot,customerPhoneSnapshot,addressSnapshot,subtotal,shippingCost,appliedDiscounts,total,status,deliveryEvidenceUrl,createdAt,deliveryMethod,estimatedDeliveryDate,deliveredAt,idempotencyKey,paymentMethod,confirmationCode,const DeepCollectionEquality().hash(_items)]);
 
 @override
 String toString() {
-  return 'Order(id: $id, customerId: $customerId, branchId: $branchId, deliveryDriverId: $deliveryDriverId, customerNameSnapshot: $customerNameSnapshot, customerPhoneSnapshot: $customerPhoneSnapshot, addressSnapshot: $addressSnapshot, subtotal: $subtotal, shippingCost: $shippingCost, appliedDiscounts: $appliedDiscounts, total: $total, status: $status, deliveryEvidenceUrl: $deliveryEvidenceUrl, createdAt: $createdAt, deliveryMethod: $deliveryMethod, estimatedDeliveryDate: $estimatedDeliveryDate, deliveredAt: $deliveredAt, paymentUrl: $paymentUrl, idempotencyKey: $idempotencyKey, paymentMethod: $paymentMethod, confirmationCode: $confirmationCode, items: $items)';
+  return 'Order(id: $id, customerId: $customerId, branchId: $branchId, deliveryDriverId: $deliveryDriverId, customerNameSnapshot: $customerNameSnapshot, customerPhoneSnapshot: $customerPhoneSnapshot, addressSnapshot: $addressSnapshot, subtotal: $subtotal, shippingCost: $shippingCost, appliedDiscounts: $appliedDiscounts, total: $total, status: $status, deliveryEvidenceUrl: $deliveryEvidenceUrl, createdAt: $createdAt, deliveryMethod: $deliveryMethod, estimatedDeliveryDate: $estimatedDeliveryDate, deliveredAt: $deliveredAt, idempotencyKey: $idempotencyKey, paymentMethod: $paymentMethod, confirmationCode: $confirmationCode, items: $items)';
 }
 
 
@@ -289,7 +287,7 @@ abstract mixin class _$OrderCopyWith<$Res> implements $OrderCopyWith<$Res> {
   factory _$OrderCopyWith(_Order value, $Res Function(_Order) _then) = __$OrderCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String customerId, String branchId, String? deliveryDriverId, String customerNameSnapshot, String customerPhoneSnapshot, String addressSnapshot, int subtotal, int shippingCost, int appliedDiscounts, int total, OrderStatus status, String? deliveryEvidenceUrl, DateTime createdAt, DeliveryMethod deliveryMethod, DateTime? estimatedDeliveryDate, DateTime? deliveredAt, String? paymentUrl, String? idempotencyKey, PaymentMethodType? paymentMethod, String? confirmationCode, List<OrderItem> items
+ String id, String customerId, String branchId, String? deliveryDriverId, String customerNameSnapshot, String customerPhoneSnapshot, String addressSnapshot, int subtotal, int shippingCost, int appliedDiscounts, int total, OrderStatus status, String? deliveryEvidenceUrl, DateTime createdAt, DeliveryMethod deliveryMethod, DateTime? estimatedDeliveryDate, DateTime? deliveredAt, String? idempotencyKey, PaymentMethodType? paymentMethod, String? confirmationCode, List<OrderItem> items
 });
 
 
@@ -306,7 +304,7 @@ class __$OrderCopyWithImpl<$Res>
 
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? customerId = null,Object? branchId = null,Object? deliveryDriverId = freezed,Object? customerNameSnapshot = null,Object? customerPhoneSnapshot = null,Object? addressSnapshot = null,Object? subtotal = null,Object? shippingCost = null,Object? appliedDiscounts = null,Object? total = null,Object? status = null,Object? deliveryEvidenceUrl = freezed,Object? createdAt = null,Object? deliveryMethod = null,Object? estimatedDeliveryDate = freezed,Object? deliveredAt = freezed,Object? paymentUrl = freezed,Object? idempotencyKey = freezed,Object? paymentMethod = freezed,Object? confirmationCode = freezed,Object? items = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? customerId = null,Object? branchId = null,Object? deliveryDriverId = freezed,Object? customerNameSnapshot = null,Object? customerPhoneSnapshot = null,Object? addressSnapshot = null,Object? subtotal = null,Object? shippingCost = null,Object? appliedDiscounts = null,Object? total = null,Object? status = null,Object? deliveryEvidenceUrl = freezed,Object? createdAt = null,Object? deliveryMethod = null,Object? estimatedDeliveryDate = freezed,Object? deliveredAt = freezed,Object? idempotencyKey = freezed,Object? paymentMethod = freezed,Object? confirmationCode = freezed,Object? items = null,}) {
   return _then(_Order(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,customerId: null == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
@@ -325,8 +323,7 @@ as String?,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore:
 as DateTime,deliveryMethod: null == deliveryMethod ? _self.deliveryMethod : deliveryMethod // ignore: cast_nullable_to_non_nullable
 as DeliveryMethod,estimatedDeliveryDate: freezed == estimatedDeliveryDate ? _self.estimatedDeliveryDate : estimatedDeliveryDate // ignore: cast_nullable_to_non_nullable
 as DateTime?,deliveredAt: freezed == deliveredAt ? _self.deliveredAt : deliveredAt // ignore: cast_nullable_to_non_nullable
-as DateTime?,paymentUrl: freezed == paymentUrl ? _self.paymentUrl : paymentUrl // ignore: cast_nullable_to_non_nullable
-as String?,idempotencyKey: freezed == idempotencyKey ? _self.idempotencyKey : idempotencyKey // ignore: cast_nullable_to_non_nullable
+as DateTime?,idempotencyKey: freezed == idempotencyKey ? _self.idempotencyKey : idempotencyKey // ignore: cast_nullable_to_non_nullable
 as String?,paymentMethod: freezed == paymentMethod ? _self.paymentMethod : paymentMethod // ignore: cast_nullable_to_non_nullable
 as PaymentMethodType?,confirmationCode: freezed == confirmationCode ? _self.confirmationCode : confirmationCode // ignore: cast_nullable_to_non_nullable
 as String?,items: null == items ? _self._items : items // ignore: cast_nullable_to_non_nullable

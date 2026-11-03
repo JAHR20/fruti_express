@@ -4,7 +4,7 @@ import 'package:fpdart/fpdart.dart' hide Order;
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
-import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/enums/cancellation_reason.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/repositories/order_repository.dart';
 import 'manager_orders_state.dart';
 
@@ -74,29 +74,21 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
       ),
     );
 
-    // 1. Asignamos al repartidor
-    final assignment = await _repository
-        .assignDriver(orderId: orderId, driverId: driverId)
+    final result = await _repository
+        .assignDriverAndPrepare(orderId: orderId, driverId: driverId)
         .run();
 
-    final assignmentFailed = assignment.fold((failure) {
-      emit(ManagerOrdersState.error(translateFailure(failure)));
-      return true;
-    }, (_) => false);
-
-    if (assignmentFailed) return;
-
-    final updateResult = await _repository
-        .updateStatus(orderId: orderId, newStatus: OrderStatus.preparing)
-        .run();
-
-    updateResult.fold(
+    result.fold(
       (failure) => emit(ManagerOrdersState.error(translateFailure(failure))),
       (_) => emit(ManagerOrdersState.loaded(currentOrdersList)),
     );
   }
 
-  Future<void> cancelOrder(String orderId) async {
+  Future<void> cancelOrder({
+    required String orderId,
+    required CancellationReason reason,
+    String? note,
+  }) async {
     final currentOrdersList = _currentOrders();
     if (currentOrdersList == null) return;
 
@@ -108,7 +100,7 @@ class ManagerOrdersCubit extends Cubit<ManagerOrdersState> {
     );
 
     final result = await _repository
-        .updateStatus(orderId: orderId, newStatus: OrderStatus.cancelled)
+        .cancelCashOrder(orderId: orderId, reason: reason, note: note)
         .run();
 
     result.fold(

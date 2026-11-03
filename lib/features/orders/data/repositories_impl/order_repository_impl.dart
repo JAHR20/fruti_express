@@ -7,6 +7,8 @@ import 'package:fruti_express_jahr_admin/features/orders/data/models/order_model
 import 'package:fruti_express_jahr_admin/features/orders/data/models/order_preview_model.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order_preview.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/enums/cancellation_reason.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/enums/delivery_failure_reason.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart'; // Import corregido
 import 'package:fruti_express_jahr_admin/features/orders/domain/repositories/order_repository.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/use_cases/confirm_delivery_params.dart';
@@ -27,28 +29,6 @@ class OrderRepositoryImpl
         final created = await remoteDatasource.create(model);
         return created.toDomain();
       }, handleException);
-
-  @override
-  ResultTask<List<Order>> getAll() => TaskEither.tryCatch(() async {
-    final models = await remoteDatasource.getAll();
-    return models.map((m) => m.toDomain()).toList();
-  }, handleException);
-
-  @override
-  ResultTask<List<Order>> getByBranch(String branchId) =>
-      TaskEither.tryCatch(() async {
-        final models = await remoteDatasource.getByBranch(branchId);
-        return models.map((m) => m.toDomain()).toList();
-      }, handleException);
-
-  @override
-  ResultTask<List<Order>> getByStatus({
-    required String branchId,
-    required OrderStatus status,
-  }) => TaskEither.tryCatch(() async {
-    final models = await remoteDatasource.getByStatus(branchId, status.name);
-    return models.map((m) => m.toDomain()).toList();
-  }, handleException);
 
   @override
   ResultTask<Order> getById(String id) => TaskEither.tryCatch(() async {
@@ -88,22 +68,17 @@ class OrderRepositoryImpl
     handleException,
   );
 
-  @override
-  ResultTask<Order> updateStatus({
-    required String orderId,
-    required OrderStatus newStatus,
-  }) => TaskEither.tryCatch(() async {
-    final model = await remoteDatasource.updateStatus(orderId, newStatus.name);
-    return model.toDomain();
-  }, handleException);
 
   @override
-  ResultTask<Order> assignDriver({
+  ResultTask<Unit> assignDriverAndPrepare({
     required String orderId,
     required String driverId,
   }) => TaskEither.tryCatch(() async {
-    final model = await remoteDatasource.assignDriver(orderId, driverId);
-    return model.toDomain();
+    await remoteDatasource.assignDriverAndPrepare(
+      orderId: orderId,
+      driverId: driverId,
+    );
+    return unit;
   }, handleException);
 
   @override
@@ -168,5 +143,40 @@ class OrderRepositoryImpl
       TaskEither.tryCatch(() async {
         await remoteDatasource.confirmCashOrder(orderId: orderId);
         return unit;
+      }, handleException);
+
+  @override
+  ResultTask<Unit> cancelCashOrder({
+    required String orderId,
+    required CancellationReason reason,
+    String? note,
+  }) => TaskEither.tryCatch(() async {
+    await remoteDatasource.cancelCashOrder(
+      orderId: orderId,
+      reason: reason.code,
+      note: note,
+    );
+    return unit;
+  }, handleException);
+
+  @override
+  ResultTask<Unit> failDelivery({
+    required String orderId,
+    required DeliveryFailureReason reason,
+    String? note,
+  }) => TaskEither.tryCatch(() async {
+    await remoteDatasource.failDelivery(
+      orderId: orderId,
+      reason: reason.code,
+      note: note,
+    );
+    return unit;
+  }, handleException);
+
+  @override
+  ResultTask<Order> departForDelivery({required String orderId}) =>
+      TaskEither.tryCatch(() async {
+        final model = await remoteDatasource.departForDelivery(orderId);
+        return model.toDomain();
       }, handleException);
 }

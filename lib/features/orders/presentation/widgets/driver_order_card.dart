@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/core/utils/currency_formatter.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order_item.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/services/contact_service.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/driver_quick_actions.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/order_status_chip.dart';
@@ -89,12 +90,13 @@ class _CustomerInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var colorTheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           children: [
-            const Icon(Icons.person_outline, size: 16, color: Colors.grey),
+            Icon(Icons.person_outline, size: 16, color: colorTheme.secondaryContainer),
             const SizedBox(width: 6),
             Text(
               order.customerNameSnapshot,
@@ -105,11 +107,11 @@ class _CustomerInfo extends StatelessWidget {
         const SizedBox(height: 4),
         Row(
           children: [
-            const Icon(Icons.phone_outlined, size: 16, color: Colors.grey),
+            Icon(Icons.phone_outlined, size: 16, color: colorTheme.secondaryContainer),
             const SizedBox(width: 6),
             Text(
               order.customerPhoneSnapshot,
-              style: const TextStyle(color: Colors.grey),
+              style: TextStyle(color: colorTheme.outline),
             ),
           ],
         ),
@@ -124,27 +126,24 @@ class _HighlightedAddress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E3A8A).withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: const Color(0xFF1E3A8A).withValues(alpha: 0.2),
-        ),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Icon(Icons.location_on, size: 18, color: Color(0xFF1E3A8A)),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              address,
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+    var colorTheme = Theme.of(context).colorScheme;
+    return Card(
+      color: colorTheme.surfaceContainerHigh,
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.location_on, size: 18, color: colorTheme.secondaryContainer),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                address,
+                style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 13),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -164,11 +163,11 @@ class _Items extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '${item.quantity}x ${item.productNameSnapshot}',
+                '${item.formattedQuantity} x ${item.productNameSnapshot}',
                 style: const TextStyle(fontSize: 13),
               ),
               Text(
-                '\$${item.quantity * item.unitPriceSnapshot}',
+                item.calculatedSubtotal.toCurrencyFormat,
                 style: const TextStyle(fontSize: 13),
               ),
             ],

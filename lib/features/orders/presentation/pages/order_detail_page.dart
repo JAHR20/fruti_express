@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fruti_express_jahr_admin/core/enums/payment_method_type.dart';
 import 'package:fruti_express_jahr_admin/core/utils/currency_formatter.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order_item.dart';
@@ -7,8 +8,13 @@ import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/or
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;
+  final bool isStaffView;
 
-  const OrderDetailPage({super.key, required this.order});
+  const OrderDetailPage({
+    super.key,
+    required this.order,
+    this.isStaffView = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +45,35 @@ class OrderDetailPage extends StatelessWidget {
             if (order.status != OrderStatus.cancelled) ...[
               _OrderTimeline(currentStatus: order.status),
               const SizedBox(height: 16),
+            ],
+
+            if (isStaffView) ...[
+              _SectionCard(
+                title: 'Cliente y pago',
+                icon: Icons.person_outline,
+                child: Column(
+                  children: [
+                    _InfoRow(
+                      label: 'Cliente',
+                      value: order.customerNameSnapshot,
+                    ),
+                    _InfoRow(
+                      label: 'Teléfono',
+                      value: order.customerPhoneSnapshot,
+                    ),
+                    _InfoRow(
+                      label: 'Método de pago',
+                      value: switch (order.paymentMethod) {
+                        PaymentMethodType.cashOnDelivery =>
+                          'Efectivo contra entrega',
+                        null => 'No especificado',
+                        _ => 'Tarjeta',
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
             ],
 
             _SectionCard(
@@ -112,7 +147,7 @@ class OrderDetailPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
-            if (isActive && order.confirmationCode != null) ...[
+            if (!isStaffView && isActive && order.confirmationCode != null) ...[
               _ConfirmationCode(code: order.confirmationCode!),
               const SizedBox(height: 12),
             ],
@@ -477,7 +512,7 @@ class _SectionCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(icon, size: 18, color: colorScheme.primary),
+                Icon(icon, size: 18, color: colorScheme.secondaryContainer),
                 const SizedBox(width: 8),
                 Text(
                   title,

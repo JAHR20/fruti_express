@@ -113,6 +113,19 @@ enum FailureCode {
   outsideDeliveryZone,
   invalidDeliveryAddress,
 
+  orderNotAssigned,
+  orderNotInYourBranch,
+  invalidFailureReason,
+  cardOrderNeedsRefund,
+  cardOrderNotConfirmable,
+  orderNotPending,
+  orderNotConfirmed,
+  invalidDriverForBranch,
+
+  invalidCancellationReason,
+  orderNotCancellable,
+  orderNotReadyToDepart,
+
   // Módulo de Envíos (Shipping)
   shippingConfigNotFound,
   shippingCalculationError,

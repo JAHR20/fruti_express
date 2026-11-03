@@ -79,9 +79,8 @@ class AdminDrawer extends StatelessWidget {
           // 2. Quitamos el Spacer() porque el Expanded ya ocupa el espacio sobrante automáticamente.
           //const Divider(height: 1),
 
-          // 3. Agregamos SafeArea abajo para proteger el botón de la barra de navegación gestual de Android o iOS.
           SafeArea(
-            top: false, // Solo protegemos la parte inferior
+            top: false,
             child: Padding(
               padding: const EdgeInsets.only(top: 8.0, bottom: 8.0, left: 12, right: 12), 
               child: ListTile(

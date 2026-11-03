@@ -1,6 +1,5 @@
 import 'package:fruti_express_jahr_admin/features/payments/data/datasources/payment_remote_data_source.dart';
 import 'package:fruti_express_jahr_admin/features/payments/data/models/card_payment_result_model.dart';
-import 'package:fruti_express_jahr_admin/features/payments/data/models/payment_order_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
@@ -62,31 +61,6 @@ class PaymentRemoteDataSourceImpl implements PaymentRemoteDataSource {
       final message = details is Map ? details['error']?.toString() : null;
       throw Exception(message ?? 'No se pudo verificar el pago.');
     }
-  }
-
-  @override
-  Future<PaymentOrderModel> createPaymentOrder({
-    required String orderId,
-  }) async {
-    final response = await _supabase.functions.invoke(
-      'create-payment-order',
-      body: {'order_id': orderId},
-    );
-
-    final data = response.data;
-
-    if (response.status < 200 || response.status >= 300) {
-      final message = data is Map ? data['error']?.toString() : null;
-      throw Exception(message ?? 'No se pudo iniciar el pago.');
-    }
-
-    if (data is! Map) {
-      throw const FormatException(
-        'La respuesta de pago no tiene un formato válido.',
-      );
-    }
-
-    return PaymentOrderModel.fromJson(Map<String, dynamic>.from(data));
   }
 
   @override
