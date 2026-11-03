@@ -9,13 +9,13 @@ PODS:
   - GoogleMaps (9.4.0):
     - GoogleMaps/Maps (= 9.4.0)
   - GoogleMaps/Maps (9.4.0)
-  - mercadopago (0.1.0):
+  - mercadopago_sdk_flutter (0.1.0):
     - Flutter
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
-  - mercadopago (from `.symlinks/plugins/mercadopago/ios`)
+  - mercadopago_sdk_flutter (from `.symlinks/plugins/mercadopago_sdk_flutter/ios`)
 
 SPEC REPOS:
   trunk:
@@ -27,15 +27,15 @@ EXTERNAL SOURCES:
     :path: Flutter
   google_maps_flutter_ios:
     :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
-  mercadopago:
-    :path: ".symlinks/plugins/mercadopago/ios"
+  mercadopago_sdk_flutter:
+    :path: ".symlinks/plugins/mercadopago_sdk_flutter/ios"
 
 SPEC CHECKSUMS:
   Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
   Google-Maps-iOS-Utils: 0a484b05ed21d88c9f9ebbacb007956edd508a96
   google_maps_flutter_ios: 17552876e72723da1d41accc22f03b5f7afbde69
   GoogleMaps: 0608099d4870cac8754bdba9b6953db543432438
-  mercadopago: f47629a70fe7477721d45984dbc89b8b2850fa93
+  mercadopago_sdk_flutter: 7f467a98bc6f25331c21611be96cf71925cea2b6
 
 PODFILE CHECKSUM: 4b015915ec662986b54bf30ab778da63f7dda016
 

@@ -7,7 +7,7 @@ import 'package:fruti_express_jahr_admin/features/orders/presentation/router/ord
 import 'package:fruti_express_jahr_admin/features/payments/presentation/cubits/card_payment_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/payments/presentation/cubits/card_payment_state.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mercadopago/mercadopago.dart';
+import 'package:mercadopago_sdk_flutter/mercadopago_sdk_flutter.dart';
 
 class CardPaymentPage extends StatelessWidget {
   final Order order;
