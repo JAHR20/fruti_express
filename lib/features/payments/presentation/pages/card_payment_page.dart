@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/di/injection_container.dart';
+import 'package:fruti_express_jahr_admin/core/services/secure_screen.dart';
 import 'package:fruti_express_jahr_admin/features/cart/presentation/cubits/cart_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/router/order_routes.dart';
 import 'package:fruti_express_jahr_admin/features/payments/presentation/cubits/card_payment_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/payments/presentation/cubits/card_payment_state.dart';
+import 'package:fruti_express_jahr_admin/features/payments/presentation/widgets/swipe_to_pay_button.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mercadopago_sdk_flutter/mercadopago_sdk_flutter.dart';
 
@@ -32,11 +34,13 @@ class _CardPaymentView extends StatefulWidget {
   State<_CardPaymentView> createState() => _CardPaymentViewState();
 }
 
-class _CardPaymentViewState extends State<_CardPaymentView> {
+class _CardPaymentViewState extends State<_CardPaymentView>
+    with WidgetsBindingObserver {
   final _cardNumber = PciFieldState();
   final _expirationDate = PciFieldState();
   final _securityCode = PciFieldState();
   final _name = TextEditingController();
+  bool _obscured = false;
 
   String? _activeBin;
   int? _securityCodeLength;
@@ -44,12 +48,29 @@ class _CardPaymentViewState extends State<_CardPaymentView> {
   String? _paymentTypeId;
   bool _tokenizing = false;
 
-  bool _finished = false; 
+  bool _finished = false;
   bool _outcomeUnknown = false;
-  bool _leaving = false; 
+  bool _leaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    SecureScreen.enable();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // En iOS (y en el selector de apps) se tapa el contenido cuando la app
+    // deja de estar activa.
+    final hide = state != AppLifecycleState.resumed;
+    if (hide != _obscured) setState(() => _obscured = hide);
+  }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    SecureScreen.disable();
     _cardNumber.dispose();
     _expirationDate.dispose();
     _securityCode.dispose();
@@ -101,8 +122,8 @@ class _CardPaymentViewState extends State<_CardPaymentView> {
       final length = method.securityCodeLength;
       setState(() {
         _securityCodeLength = length == 3 || length == 4 ? length : null;
-        _paymentMethodId = method.id; 
-        _paymentTypeId = method.paymentTypeId; 
+        _paymentMethodId = method.id;
+        _paymentTypeId = method.paymentTypeId;
       });
     }
   }
@@ -148,7 +169,7 @@ class _CardPaymentViewState extends State<_CardPaymentView> {
       case Success(:final data):
         await cubit.pay(
           orderId: widget.order.id,
-          token: data.token, 
+          token: data.token,
           paymentMethodId: methodId,
           paymentTypeId: typeId,
         );
@@ -180,8 +201,7 @@ class _CardPaymentViewState extends State<_CardPaymentView> {
             );
           },
           rejected: (message) {
-            _outcomeUnknown =
-                false;
+            _outcomeUnknown = false;
             _showMessage(message);
           },
           error: (message) {
@@ -198,87 +218,87 @@ class _CardPaymentViewState extends State<_CardPaymentView> {
         );
         final busy = _tokenizing || charging;
 
-        return PopScope(
-          canPop: false, 
-          onPopInvokedWithResult: (didPop, _) {
-            if (didPop || busy) return;
-            _leave();
-          },
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            PopScope(
+              canPop: false,
+              onPopInvokedWithResult: (didPop, _) {
+                if (didPop || busy) return;
+                _leave();
+              },
 
-          child: Scaffold(
-            backgroundColor: colorScheme.surface,
-            appBar: AppBar(
-              title: const Text(
-                'Pago con tarjeta',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-            ),
-            body: ListView(
-              padding: const EdgeInsets.all(24),
-              children: [
-                TextField(
-                  controller: _name,
-                  enabled: !busy,
-                  textCapitalization: TextCapitalization.characters,
-                  decoration: const InputDecoration(
-                    labelText: 'Nombre del titular',
-                    border: OutlineInputBorder(),
+              child: Scaffold(
+                backgroundColor: colorScheme.surface,
+                appBar: AppBar(
+                  title: const Text(
+                    'Pago con tarjeta',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
-                const SizedBox(height: 16),
-                CardNumberField(
-                  controller: _cardNumber,
-                  enabled: !busy,
-                  onBinChanged: _loadPaymentMetadata,
-                ),
-                const SizedBox(height: 16),
-                Row(
+                body: ListView(
+                  padding: const EdgeInsets.all(24),
                   children: [
-                    Expanded(
-                      child: ExpirationDateField(
-                        controller: _expirationDate,
-                        enabled: !busy,
+                    TextField(
+                      controller: _name,
+                      enabled: !busy,
+                      textCapitalization: TextCapitalization.characters,
+                      decoration: const InputDecoration(
+                        labelText: 'Nombre del titular',
+                        border: OutlineInputBorder(),
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: SecurityCodeField(
-                        controller: _securityCode,
-                        expectedLength: _securityCodeLength,
-                        enabled: !busy,
-                      ),
+                    const SizedBox(height: 16),
+                    CardNumberField(
+                      controller: _cardNumber,
+                      enabled: !busy,
+                      onBinChanged: _loadPaymentMetadata,
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ExpirationDateField(
+                            controller: _expirationDate,
+                            enabled: !busy,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: SecurityCodeField(
+                            controller: _securityCode,
+                            expectedLength: _securityCodeLength,
+                            enabled: !busy,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 24),
+                    SwipeToPayButton(
+                      isBusy: busy,
+                      enabled: !busy && _paymentMethodId != null,
+                      onSwipeCompleted: _pay,
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      'Los datos de tu tarjeta se envían directo a Mercado Pago.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                SizedBox(
-                  height: 50,
-                  child: FilledButton(
-                    onPressed: busy || _paymentMethodId == null ? null : _pay,
-                    child: busy
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Text(
-                            'Pagar',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+              ),
+            ),
+            if (_obscured)
+              Positioned.fill(
+                child: ColoredBox(
+                  color: Theme.of(context).colorScheme.surface,
+                  child: const Center(
+                    child: Icon(Icons.lock_outline, size: 48),
                   ),
                 ),
-                const SizedBox(height: 12),
-                Text(
-                  'Los datos de tu tarjeta se envían directo a Mercado Pago.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: colorScheme.onSurfaceVariant),
-                ),
-              ],
-            ),
-          ),
+              ),
+          ],
         );
       },
     );

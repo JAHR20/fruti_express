@@ -40,7 +40,5 @@ Map<String, dynamic> _$ShippingConfigModelToJson(
 
 const _$ShippingStrategyEnumMap = {
   ShippingStrategy.haversine: 'haversine',
-  ShippingStrategy.zipCode: 'zipCode',
-  ShippingStrategy.geofence: 'geofence',
   ShippingStrategy.hybrid: 'hybrid',
 };

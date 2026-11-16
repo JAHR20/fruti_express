@@ -73,7 +73,7 @@ class _OrdersDashboardPageState extends State<OrdersDashboardPage>
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
@@ -89,13 +89,13 @@ class _OrdersDashboardPageState extends State<OrdersDashboardPage>
 
   Future<void> handleRefresh() async {
     if (_selectedBranchId != null) {
-      // Supongamos que tu cubit tiene un método para recargar o re-observar
       context.read<ManagerOrdersCubit>().startWatching(_selectedBranchId!);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     final currentUser =
         (context.read<AuthCubit>().state as AuthAuthenticated).user;
     final isGlobalAdmin = currentUser.isAdmin;
@@ -128,11 +128,11 @@ class _OrdersDashboardPageState extends State<OrdersDashboardPage>
             margin: const EdgeInsets.symmetric(horizontal: 12),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.shade200,
+                  color: colorScheme.shadow,
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -147,9 +147,9 @@ class _OrdersDashboardPageState extends State<OrdersDashboardPage>
                 final branches = state.branches;
 
                 if (branches.isEmpty) {
-                  return const Text(
+                  return  Text(
                     'No hay sucursales registradas.',
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: colorScheme.onSurfaceVariant),
                   );
                 }
 
@@ -189,8 +189,8 @@ class _OrdersDashboardPageState extends State<OrdersDashboardPage>
             builder: (context, state) {
               return state.when(
                 initial: () => _NoBranchSelected(isAdmin: isGlobalAdmin),
-                loading: () => const Center(
-                  child: CircularProgressIndicator(color: Color(0xFF1E3A8A)),
+                loading: () =>  Center(
+                  child: CircularProgressIndicator(color: colorScheme.primary),
                 ),
                 error: (msg) => _ErrorView(
                   message: msg,
@@ -271,6 +271,16 @@ class _TabViews extends StatelessWidget {
         final filtered = orders.where((o) => o.status == tab.status).toList();
 
         if (filtered.isEmpty) {
+          // Asignación de icono único según el estatus del tab
+          final IconData emptyIcon = switch (tab.status) {
+            OrderStatus.pendingPayment => Icons.receipt_long_outlined,
+            OrderStatus.confirmed      => Icons.thumb_up_alt_outlined,
+            OrderStatus.preparing      => Icons.kitchen_outlined,
+            OrderStatus.onTheWay       => Icons.delivery_dining_outlined,
+            OrderStatus.delivered      => Icons.check_circle_outline,
+            _                          => Icons.inbox_outlined,
+          };
+
           return RefreshIndicator(
             color: colorScheme.primary,
             onRefresh: onRefresh,
@@ -280,7 +290,7 @@ class _TabViews extends StatelessWidget {
                 SliverFillRemaining(
                   hasScrollBody: false,
                   child: AnimatedEmptyState(
-                    icon: const Icon(Icons.inbox_outlined, size: 64),
+                    icon: Icon(emptyIcon, size: 64, color: colorScheme.primary),
                     title: 'Sin pedidos',
                     subtitle:
                         'No hay pedidos ${tab.status.displayName.toLowerCase()} en este momento',
@@ -327,17 +337,18 @@ class _NoBranchSelected extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
     if (!isAdmin) return const SizedBox.shrink();
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.store_outlined, size: 64, color: Colors.grey.shade300),
+          Icon(Icons.store_outlined, size: 64, color: colorScheme.shadow),
           const SizedBox(height: 12),
           Text(
             'Selecciona una sucursal\npara ver sus pedidos',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 16),
+            style: TextStyle(color: colorScheme.onSurfaceVariant, fontSize: 16),
           ),
         ],
       ),
@@ -356,7 +367,7 @@ class _ErrorView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.error_outline, size: 48, color: Colors.red),
+          Icon(Icons.error_outline, size: 48, color: Theme.of(context).colorScheme.error),
           const SizedBox(height: 12),
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: 16),

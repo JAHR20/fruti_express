@@ -78,6 +78,9 @@
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
   		<string>tel</string>
+		<string>telprompt</string>
+		<string>whatsapp</string>
+		<string>http</string>
   		<string>https</string>
 	</array>
 	<!-- Inicia configuración de Google Sign-In -->

@@ -4,16 +4,23 @@ import 'package:fruti_express_jahr_admin/core/utils/currency_formatter.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/entities/order_item.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/enums/order_status.dart';
+import 'package:fruti_express_jahr_admin/features/orders/domain/services/contact_service.dart' show ContactService;
+import 'package:fruti_express_jahr_admin/features/orders/domain/services/contact_service_impl.dart';
+import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/driver_quick_actions.dart';
 import 'package:fruti_express_jahr_admin/features/orders/presentation/widgets/order_status_chip.dart';
 
 class OrderDetailPage extends StatelessWidget {
   final Order order;
   final bool isStaffView;
+  final bool isDriverView;
+  final ContactService? contactService;
 
   const OrderDetailPage({
     super.key,
     required this.order,
     this.isStaffView = false,
+    this.isDriverView = false,
+    this.contactService,
   });
 
   @override
@@ -48,6 +55,16 @@ class OrderDetailPage extends StatelessWidget {
             ],
 
             if (isStaffView) ...[
+              _SectionCard(
+                title: 'Acciones de entrega',
+                icon: Icons.navigation_outlined,
+                child: DriverQuickActions(
+                  phone: order.customerPhoneSnapshot,
+                  address: order.addressSnapshot,
+                  contactService: ContactServiceImpl(),
+                ),
+              ),
+              const SizedBox(height: 12),
               _SectionCard(
                 title: 'Cliente y pago',
                 icon: Icons.person_outline,

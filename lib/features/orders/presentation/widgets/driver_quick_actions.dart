@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:fruti_express_jahr_admin/features/orders/domain/services/contact_service.dart';
 
 class DriverQuickActions extends StatelessWidget {
-  final String phone; 
-  final String address; 
+  final String phone;
+  final String address;
   final ContactService contactService;
 
   const DriverQuickActions({
@@ -15,31 +16,32 @@ class DriverQuickActions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var colorScheme = Theme.of(context).colorScheme;
     return Row(
       children: [
         Expanded(
           child: _QuickActionButton(
-            icon: Icons.phone,
+            icon: Icon(Icons.call_outlined, color: colorScheme.onPrimaryContainer),
             label: 'Llamar',
-            color: Colors.green,
+            background: colorScheme.secondaryContainer,
             onTap: () => contactService.makeCall(phone),
           ),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: _QuickActionButton(
-            icon: Icons.chat,
+            icon: FaIcon(FontAwesomeIcons.whatsapp, color: colorScheme.onPrimaryContainer),
             label: 'WhatsApp',
-            color: const Color(0xFF25D366),
+            background: colorScheme.primary,
             onTap: () => contactService.openWhatsApp(phone),
           ),
         ),
         const SizedBox(width: 8),
         Expanded(
           child: _QuickActionButton(
-            icon: Icons.map_outlined,
+            icon: FaIcon(FontAwesomeIcons.map, color: colorScheme.onPrimaryContainer),
             label: 'Maps',
-            color: Colors.blue,
+            background: colorScheme.tertiary,
             onTap: () => contactService.openMaps(address),
           ),
         ),
@@ -49,44 +51,44 @@ class DriverQuickActions extends StatelessWidget {
 }
 
 class _QuickActionButton extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String label;
-  final Color color;
+  final Color background;
   final VoidCallback onTap;
 
   const _QuickActionButton({
     required this.icon,
     required this.label,
-    required this.color,
+    required this.background,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: color.withValues(alpha: 0.3)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 22),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                color: color,
-                fontSize: 11,
-                fontWeight: FontWeight.w600,
+    var colorScheme = Theme.of(context).colorScheme;
+    return Card(
+      color: background,
+      elevation: 2,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              icon,
+              const SizedBox(height: 4),
+              Text(
+                label,
+                style: TextStyle(
+                  color: colorScheme.onPrimaryContainer,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
