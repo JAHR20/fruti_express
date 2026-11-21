@@ -1,3 +1,4 @@
+import 'package:fruti_express_jahr_admin/features/shipping/data/models/covering_branch_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
@@ -20,6 +21,8 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
       'save_shipping_configuration';
   static const String _configurationParam = 'p_configuration';
   static const String _zipCodesParam = 'p_zip_codes';
+
+  static const String _findCoveringBranchRpc = 'find_covering_branch';
 
   ShippingRemoteDataSourceImpl(this._supabaseClient);
 
@@ -105,7 +108,6 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
     }
   }
 
-
   @override
   Future<void> saveRates({
     required String branchId,
@@ -140,7 +142,6 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
     }
   }
 
-
   @override
   Future<Set<String>> getBranchesWithConfiguredShipping() async {
     try {
@@ -160,5 +161,26 @@ class ShippingRemoteDataSourceImpl implements ShippingRemoteDataSource {
         params: {'errorMsg': e.toString()},
       );
     }
+  }
+
+  @override
+  Future<List<CoveringBranchModel>> findCoveringBranches({
+    required double latitude,
+    required double longitude,
+    String? zipCode,
+  }) async {
+    final response = await _supabaseClient.rpc(
+      _findCoveringBranchRpc,
+      params: {
+        'p_latitude': latitude,
+        'p_longitude': longitude,
+        'p_zip_code': zipCode,
+      },
+    );
+    return (response as List)
+        .map(
+          (json) => CoveringBranchModel.fromJson(json as Map<String, dynamic>),
+        )
+        .toList();
   }
 }

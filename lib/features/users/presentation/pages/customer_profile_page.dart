@@ -31,7 +31,7 @@ class CustomerProfilePage extends StatelessWidget {
       ),
       // 1. Garantizamos que toda la pantalla sea scrolleable para evitar overflows
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(bottom: 100, top: 0), // Espacio inferior para el scroll
+        padding: const EdgeInsets.only(bottom: 100, top: 0), 
         
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

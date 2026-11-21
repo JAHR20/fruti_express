@@ -10,7 +10,12 @@ import 'package:fruti_express_jahr_admin/core/widgets/bottom_sheet_form_actions.
 import 'package:fruti_express_jahr_admin/core/widgets/image_picker_field.dart';
 
 import 'package:fruti_express_jahr_admin/core/utils/validators.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_style_config.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_template_settings.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/promo_banner.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/services/banner_style_config_builder.dart';
+import 'package:fruti_express_jahr_admin/features/banners/presentation/widgets/banner_template_editor.dart';
+import 'package:fruti_express_jahr_admin/features/banners/presentation/widgets/promo_banner_renderer.dart';
 
 class PromoBannerFormBottomSheet extends StatefulWidget {
   final PromoBanner? bannerToEdit;
@@ -23,6 +28,7 @@ class PromoBannerFormBottomSheet extends StatefulWidget {
     String endColor,
     int sortOrder,
     File? image,
+    BannerStyleConfig? styleConfig,
   ) onSave;
 
   const PromoBannerFormBottomSheet({
@@ -48,6 +54,10 @@ class _PromoBannerFormBottomSheetState
   late Color _startColor;
   late Color _endColor;
 
+  // Plantilla: null en el banner = diseño clásico.
+  late bool _useTemplate;
+  late BannerTemplateSettings _settings;
+
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
 
@@ -61,9 +71,11 @@ class _PromoBannerFormBottomSheetState
     _sortOrderCtrl = TextEditingController(
       text: b?.sortOrder.toString() ?? '0',
     );
-    // Nota: Aquí se mantienen estos hex por defecto ya que son los colores iniciales lógicos del banner, no de la UI.
     _startColor = _hexToColor(b?.startColor ?? '#E8F5E9');
     _endColor = _hexToColor(b?.endColor ?? '#C8E6C9');
+
+    _useTemplate = b?.styleConfig != null;
+    _settings = BannerTemplateSettings.fromConfig(b?.styleConfig);
   }
 
   @override
@@ -83,6 +95,50 @@ class _PromoBannerFormBottomSheetState
 
   String _colorToHex(Color color) {
     return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
+  }
+
+  /// Texto oscuro sobre fondos claros y blanco sobre fondos oscuros.
+  String _readableTextHex() {
+    final luminance =
+        (_startColor.computeLuminance() + _endColor.computeLuminance()) / 2;
+    return luminance > 0.5 ? '#1F1F1F' : '#FFFFFF';
+  }
+
+  void _setUseTemplate(bool value) {
+    setState(() {
+      _useTemplate = value;
+      // Un banner que todavía no tenía plantilla empieza con un color legible.
+      if (value && widget.bannerToEdit?.styleConfig == null) {
+        _settings = _settings.copyWith(textColor: _readableTextHex());
+      }
+    });
+  }
+
+  BannerStyleConfig? _buildStyleConfig() {
+    if (!_useTemplate) return null;
+    return BannerStyleConfigBuilder.build(
+      settings: _settings,
+      backgroundStartHex: _colorToHex(_startColor),
+      backgroundEndHex: _colorToHex(_endColor),
+    );
+  }
+
+  /// Banner con lo que hay escrito en el formulario, para la vista previa.
+  PromoBanner _draftBanner() {
+    final b = widget.bannerToEdit;
+    return PromoBanner(
+      id: b?.id ?? '',
+      title: _titleCtrl.text.trim(),
+      discount: _discountCtrl.text.trim(),
+      subtitle: _subtitleCtrl.text.trim(),
+      startColor: _colorToHex(_startColor),
+      endColor: _colorToHex(_endColor),
+      imageUrl: b?.imageUrl,
+      isActive: b?.isActive ?? true,
+      sortOrder: int.tryParse(_sortOrderCtrl.text.trim()) ?? 0,
+      createdAt: b?.createdAt ?? DateTime.now(),
+      styleConfig: _buildStyleConfig(),
+    );
   }
 
   Future<void> _pickImage() async {
@@ -120,7 +176,7 @@ class _PromoBannerFormBottomSheetState
             // 👇 Eliminamos los colores forzados; toman el estilo global del tema
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text('Cancelar'), 
+              child: const Text('Cancelar'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -151,6 +207,7 @@ class _PromoBannerFormBottomSheetState
         _colorToHex(_endColor),
         int.tryParse(_sortOrderCtrl.text.trim()) ?? 0,
         _selectedImage,
+        _buildStyleConfig(),
       );
     }
   }
@@ -246,7 +303,7 @@ class _PromoBannerFormBottomSheetState
                       ),
                       decoration: BoxDecoration(
                         // 👇 Reemplaza Colors.grey.shade400
-                        border: Border.all(color: colors.outline), 
+                        border: Border.all(color: colors.outline),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -277,7 +334,7 @@ class _PromoBannerFormBottomSheetState
                       ),
                       decoration: BoxDecoration(
                         // 👇 Reemplaza Colors.grey.shade400
-                        border: Border.all(color: colors.outline), 
+                        border: Border.all(color: colors.outline),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -297,29 +354,37 @@ class _PromoBannerFormBottomSheetState
               ],
             ),
             const SizedBox(height: 16),
-            Container(
-              height: 45,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                gradient: LinearGradient(
-                  colors: [_startColor, _endColor],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-              ),
-              child: Center(
-                // 👇 Se agregó un fondo semitransparente al texto para garantizar lectura 
-                // sin importar el gradiente que el usuario haya seleccionado.
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  child: Text(
-                    'Previsualización del Gradiente',
-                    style: TextStyle(
-                      color: colors.onSurface, 
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13,
-                    ),
+
+            BannerTemplateEditor(
+              useTemplate: _useTemplate,
+              settings: _settings,
+              enabled: !widget.isSaving,
+              onUseTemplateChanged: _setUseTemplate,
+              onSettingsChanged: (settings) =>
+                  setState(() => _settings = settings),
+            ),
+            const SizedBox(height: 16),
+
+            const Text(
+              'Vista previa',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8),
+            // Se redibuja al escribir en los campos de texto.
+            ListenableBuilder(
+              listenable: Listenable.merge([
+                _titleCtrl,
+                _discountCtrl,
+                _subtitleCtrl,
+              ]),
+              builder: (context, _) => Center(
+                child: SizedBox(
+                  width: 280,
+                  child: PromoBannerRenderer(
+                    banner: _draftBanner(),
+                    previewImage: _selectedImage == null
+                        ? null
+                        : FileImage(_selectedImage!),
                   ),
                 ),
               ),

@@ -34,7 +34,7 @@ class _BranchDialogState extends State<BranchDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme; // 👈 Extraemos el tema
+    final colorScheme = Theme.of(context).colorScheme;
 
     return BlocProvider.value(
       value: widget.branchCubit,
@@ -54,7 +54,7 @@ class _BranchDialogState extends State<BranchDialog> {
             if (state.errorMessage != null && state.branches.isEmpty) {
               return Text(
                 'Error: ${state.errorMessage}',
-                style: TextStyle(color: colorScheme.error), // 👈 Reemplaza Colors.red
+                style: TextStyle(color: colorScheme.error),
               );
             }
             
@@ -97,7 +97,7 @@ class _BranchDialogState extends State<BranchDialog> {
             onPressed: () => Navigator.of(context).pop(null),
             child: Text(
               'Cancelar', 
-              style: TextStyle(color: colorScheme.onSurfaceVariant), // 👈 Reemplaza Colors.grey
+              style: TextStyle(color: colorScheme.onSurfaceVariant), 
             ),
           ),
           BlocBuilder<BranchCubit, BranchState>(
@@ -105,10 +105,10 @@ class _BranchDialogState extends State<BranchDialog> {
               final bool isBlocked =
                   state.branches.isEmpty || selectedBranchId == null;
 
-              return FilledButton( // 👈 Cambiamos a FilledButton
+              return FilledButton( 
                 style: FilledButton.styleFrom(
-                  backgroundColor: colorScheme.primary, // 👈 Reemplaza Color(0xFF1E3A8A)
-                  foregroundColor: colorScheme.onPrimary, // 👈 Se encarga del color del texto (blanco)
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary, 
                 ),
                 onPressed: isBlocked
                     ? null

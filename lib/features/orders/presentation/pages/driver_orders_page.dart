@@ -229,13 +229,34 @@ class _DriverOrdersPageState extends State<DriverOrdersPage>
                       ],
                     ),
                     const SizedBox(height: 6),
-                    Text(
-                      '⚠️ Recibe el pago completo antes de finalizar la entrega.',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: colorTheme.secondary,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          isCashOnDelivery
+                              ? Icons.warning_amber_rounded
+                              : Icons.check_circle_outline,
+                          size: 20,
+                          color: isCashOnDelivery
+                              ? colorTheme.secondaryContainer
+                              : colorTheme.primary,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            isCashOnDelivery
+                                ? 'Recibe el pago completo antes de finalizar la entrega.'
+                                : 'Pedido pagado previamente en la app. No debes cobrar nada al cliente.',
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              color: isCashOnDelivery
+                                  ? colorTheme.secondaryContainer
+                                  : colorTheme.primary,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),

@@ -100,7 +100,7 @@ class DriverOrderCard extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withValues(alpha: 0.15),
+                        color: colorTheme.tertiaryContainer.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -108,7 +108,7 @@ class DriverOrderCard extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
-                          color: Colors.orange.shade900,
+                          color: colorTheme.tertiary,
                         ),
                       ),
                     )
@@ -119,15 +119,15 @@ class DriverOrderCard extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.green.withValues(alpha: 0.15),
+                        color: colorTheme.primary.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         'Pagado',
                         style: TextStyle(
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w700,
                           fontSize: 12,
-                          color: Colors.green.shade800,
+                          color: colorTheme.primaryContainer,
                         ),
                       ),
                     ),
@@ -173,8 +173,8 @@ class DriverOrderCard extends StatelessWidget {
                     onPressed: onDepartForDelivery ?? onConfirmDelivery,
                     style: FilledButton.styleFrom(
                       backgroundColor: onDepartForDelivery != null
-                          ? Colors.teal
-                          : Colors.green,
+                          ? colorTheme.tertiary
+                          : colorTheme.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),

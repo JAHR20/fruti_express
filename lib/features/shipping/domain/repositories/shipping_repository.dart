@@ -1,5 +1,6 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/covering_branch.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/shipping_config.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/shipping_rate.dart';
 
@@ -16,5 +17,11 @@ abstract class ShippingRepository {
     required String branchId,
     required List<ShippingRate> rates,
   });
+
+  ResultTask<List<CoveringBranch>> findCoveringBranches({
+  required double latitude,
+  required double longitude,
+  String? zipCode,
+});
 
 }

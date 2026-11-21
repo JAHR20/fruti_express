@@ -49,7 +49,7 @@ class CustomerDependencyProvider extends StatelessWidget {
             addressCubit: addressCubit,
             getSelectedAddressUseCase: sl(),
             saveSelectedAddressUseCase: sl(),
-            calculateShippingQuoteUseCase: sl()
+            findCoveringBranchUseCase: sl()
           ),
         ),
       ],

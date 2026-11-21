@@ -77,12 +77,13 @@ class _CancelOrderDialogState extends State<_CancelOrderDialog> {
               ? null
               : () {
                   final note = _noteCtrl.text.trim();
-                  Navigator.of(context).pop((
-                    reason: _reason!,
-                    note: note.isEmpty ? null : note,
-                  ));
+                  Navigator.of(
+                    context,
+                  ).pop((reason: _reason!, note: note.isEmpty ? null : note));
                 },
-          style: FilledButton.styleFrom(backgroundColor: Colors.red),
+          style: FilledButton.styleFrom(
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
           child: const Text('Cancelar pedido'),
         ),
       ],

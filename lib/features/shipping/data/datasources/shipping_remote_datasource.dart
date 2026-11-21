@@ -1,3 +1,4 @@
+import 'package:fruti_express_jahr_admin/features/shipping/data/models/covering_branch_model.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/data/models/shipping_config_model.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/data/models/shipping_rate_model.dart';
 
@@ -10,4 +11,9 @@ abstract class ShippingRemoteDataSource {
     required List<ShippingRateModel> rates,
   });
   Future<Set<String>> getBranchesWithConfiguredShipping();
+  Future<List<CoveringBranchModel>> findCoveringBranches({
+  required double latitude,
+  required double longitude,
+  String? zipCode,
+});
 }

@@ -9,8 +9,8 @@ import 'package:fruti_express_jahr_admin/features/addresses/presentation/cubits/
 import 'package:fruti_express_jahr_admin/features/branches/domain/entities/branch.dart';
 import 'package:fruti_express_jahr_admin/features/branches/presentation/cubits/branch_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/products/presentation/customer/cubits/customer_products_cubit.dart';
-import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/shipping_quote.dart';
-import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/calculate_shipping_quote_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/covering_branch.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/find_covering_branch_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_shipping_cubit.dart';
 
 import 'customer_coordinator_state.dart';
@@ -24,7 +24,7 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
 
   final GetSelectedAddressUseCase _getSelectedAddressUseCase;
   final SaveSelectedAddressUseCase _saveSelectedAddressUseCase;
-  final CalculateShippingQuoteUseCase _calculateShippingQuote;
+  final FindCoveringBranchUseCase _findCoveringBranchUseCase;
 
   StreamSubscription? _branchSub;
   StreamSubscription? _shippingSub;
@@ -41,7 +41,7 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
     required AddressCubit addressCubit,
     required GetSelectedAddressUseCase getSelectedAddressUseCase,
     required SaveSelectedAddressUseCase saveSelectedAddressUseCase,
-    required CalculateShippingQuoteUseCase calculateShippingQuoteUseCase,
+    required FindCoveringBranchUseCase findCoveringBranchUseCase,
   }) : _cartCubit = cartCubit,
        _customerProductsCubit = customerProductsCubit,
        _branchCubit = branchCubit,
@@ -49,7 +49,7 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
        _addressCubit = addressCubit,
        _getSelectedAddressUseCase = getSelectedAddressUseCase,
        _saveSelectedAddressUseCase = saveSelectedAddressUseCase,
-       _calculateShippingQuote = calculateShippingQuoteUseCase,
+       _findCoveringBranchUseCase = findCoveringBranchUseCase,
        super(const CustomerCoordinatorState.idle()) {
     _branchSub = _branchCubit.stream.listen((state) async {
       if (state.branches.isNotEmpty) {
@@ -176,56 +176,61 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
 
     if (branches.isEmpty) return;
 
-    ShippingQuote? bestQuote;
-    Branch? winningBranch;
+    // Una sola consulta al servidor: devuelve las sucursales que cubren la
+    // dirección, la de envío más barato primero (y, si empatan, la más cercana).
+    final result = await _findCoveringBranchUseCase.execute(address: address).run();
 
-    for (final branch in branches) {
-      if (!branch.active) continue;
+    // Un error de red o del servidor no es "sin cobertura": no se cambia nada.
+    final List<CoveringBranch>? covering = result.fold(
+      (_) => null,
+      (list) => list,
+    );
 
-      final quoteResult = await _calculateShippingQuote
-          .execute(branch: branch, address: address)
-          .run();
-
-      quoteResult.fold(
-        (failure) {
-        },
-        (quote) {
-          
-          if (quote.isAvailable) {
-            if (bestQuote == null || quote.shippingCost < bestQuote!.shippingCost) {
-              bestQuote = quote;
-              winningBranch = branch;
-            }
-          } else {
-          }
-        },
-      );
+    if (covering == null) {
+      emit(const CustomerCoordinatorState.idle());
+      return;
     }
 
-    if (winningBranch != null && bestQuote != null) {
+    // La primera sucursal ofrecida que también esté en la lista local y activa.
+    Branch? winningBranch;
+    CoveringBranch? winningOffer;
+
+    for (final offer in covering) {
+      final branch = branches
+          .where((b) => b.id == offer.branchId && b.active)
+          .firstOrNull;
+      if (branch != null) {
+        winningBranch = branch;
+        winningOffer = offer;
+        break;
+      }
+    }
+
+    final branch = winningBranch;
+    final offer = winningOffer;
+
+    if (branch != null && offer != null) {
       _cartCubit.setDeliveryMethod(DeliveryMethod.homeDelivery);
       _cartCubit.setDeliveryAddress(address);
-      _cartCubit.setActiveBranch(winningBranch!.id);
+      _cartCubit.setActiveBranch(branch.id);
 
-      _customerProductsCubit.loadProductsByBranch(winningBranch!.id);
+      _customerProductsCubit.loadProductsByBranch(branch.id);
       _saveSelectedAddressUseCase(address.id);
 
-      // 3. Buscamos la regla de "Envío Gratis" para la sucursal ganadora
+      // Regla de "Envío Gratis" de la sucursal ganadora.
       final branchConfig = configs
-          .where((c) => c.branchId == winningBranch!.id)
+          .where((c) => c.branchId == branch.id)
           .firstOrNull;
 
-      // 4. Actualizamos las reglas del carrito con el costo cotizado y el mínimo para envío gratis
+      // Costo base cotizado por el servidor y mínimo para envío gratis.
       _cartCubit.setShippingRules(
-        baseRate: bestQuote!.shippingCost,
+        baseRate: offer.shippingCost,
         freeThreshold: branchConfig?.minAmountForFreeShipping,
       );
 
-      emit(
-        CustomerCoordinatorState.changeSuccessful(winningBranch!, isAutomatic),
-      );
+      emit(CustomerCoordinatorState.changeSuccessful(branch, isAutomatic));
     } else {
-      // Ninguna sucursal tiene cobertura para esa dirección
+      // Ninguna sucursal tiene cobertura para esa dirección.
       emit(CustomerCoordinatorState.outOfCoverage(address));
     }
 

@@ -1,16 +1,21 @@
+// lib/features/banners/presentation/widgets/promo_banners_carousel.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/core/di/injection_container.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_format.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/promo_banner_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/promo_banner_state.dart';
+import 'package:fruti_express_jahr_admin/features/banners/presentation/widgets/promo_banner_renderer.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-class PromoBannersCarousel extends StatelessWidget { 
+class PromoBannersCarousel extends StatelessWidget {
   const PromoBannersCarousel({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<PromoBannerCubit, PromoBannerState>( 
+    return BlocBuilder<PromoBannerCubit, PromoBannerState>(
       builder: (context, state) {
-        final activeBanners = state.banners.where((b) => b.isActive).toList(); 
+        final activeBanners = state.banners.where((b) => b.isActive).toList();
 
         if (activeBanners.isEmpty) return const SizedBox.shrink();
 
@@ -23,56 +28,20 @@ class PromoBannersCarousel extends StatelessWidget {
             itemCount: activeBanners.length,
             itemBuilder: (context, index) {
               final banner = activeBanners[index];
-              final startColor = _hexToColor(banner.startColor); 
-              final endColor = _hexToColor(banner.endColor); 
 
-              return Container(
-                width: 280,
-                margin: const EdgeInsets.only(right: 16.0),
-                padding: const EdgeInsets.all(16.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  gradient: LinearGradient(
-                    colors: [startColor, endColor],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+              // 280 de ancho en formato 2:1 = 140 de alto, igual que el contenedor.
+              return Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: SizedBox(
+                  width: 280,
+                  child: PromoBannerRenderer(
+                    banner: banner,
+                    format: BannerFormat.carouselCard,
+                    resolveImageUrl: (path) => sl<SupabaseClient>()
+                        .storage
+                        .from('imagenes_banners')
+                        .getPublicUrl(path),
                   ),
-                  image: banner.imageUrl != null 
-                      ? DecorationImage(
-                          image: NetworkImage(banner.imageUrl!),
-                          fit: BoxFit.cover,
-                          opacity: 0.15,
-                        )
-                      : null,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      banner.title, // titulo -> title
-                      style: const TextStyle(
-                        color: Colors.black54,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      banner.discount,
-                      style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    Text(
-                      banner.subtitle, 
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
                 ),
               );
             },
@@ -80,11 +49,5 @@ class PromoBannersCarousel extends StatelessWidget {
         );
       },
     );
-  }
-
-  Color _hexToColor(String hex) {
-    hex = hex.replaceFirst('#', '');
-    if (hex.length == 6) hex = 'FF$hex';
-    return Color(int.parse(hex, radix: 16));
   }
 }

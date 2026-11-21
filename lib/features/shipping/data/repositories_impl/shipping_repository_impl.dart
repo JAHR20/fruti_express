@@ -3,6 +3,7 @@ import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.d
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/data/models/shipping_config_model.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/data/models/shipping_rate_model.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/covering_branch.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/shipping_config.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/entities/shipping_rate.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/repositories/shipping_repository.dart';
@@ -40,7 +41,6 @@ class ShippingRepositoryImpl
     }, handleException);
   }
 
-
   @override
   ResultTask<Unit> saveRates({
     required String branchId,
@@ -55,11 +55,26 @@ class ShippingRepositoryImpl
     }, handleException);
   }
 
-
   @override
   ResultTask<Set<String>> getBranchesWithConfiguredShipping() {
     return TaskEither.tryCatch(() async {
       return await _remoteDataSource.getBranchesWithConfiguredShipping();
+    }, handleException);
+  }
+
+  @override
+  ResultTask<List<CoveringBranch>> findCoveringBranches({
+    required double latitude,
+    required double longitude,
+    String? zipCode,
+  }) {
+    return TaskEither.tryCatch(() async {
+      final models = await _remoteDataSource.findCoveringBranches(
+        latitude: latitude,
+        longitude: longitude,
+        zipCode: zipCode,
+      );
+      return models.map((model) => model.toEntity()).toList();
     }, handleException);
   }
 }

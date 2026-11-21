@@ -49,7 +49,10 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Theme.of(context).colorScheme.error,
+      ),
     );
   }
 
@@ -69,7 +72,9 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('Sí, registrar'),
           ),
         ],
@@ -127,6 +132,8 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
   Widget build(BuildContext context) {
     final failed = _mode == _DeliveryMode.notDelivered;
 
+    var colorScheme = Theme.of(context).colorScheme;
+
     return DraggableScrollableSheet(
       initialChildSize: 0.7,
       minChildSize: 0.4,
@@ -152,7 +159,7 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -165,7 +172,7 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
               Text(
                 '#${widget.order.id.substring(0, 8).toUpperCase()} · '
                 '${widget.order.customerNameSnapshot}',
-                style: TextStyle(color: Colors.grey.shade600),
+                style: TextStyle(color: colorScheme.shadow),
               ),
               const SizedBox(height: 16),
 
@@ -174,14 +181,16 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: Colors.amber.withValues(alpha: 0.15),
+                    color: colorScheme.secondaryFixed,
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.amber.shade700),
+                    border: Border.all(color: colorScheme.secondaryContainer),
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.payments_outlined,
-                          color: Colors.amber.shade800),
+                      Icon(
+                        Icons.payments_outlined,
+                        color: colorScheme.primaryContainer,
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
@@ -203,7 +212,7 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
                       icon: Icons.check_circle_outline,
                       label: _isCash ? 'Entrega\nexitosa' : 'Cliente\npresente',
                       isActive: _mode == _DeliveryMode.delivered,
-                      color: Colors.green,
+                      color: colorScheme.primary,
                       onTap: () =>
                           setState(() => _mode = _DeliveryMode.delivered),
                     ),
@@ -214,9 +223,11 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
                       icon: _isCash
                           ? Icons.report_gmailerrorred_outlined
                           : Icons.person_off_outlined,
-                      label: _isCash ? 'No se pudo\nentregar' : 'Cliente\nausente',
+                      label: _isCash
+                          ? 'No se pudo\nentregar'
+                          : 'Cliente\nausente',
                       isActive: failed,
-                      color: Colors.orange,
+                      color: colorScheme.tertiary,
                       onTap: () =>
                           setState(() => _mode = _DeliveryMode.notDelivered),
                     ),
@@ -230,7 +241,7 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
                   _isCash
                       ? 'Después de cobrar, pide al cliente su código de confirmación'
                       : 'Pide al cliente su código de confirmación',
-                  style: const TextStyle(color: Colors.grey),
+                  style: TextStyle(color: colorScheme.shadow),
                 ),
                 const SizedBox(height: 12),
                 TextFormField(
@@ -260,9 +271,9 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
               ],
 
               if (failed && _isCash) ...[
-                const Text(
+                Text(
                   '¿Por qué no se pudo entregar?',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: colorScheme.shadow),
                 ),
                 const SizedBox(height: 12),
                 Wrap(
@@ -293,9 +304,9 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
               ],
 
               if (failed && !_isCash) ...[
-                const Text(
+                Text(
                   'Toma una foto como evidencia de entrega',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: colorScheme.shadow),
                 ),
                 const SizedBox(height: 12),
                 GestureDetector(
@@ -305,13 +316,13 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
                     height: 140,
                     decoration: BoxDecoration(
                       color: _photoPath != null
-                          ? Colors.green.withValues(alpha: 0.05)
-                          : Colors.orange.withValues(alpha: 0.05),
+                          ? colorScheme.primary.withValues(alpha: 0.05)
+                          : colorScheme.secondary.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: _photoPath != null
-                            ? Colors.green
-                            : Colors.orange.withValues(alpha: 0.5),
+                            ? colorScheme.primary
+                            : colorScheme.secondary,
                         width: 1.5,
                       ),
                     ),
@@ -319,13 +330,16 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
                         ? Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.camera_alt_outlined,
-                                  size: 40, color: Colors.orange.shade400),
+                              Icon(
+                                Icons.camera_alt_outlined,
+                                size: 40,
+                                color: colorScheme.secondary,
+                              ),
                               const SizedBox(height: 8),
                               Text(
                                 'Tomar foto de evidencia',
                                 style: TextStyle(
-                                  color: Colors.orange.shade400,
+                                  color: colorScheme.secondary,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -334,13 +348,16 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
                         : Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.check_circle,
-                                  color: Colors.green, size: 40),
+                              Icon(
+                                Icons.check_circle,
+                                color: colorScheme.primary,
+                                size: 40,
+                              ),
                               const SizedBox(height: 8),
-                              const Text(
+                              Text(
                                 'Foto tomada',
                                 style: TextStyle(
-                                  color: Colors.green,
+                                  color: colorScheme.primary,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -362,8 +379,8 @@ class _ConfirmDeliverySheetState extends State<ConfirmDeliverySheet> {
                   onPressed: _confirm,
                   style: FilledButton.styleFrom(
                     backgroundColor: failed && _isCash
-                        ? Colors.red
-                        : Colors.green,
+                        ? colorScheme.error
+                        : colorScheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -402,28 +419,35 @@ class _ModeSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var colorScheme = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isActive ? color.withValues(alpha: 0.1) : Colors.grey.shade100,
+          color: isActive
+              ? color.withValues(alpha: 0.1)
+              : colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isActive ? color : Colors.grey.shade300,
+            color: isActive ? color : colorScheme.surfaceContainerHighest,
             width: isActive ? 2 : 1,
           ),
         ),
         child: Column(
           children: [
-            Icon(icon, color: isActive ? color : Colors.grey, size: 28),
+            Icon(
+              icon,
+              color: isActive ? color : colorScheme.shadow.withValues(alpha: 0.6),
+              size: 28,
+            ),
             const SizedBox(height: 6),
             Text(
               label,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: isActive ? color : Colors.grey,
+                color: isActive ? color : colorScheme.shadow.withValues(alpha: 0.6),
                 fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                 fontSize: 12,
               ),

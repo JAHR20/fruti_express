@@ -50,7 +50,7 @@ class ProfileOptionTile extends StatelessWidget {
               subtitle!,
               style: TextStyle(
                 fontSize: 12, 
-                color: colorScheme.onSurfaceVariant, // 👈 Gris para textos secundarios
+                color: colorScheme.onSurfaceVariant, 
               ),
             )
           : null,
@@ -58,7 +58,7 @@ class ProfileOptionTile extends StatelessWidget {
           ? null
           : Icon(
               Icons.chevron_right, 
-              color: colorScheme.onSurfaceVariant, // 👈 Flecha adaptable
+              color: colorScheme.onSurfaceVariant, 
             ),
     );
   }
@@ -71,7 +71,7 @@ class ProfileSectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme; // 👈 Extraemos el tema
+    final colorScheme = Theme.of(context).colorScheme; 
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
@@ -80,7 +80,7 @@ class ProfileSectionTitle extends StatelessWidget {
         style: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.bold,
-          color: colorScheme.onSurfaceVariant, // 👈 Sustituye a Colors.grey.shade500
+          color: colorScheme.onSurfaceVariant, 
           letterSpacing: 1.2,
         ),
       ),

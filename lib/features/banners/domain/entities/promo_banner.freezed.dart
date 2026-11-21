@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PromoBanner {
 
- String get id; String get title; String get discount; String get subtitle; String get startColor; String get endColor; String? get imageUrl; bool get isActive; int get sortOrder; DateTime get createdAt;
+ String get id; String get title; String get discount; String get subtitle; String get startColor; String get endColor; String? get imageUrl; BannerStyleConfig? get styleConfig; bool get isActive; int get sortOrder; DateTime get createdAt;
 /// Create a copy of PromoBanner
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $PromoBannerCopyWith<PromoBanner> get copyWith => _$PromoBannerCopyWithImpl<Prom
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PromoBanner&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.discount, discount) || other.discount == discount)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.startColor, startColor) || other.startColor == startColor)&&(identical(other.endColor, endColor) || other.endColor == endColor)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PromoBanner&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.discount, discount) || other.discount == discount)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.startColor, startColor) || other.startColor == startColor)&&(identical(other.endColor, endColor) || other.endColor == endColor)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.styleConfig, styleConfig) || other.styleConfig == styleConfig)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,discount,subtitle,startColor,endColor,imageUrl,isActive,sortOrder,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,discount,subtitle,startColor,endColor,imageUrl,styleConfig,isActive,sortOrder,createdAt);
 
 @override
 String toString() {
-  return 'PromoBanner(id: $id, title: $title, discount: $discount, subtitle: $subtitle, startColor: $startColor, endColor: $endColor, imageUrl: $imageUrl, isActive: $isActive, sortOrder: $sortOrder, createdAt: $createdAt)';
+  return 'PromoBanner(id: $id, title: $title, discount: $discount, subtitle: $subtitle, startColor: $startColor, endColor: $endColor, imageUrl: $imageUrl, styleConfig: $styleConfig, isActive: $isActive, sortOrder: $sortOrder, createdAt: $createdAt)';
 }
 
 
@@ -45,11 +45,11 @@ abstract mixin class $PromoBannerCopyWith<$Res>  {
   factory $PromoBannerCopyWith(PromoBanner value, $Res Function(PromoBanner) _then) = _$PromoBannerCopyWithImpl;
 @useResult
 $Res call({
- String id, String title, String discount, String subtitle, String startColor, String endColor, String? imageUrl, bool isActive, int sortOrder, DateTime createdAt
+ String id, String title, String discount, String subtitle, String startColor, String endColor, String? imageUrl, BannerStyleConfig? styleConfig, bool isActive, int sortOrder, DateTime createdAt
 });
 
 
-
+$BannerStyleConfigCopyWith<$Res>? get styleConfig;
 
 }
 /// @nodoc
@@ -62,7 +62,7 @@ class _$PromoBannerCopyWithImpl<$Res>
 
 /// Create a copy of PromoBanner
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? discount = null,Object? subtitle = null,Object? startColor = null,Object? endColor = null,Object? imageUrl = freezed,Object? isActive = null,Object? sortOrder = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? discount = null,Object? subtitle = null,Object? startColor = null,Object? endColor = null,Object? imageUrl = freezed,Object? styleConfig = freezed,Object? isActive = null,Object? sortOrder = null,Object? createdAt = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -71,13 +71,26 @@ as String,subtitle: null == subtitle ? _self.subtitle : subtitle // ignore: cast
 as String,startColor: null == startColor ? _self.startColor : startColor // ignore: cast_nullable_to_non_nullable
 as String,endColor: null == endColor ? _self.endColor : endColor // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
-as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as String?,styleConfig: freezed == styleConfig ? _self.styleConfig : styleConfig // ignore: cast_nullable_to_non_nullable
+as BannerStyleConfig?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
+/// Create a copy of PromoBanner
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$BannerStyleConfigCopyWith<$Res>? get styleConfig {
+    if (_self.styleConfig == null) {
+    return null;
+  }
 
+  return $BannerStyleConfigCopyWith<$Res>(_self.styleConfig!, (value) {
+    return _then(_self.copyWith(styleConfig: value));
+  });
+}
 }
 
 
@@ -159,10 +172,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String discount,  String subtitle,  String startColor,  String endColor,  String? imageUrl,  bool isActive,  int sortOrder,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String title,  String discount,  String subtitle,  String startColor,  String endColor,  String? imageUrl,  BannerStyleConfig? styleConfig,  bool isActive,  int sortOrder,  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PromoBanner() when $default != null:
-return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.isActive,_that.sortOrder,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.styleConfig,_that.isActive,_that.sortOrder,_that.createdAt);case _:
   return orElse();
 
 }
@@ -180,10 +193,10 @@ return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startCo
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String discount,  String subtitle,  String startColor,  String endColor,  String? imageUrl,  bool isActive,  int sortOrder,  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String title,  String discount,  String subtitle,  String startColor,  String endColor,  String? imageUrl,  BannerStyleConfig? styleConfig,  bool isActive,  int sortOrder,  DateTime createdAt)  $default,) {final _that = this;
 switch (_that) {
 case _PromoBanner():
-return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.isActive,_that.sortOrder,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.styleConfig,_that.isActive,_that.sortOrder,_that.createdAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -200,10 +213,10 @@ return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startCo
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String discount,  String subtitle,  String startColor,  String endColor,  String? imageUrl,  bool isActive,  int sortOrder,  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String title,  String discount,  String subtitle,  String startColor,  String endColor,  String? imageUrl,  BannerStyleConfig? styleConfig,  bool isActive,  int sortOrder,  DateTime createdAt)?  $default,) {final _that = this;
 switch (_that) {
 case _PromoBanner() when $default != null:
-return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.isActive,_that.sortOrder,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.styleConfig,_that.isActive,_that.sortOrder,_that.createdAt);case _:
   return null;
 
 }
@@ -215,7 +228,7 @@ return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startCo
 
 
 class _PromoBanner implements PromoBanner {
-  const _PromoBanner({required this.id, required this.title, required this.discount, required this.subtitle, required this.startColor, required this.endColor, this.imageUrl, required this.isActive, required this.sortOrder, required this.createdAt});
+  const _PromoBanner({required this.id, required this.title, required this.discount, required this.subtitle, required this.startColor, required this.endColor, this.imageUrl, this.styleConfig, required this.isActive, required this.sortOrder, required this.createdAt});
   
 
 @override final  String id;
@@ -225,6 +238,7 @@ class _PromoBanner implements PromoBanner {
 @override final  String startColor;
 @override final  String endColor;
 @override final  String? imageUrl;
+@override final  BannerStyleConfig? styleConfig;
 @override final  bool isActive;
 @override final  int sortOrder;
 @override final  DateTime createdAt;
@@ -239,16 +253,16 @@ _$PromoBannerCopyWith<_PromoBanner> get copyWith => __$PromoBannerCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PromoBanner&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.discount, discount) || other.discount == discount)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.startColor, startColor) || other.startColor == startColor)&&(identical(other.endColor, endColor) || other.endColor == endColor)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PromoBanner&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.discount, discount) || other.discount == discount)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.startColor, startColor) || other.startColor == startColor)&&(identical(other.endColor, endColor) || other.endColor == endColor)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.styleConfig, styleConfig) || other.styleConfig == styleConfig)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,discount,subtitle,startColor,endColor,imageUrl,isActive,sortOrder,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,discount,subtitle,startColor,endColor,imageUrl,styleConfig,isActive,sortOrder,createdAt);
 
 @override
 String toString() {
-  return 'PromoBanner(id: $id, title: $title, discount: $discount, subtitle: $subtitle, startColor: $startColor, endColor: $endColor, imageUrl: $imageUrl, isActive: $isActive, sortOrder: $sortOrder, createdAt: $createdAt)';
+  return 'PromoBanner(id: $id, title: $title, discount: $discount, subtitle: $subtitle, startColor: $startColor, endColor: $endColor, imageUrl: $imageUrl, styleConfig: $styleConfig, isActive: $isActive, sortOrder: $sortOrder, createdAt: $createdAt)';
 }
 
 
@@ -259,11 +273,11 @@ abstract mixin class _$PromoBannerCopyWith<$Res> implements $PromoBannerCopyWith
   factory _$PromoBannerCopyWith(_PromoBanner value, $Res Function(_PromoBanner) _then) = __$PromoBannerCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String title, String discount, String subtitle, String startColor, String endColor, String? imageUrl, bool isActive, int sortOrder, DateTime createdAt
+ String id, String title, String discount, String subtitle, String startColor, String endColor, String? imageUrl, BannerStyleConfig? styleConfig, bool isActive, int sortOrder, DateTime createdAt
 });
 
 
-
+@override $BannerStyleConfigCopyWith<$Res>? get styleConfig;
 
 }
 /// @nodoc
@@ -276,7 +290,7 @@ class __$PromoBannerCopyWithImpl<$Res>
 
 /// Create a copy of PromoBanner
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? discount = null,Object? subtitle = null,Object? startColor = null,Object? endColor = null,Object? imageUrl = freezed,Object? isActive = null,Object? sortOrder = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? discount = null,Object? subtitle = null,Object? startColor = null,Object? endColor = null,Object? imageUrl = freezed,Object? styleConfig = freezed,Object? isActive = null,Object? sortOrder = null,Object? createdAt = null,}) {
   return _then(_PromoBanner(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -285,14 +299,27 @@ as String,subtitle: null == subtitle ? _self.subtitle : subtitle // ignore: cast
 as String,startColor: null == startColor ? _self.startColor : startColor // ignore: cast_nullable_to_non_nullable
 as String,endColor: null == endColor ? _self.endColor : endColor // ignore: cast_nullable_to_non_nullable
 as String,imageUrl: freezed == imageUrl ? _self.imageUrl : imageUrl // ignore: cast_nullable_to_non_nullable
-as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as String?,styleConfig: freezed == styleConfig ? _self.styleConfig : styleConfig // ignore: cast_nullable_to_non_nullable
+as BannerStyleConfig?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as DateTime,
   ));
 }
 
+/// Create a copy of PromoBanner
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$BannerStyleConfigCopyWith<$Res>? get styleConfig {
+    if (_self.styleConfig == null) {
+    return null;
+  }
 
+  return $BannerStyleConfigCopyWith<$Res>(_self.styleConfig!, (value) {
+    return _then(_self.copyWith(styleConfig: value));
+  });
+}
 }
 
 // dart format on

@@ -13,6 +13,7 @@ import 'package:fruti_express_jahr_admin/features/shipping/domain/strategies/pri
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/calculate_shipping_quote_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/delete_and_merge_shipping_rate_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/edit_shipping_rate_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/find_covering_branch_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/save_shipping_config_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_shipping_config_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_branches_with_configured_shipping_use_case.dart';
@@ -50,6 +51,7 @@ void initShipping(GetIt sl) {
   sl.registerLazySingleton(
     () => GetBranchesWithConfiguredShippingUseCase(sl()),
   );
+  sl.registerLazySingleton(() => FindCoveringBranchUseCase(sl()));
   sl.registerLazySingleton(() => const SplitShippingRateUseCase());
   sl.registerLazySingleton(() => const DeleteAndMergeShippingRateUseCase());
   sl.registerLazySingleton(() => const EditShippingRateUseCase());
@@ -73,7 +75,7 @@ void initShipping(GetIt sl) {
       saveRatesUseCase: sl(),
       splitRateUseCase: sl(),
       deleteAndMergeRateUseCase: sl(),
-      editRateUseCase: sl()
+      editRateUseCase: sl(),
     ),
   );
 
@@ -88,7 +90,7 @@ void initShipping(GetIt sl) {
       addressCubit: sl(),
       getSelectedAddressUseCase: sl(),
       saveSelectedAddressUseCase: sl(),
-      calculateShippingQuoteUseCase: sl(),
+      findCoveringBranchUseCase: sl(),
     ),
   );
 }

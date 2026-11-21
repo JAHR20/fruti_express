@@ -15,6 +15,11 @@ _PromoBannerModel _$PromoBannerModelFromJson(Map<String, dynamic> json) =>
       startColor: json['start_color'] as String,
       endColor: json['end_color'] as String,
       imageUrl: json['image_url'] as String?,
+      styleConfig: json['style_config'] == null
+          ? null
+          : BannerStyleConfigModel.fromJson(
+              json['style_config'] as Map<String, dynamic>,
+            ),
       isActive: json['is_active'] as bool,
       sortOrder: (json['display_order'] as num).toInt(),
       createdAt: DateTime.parse(json['created_at'] as String),
@@ -29,6 +34,7 @@ Map<String, dynamic> _$PromoBannerModelToJson(_PromoBannerModel instance) =>
       'start_color': instance.startColor,
       'end_color': instance.endColor,
       'image_url': instance.imageUrl,
+      'style_config': instance.styleConfig,
       'is_active': instance.isActive,
       'display_order': instance.sortOrder,
       'created_at': instance.createdAt.toIso8601String(),

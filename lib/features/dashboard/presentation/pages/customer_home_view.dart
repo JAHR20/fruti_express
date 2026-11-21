@@ -268,7 +268,7 @@ class _CustomerHomeViewState extends State<CustomerHomeView> {
           SliverToBoxAdapter(
             child: Padding(
               // Mantenemos el padding inferior (110) para no tapar contenido con la NavBar de abajo
-              padding: const EdgeInsets.fromLTRB(0, 16, 0, 110),
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 110),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: const [

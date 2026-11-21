@@ -9,7 +9,7 @@ class ProfileHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final profile = user.profile; 
-    final colorScheme = Theme.of(context).colorScheme; // 👈 Extraemos el colorScheme
+    final colorScheme = Theme.of(context).colorScheme; 
 
     final fullName = [
       profile.firstName,
@@ -21,7 +21,7 @@ class ProfileHeader extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       decoration: BoxDecoration(
-        color: colorScheme.primary, // 👈 Fondo usa el color principal del tema
+        color: colorScheme.primary,
         borderRadius: const BorderRadius.vertical(bottom: Radius.circular(90)),
       ),
       child: Column(
@@ -38,7 +38,7 @@ class ProfileHeader extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: colorScheme.onPrimary, // 👈 Letra inicial adaptable
+                      color: colorScheme.onPrimary, 
                     ),
                   )
                 : null,
@@ -47,7 +47,7 @@ class ProfileHeader extends StatelessWidget {
           Text(
             fullName,
             style: TextStyle(
-              color: colorScheme.onPrimary, // 👈 Nombre principal
+              color: colorScheme.onPrimary,
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
@@ -56,7 +56,7 @@ class ProfileHeader extends StatelessWidget {
           Text(
             user.email,
             style: TextStyle(
-              color: colorScheme.onPrimary.withValues(alpha: 0.7), // 👈 Email con opacidad
+              color: colorScheme.onPrimary.withValues(alpha: 0.7), 
               fontSize: 14,
             ),
           ),
@@ -72,7 +72,7 @@ class ProfileHeader extends StatelessWidget {
               child: Text(
                 '@${profile.alias}',
                 style: TextStyle(
-                  color: colorScheme.onPrimary, // 👈 Texto del alias
+                  color: colorScheme.onPrimary, 
                   fontSize: 12
                 ),
               ),

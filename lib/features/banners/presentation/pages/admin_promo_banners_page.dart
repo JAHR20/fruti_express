@@ -105,6 +105,7 @@ class _AdminPromoBannersPageState extends State<AdminPromoBannersPage>
                       endColor,
                       sortOrder,
                       image,
+                      styleConfig,
                     ) {
                       final generatedBanner = PromoBanner(
                         id: banner?.id ?? '',
@@ -116,6 +117,7 @@ class _AdminPromoBannersPageState extends State<AdminPromoBannersPage>
                         sortOrder: sortOrder,
                         isActive: banner?.isActive ?? true,
                         imageUrl: banner?.imageUrl,
+                        styleConfig: styleConfig,
                         createdAt: banner?.createdAt ?? DateTime.now(),
                       );
 
