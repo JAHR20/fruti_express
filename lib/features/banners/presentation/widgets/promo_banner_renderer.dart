@@ -1,6 +1,4 @@
-// lib/features/banners/presentation/widgets/promo_banner_renderer.dart
 import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_background_config.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_button_config.dart';
@@ -16,8 +14,6 @@ import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_te
 import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_text_alignment.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_vertical_alignment.dart';
 
-/// Convierte una ruta de Storage en una URL pública. Se inyecta desde fuera
-/// para que el renderer no dependa de Supabase.
 typedef BannerImageUrlResolver = String Function(String storagePath);
 
 extension BannerFormatSpec on BannerFormat {

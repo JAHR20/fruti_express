@@ -1,13 +1,9 @@
-// lib/features/banners/presentation/widgets/banner_template_editor.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_template_settings.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_template.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart';
 
-/// Controles de la plantilla. No guarda datos: recibe los ajustes actuales y
-/// avisa de cada cambio, de modo que el formulario que lo contiene decide
-/// cuándo y cómo guardarlos.
 class BannerTemplateEditor extends StatefulWidget {
   const BannerTemplateEditor({
     super.key,

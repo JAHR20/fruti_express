@@ -17,7 +17,6 @@ abstract class BannerDecorationConfig with _$BannerDecorationConfig {
     @Default(20.0) double widthPercent,
     @Default(20.0) double heightPercent,
 
-    // Posición relativa al contenedor: 0 a 100.
     @Default(50.0) double positionX,
     @Default(50.0) double positionY,
 

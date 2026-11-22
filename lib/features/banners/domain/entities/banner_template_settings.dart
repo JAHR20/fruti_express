@@ -1,4 +1,3 @@
-// lib/features/banners/domain/entities/banner_template_settings.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_format_config.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_style_config.dart';

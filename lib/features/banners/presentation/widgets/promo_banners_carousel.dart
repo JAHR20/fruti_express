@@ -1,4 +1,3 @@
-// lib/features/banners/presentation/widgets/promo_banners_carousel.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/di/injection_container.dart';
@@ -20,8 +19,6 @@ class PromoBannersCarousel extends StatelessWidget {
     r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
   );
 
-  /// Destinos permitidos para un botón. El administrador solo elige entre
-  /// ellos: nunca se navega a una ruta o URL escrita por él.
   void _onButtonTap(BuildContext context, BannerButtonConfig button) {
     switch (button.actionType) {
       case BannerActionType.promotions:
@@ -35,7 +32,6 @@ class PromoBannersCarousel extends StatelessWidget {
           return;
         }
 
-        // Categoría opcional: si no es un id válido, se muestran todas las ofertas.
         final value = (button.actionValue ?? '').trim();
         final categoryId = _uuidPattern.hasMatch(value) ? value : null;
 
@@ -47,7 +43,6 @@ class PromoBannersCarousel extends StatelessWidget {
           },
         );
       default:
-        // Las demás acciones todavía no tienen destino: no hacen nada.
         break;
     }
   }
@@ -69,8 +64,6 @@ class PromoBannersCarousel extends StatelessWidget {
             itemCount: activeBanners.length,
             itemBuilder: (context, index) {
               final banner = activeBanners[index];
-
-              // 280 de ancho en formato 2:1 = 140 de alto, igual que el contenedor.
               return Padding(
                 padding: const EdgeInsets.only(right: 16.0),
                 child: SizedBox(

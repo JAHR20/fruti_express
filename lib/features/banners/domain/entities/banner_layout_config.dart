@@ -13,17 +13,14 @@ abstract class BannerLayoutConfig with _$BannerLayoutConfig {
     @Default(16.0) double paddingBottom,
     @Default(16.0) double paddingLeft,
 
-    // Separación entre elementos.
     @Default(8.0) double elementSpacing,
 
-    // Alineación del contenido.
     @Default(BannerTextAlignment.left)
     BannerTextAlignment horizontalAlignment,
 
     @Default(BannerVerticalAlignment.center)
     BannerVerticalAlignment verticalAlignment,
 
-    // Desplazamiento del contenido.
     @Default(0.0) double offsetX,
     @Default(0.0) double offsetY,
   }) = _BannerLayoutConfig;

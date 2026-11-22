@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/enums/delivery_method.dart';
 import 'package:fruti_express_jahr_admin/features/cart/presentation/cubits/cart_cubit.dart';
@@ -174,24 +175,30 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
     final branches = _branchCubit.state.branches;
     final configs = _customerShippingCubit.state.configs;
 
+    debugPrint(
+      'branches=${branches.length} configs=${configs.length} '
+      'dir=${address.latitude},${address.longitude},${address.zipCode}',
+    );
+
     if (branches.isEmpty) return;
 
-    // Una sola consulta al servidor: devuelve las sucursales que cubren la
-    // dirección, la de envío más barato primero (y, si empatan, la más cercana).
-    final result = await _findCoveringBranchUseCase.execute(address: address).run();
-
-    // Un error de red o del servidor no es "sin cobertura": no se cambia nada.
+    final result = await _findCoveringBranchUseCase
+        .execute(address: address)
+        .run();
     final List<CoveringBranch>? covering = result.fold(
-      (_) => null,
-      (list) => list,
+      (failure) {
+        return null;
+      },
+      (list) {
+        return list;
+      },
     );
 
     if (covering == null) {
       emit(const CustomerCoordinatorState.idle());
       return;
     }
-
-    // La primera sucursal ofrecida que también esté en la lista local y activa.
+    
     Branch? winningBranch;
     CoveringBranch? winningOffer;
 

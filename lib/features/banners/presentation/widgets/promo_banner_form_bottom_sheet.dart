@@ -59,7 +59,6 @@ class _PromoBannerFormBottomSheetState
   late Color _startColor;
   late Color _endColor;
 
-  // Plantilla: null en el banner = diseño clásico.
   late bool _useTemplate;
   late BannerTemplateSettings _settings;
 
