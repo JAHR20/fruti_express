@@ -14,6 +14,8 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   static const String _colCategoryId = 'category_id';
   static const String _relInventory = 'inventory!inner(available_stock)';
   static const String _colInventoryBranchId = 'inventory.branch_id';
+  static const String _colIsOnSale = 'is_on_sale';
+  static const String _rpcCategoryTreeIds = 'category_tree_ids';
 
   ProductRemoteDataSourceImpl(this.supabase);
 
@@ -194,5 +196,36 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
     };
 
     return controller.stream;
+  }
+
+  @override
+  Future<List<String>> getCategoryTreeIds(String categoryId) async {
+    final response = await supabase.rpc(
+      _rpcCategoryTreeIds,
+      params: {'p_category_id': categoryId},
+    );
+    return (response as List).map((id) => id as String).toList();
+  }
+
+  @override
+  Future<List<ProductModel>> getOffers({
+    required String branchId,
+    List<String>? categoryIds,
+  }) async {
+    var query = supabase
+        .from(_tableName)
+        .select('*, $_relInventory')
+        .eq(_colIsOnSale, true)
+        .eq(_colInventoryBranchId, branchId);
+
+    if (categoryIds != null && categoryIds.isNotEmpty) {
+      query = query.inFilter(_colCategoryId, categoryIds);
+    }
+
+    final response = await query.order(_colName, ascending: true);
+
+    return (response as List)
+        .map((json) => ProductModel.fromJson(json))
+        .toList();
   }
 }

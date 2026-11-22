@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fruti_express_jahr_admin/core/di/injection_container.dart';
 import 'package:fruti_express_jahr_admin/core/widgets/animated_empty_state.dart';
 import 'package:fruti_express_jahr_admin/core/widgets/confirm_dialog.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
@@ -9,6 +10,7 @@ import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/pr
 import 'package:fruti_express_jahr_admin/features/banners/presentation/cubits/promo_banner_state.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/widgets/promo_banner_form_bottom_sheet.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/widgets/promo_banner_card.dart';
+import 'package:fruti_express_jahr_admin/features/categories/presentation/cubits/category_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
 
 class AdminPromoBannersPage extends StatefulWidget {
@@ -56,8 +58,13 @@ class _AdminPromoBannersPageState extends State<AdminPromoBannersPage>
       useSafeArea: true,
       transitionAnimationController: _bottomSheetController,
       builder: (dialogContext) {
-        return BlocProvider.value(
-          value: bannerCubit,
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: bannerCubit),
+            BlocProvider(
+              create: (_) => sl<CategoryCubit>()..loadActiveCategories(),
+            ),
+          ],
           child: BlocConsumer<PromoBannerCubit, PromoBannerState>(
             listenWhen: (previous, current) =>
                 previous.operationError != current.operationError ||
@@ -95,6 +102,7 @@ class _AdminPromoBannersPageState extends State<AdminPromoBannersPage>
             builder: (ctx, state) {
               return PromoBannerFormBottomSheet(
                 bannerToEdit: banner,
+                categories: ctx.watch<CategoryCubit>().state.categories,
                 isSaving: state.isLoading || state.processingBannerId != null,
                 onSave:
                     (

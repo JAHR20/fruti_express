@@ -12,5 +12,8 @@ abstract class CustomerProductsState with _$CustomerProductsState {
     @Default(false) bool isLoading,
     String? errorMessage,
     @Default('') String branchId,
+    @Default(false) bool isOffersMode,
+    String? offersCategoryId,
+    @Default(false) bool offersCategoryUnavailable,
   }) = _CustomerProductsState;
 }

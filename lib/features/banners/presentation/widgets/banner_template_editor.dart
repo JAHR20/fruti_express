@@ -1,9 +1,9 @@
-// lib/features/banners/presentation/editor/banner_template_editor.dart
+// lib/features/banners/presentation/widgets/banner_template_editor.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
-import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_action_type.dart';
-import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_template.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_template_settings.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_template.dart';
+import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart';
 
 /// Controles de la plantilla. No guarda datos: recibe los ajustes actuales y
 /// avisa de cada cambio, de modo que el formulario que lo contiene decide
@@ -15,6 +15,7 @@ class BannerTemplateEditor extends StatefulWidget {
     required this.settings,
     required this.onUseTemplateChanged,
     required this.onSettingsChanged,
+    this.categories = const [],
     this.enabled = true,
   });
 
@@ -22,6 +23,9 @@ class BannerTemplateEditor extends StatefulWidget {
   final BannerTemplateSettings settings;
   final ValueChanged<bool> onUseTemplateChanged;
   final ValueChanged<BannerTemplateSettings> onSettingsChanged;
+
+  /// Categorías activas entre las que el botón puede apuntar a sus ofertas.
+  final List<Category> categories;
   final bool enabled;
 
   @override
@@ -98,6 +102,92 @@ class _BannerTemplateEditorState extends State<BannerTemplateEditor> {
         ],
       ),
     );
+  }
+
+  String _categoryLabel() {
+    final id = widget.settings.buttonCategoryId;
+    if (id == null) return 'Todas las categorías';
+    if (widget.categories.isEmpty) return 'Categoría seleccionada';
+
+    final match = widget.categories.where((c) => c.id == id).firstOrNull;
+    return match?.name ??
+        'Categoría no disponible (se mostrarán todas las ofertas)';
+  }
+
+  void _selectCategory(BuildContext dialogContext, String? id) {
+    _update(widget.settings.copyWith(buttonCategoryId: id));
+    Navigator.pop(dialogContext);
+  }
+
+  void _pickCategory() {
+    final selectedId = widget.settings.buttonCategoryId;
+    final entries = _flattenCategories(widget.categories);
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('Ver ofertas de'),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              ListTile(
+                title: const Text('Todas las categorías'),
+                trailing: selectedId == null ? const Icon(Icons.check) : null,
+                onTap: () => _selectCategory(dialogContext, null),
+              ),
+              for (final entry in entries)
+                ListTile(
+                  contentPadding:
+                      EdgeInsets.only(left: 16.0 + entry.depth * 20, right: 16),
+                  title: Text(entry.category.name),
+                  trailing: selectedId == entry.category.id
+                      ? const Icon(Icons.check)
+                      : null,
+                  onTap: () => _selectCategory(dialogContext, entry.category.id),
+                ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancelar'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Categorías en orden de árbol (cada padre seguido de sus hijos), con su nivel.
+  List<({Category category, int depth})> _flattenCategories(
+    List<Category> categories,
+  ) {
+    final ids = categories.map((c) => c.id).toSet();
+    final byParent = <String?, List<Category>>{};
+    for (final c in categories) {
+      final parent = (c.parentCategoryId != null && ids.contains(c.parentCategoryId))
+          ? c.parentCategoryId
+          : null;
+      (byParent[parent] ??= []).add(c);
+    }
+
+    final result = <({Category category, int depth})>[];
+    final seen = <String>{};
+
+    void visit(String? parent, int depth) {
+      final children = [...(byParent[parent] ?? const <Category>[])]
+        ..sort((a, b) => a.name.compareTo(b.name));
+      for (final c in children) {
+        if (!seen.add(c.id)) continue; // evita ciclos
+        result.add((category: c, depth: depth));
+        visit(c.id, depth + 1);
+      }
+    }
+
+    visit(null, 0);
+    return result;
   }
 
   @override
@@ -216,23 +306,38 @@ class _BannerTemplateEditorState extends State<BannerTemplateEditor> {
                   _update(settings.copyWith(buttonText: value)),
             ),
             const SizedBox(height: 8),
-            SegmentedButton<BannerActionType>(
-              showSelectedIcon: false,
-              segments: const [
-                ButtonSegment(
-                  value: BannerActionType.none,
-                  label: Text('Sin acción'),
+            InkWell(
+              onTap: enabled ? _pickCategory : null,
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+                decoration: BoxDecoration(
+                  border: Border.all(color: colors.outline),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                ButtonSegment(
-                  value: BannerActionType.promotions,
-                  label: Text('Ir a promociones'),
+                child: Row(
+                  children: [
+                    const Icon(Icons.local_offer_outlined, size: 20),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Ver ofertas de',
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          Text(
+                            _categoryLabel(),
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
                 ),
-              ],
-              selected: {settings.buttonAction},
-              onSelectionChanged: enabled
-                  ? (selection) =>
-                      _update(settings.copyWith(buttonAction: selection.first))
-                  : null,
+              ),
             ),
           ],
         ],

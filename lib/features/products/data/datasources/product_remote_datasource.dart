@@ -14,4 +14,9 @@ abstract class ProductRemoteDataSource {
   Future<void> delete(String id);
   Future<List<ProductModel>> getByBranch(String branchId);
   Stream<void> watchInventoryChanges(String branchId);
+  Future<List<String>> getCategoryTreeIds(String categoryId);
+  Future<List<ProductModel>> getOffers({
+    required String branchId,
+    List<String>? categoryIds,
+  });
 }

@@ -1,3 +1,4 @@
+import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_offers_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/search_products_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_products_by_branch_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/upload_product_image_use_case.dart';
@@ -36,6 +37,7 @@ void initProducts(GetIt sl) {
   sl.registerLazySingleton(() => SearchProductsUseCase(repository:  sl()));
   sl.registerLazySingleton(() => GetProductsByBranchUseCase(repository: sl()));
   sl.registerLazySingleton(() => WatchInventoryChangesUseCase(repository: sl()));
+  sl.registerLazySingleton(() => GetOffersUseCase(repository: sl()));
 
   // --- REPOSITORIO ---
   sl.registerLazySingleton<ProductRepository>(
@@ -66,6 +68,7 @@ void initProducts(GetIt sl) {
       searchProductsUseCase: sl(),
       getProductsByBranchUseCase: sl(),
       watchInventoryChangesUseCase: sl(),
+      getOffersUseCase: sl()
     ),
   );
 }

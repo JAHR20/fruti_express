@@ -22,7 +22,8 @@ abstract class BannerTemplateSettings with _$BannerTemplateSettings {
     @Default(40.0) double imageWidthPercent,
     @Default(false) bool buttonEnabled,
     @Default('Ver ofertas') String buttonText,
-    @Default(BannerActionType.promotions) BannerActionType buttonAction,
+    // Categoría de las ofertas a las que lleva el botón; null = todas.
+    String? buttonCategoryId,
   }) = _BannerTemplateSettings;
 
   static const supportedTemplates = [
@@ -30,17 +31,12 @@ abstract class BannerTemplateSettings with _$BannerTemplateSettings {
     BannerTemplate.imageLeft,
   ];
 
-  static const supportedActions = [
-    BannerActionType.none,
-    BannerActionType.promotions,
-  ];
-
   static const double minImageWidth = 20;
   static const double maxImageWidth = 50;
 
   /// Rellena el editor con la configuración guardada de un banner.
-  /// Lo que esta versión del editor no maneja (otra plantilla, otra acción)
-  /// se sustituye por un valor que sí maneja.
+  /// Lo que esta versión del editor no maneja (otra plantilla) se sustituye
+  /// por un valor que sí maneja.
   factory BannerTemplateSettings.fromConfig(BannerStyleConfig? config) {
     final format = _carouselFormat(config);
     if (format == null) return const BannerTemplateSettings();
@@ -56,12 +52,15 @@ abstract class BannerTemplateSettings with _$BannerTemplateSettings {
       imageWidthPercent: width.clamp(minImageWidth, maxImageWidth).toDouble(),
       buttonEnabled: button?.enabled ?? false,
       buttonText: button?.text ?? 'Ver ofertas',
-      buttonAction: button == null
-          ? BannerActionType.promotions
-          : (supportedActions.contains(button.actionType)
-              ? button.actionType
-              : BannerActionType.none),
+      buttonCategoryId: button?.actionType == BannerActionType.promotions
+          ? _cleanId(button?.actionValue)
+          : null,
     );
+  }
+
+  static String? _cleanId(String? value) {
+    final trimmed = value?.trim();
+    return (trimmed == null || trimmed.isEmpty) ? null : trimmed;
   }
 
   static BannerFormatConfig? _carouselFormat(BannerStyleConfig? config) {

@@ -5,6 +5,7 @@ import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.d
 import 'package:fruti_express_jahr_admin/features/products/data/datasources/product_remote_datasource.dart';
 import 'package:fruti_express_jahr_admin/features/products/data/models/product_model.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/entities/product.dart';
+import 'package:fruti_express_jahr_admin/features/products/domain/entities/product_offers.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/repositories/product_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -16,23 +17,20 @@ class ProductRepositoryImpl
   ProductRepositoryImpl(this.remoteDataSource);
 
   @override
-  ResultTask<List<Product>> getAll() => TaskEither.tryCatch(
-    () async {
-      final models = await remoteDataSource.getAll();
-      return models.map((m) => m.toDomain()).toList();
-    },
-    handleException,
-  );
+  ResultTask<List<Product>> getAll() => TaskEither.tryCatch(() async {
+    final models = await remoteDataSource.getAll();
+    return models.map((m) => m.toDomain()).toList();
+  }, handleException);
 
   @override
   ResultTask<List<Product>> getByCategory(String categoryId, String branchId) =>
-      TaskEither.tryCatch(
-        () async {
-          final models = await remoteDataSource.getByCategory(categoryId, branchId);
-          return models.map((m) => m.toDomain()).toList();
-        },
-        handleException,
-      );
+      TaskEither.tryCatch(() async {
+        final models = await remoteDataSource.getByCategory(
+          categoryId,
+          branchId,
+        );
+        return models.map((m) => m.toDomain()).toList();
+      }, handleException);
 
   @override
   ResultTask<Product> getById(String id) => TaskEither.tryCatch(() async {
@@ -47,17 +45,16 @@ class ProductRepositoryImpl
   }, handleException);
 
   @override
-  ResultTask<Product> getByName(String name) =>
-      TaskEither.tryCatch(() async {
-        final model = await remoteDataSource.getByName(name);
-        if (model == null) {
-          throw const PostgrestException(
-            message: 'Producto no encontrado',
-            code: 'PGRST116',
-          );
-        }
-        return model.toDomain();
-      }, handleException);
+  ResultTask<Product> getByName(String name) => TaskEither.tryCatch(() async {
+    final model = await remoteDataSource.getByName(name);
+    if (model == null) {
+      throw const PostgrestException(
+        message: 'Producto no encontrado',
+        code: 'PGRST116',
+      );
+    }
+    return model.toDomain();
+  }, handleException);
 
   @override
   ResultTask<bool> existsByName(String name) => TaskEither.tryCatch(
@@ -73,24 +70,18 @@ class ProductRepositoryImpl
       }, handleException);
 
   @override
-  ResultTask<Product> create(Product product) => TaskEither.tryCatch(
-    () async {
-      final model = ProductModelX.fromDomain(product);
-      final created = await remoteDataSource.create(model);
-      return created.toDomain();
-    },
-    handleException,
-  );
+  ResultTask<Product> create(Product product) => TaskEither.tryCatch(() async {
+    final model = ProductModelX.fromDomain(product);
+    final created = await remoteDataSource.create(model);
+    return created.toDomain();
+  }, handleException);
 
   @override
-  ResultTask<Product> update(Product product) => TaskEither.tryCatch(
-    () async {
-      final model = ProductModelX.fromDomain(product);
-      final updated = await remoteDataSource.update(model);
-      return updated.toDomain();
-    },
-    handleException,
-  );
+  ResultTask<Product> update(Product product) => TaskEither.tryCatch(() async {
+    final model = ProductModelX.fromDomain(product);
+    final updated = await remoteDataSource.update(model);
+    return updated.toDomain();
+  }, handleException);
 
   @override
   ResultTask<Unit> delete(String id) => TaskEither.tryCatch(() async {
@@ -116,4 +107,30 @@ class ProductRepositoryImpl
   Stream<void> watchInventoryChanges(String branchId) {
     return remoteDataSource.watchInventoryChanges(branchId);
   }
+
+  @override
+  ResultTask<ProductOffers> getOffers(String branchId, {String? categoryId}) =>
+      TaskEither.tryCatch(() async {
+        List<String>? categoryIds;
+        var categoryUnavailable = false;
+
+        if (categoryId != null) {
+          final tree = await remoteDataSource.getCategoryTreeIds(categoryId);
+          if (tree.isEmpty) {
+            categoryUnavailable = true;
+          } else {
+            categoryIds = tree;
+          }
+        }
+
+        final models = await remoteDataSource.getOffers(
+          branchId: branchId,
+          categoryIds: categoryIds,
+        );
+
+        return ProductOffers(
+          products: models.map((m) => m.toDomain()).toList(),
+          categoryUnavailable: categoryUnavailable,
+        );
+      }, handleException);
 }

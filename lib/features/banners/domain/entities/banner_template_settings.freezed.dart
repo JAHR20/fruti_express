@@ -14,7 +14,8 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BannerTemplateSettings {
 
- BannerTemplate get template; String get textColor; double get imageWidthPercent; bool get buttonEnabled; String get buttonText; BannerActionType get buttonAction;
+ BannerTemplate get template; String get textColor; double get imageWidthPercent; bool get buttonEnabled; String get buttonText;// Categoría de las ofertas a las que lleva el botón; null = todas.
+ String? get buttonCategoryId;
 /// Create a copy of BannerTemplateSettings
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +26,16 @@ $BannerTemplateSettingsCopyWith<BannerTemplateSettings> get copyWith => _$Banner
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BannerTemplateSettings&&(identical(other.template, template) || other.template == template)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.imageWidthPercent, imageWidthPercent) || other.imageWidthPercent == imageWidthPercent)&&(identical(other.buttonEnabled, buttonEnabled) || other.buttonEnabled == buttonEnabled)&&(identical(other.buttonText, buttonText) || other.buttonText == buttonText)&&(identical(other.buttonAction, buttonAction) || other.buttonAction == buttonAction));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BannerTemplateSettings&&(identical(other.template, template) || other.template == template)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.imageWidthPercent, imageWidthPercent) || other.imageWidthPercent == imageWidthPercent)&&(identical(other.buttonEnabled, buttonEnabled) || other.buttonEnabled == buttonEnabled)&&(identical(other.buttonText, buttonText) || other.buttonText == buttonText)&&(identical(other.buttonCategoryId, buttonCategoryId) || other.buttonCategoryId == buttonCategoryId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,template,textColor,imageWidthPercent,buttonEnabled,buttonText,buttonAction);
+int get hashCode => Object.hash(runtimeType,template,textColor,imageWidthPercent,buttonEnabled,buttonText,buttonCategoryId);
 
 @override
 String toString() {
-  return 'BannerTemplateSettings(template: $template, textColor: $textColor, imageWidthPercent: $imageWidthPercent, buttonEnabled: $buttonEnabled, buttonText: $buttonText, buttonAction: $buttonAction)';
+  return 'BannerTemplateSettings(template: $template, textColor: $textColor, imageWidthPercent: $imageWidthPercent, buttonEnabled: $buttonEnabled, buttonText: $buttonText, buttonCategoryId: $buttonCategoryId)';
 }
 
 
@@ -45,7 +46,7 @@ abstract mixin class $BannerTemplateSettingsCopyWith<$Res>  {
   factory $BannerTemplateSettingsCopyWith(BannerTemplateSettings value, $Res Function(BannerTemplateSettings) _then) = _$BannerTemplateSettingsCopyWithImpl;
 @useResult
 $Res call({
- BannerTemplate template, String textColor, double imageWidthPercent, bool buttonEnabled, String buttonText, BannerActionType buttonAction
+ BannerTemplate template, String textColor, double imageWidthPercent, bool buttonEnabled, String buttonText, String? buttonCategoryId
 });
 
 
@@ -62,15 +63,15 @@ class _$BannerTemplateSettingsCopyWithImpl<$Res>
 
 /// Create a copy of BannerTemplateSettings
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? template = null,Object? textColor = null,Object? imageWidthPercent = null,Object? buttonEnabled = null,Object? buttonText = null,Object? buttonAction = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? template = null,Object? textColor = null,Object? imageWidthPercent = null,Object? buttonEnabled = null,Object? buttonText = null,Object? buttonCategoryId = freezed,}) {
   return _then(_self.copyWith(
 template: null == template ? _self.template : template // ignore: cast_nullable_to_non_nullable
 as BannerTemplate,textColor: null == textColor ? _self.textColor : textColor // ignore: cast_nullable_to_non_nullable
 as String,imageWidthPercent: null == imageWidthPercent ? _self.imageWidthPercent : imageWidthPercent // ignore: cast_nullable_to_non_nullable
 as double,buttonEnabled: null == buttonEnabled ? _self.buttonEnabled : buttonEnabled // ignore: cast_nullable_to_non_nullable
 as bool,buttonText: null == buttonText ? _self.buttonText : buttonText // ignore: cast_nullable_to_non_nullable
-as String,buttonAction: null == buttonAction ? _self.buttonAction : buttonAction // ignore: cast_nullable_to_non_nullable
-as BannerActionType,
+as String,buttonCategoryId: freezed == buttonCategoryId ? _self.buttonCategoryId : buttonCategoryId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -155,10 +156,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( BannerTemplate template,  String textColor,  double imageWidthPercent,  bool buttonEnabled,  String buttonText,  BannerActionType buttonAction)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( BannerTemplate template,  String textColor,  double imageWidthPercent,  bool buttonEnabled,  String buttonText,  String? buttonCategoryId)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _BannerTemplateSettings() when $default != null:
-return $default(_that.template,_that.textColor,_that.imageWidthPercent,_that.buttonEnabled,_that.buttonText,_that.buttonAction);case _:
+return $default(_that.template,_that.textColor,_that.imageWidthPercent,_that.buttonEnabled,_that.buttonText,_that.buttonCategoryId);case _:
   return orElse();
 
 }
@@ -176,10 +177,10 @@ return $default(_that.template,_that.textColor,_that.imageWidthPercent,_that.but
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( BannerTemplate template,  String textColor,  double imageWidthPercent,  bool buttonEnabled,  String buttonText,  BannerActionType buttonAction)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( BannerTemplate template,  String textColor,  double imageWidthPercent,  bool buttonEnabled,  String buttonText,  String? buttonCategoryId)  $default,) {final _that = this;
 switch (_that) {
 case _BannerTemplateSettings():
-return $default(_that.template,_that.textColor,_that.imageWidthPercent,_that.buttonEnabled,_that.buttonText,_that.buttonAction);case _:
+return $default(_that.template,_that.textColor,_that.imageWidthPercent,_that.buttonEnabled,_that.buttonText,_that.buttonCategoryId);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +197,10 @@ return $default(_that.template,_that.textColor,_that.imageWidthPercent,_that.but
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( BannerTemplate template,  String textColor,  double imageWidthPercent,  bool buttonEnabled,  String buttonText,  BannerActionType buttonAction)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( BannerTemplate template,  String textColor,  double imageWidthPercent,  bool buttonEnabled,  String buttonText,  String? buttonCategoryId)?  $default,) {final _that = this;
 switch (_that) {
 case _BannerTemplateSettings() when $default != null:
-return $default(_that.template,_that.textColor,_that.imageWidthPercent,_that.buttonEnabled,_that.buttonText,_that.buttonAction);case _:
+return $default(_that.template,_that.textColor,_that.imageWidthPercent,_that.buttonEnabled,_that.buttonText,_that.buttonCategoryId);case _:
   return null;
 
 }
@@ -211,7 +212,7 @@ return $default(_that.template,_that.textColor,_that.imageWidthPercent,_that.but
 
 
 class _BannerTemplateSettings extends BannerTemplateSettings {
-  const _BannerTemplateSettings({this.template = BannerTemplate.imageRight, this.textColor = '#FFFFFF', this.imageWidthPercent = 40.0, this.buttonEnabled = false, this.buttonText = 'Ver ofertas', this.buttonAction = BannerActionType.promotions}): super._();
+  const _BannerTemplateSettings({this.template = BannerTemplate.imageRight, this.textColor = '#FFFFFF', this.imageWidthPercent = 40.0, this.buttonEnabled = false, this.buttonText = 'Ver ofertas', this.buttonCategoryId}): super._();
   
 
 @override@JsonKey() final  BannerTemplate template;
@@ -219,7 +220,8 @@ class _BannerTemplateSettings extends BannerTemplateSettings {
 @override@JsonKey() final  double imageWidthPercent;
 @override@JsonKey() final  bool buttonEnabled;
 @override@JsonKey() final  String buttonText;
-@override@JsonKey() final  BannerActionType buttonAction;
+// Categoría de las ofertas a las que lleva el botón; null = todas.
+@override final  String? buttonCategoryId;
 
 /// Create a copy of BannerTemplateSettings
 /// with the given fields replaced by the non-null parameter values.
@@ -231,16 +233,16 @@ _$BannerTemplateSettingsCopyWith<_BannerTemplateSettings> get copyWith => __$Ban
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BannerTemplateSettings&&(identical(other.template, template) || other.template == template)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.imageWidthPercent, imageWidthPercent) || other.imageWidthPercent == imageWidthPercent)&&(identical(other.buttonEnabled, buttonEnabled) || other.buttonEnabled == buttonEnabled)&&(identical(other.buttonText, buttonText) || other.buttonText == buttonText)&&(identical(other.buttonAction, buttonAction) || other.buttonAction == buttonAction));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BannerTemplateSettings&&(identical(other.template, template) || other.template == template)&&(identical(other.textColor, textColor) || other.textColor == textColor)&&(identical(other.imageWidthPercent, imageWidthPercent) || other.imageWidthPercent == imageWidthPercent)&&(identical(other.buttonEnabled, buttonEnabled) || other.buttonEnabled == buttonEnabled)&&(identical(other.buttonText, buttonText) || other.buttonText == buttonText)&&(identical(other.buttonCategoryId, buttonCategoryId) || other.buttonCategoryId == buttonCategoryId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,template,textColor,imageWidthPercent,buttonEnabled,buttonText,buttonAction);
+int get hashCode => Object.hash(runtimeType,template,textColor,imageWidthPercent,buttonEnabled,buttonText,buttonCategoryId);
 
 @override
 String toString() {
-  return 'BannerTemplateSettings(template: $template, textColor: $textColor, imageWidthPercent: $imageWidthPercent, buttonEnabled: $buttonEnabled, buttonText: $buttonText, buttonAction: $buttonAction)';
+  return 'BannerTemplateSettings(template: $template, textColor: $textColor, imageWidthPercent: $imageWidthPercent, buttonEnabled: $buttonEnabled, buttonText: $buttonText, buttonCategoryId: $buttonCategoryId)';
 }
 
 
@@ -251,7 +253,7 @@ abstract mixin class _$BannerTemplateSettingsCopyWith<$Res> implements $BannerTe
   factory _$BannerTemplateSettingsCopyWith(_BannerTemplateSettings value, $Res Function(_BannerTemplateSettings) _then) = __$BannerTemplateSettingsCopyWithImpl;
 @override @useResult
 $Res call({
- BannerTemplate template, String textColor, double imageWidthPercent, bool buttonEnabled, String buttonText, BannerActionType buttonAction
+ BannerTemplate template, String textColor, double imageWidthPercent, bool buttonEnabled, String buttonText, String? buttonCategoryId
 });
 
 
@@ -268,15 +270,15 @@ class __$BannerTemplateSettingsCopyWithImpl<$Res>
 
 /// Create a copy of BannerTemplateSettings
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? template = null,Object? textColor = null,Object? imageWidthPercent = null,Object? buttonEnabled = null,Object? buttonText = null,Object? buttonAction = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? template = null,Object? textColor = null,Object? imageWidthPercent = null,Object? buttonEnabled = null,Object? buttonText = null,Object? buttonCategoryId = freezed,}) {
   return _then(_BannerTemplateSettings(
 template: null == template ? _self.template : template // ignore: cast_nullable_to_non_nullable
 as BannerTemplate,textColor: null == textColor ? _self.textColor : textColor // ignore: cast_nullable_to_non_nullable
 as String,imageWidthPercent: null == imageWidthPercent ? _self.imageWidthPercent : imageWidthPercent // ignore: cast_nullable_to_non_nullable
 as double,buttonEnabled: null == buttonEnabled ? _self.buttonEnabled : buttonEnabled // ignore: cast_nullable_to_non_nullable
 as bool,buttonText: null == buttonText ? _self.buttonText : buttonText // ignore: cast_nullable_to_non_nullable
-as String,buttonAction: null == buttonAction ? _self.buttonAction : buttonAction // ignore: cast_nullable_to_non_nullable
-as BannerActionType,
+as String,buttonCategoryId: freezed == buttonCategoryId ? _self.buttonCategoryId : buttonCategoryId // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

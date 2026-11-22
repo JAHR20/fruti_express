@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
+import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_offers_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/search_products_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_product_by_id_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/products/domain/use_cases/get_product_by_name_use_case.dart';
@@ -16,6 +17,7 @@ class CustomerProductsCubit extends Cubit<CustomerProductsState> {
   final SearchProductsUseCase _searchProductsUseCase;
   final GetProductsByBranchUseCase _getProductsByBranchUseCase;
   final WatchInventoryChangesUseCase _watchInventoryChangesUseCase;
+  final GetOffersUseCase _getOffersUseCase;
 
   CustomerProductsCubit({
     required GetProductByIdUseCase getProductByIdUseCase,
@@ -24,12 +26,14 @@ class CustomerProductsCubit extends Cubit<CustomerProductsState> {
     required SearchProductsUseCase searchProductsUseCase,
     required GetProductsByBranchUseCase getProductsByBranchUseCase,
     required WatchInventoryChangesUseCase watchInventoryChangesUseCase,
+    required GetOffersUseCase getOffersUseCase,
   }) : _getProductByIdUseCase = getProductByIdUseCase,
        _getProductByNameUseCase = getProductByNameUseCase,
        _getProductsByCategoryUseCase = getProductsByCategoryUseCase,
        _searchProductsUseCase = searchProductsUseCase,
        _getProductsByBranchUseCase = getProductsByBranchUseCase,
        _watchInventoryChangesUseCase = watchInventoryChangesUseCase,
+       _getOffersUseCase = getOffersUseCase,
        super(const CustomerProductsState());
 
   int _currentSearchId = 0;
@@ -38,13 +42,31 @@ class CustomerProductsCubit extends Cubit<CustomerProductsState> {
 
   Future<void> loadProductsByBranch(String branchId) async {
     _listenToInventoryRealtime(branchId);
-    emit(state.copyWith(isLoading: true, errorMessage: null, branchId: branchId,));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        errorMessage: null,
+        branchId: branchId,
+        isOffersMode: false,
+      ),
+    );
 
     final result = await _getProductsByBranchUseCase.execute(branchId).run();
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: translateFailure(failure))),
-      (products) => emit(state.copyWith(isLoading: false, products: products, errorMessage: null)),
+      (failure) => emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: translateFailure(failure),
+        ),
+      ),
+      (products) => emit(
+        state.copyWith(
+          isLoading: false,
+          products: products,
+          errorMessage: null,
+        ),
+      ),
     );
   }
 
@@ -53,7 +75,13 @@ class CustomerProductsCubit extends Cubit<CustomerProductsState> {
     final mySearchId = ++_currentSearchId;
 
     if (text.isEmpty) {
-      emit(state.copyWith(products: const [], errorMessage: null, isLoading: false));
+      emit(
+        state.copyWith(
+          products: const [],
+          errorMessage: null,
+          isLoading: false,
+        ),
+      );
       return;
     }
 
@@ -63,31 +91,79 @@ class CustomerProductsCubit extends Cubit<CustomerProductsState> {
     if (mySearchId != _currentSearchId) return;
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: translateFailure(failure))),
-      (products) => emit(state.copyWith(isLoading: false, products: products, errorMessage: null)),
+      (failure) => emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: translateFailure(failure),
+        ),
+      ),
+      (products) => emit(
+        state.copyWith(
+          isLoading: false,
+          products: products,
+          errorMessage: null,
+        ),
+      ),
     );
   }
 
-  Future<void> loadProductsByCategory(String categoryId, String branchId) async {
+  Future<void> loadProductsByCategory(
+    String categoryId,
+    String branchId,
+  ) async {
     _listenToInventoryRealtime(branchId);
-    emit(state.copyWith(isLoading: true, currentCategoryId: categoryId, errorMessage: null));
+    emit(
+      state.copyWith(
+        isLoading: true,
+        currentCategoryId: categoryId,
+        errorMessage: null,
+        isOffersMode: false,
+      ),
+    );
 
-    final result = await _getProductsByCategoryUseCase.execute(categoryId, branchId).run();
+    final result = await _getProductsByCategoryUseCase
+        .execute(categoryId, branchId)
+        .run();
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: translateFailure(failure))),
-      (products) => emit(state.copyWith(isLoading: false, products: products, currentCategoryId: categoryId, errorMessage: null)),
+      (failure) => emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: translateFailure(failure),
+        ),
+      ),
+      (products) => emit(
+        state.copyWith(
+          isLoading: false,
+          products: products,
+          currentCategoryId: categoryId,
+          errorMessage: null,
+        ),
+      ),
     );
   }
 
   Future<void> loadProductById(String id) async {
-    emit(state.copyWith(isLoading: true, productDetail: null, errorMessage: null));
+    emit(
+      state.copyWith(isLoading: true, productDetail: null, errorMessage: null),
+    );
 
     final result = await _getProductByIdUseCase.execute(id).run();
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: translateFailure(failure))),
-      (product) => emit(state.copyWith(isLoading: false, productDetail: product, errorMessage: null)),
+      (failure) => emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: translateFailure(failure),
+        ),
+      ),
+      (product) => emit(
+        state.copyWith(
+          isLoading: false,
+          productDetail: product,
+          errorMessage: null,
+        ),
+      ),
     );
   }
 
@@ -99,8 +175,20 @@ class CustomerProductsCubit extends Cubit<CustomerProductsState> {
     final result = await _getProductByNameUseCase.execute(text).run();
 
     result.fold(
-      (failure) => emit(state.copyWith(isLoading: false, errorMessage: translateFailure(failure))),
-      (product) => emit(state.copyWith(isLoading: false, products: [product], productDetail: product, errorMessage: null)),
+      (failure) => emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: translateFailure(failure),
+        ),
+      ),
+      (product) => emit(
+        state.copyWith(
+          isLoading: false,
+          products: [product],
+          productDetail: product,
+          errorMessage: null,
+        ),
+      ),
     );
   }
 
@@ -109,13 +197,51 @@ class CustomerProductsCubit extends Cubit<CustomerProductsState> {
     _listeningBranchId = branchId;
 
     _inventorySubscription?.cancel();
-    _inventorySubscription = _watchInventoryChangesUseCase.execute(branchId).listen((_) {
-      if (state.currentCategoryId != null) {
-        loadProductsByCategory(state.currentCategoryId!, branchId);
-      } else {
-        loadProductsByBranch(branchId);
-      }
-    });
+    _inventorySubscription = _watchInventoryChangesUseCase
+        .execute(branchId)
+        .listen((_) {
+          if (state.isOffersMode) {
+            loadOffers(branchId, categoryId: state.offersCategoryId);
+          } else if (state.currentCategoryId != null) {
+            loadProductsByCategory(state.currentCategoryId!, branchId);
+          } else {
+            loadProductsByBranch(branchId);
+          }
+        });
+  }
+
+  Future<void> loadOffers(String branchId, {String? categoryId}) async {
+    _listenToInventoryRealtime(branchId);
+    emit(
+      state.copyWith(
+        isLoading: true,
+        isOffersMode: true,
+        offersCategoryId: categoryId,
+        currentCategoryId: null,
+        errorMessage: null,
+      ),
+    );
+
+    final result = await _getOffersUseCase
+        .execute(branchId, categoryId: categoryId)
+        .run();
+
+    result.fold(
+      (failure) => emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: translateFailure(failure),
+        ),
+      ),
+      (offers) => emit(
+        state.copyWith(
+          isLoading: false,
+          products: offers.products,
+          offersCategoryUnavailable: offers.categoryUnavailable,
+          errorMessage: null,
+        ),
+      ),
+    );
   }
 
   @override

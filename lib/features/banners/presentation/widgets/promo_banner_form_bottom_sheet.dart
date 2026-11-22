@@ -16,10 +16,14 @@ import 'package:fruti_express_jahr_admin/features/banners/domain/entities/promo_
 import 'package:fruti_express_jahr_admin/features/banners/domain/services/banner_style_config_builder.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/widgets/banner_template_editor.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/widgets/promo_banner_renderer.dart';
+import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart';
 
 class PromoBannerFormBottomSheet extends StatefulWidget {
   final PromoBanner? bannerToEdit;
   final bool isSaving;
+
+  /// Categorías activas para elegir a dónde lleva el botón.
+  final List<Category> categories;
   final Function(
     String title,
     String discount,
@@ -34,6 +38,7 @@ class PromoBannerFormBottomSheet extends StatefulWidget {
   const PromoBannerFormBottomSheet({
     super.key,
     this.bannerToEdit,
+    this.categories = const [],
     required this.isSaving,
     required this.onSave,
   });
@@ -358,6 +363,7 @@ class _PromoBannerFormBottomSheetState
             BannerTemplateEditor(
               useTemplate: _useTemplate,
               settings: _settings,
+              categories: widget.categories,
               enabled: !widget.isSaving,
               onUseTemplateChanged: _setUseTemplate,
               onSettingsChanged: (settings) =>

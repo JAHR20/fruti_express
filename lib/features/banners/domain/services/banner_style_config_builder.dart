@@ -8,6 +8,7 @@ import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_template_settings.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_text_style_config.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_typography_config.dart';
+import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_action_type.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_background_type.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_font_weight.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_format.dart';
@@ -60,7 +61,9 @@ abstract final class BannerStyleConfigBuilder {
                 : (buttonText.length > 20 ? buttonText.substring(0, 20) : buttonText),
             textColor: '#0C700F',
             backgroundColor: '#FFFFFF',
-            actionType: settings.buttonAction,
+            // El botón siempre lleva a las ofertas; con categoría o de todas.
+            actionType: BannerActionType.promotions,
+            actionValue: settings.buttonCategoryId,
           ),
         ),
       },
