@@ -30,9 +30,7 @@ class ProductCard extends StatelessWidget {
 
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
         decoration: BoxDecoration(
           color: colorScheme.surface,
@@ -84,9 +82,9 @@ class ProductCard extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 2),
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
+                        padding: const EdgeInsets.fromLTRB(12, 6, 12, 16),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -100,7 +98,6 @@ class ProductCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 4),
                             Text(
                               product.measurementUnit.displayName,
                               style: TextStyle(
@@ -110,24 +107,34 @@ class ProductCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: 6),
                             if (!isOutOfStock)
                               Text(
                                 'Disp: ${product.measurementUnit.format(product.stock)}',
                                 style: TextStyle(
-                                  // Mantenemos verde como color semántico universal para disponibilidad
-                                  color: Colors.green.shade700,
+                                  color: colorScheme.primary,
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             const SizedBox(height: 8),
+                            if (product.hasDiscount)
+                              Text(
+                                CurrencyFormatter.format(
+                                  product.comparisonPrice!,
+                                ),
+                                style: TextStyle(
+                                  color: colorScheme.onSurfaceVariant,
+                                  fontSize: 12,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
                             Text(
                               CurrencyFormatter.format(
                                 product.currentPrice.toInt(),
                               ),
                               style: TextStyle(
-                                color: colorScheme.primary, // Unificado con el DetailBottomBar
+                                color: colorScheme.primary,
                                 fontWeight: FontWeight.w900,
                                 fontSize: 16,
                               ),
@@ -137,7 +144,42 @@ class ProductCard extends StatelessWidget {
                       ),
                     ],
                   ),
-      
+
+                  if (product.hasDiscount)
+                    Positioned(
+                      top: 10,
+                      right: -40,
+                      child: Transform.rotate(
+                        angle: 0.785398, // 45 grados
+                        child: Container(
+                          width: 120,
+                          padding: const EdgeInsets.symmetric(vertical: 1),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: colorScheme.error,
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorScheme.shadow.withValues(
+                                  alpha: 0.2,
+                                ),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            '-${product.discountPercentage}%',
+                            style: TextStyle(
+                              color: colorScheme.onError,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+
                   if (isOutOfStock)
                     Positioned(
                       top: 12,
@@ -188,23 +230,24 @@ class ProductCard extends StatelessWidget {
                             ? null
                             : () async {
                                 int finalQuantity = 1;
-      
+
                                 if (product.measurementUnit ==
                                     MeasurementUnit.gram) {
                                   final chosenGrams = await showDialog<int>(
                                     context: context,
-                                    builder: (context) => QuantitySelectorDialog(
-                                      productName: product.name,
-                                      pricePerKilo: product.currentPrice,
-                                    ),
+                                    builder: (context) =>
+                                        QuantitySelectorDialog(
+                                          productName: product.name,
+                                          pricePerKilo: product.currentPrice,
+                                        ),
                                   );
-      
+
                                   if (chosenGrams == null || chosenGrams <= 0) {
                                     return;
                                   }
                                   finalQuantity = chosenGrams;
                                 }
-      
+
                                 if (!context.mounted) return;
                                 final cartCubit = context.read<CartCubit>();
                                 final cartState = cartCubit.state;
@@ -212,12 +255,12 @@ class ProductCard extends StatelessWidget {
                                     cartState.branchId!.isNotEmpty
                                     ? cartState.branchId
                                     : branchId;
-      
+
                                 if (activeBranch == null ||
                                     activeBranch.isEmpty) {
                                   return;
                                 }
-      
+
                                 final newItem = CartItem(
                                   productId: product.id!,
                                   name: product.name,
@@ -227,16 +270,18 @@ class ProductCard extends StatelessWidget {
                                   measurementUnit: product.measurementUnit,
                                   branchId: activeBranch,
                                 );
-      
+
                                 final error = await cartCubit.addItem(newItem);
-      
+
                                 if (context.mounted) {
                                   if (error != null) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text(
                                           error,
-                                          style: TextStyle(color: colorScheme.onError),
+                                          style: TextStyle(
+                                            color: colorScheme.onError,
+                                          ),
                                         ),
                                         backgroundColor: colorScheme.error,
                                       ),
@@ -249,11 +294,13 @@ class ProductCard extends StatelessWidget {
                                                   MeasurementUnit.gram
                                               ? '${finalQuantity}g de ${product.name} agregados'
                                               : '${product.name} agregado al carrito',
-                                          style: const TextStyle(color: Colors.white),
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                         duration: const Duration(seconds: 1),
                                         // Verde semántico para éxito
-                                        backgroundColor: Colors.green.shade700, 
+                                        backgroundColor: Colors.green.shade700,
                                       ),
                                     );
                                   }

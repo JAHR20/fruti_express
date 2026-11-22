@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:fruti_express_jahr_admin/core/utils/currency_formatter.dart';
-import 'package:fruti_express_jahr_admin/features/products/domain/enums/measurement_unit.dart';
-// Asegúrate de importar tu archivo donde tengas el .format() de la unidad, 
-// o la extensión que estés usando para formatear cantidades con unidad.
 import 'package:fruti_express_jahr_admin/core/utils/unit_formatter.dart';
-import 'package:fruti_express_jahr_admin/features/products/presentation/utils/measurement_unit_extension.dart'; 
+import 'package:fruti_express_jahr_admin/features/products/domain/enums/measurement_unit.dart';
+import 'package:fruti_express_jahr_admin/features/products/presentation/utils/measurement_unit_extension.dart';
 
 class ProductInfoSection extends StatelessWidget {
   final String name;
   final String categoryName;
   final int price;
   final MeasurementUnit unit;
-  final int stock; // 👈 1. Añadimos el stock como parámetro requerido o opcional
+  final int stock;
+  final bool hasDiscount;
+  final int? comparisonPrice;
+  final int? discountPercentage;
   final String? description;
 
   const ProductInfoSection({
@@ -20,23 +21,45 @@ class ProductInfoSection extends StatelessWidget {
     required this.categoryName,
     required this.price,
     required this.unit,
-    required this.stock, // 👈 2. Requerido en el constructor
+    required this.stock,
+    required this.hasDiscount,
+    this.comparisonPrice,
+    this.discountPercentage,
     this.description,
   });
 
   @override
   Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
     final isAvailable = stock > 0;
     final stockFormatted = unit.format(stock);
+    final hasDescription = description != null && description!.trim().isNotEmpty;
 
     return Padding(
-      padding: const EdgeInsets.all(24.0),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ─── CATEGORÍA ───
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: colorScheme.secondaryContainer.withValues(alpha: 0.45),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              categoryName,
+              style: textTheme.labelMedium?.copyWith(
+                color: colorScheme.onSecondaryContainer,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+
+          // ─── TÍTULO + DISPONIBLES (IZQUIERDA) / PRECIO (DERECHA) ───
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
@@ -45,95 +68,180 @@ class ProductInfoSection extends StatelessWidget {
                   children: [
                     Text(
                       name,
-                      style: TextStyle(
-                        fontSize: 24,
+                      style: textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: colorScheme.onSurface,
+                        height: 1.2,
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      categoryName,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
+                    const SizedBox(height: 8),
+                    _StockBadge(
+                      isAvailable: isAvailable,
+                      stockFormatted: stockFormatted,
                     ),
                   ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    CurrencyFormatter.format(price),
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary.withValues(alpha: 0.9), 
-                    ),
-                  ),
-                  Text(
-                    unit.displayName,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+              const SizedBox(width: 16),
+              _PriceBlock(
+                price: price,
+                unitLabel: unit.displayName,
+                hasDiscount: hasDiscount,
+                comparisonPrice: comparisonPrice,
+                discountPercentage: discountPercentage,
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          
-          // 👇 3. Indicador de Stock integrado limpiamente en su propia sección de info
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(
-              color: isAvailable 
-                  ? Colors.green.withValues(alpha: 0.1) 
-                  : Colors.red.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  isAvailable ? Icons.inventory_2_outlined : Icons.remove_shopping_cart_outlined,
-                  size: 16,
-                  color: isAvailable ? colorScheme.primary : colorScheme.error,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  isAvailable ? 'Disponibles: $stockFormatted' : 'Agotado en esta sucursal',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: isAvailable ? colorScheme.primary : colorScheme.error,
-                  ),
-                ),
-              ],
-            ),
-          ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
+          Divider(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+          const SizedBox(height: 16),
+
+          // ─── DESCRIPCIÓN ───
           Text(
             'Descripción',
-            style: TextStyle(
-              fontSize: 18,
+            style: textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            description != null && description!.isNotEmpty
-                ? description!
-                : 'Sin descripción disponible.',
-            style: TextStyle(
-              fontSize: 14,
-              color: colorScheme.onSurfaceVariant,
-              height: 1.5,
+            hasDescription ? description!.trim() : 'Sin descripción disponible.',
+            style: textTheme.bodyMedium?.copyWith(
+              color: hasDescription
+                  ? colorScheme.onSurfaceVariant
+                  : colorScheme.outline,
+              fontStyle: hasDescription ? FontStyle.normal : FontStyle.italic,
+              height: 1.55,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PriceBlock extends StatelessWidget {
+  final int price;
+  final String unitLabel;
+  final bool hasDiscount;
+  final int? comparisonPrice;
+  final int? discountPercentage;
+
+  const _PriceBlock({
+    required this.price,
+    required this.unitLabel,
+    required this.hasDiscount,
+    this.comparisonPrice,
+    this.discountPercentage,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (hasDiscount && (comparisonPrice != null || discountPercentage != null)) ...[
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (discountPercentage != null) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: colorScheme.tertiaryContainer,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    '-$discountPercentage%',
+                    style: textTheme.labelSmall?.copyWith(
+                      color: colorScheme.onTertiaryContainer,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                if (comparisonPrice != null) const SizedBox(width: 6),
+              ],
+              if (comparisonPrice != null)
+                Text(
+                  CurrencyFormatter.format(comparisonPrice!),
+                  style: textTheme.bodyMedium?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                    decoration: TextDecoration.lineThrough,
+                    decorationColor: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 2),
+        ],
+        Text(
+          CurrencyFormatter.format(price),
+          style: textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.primary,
+            height: 1.1,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          'por $unitLabel',
+          style: textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _StockBadge extends StatelessWidget {
+  final bool isAvailable;
+  final String stockFormatted;
+
+  const _StockBadge({
+    required this.isAvailable,
+    required this.stockFormatted,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    final colorScheme = Theme.of(context).colorScheme;
+
+    final fgColor = isAvailable
+        ? colorScheme.primary
+        : colorScheme.onErrorContainer;
+    final bgColor = isAvailable
+        ? colorScheme.primaryContainer.withValues(alpha: 0.15)
+        : colorScheme.errorContainer.withValues(alpha: 0.7);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            isAvailable
+                ? Icons.inventory_2_outlined
+                : Icons.remove_shopping_cart_outlined,
+            size: 14,
+            color: fgColor,
+          ),
+          const SizedBox(width: 5),
+          Text(
+            isAvailable ? 'Disponibles: $stockFormatted' : 'Agotado',
+            style: textTheme.labelMedium?.copyWith(
+              color: fgColor,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
