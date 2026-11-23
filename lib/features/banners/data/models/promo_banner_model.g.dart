@@ -23,6 +23,12 @@ _PromoBannerModel _$PromoBannerModelFromJson(Map<String, dynamic> json) =>
       isActive: json['is_active'] as bool,
       sortOrder: (json['display_order'] as num).toInt(),
       createdAt: DateTime.parse(json['created_at'] as String),
+      startsAt: json['starts_at'] == null
+          ? null
+          : DateTime.parse(json['starts_at'] as String),
+      endsAt: json['ends_at'] == null
+          ? null
+          : DateTime.parse(json['ends_at'] as String),
     );
 
 Map<String, dynamic> _$PromoBannerModelToJson(_PromoBannerModel instance) =>
@@ -34,8 +40,10 @@ Map<String, dynamic> _$PromoBannerModelToJson(_PromoBannerModel instance) =>
       'start_color': instance.startColor,
       'end_color': instance.endColor,
       'image_url': instance.imageUrl,
-      'style_config': instance.styleConfig,
+      'style_config': instance.styleConfig?.toJson(),
       'is_active': instance.isActive,
       'display_order': instance.sortOrder,
       'created_at': instance.createdAt.toIso8601String(),
+      'starts_at': instance.startsAt?.toIso8601String(),
+      'ends_at': instance.endsAt?.toIso8601String(),
     };

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$PromoBannerModel {
 
- String get id;@JsonKey(name: 'title') String get title;@JsonKey(name: 'discount') String get discount;@JsonKey(name: 'subtitle') String get subtitle;@JsonKey(name: 'start_color') String get startColor;@JsonKey(name: 'end_color') String get endColor;@JsonKey(name: 'image_url') String? get imageUrl;@JsonKey(name: 'style_config') BannerStyleConfigModel? get styleConfig;@JsonKey(name: 'is_active') bool get isActive;@JsonKey(name: 'display_order') int get sortOrder;@JsonKey(name: 'created_at') DateTime get createdAt;
+ String get id;@JsonKey(name: 'title') String get title;@JsonKey(name: 'discount') String get discount;@JsonKey(name: 'subtitle') String get subtitle;@JsonKey(name: 'start_color') String get startColor;@JsonKey(name: 'end_color') String get endColor;@JsonKey(name: 'image_url') String? get imageUrl;@JsonKey(name: 'style_config') BannerStyleConfigModel? get styleConfig;@JsonKey(name: 'is_active') bool get isActive;@JsonKey(name: 'display_order') int get sortOrder;@JsonKey(name: 'created_at') DateTime get createdAt;@JsonKey(name: 'starts_at') DateTime? get startsAt;@JsonKey(name: 'ends_at') DateTime? get endsAt;
 /// Create a copy of PromoBannerModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $PromoBannerModelCopyWith<PromoBannerModel> get copyWith => _$PromoBannerModelCo
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PromoBannerModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.discount, discount) || other.discount == discount)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.startColor, startColor) || other.startColor == startColor)&&(identical(other.endColor, endColor) || other.endColor == endColor)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.styleConfig, styleConfig) || other.styleConfig == styleConfig)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PromoBannerModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.discount, discount) || other.discount == discount)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.startColor, startColor) || other.startColor == startColor)&&(identical(other.endColor, endColor) || other.endColor == endColor)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.styleConfig, styleConfig) || other.styleConfig == styleConfig)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.startsAt, startsAt) || other.startsAt == startsAt)&&(identical(other.endsAt, endsAt) || other.endsAt == endsAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,discount,subtitle,startColor,endColor,imageUrl,styleConfig,isActive,sortOrder,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,discount,subtitle,startColor,endColor,imageUrl,styleConfig,isActive,sortOrder,createdAt,startsAt,endsAt);
 
 @override
 String toString() {
-  return 'PromoBannerModel(id: $id, title: $title, discount: $discount, subtitle: $subtitle, startColor: $startColor, endColor: $endColor, imageUrl: $imageUrl, styleConfig: $styleConfig, isActive: $isActive, sortOrder: $sortOrder, createdAt: $createdAt)';
+  return 'PromoBannerModel(id: $id, title: $title, discount: $discount, subtitle: $subtitle, startColor: $startColor, endColor: $endColor, imageUrl: $imageUrl, styleConfig: $styleConfig, isActive: $isActive, sortOrder: $sortOrder, createdAt: $createdAt, startsAt: $startsAt, endsAt: $endsAt)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $PromoBannerModelCopyWith<$Res>  {
   factory $PromoBannerModelCopyWith(PromoBannerModel value, $Res Function(PromoBannerModel) _then) = _$PromoBannerModelCopyWithImpl;
 @useResult
 $Res call({
- String id,@JsonKey(name: 'title') String title,@JsonKey(name: 'discount') String discount,@JsonKey(name: 'subtitle') String subtitle,@JsonKey(name: 'start_color') String startColor,@JsonKey(name: 'end_color') String endColor,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'style_config') BannerStyleConfigModel? styleConfig,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'display_order') int sortOrder,@JsonKey(name: 'created_at') DateTime createdAt
+ String id,@JsonKey(name: 'title') String title,@JsonKey(name: 'discount') String discount,@JsonKey(name: 'subtitle') String subtitle,@JsonKey(name: 'start_color') String startColor,@JsonKey(name: 'end_color') String endColor,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'style_config') BannerStyleConfigModel? styleConfig,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'display_order') int sortOrder,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'starts_at') DateTime? startsAt,@JsonKey(name: 'ends_at') DateTime? endsAt
 });
 
 
@@ -65,7 +65,7 @@ class _$PromoBannerModelCopyWithImpl<$Res>
 
 /// Create a copy of PromoBannerModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? discount = null,Object? subtitle = null,Object? startColor = null,Object? endColor = null,Object? imageUrl = freezed,Object? styleConfig = freezed,Object? isActive = null,Object? sortOrder = null,Object? createdAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? discount = null,Object? subtitle = null,Object? startColor = null,Object? endColor = null,Object? imageUrl = freezed,Object? styleConfig = freezed,Object? isActive = null,Object? sortOrder = null,Object? createdAt = null,Object? startsAt = freezed,Object? endsAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -78,7 +78,9 @@ as String?,styleConfig: freezed == styleConfig ? _self.styleConfig : styleConfig
 as BannerStyleConfigModel?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,startsAt: freezed == startsAt ? _self.startsAt : startsAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,endsAt: freezed == endsAt ? _self.endsAt : endsAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 /// Create a copy of PromoBannerModel
@@ -175,10 +177,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'title')  String title, @JsonKey(name: 'discount')  String discount, @JsonKey(name: 'subtitle')  String subtitle, @JsonKey(name: 'start_color')  String startColor, @JsonKey(name: 'end_color')  String endColor, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'style_config')  BannerStyleConfigModel? styleConfig, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'display_order')  int sortOrder, @JsonKey(name: 'created_at')  DateTime createdAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'title')  String title, @JsonKey(name: 'discount')  String discount, @JsonKey(name: 'subtitle')  String subtitle, @JsonKey(name: 'start_color')  String startColor, @JsonKey(name: 'end_color')  String endColor, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'style_config')  BannerStyleConfigModel? styleConfig, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'display_order')  int sortOrder, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'starts_at')  DateTime? startsAt, @JsonKey(name: 'ends_at')  DateTime? endsAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _PromoBannerModel() when $default != null:
-return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.styleConfig,_that.isActive,_that.sortOrder,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.styleConfig,_that.isActive,_that.sortOrder,_that.createdAt,_that.startsAt,_that.endsAt);case _:
   return orElse();
 
 }
@@ -196,10 +198,10 @@ return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startCo
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'title')  String title, @JsonKey(name: 'discount')  String discount, @JsonKey(name: 'subtitle')  String subtitle, @JsonKey(name: 'start_color')  String startColor, @JsonKey(name: 'end_color')  String endColor, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'style_config')  BannerStyleConfigModel? styleConfig, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'display_order')  int sortOrder, @JsonKey(name: 'created_at')  DateTime createdAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id, @JsonKey(name: 'title')  String title, @JsonKey(name: 'discount')  String discount, @JsonKey(name: 'subtitle')  String subtitle, @JsonKey(name: 'start_color')  String startColor, @JsonKey(name: 'end_color')  String endColor, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'style_config')  BannerStyleConfigModel? styleConfig, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'display_order')  int sortOrder, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'starts_at')  DateTime? startsAt, @JsonKey(name: 'ends_at')  DateTime? endsAt)  $default,) {final _that = this;
 switch (_that) {
 case _PromoBannerModel():
-return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.styleConfig,_that.isActive,_that.sortOrder,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.styleConfig,_that.isActive,_that.sortOrder,_that.createdAt,_that.startsAt,_that.endsAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -216,10 +218,10 @@ return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startCo
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'title')  String title, @JsonKey(name: 'discount')  String discount, @JsonKey(name: 'subtitle')  String subtitle, @JsonKey(name: 'start_color')  String startColor, @JsonKey(name: 'end_color')  String endColor, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'style_config')  BannerStyleConfigModel? styleConfig, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'display_order')  int sortOrder, @JsonKey(name: 'created_at')  DateTime createdAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id, @JsonKey(name: 'title')  String title, @JsonKey(name: 'discount')  String discount, @JsonKey(name: 'subtitle')  String subtitle, @JsonKey(name: 'start_color')  String startColor, @JsonKey(name: 'end_color')  String endColor, @JsonKey(name: 'image_url')  String? imageUrl, @JsonKey(name: 'style_config')  BannerStyleConfigModel? styleConfig, @JsonKey(name: 'is_active')  bool isActive, @JsonKey(name: 'display_order')  int sortOrder, @JsonKey(name: 'created_at')  DateTime createdAt, @JsonKey(name: 'starts_at')  DateTime? startsAt, @JsonKey(name: 'ends_at')  DateTime? endsAt)?  $default,) {final _that = this;
 switch (_that) {
 case _PromoBannerModel() when $default != null:
-return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.styleConfig,_that.isActive,_that.sortOrder,_that.createdAt);case _:
+return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startColor,_that.endColor,_that.imageUrl,_that.styleConfig,_that.isActive,_that.sortOrder,_that.createdAt,_that.startsAt,_that.endsAt);case _:
   return null;
 
 }
@@ -228,10 +230,10 @@ return $default(_that.id,_that.title,_that.discount,_that.subtitle,_that.startCo
 }
 
 /// @nodoc
-@JsonSerializable()
 
+@JsonSerializable(explicitToJson: true)
 class _PromoBannerModel implements PromoBannerModel {
-  const _PromoBannerModel({required this.id, @JsonKey(name: 'title') required this.title, @JsonKey(name: 'discount') required this.discount, @JsonKey(name: 'subtitle') required this.subtitle, @JsonKey(name: 'start_color') required this.startColor, @JsonKey(name: 'end_color') required this.endColor, @JsonKey(name: 'image_url') this.imageUrl, @JsonKey(name: 'style_config') this.styleConfig, @JsonKey(name: 'is_active') required this.isActive, @JsonKey(name: 'display_order') required this.sortOrder, @JsonKey(name: 'created_at') required this.createdAt});
+  const _PromoBannerModel({required this.id, @JsonKey(name: 'title') required this.title, @JsonKey(name: 'discount') required this.discount, @JsonKey(name: 'subtitle') required this.subtitle, @JsonKey(name: 'start_color') required this.startColor, @JsonKey(name: 'end_color') required this.endColor, @JsonKey(name: 'image_url') this.imageUrl, @JsonKey(name: 'style_config') this.styleConfig, @JsonKey(name: 'is_active') required this.isActive, @JsonKey(name: 'display_order') required this.sortOrder, @JsonKey(name: 'created_at') required this.createdAt, @JsonKey(name: 'starts_at') this.startsAt, @JsonKey(name: 'ends_at') this.endsAt});
   factory _PromoBannerModel.fromJson(Map<String, dynamic> json) => _$PromoBannerModelFromJson(json);
 
 @override final  String id;
@@ -245,6 +247,8 @@ class _PromoBannerModel implements PromoBannerModel {
 @override@JsonKey(name: 'is_active') final  bool isActive;
 @override@JsonKey(name: 'display_order') final  int sortOrder;
 @override@JsonKey(name: 'created_at') final  DateTime createdAt;
+@override@JsonKey(name: 'starts_at') final  DateTime? startsAt;
+@override@JsonKey(name: 'ends_at') final  DateTime? endsAt;
 
 /// Create a copy of PromoBannerModel
 /// with the given fields replaced by the non-null parameter values.
@@ -259,16 +263,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PromoBannerModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.discount, discount) || other.discount == discount)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.startColor, startColor) || other.startColor == startColor)&&(identical(other.endColor, endColor) || other.endColor == endColor)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.styleConfig, styleConfig) || other.styleConfig == styleConfig)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PromoBannerModel&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.discount, discount) || other.discount == discount)&&(identical(other.subtitle, subtitle) || other.subtitle == subtitle)&&(identical(other.startColor, startColor) || other.startColor == startColor)&&(identical(other.endColor, endColor) || other.endColor == endColor)&&(identical(other.imageUrl, imageUrl) || other.imageUrl == imageUrl)&&(identical(other.styleConfig, styleConfig) || other.styleConfig == styleConfig)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.startsAt, startsAt) || other.startsAt == startsAt)&&(identical(other.endsAt, endsAt) || other.endsAt == endsAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,title,discount,subtitle,startColor,endColor,imageUrl,styleConfig,isActive,sortOrder,createdAt);
+int get hashCode => Object.hash(runtimeType,id,title,discount,subtitle,startColor,endColor,imageUrl,styleConfig,isActive,sortOrder,createdAt,startsAt,endsAt);
 
 @override
 String toString() {
-  return 'PromoBannerModel(id: $id, title: $title, discount: $discount, subtitle: $subtitle, startColor: $startColor, endColor: $endColor, imageUrl: $imageUrl, styleConfig: $styleConfig, isActive: $isActive, sortOrder: $sortOrder, createdAt: $createdAt)';
+  return 'PromoBannerModel(id: $id, title: $title, discount: $discount, subtitle: $subtitle, startColor: $startColor, endColor: $endColor, imageUrl: $imageUrl, styleConfig: $styleConfig, isActive: $isActive, sortOrder: $sortOrder, createdAt: $createdAt, startsAt: $startsAt, endsAt: $endsAt)';
 }
 
 
@@ -279,7 +283,7 @@ abstract mixin class _$PromoBannerModelCopyWith<$Res> implements $PromoBannerMod
   factory _$PromoBannerModelCopyWith(_PromoBannerModel value, $Res Function(_PromoBannerModel) _then) = __$PromoBannerModelCopyWithImpl;
 @override @useResult
 $Res call({
- String id,@JsonKey(name: 'title') String title,@JsonKey(name: 'discount') String discount,@JsonKey(name: 'subtitle') String subtitle,@JsonKey(name: 'start_color') String startColor,@JsonKey(name: 'end_color') String endColor,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'style_config') BannerStyleConfigModel? styleConfig,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'display_order') int sortOrder,@JsonKey(name: 'created_at') DateTime createdAt
+ String id,@JsonKey(name: 'title') String title,@JsonKey(name: 'discount') String discount,@JsonKey(name: 'subtitle') String subtitle,@JsonKey(name: 'start_color') String startColor,@JsonKey(name: 'end_color') String endColor,@JsonKey(name: 'image_url') String? imageUrl,@JsonKey(name: 'style_config') BannerStyleConfigModel? styleConfig,@JsonKey(name: 'is_active') bool isActive,@JsonKey(name: 'display_order') int sortOrder,@JsonKey(name: 'created_at') DateTime createdAt,@JsonKey(name: 'starts_at') DateTime? startsAt,@JsonKey(name: 'ends_at') DateTime? endsAt
 });
 
 
@@ -296,7 +300,7 @@ class __$PromoBannerModelCopyWithImpl<$Res>
 
 /// Create a copy of PromoBannerModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? discount = null,Object? subtitle = null,Object? startColor = null,Object? endColor = null,Object? imageUrl = freezed,Object? styleConfig = freezed,Object? isActive = null,Object? sortOrder = null,Object? createdAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? discount = null,Object? subtitle = null,Object? startColor = null,Object? endColor = null,Object? imageUrl = freezed,Object? styleConfig = freezed,Object? isActive = null,Object? sortOrder = null,Object? createdAt = null,Object? startsAt = freezed,Object? endsAt = freezed,}) {
   return _then(_PromoBannerModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -309,7 +313,9 @@ as String?,styleConfig: freezed == styleConfig ? _self.styleConfig : styleConfig
 as BannerStyleConfigModel?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as int,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
-as DateTime,
+as DateTime,startsAt: freezed == startsAt ? _self.startsAt : startsAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,endsAt: freezed == endsAt ? _self.endsAt : endsAt // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

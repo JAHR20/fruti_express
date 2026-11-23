@@ -14,6 +14,7 @@ import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner_template_settings.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/entities/promo_banner.dart';
 import 'package:fruti_express_jahr_admin/features/banners/domain/services/banner_style_config_builder.dart';
+import 'package:fruti_express_jahr_admin/features/banners/presentation/utils/banner_date_format.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/widgets/banner_template_editor.dart';
 import 'package:fruti_express_jahr_admin/features/banners/presentation/widgets/promo_banner_renderer.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart';
@@ -33,6 +34,8 @@ class PromoBannerFormBottomSheet extends StatefulWidget {
     int sortOrder,
     File? image,
     BannerStyleConfig? styleConfig,
+    DateTime? startsAt,
+    DateTime? endsAt,
   ) onSave;
 
   const PromoBannerFormBottomSheet({
@@ -59,8 +62,14 @@ class _PromoBannerFormBottomSheetState
   late Color _startColor;
   late Color _endColor;
 
+  // Plantilla: null en el banner = diseño clásico.
   late bool _useTemplate;
   late BannerTemplateSettings _settings;
+
+  // Programación (hora local; null = sin límite).
+  DateTime? _startsAt;
+  DateTime? _endsAt;
+  String? _scheduleError;
 
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
@@ -80,6 +89,9 @@ class _PromoBannerFormBottomSheetState
 
     _useTemplate = b?.styleConfig != null;
     _settings = BannerTemplateSettings.fromConfig(b?.styleConfig);
+
+    _startsAt = b?.startsAt?.toLocal();
+    _endsAt = b?.endsAt?.toLocal();
   }
 
   @override
@@ -142,6 +154,83 @@ class _PromoBannerFormBottomSheetState
       sortOrder: int.tryParse(_sortOrderCtrl.text.trim()) ?? 0,
       createdAt: b?.createdAt ?? DateTime.now(),
       styleConfig: _buildStyleConfig(),
+      startsAt: _startsAt,
+      endsAt: _endsAt,
+    );
+  }
+
+  Future<void> _pickDateTime({required bool isStart}) async {
+    final now = DateTime.now();
+    final current = isStart ? _startsAt : _endsAt;
+
+    final date = await showDatePicker(
+      context: context,
+      initialDate: current ?? now,
+      firstDate: DateTime(now.year - 1),
+      lastDate: DateTime(now.year + 3),
+    );
+    if (date == null || !mounted) return;
+
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(current ?? now),
+    );
+    if (time == null || !mounted) return;
+
+    final picked = DateTime(date.year, date.month, date.day, time.hour, time.minute);
+    setState(() {
+      if (isStart) {
+        _startsAt = picked;
+      } else {
+        _endsAt = picked;
+      }
+      _scheduleError = null;
+    });
+  }
+
+  Widget _scheduleTile({
+    required String label,
+    required DateTime? value,
+    required String emptyText,
+    required VoidCallback? onTap,
+    required VoidCallback? onClear,
+  }) {
+    final colors = Theme.of(context).colorScheme;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        decoration: BoxDecoration(
+          border: Border.all(color: colors.outline),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.event_outlined, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label, style: const TextStyle(fontSize: 12)),
+                  Text(
+                    value == null ? emptyText : formatBannerDate(value),
+                    style: const TextStyle(fontWeight: FontWeight.w500),
+                  ),
+                ],
+              ),
+            ),
+            if (value != null)
+              IconButton(
+                icon: const Icon(Icons.close),
+                tooltip: 'Quitar',
+                onPressed: onClear,
+              ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -202,18 +291,30 @@ class _PromoBannerFormBottomSheetState
   }
 
   void _submit() {
-    if (_formKey.currentState!.validate()) {
-      widget.onSave(
-        _titleCtrl.text.trim(),
-        _discountCtrl.text.trim(),
-        _subtitleCtrl.text.trim(),
-        _colorToHex(_startColor),
-        _colorToHex(_endColor),
-        int.tryParse(_sortOrderCtrl.text.trim()) ?? 0,
-        _selectedImage,
-        _buildStyleConfig(),
-      );
+    if (!_formKey.currentState!.validate()) return;
+
+    final start = _startsAt;
+    final end = _endsAt;
+    if (start != null && end != null && !end.isAfter(start)) {
+      setState(() {
+        _scheduleError = 'La fecha de fin debe ser posterior a la de inicio';
+      });
+      return;
     }
+
+    widget.onSave(
+      _titleCtrl.text.trim(),
+      _discountCtrl.text.trim(),
+      _subtitleCtrl.text.trim(),
+      _colorToHex(_startColor),
+      _colorToHex(_endColor),
+      int.tryParse(_sortOrderCtrl.text.trim()) ?? 0,
+      _selectedImage,
+      _buildStyleConfig(),
+      // Siempre en UTC (el modelo también lo asegura).
+      start?.toUtc(),
+      end?.toUtc(),
+    );
   }
 
   @override
@@ -368,6 +469,51 @@ class _PromoBannerFormBottomSheetState
               onSettingsChanged: (settings) =>
                   setState(() => _settings = settings),
             ),
+            const SizedBox(height: 16),
+
+            const Text(
+              'Programación (opcional)',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Si la dejas vacía, el banner se muestra mientras esté activo. '
+              'El interruptor "Visible" siempre manda sobre las fechas.',
+              style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant),
+            ),
+            const SizedBox(height: 8),
+            _scheduleTile(
+              label: 'Se muestra desde',
+              value: _startsAt,
+              emptyText: 'Desde ahora',
+              onTap: widget.isSaving ? null : () => _pickDateTime(isStart: true),
+              onClear: widget.isSaving
+                  ? null
+                  : () => setState(() {
+                      _startsAt = null;
+                      _scheduleError = null;
+                    }),
+            ),
+            const SizedBox(height: 8),
+            _scheduleTile(
+              label: 'Hasta',
+              value: _endsAt,
+              emptyText: 'Sin vencimiento',
+              onTap: widget.isSaving ? null : () => _pickDateTime(isStart: false),
+              onClear: widget.isSaving
+                  ? null
+                  : () => setState(() {
+                      _endsAt = null;
+                      _scheduleError = null;
+                    }),
+            ),
+            if (_scheduleError != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                _scheduleError!,
+                style: TextStyle(color: colors.error, fontSize: 12),
+              ),
+            ],
             const SizedBox(height: 16),
 
             const Text(

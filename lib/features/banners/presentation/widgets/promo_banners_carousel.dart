@@ -51,7 +51,10 @@ class PromoBannersCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PromoBannerCubit, PromoBannerState>(
       builder: (context, state) {
-        final activeBanners = state.banners.where((b) => b.isActive).toList();
+        final now = DateTime.now();
+        final activeBanners = state.banners
+            .where((b) => b.isVisibleAt(now))
+            .toList();
 
         if (activeBanners.isEmpty) return const SizedBox.shrink();
 

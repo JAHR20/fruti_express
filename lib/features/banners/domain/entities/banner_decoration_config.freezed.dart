@@ -14,8 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$BannerDecorationConfig {
 
- String get id; BannerDecorationType get type; String get color; double get opacity; double get widthPercent; double get heightPercent;// Posición relativa al contenedor: 0 a 100.
- double get positionX; double get positionY; double get rotation; int get zIndex; bool get visible;
+ String get id; BannerDecorationType get type; String get color; double get opacity; double get widthPercent; double get heightPercent; double get positionX; double get positionY; double get rotation; int get zIndex; bool get visible;
 /// Create a copy of BannerDecorationConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -226,7 +225,6 @@ class _BannerDecorationConfig implements BannerDecorationConfig {
 @override@JsonKey() final  double opacity;
 @override@JsonKey() final  double widthPercent;
 @override@JsonKey() final  double heightPercent;
-// Posición relativa al contenedor: 0 a 100.
 @override@JsonKey() final  double positionX;
 @override@JsonKey() final  double positionY;
 @override@JsonKey() final  double rotation;

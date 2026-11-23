@@ -15,10 +15,7 @@ T _$identity<T>(T value) => value;
 mixin _$BannerLayoutConfig {
 
 // Espaciado interior.
- double get paddingTop; double get paddingRight; double get paddingBottom; double get paddingLeft;// Separación entre elementos.
- double get elementSpacing;// Alineación del contenido.
- BannerTextAlignment get horizontalAlignment; BannerVerticalAlignment get verticalAlignment;// Desplazamiento del contenido.
- double get offsetX; double get offsetY;
+ double get paddingTop; double get paddingRight; double get paddingBottom; double get paddingLeft; double get elementSpacing; BannerTextAlignment get horizontalAlignment; BannerVerticalAlignment get verticalAlignment; double get offsetX; double get offsetY;
 /// Create a copy of BannerLayoutConfig
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -226,12 +223,9 @@ class _BannerLayoutConfig implements BannerLayoutConfig {
 @override@JsonKey() final  double paddingRight;
 @override@JsonKey() final  double paddingBottom;
 @override@JsonKey() final  double paddingLeft;
-// Separación entre elementos.
 @override@JsonKey() final  double elementSpacing;
-// Alineación del contenido.
 @override@JsonKey() final  BannerTextAlignment horizontalAlignment;
 @override@JsonKey() final  BannerVerticalAlignment verticalAlignment;
-// Desplazamiento del contenido.
 @override@JsonKey() final  double offsetX;
 @override@JsonKey() final  double offsetY;
 
