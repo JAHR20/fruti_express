@@ -84,7 +84,9 @@ class _CustomerHomeViewState extends State<CustomerHomeView> {
                   branch.id,
                 );
                 if (!wasAutomatic) {
-                  ScaffoldMessenger.of(context).showSnackBar(
+                  final messenger = ScaffoldMessenger.of(context);
+                  messenger.clearSnackBars();
+                  messenger.showSnackBar(
                     SnackBar(
                       content: const Text('Ubicación actualizada'),
                       backgroundColor: colorScheme.primary,
@@ -94,6 +96,24 @@ class _CustomerHomeViewState extends State<CustomerHomeView> {
               },
               outOfCoverage: (address) {
                 _showPickUpModal(context, address);
+              },
+              failure: (address, message) {
+                final messenger = ScaffoldMessenger.of(context);
+                messenger.clearSnackBars();
+                messenger.showSnackBar(
+                  SnackBar(
+                    content: Text(message),
+                    backgroundColor: colorScheme.error,
+                    duration: const Duration(seconds: 8),
+                    action: SnackBarAction(
+                      label: 'Reintentar',
+                      textColor: colorScheme.onError,
+                      onPressed: () => context
+                          .read<CustomerCoordinatorCubit>()
+                          .changeAddressManually(address),
+                    ),
+                  ),
+                );
               },
               orElse: () {},
             );

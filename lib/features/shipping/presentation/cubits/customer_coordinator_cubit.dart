@@ -1,7 +1,7 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/core/enums/delivery_method.dart';
+import 'package:fruti_express_jahr_admin/core/utils/failure_translator.dart';
 import 'package:fruti_express_jahr_admin/features/cart/presentation/cubits/cart_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/delivery_preferences/domain/use_cases/get_selected_address_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/delivery_preferences/domain/use_cases/save_selected_address_use_case.dart';
@@ -33,6 +33,7 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
 
   bool _autoSelectionMade = false;
   bool _isRevalidatingBranch = false;
+  int _validationId = 0;
 
   CustomerCoordinatorCubit({
     required CartCubit cartCubit,
@@ -172,33 +173,36 @@ class CustomerCoordinatorCubit extends Cubit<CustomerCoordinatorState> {
     required Address address,
     required bool isAutomatic,
   }) async {
+    final requestId = ++_validationId;
     final branches = _branchCubit.state.branches;
     final configs = _customerShippingCubit.state.configs;
 
-    debugPrint(
-      'branches=${branches.length} configs=${configs.length} '
-      'dir=${address.latitude},${address.longitude},${address.zipCode}',
-    );
-
-    if (branches.isEmpty) return;
+    if (branches.isEmpty) {
+      emit(const CustomerCoordinatorState.idle());
+      return;
+    }
 
     final result = await _findCoveringBranchUseCase
         .execute(address: address)
         .run();
-    final List<CoveringBranch>? covering = result.fold(
-      (failure) {
-        return null;
-      },
-      (list) {
-        return list;
-      },
-    );
+    if (isClosed || requestId != _validationId) return;
+    String? failureMessage;
+    final List<CoveringBranch>? covering = result.fold((failure) {
+      failureMessage = translateFailure(failure);
+      return null;
+    }, (list) => list);
 
     if (covering == null) {
+      emit(
+        CustomerCoordinatorState.failure(
+          address,
+          failureMessage ?? 'No pudimos buscar una sucursal. Intenta de nuevo.',
+        ),
+      );
       emit(const CustomerCoordinatorState.idle());
       return;
     }
-    
+
     Branch? winningBranch;
     CoveringBranch? winningOffer;
 

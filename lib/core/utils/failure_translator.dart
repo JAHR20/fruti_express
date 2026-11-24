@@ -130,13 +130,18 @@ String translateFailure(Failure failure) {
       return 'Se requiere una sucursal para cargar el dashboard';
     case FailureCode.branchNotFound:
       return 'La sucursal no existe o no fue encontrada.';
+    case FailureCode.branchNotAvailable:
+      return 'Esta sucursal no está disponible por ahora. '
+          'Elige otra dirección o sucursal.';
+    case FailureCode.deliveryNotAvailable:
+      return 'Esta sucursal no tiene envío a domicilio por ahora. '
+          'Elige otra dirección o pasa a recoger.';
     case FailureCode.locationCoordinatesRequired:
       return 'Las coordenadas de ubicación (latitud y longitud) son obligatorias para los envíos.';
     case FailureCode.branchAlreadyInRequestedState:
       return 'La sucursal ya se encuentra en el estado solicitado.';
     case FailureCode.branchNameAlreadyExists:
       return 'Ya existe una sucursal registrada con ese nombre.';
-
     // --- Postali / Ubicaciones ---
     case FailureCode.invalidPostalCodeLength:
       return 'El código postal debe tener exactamente 5 dígitos.';
@@ -198,7 +203,9 @@ String translateFailure(Failure failure) {
     case FailureCode.branchIdRequired:
       return 'El ID de la sucursal es obligatorio.';
     case FailureCode.insufficientAvailableStock:
-      return 'Stock insuficiente para realizar la reserva solicitada.';
+      return 'No hay stock suficiente para esa cantidad.';
+    case FailureCode.productNotInBranch:
+      return 'Uno de los productos ya no está disponible en esta sucursal.';
     case FailureCode.invalidProductIdOrBranchId:
       return 'El ID del producto y de la sucursal son obligatorios.';
     case FailureCode.invalidAddressData:

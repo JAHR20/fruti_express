@@ -55,14 +55,15 @@ extension CustomerCoordinatorStatePatterns on CustomerCoordinatorState {
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Idle value)?  idle,TResult Function( _Processing value)?  processing,TResult Function( _ChangeSuccessful value)?  changeSuccessful,TResult Function( _OutOfCoverage value)?  outOfCoverage,required TResult orElse(),}){
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( _Idle value)?  idle,TResult Function( _Processing value)?  processing,TResult Function( _ChangeSuccessful value)?  changeSuccessful,TResult Function( _OutOfCoverage value)?  outOfCoverage,TResult Function( _Failure value)?  failure,required TResult orElse(),}){
 final _that = this;
 switch (_that) {
 case _Idle() when idle != null:
 return idle(_that);case _Processing() when processing != null:
 return processing(_that);case _ChangeSuccessful() when changeSuccessful != null:
 return changeSuccessful(_that);case _OutOfCoverage() when outOfCoverage != null:
-return outOfCoverage(_that);case _:
+return outOfCoverage(_that);case _Failure() when failure != null:
+return failure(_that);case _:
   return orElse();
 
 }
@@ -80,14 +81,15 @@ return outOfCoverage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Idle value)  idle,required TResult Function( _Processing value)  processing,required TResult Function( _ChangeSuccessful value)  changeSuccessful,required TResult Function( _OutOfCoverage value)  outOfCoverage,}){
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( _Idle value)  idle,required TResult Function( _Processing value)  processing,required TResult Function( _ChangeSuccessful value)  changeSuccessful,required TResult Function( _OutOfCoverage value)  outOfCoverage,required TResult Function( _Failure value)  failure,}){
 final _that = this;
 switch (_that) {
 case _Idle():
 return idle(_that);case _Processing():
 return processing(_that);case _ChangeSuccessful():
 return changeSuccessful(_that);case _OutOfCoverage():
-return outOfCoverage(_that);case _:
+return outOfCoverage(_that);case _Failure():
+return failure(_that);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -104,14 +106,15 @@ return outOfCoverage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Idle value)?  idle,TResult? Function( _Processing value)?  processing,TResult? Function( _ChangeSuccessful value)?  changeSuccessful,TResult? Function( _OutOfCoverage value)?  outOfCoverage,}){
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( _Idle value)?  idle,TResult? Function( _Processing value)?  processing,TResult? Function( _ChangeSuccessful value)?  changeSuccessful,TResult? Function( _OutOfCoverage value)?  outOfCoverage,TResult? Function( _Failure value)?  failure,}){
 final _that = this;
 switch (_that) {
 case _Idle() when idle != null:
 return idle(_that);case _Processing() when processing != null:
 return processing(_that);case _ChangeSuccessful() when changeSuccessful != null:
 return changeSuccessful(_that);case _OutOfCoverage() when outOfCoverage != null:
-return outOfCoverage(_that);case _:
+return outOfCoverage(_that);case _Failure() when failure != null:
+return failure(_that);case _:
   return null;
 
 }
@@ -128,13 +131,14 @@ return outOfCoverage(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  idle,TResult Function()?  processing,TResult Function( Branch newBranch,  bool wasAutomatic)?  changeSuccessful,TResult Function( Address address)?  outOfCoverage,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  idle,TResult Function()?  processing,TResult Function( Branch newBranch,  bool wasAutomatic)?  changeSuccessful,TResult Function( Address address)?  outOfCoverage,TResult Function( Address address,  String message)?  failure,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Idle() when idle != null:
 return idle();case _Processing() when processing != null:
 return processing();case _ChangeSuccessful() when changeSuccessful != null:
 return changeSuccessful(_that.newBranch,_that.wasAutomatic);case _OutOfCoverage() when outOfCoverage != null:
-return outOfCoverage(_that.address);case _:
+return outOfCoverage(_that.address);case _Failure() when failure != null:
+return failure(_that.address,_that.message);case _:
   return orElse();
 
 }
@@ -152,13 +156,14 @@ return outOfCoverage(_that.address);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  idle,required TResult Function()  processing,required TResult Function( Branch newBranch,  bool wasAutomatic)  changeSuccessful,required TResult Function( Address address)  outOfCoverage,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  idle,required TResult Function()  processing,required TResult Function( Branch newBranch,  bool wasAutomatic)  changeSuccessful,required TResult Function( Address address)  outOfCoverage,required TResult Function( Address address,  String message)  failure,}) {final _that = this;
 switch (_that) {
 case _Idle():
 return idle();case _Processing():
 return processing();case _ChangeSuccessful():
 return changeSuccessful(_that.newBranch,_that.wasAutomatic);case _OutOfCoverage():
-return outOfCoverage(_that.address);case _:
+return outOfCoverage(_that.address);case _Failure():
+return failure(_that.address,_that.message);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +180,14 @@ return outOfCoverage(_that.address);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  idle,TResult? Function()?  processing,TResult? Function( Branch newBranch,  bool wasAutomatic)?  changeSuccessful,TResult? Function( Address address)?  outOfCoverage,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  idle,TResult? Function()?  processing,TResult? Function( Branch newBranch,  bool wasAutomatic)?  changeSuccessful,TResult? Function( Address address)?  outOfCoverage,TResult? Function( Address address,  String message)?  failure,}) {final _that = this;
 switch (_that) {
 case _Idle() when idle != null:
 return idle();case _Processing() when processing != null:
 return processing();case _ChangeSuccessful() when changeSuccessful != null:
 return changeSuccessful(_that.newBranch,_that.wasAutomatic);case _OutOfCoverage() when outOfCoverage != null:
-return outOfCoverage(_that.address);case _:
+return outOfCoverage(_that.address);case _Failure() when failure != null:
+return failure(_that.address,_that.message);case _:
   return null;
 
 }
@@ -390,6 +396,83 @@ class __$OutOfCoverageCopyWithImpl<$Res>
   return _then(_OutOfCoverage(
 null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
 as Address,
+  ));
+}
+
+/// Create a copy of CustomerCoordinatorState
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$AddressCopyWith<$Res> get address {
+  
+  return $AddressCopyWith<$Res>(_self.address, (value) {
+    return _then(_self.copyWith(address: value));
+  });
+}
+}
+
+/// @nodoc
+
+
+class _Failure implements CustomerCoordinatorState {
+  const _Failure(this.address, this.message);
+  
+
+ final  Address address;
+ final  String message;
+
+/// Create a copy of CustomerCoordinatorState
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$FailureCopyWith<_Failure> get copyWith => __$FailureCopyWithImpl<_Failure>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Failure&&(identical(other.address, address) || other.address == address)&&(identical(other.message, message) || other.message == message));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,address,message);
+
+@override
+String toString() {
+  return 'CustomerCoordinatorState.failure(address: $address, message: $message)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$FailureCopyWith<$Res> implements $CustomerCoordinatorStateCopyWith<$Res> {
+  factory _$FailureCopyWith(_Failure value, $Res Function(_Failure) _then) = __$FailureCopyWithImpl;
+@useResult
+$Res call({
+ Address address, String message
+});
+
+
+$AddressCopyWith<$Res> get address;
+
+}
+/// @nodoc
+class __$FailureCopyWithImpl<$Res>
+    implements _$FailureCopyWith<$Res> {
+  __$FailureCopyWithImpl(this._self, this._then);
+
+  final _Failure _self;
+  final $Res Function(_Failure) _then;
+
+/// Create a copy of CustomerCoordinatorState
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') $Res call({Object? address = null,Object? message = null,}) {
+  return _then(_Failure(
+null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
+as Address,null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
+as String,
   ));
 }
 

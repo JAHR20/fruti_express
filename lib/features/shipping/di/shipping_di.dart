@@ -20,7 +20,6 @@ import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/get_shipping_rates_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/save_shipping_rates_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/split_shipping_rate_use_case.dart';
-import 'package:fruti_express_jahr_admin/features/shipping/domain/use_cases/validate_shipping_coverage_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_coordinator_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/shipping_admin_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/shipping/presentation/cubits/customer_shipping_cubit.dart';
@@ -43,7 +42,6 @@ void initShipping(GetIt sl) {
 
   // --- CASOS DE USO ---
   sl.registerLazySingleton(() => CalculateShippingQuoteUseCase(sl(), sl()));
-  sl.registerLazySingleton(() => ValidateShippingCoverageUseCase(sl(), sl()));
   sl.registerLazySingleton(() => GetShippingConfigUseCase(sl()));
   sl.registerLazySingleton(() => GetShippingRatesUseCase(sl()));
   sl.registerLazySingleton(() => SaveShippingConfigUseCase(sl()));

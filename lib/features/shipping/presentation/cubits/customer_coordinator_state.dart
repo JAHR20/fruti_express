@@ -10,4 +10,5 @@ abstract class CustomerCoordinatorState with _$CustomerCoordinatorState {
   const factory CustomerCoordinatorState.processing() = _Processing; 
   const factory CustomerCoordinatorState.changeSuccessful(Branch newBranch, bool wasAutomatic) = _ChangeSuccessful; 
   const factory CustomerCoordinatorState.outOfCoverage(Address address) = _OutOfCoverage; 
+  const factory CustomerCoordinatorState.failure(Address address, String message) = _Failure;
 }

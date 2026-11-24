@@ -32,6 +32,7 @@ enum FailureCode {
   invalidArgument,
   localCartLoadError,
   branchNotSelected,
+  productNotInBranch,
 
   invalidLoginCredentials,
   userAlreadyRegistered,
@@ -58,6 +59,8 @@ enum FailureCode {
   locationCoordinatesRequired,
   branchAlreadyInRequestedState,
   branchNameAlreadyExists,
+  branchNotAvailable,
+  deliveryNotAvailable,
 
   // --- Postali / Ubicaciones ---
   invalidPostalCodeLength,

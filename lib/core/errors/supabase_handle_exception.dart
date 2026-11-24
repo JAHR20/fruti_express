@@ -1,3 +1,4 @@
+// lib/core/errors/supabase_handle_exception.dart
 import 'dart:io';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -51,9 +52,55 @@ mixin SupabaseHandleException {
     );
   }
 
+  /// Convierte el texto de un `RAISE EXCEPTION` de las funciones SQL en un código.
+  /// El orden importa: las reglas más específicas van primero, porque algunas
+  /// palabras ("código", "cupón", "no encontrado") aparecen en varios mensajes.
   Failure _parseRpcError(String message) {
     final msg = message.toLowerCase();
 
+    // --- Sesión y permisos ---
+    if (msg.contains('no está autenticado') ||
+        msg.contains('no esta autenticado')) {
+      return const Failure.unauthorized(FailureCode.accessDenied);
+    }
+    if (msg.contains('esta sucursal no es la tuya')) {
+      return const Failure.unauthorized(FailureCode.noPermissionInBranch);
+    }
+
+    // --- Sucursal y envío ---
+    if (msg.contains('sucursal no está disponible') ||
+        msg.contains('sucursal no esta disponible')) {
+      return const Failure.validation(FailureCode.branchNotAvailable);
+    }
+    if (msg.contains('no tiene configurado el envío') ||
+        msg.contains('no tiene configurado el envio')) {
+      return const Failure.validation(FailureCode.deliveryNotAvailable);
+    }
+
+    // --- Productos y stock ---
+    if (msg.contains('no tiene productos')) {
+      return const Failure.validation(FailureCode.emptyOrderItems);
+    }
+    if (msg.contains('stock insuficiente')) {
+      return const Failure.validation(FailureCode.insufficientAvailableStock);
+    }
+    if (msg.contains('no disponible en esta sucursal') ||
+        msg.contains('producto no encontrado')) {
+      return const Failure.validation(FailureCode.productNotInBranch);
+    }
+    if (msg.contains('no existe en esta sucursal')) {
+      return const Failure.server(FailureCode.inventoryRecordNotFound);
+    }
+
+    // --- Cupones ---
+    if (msg.contains('mínimo de compra') || msg.contains('minimo de compra')) {
+      return const Failure.validation(FailureCode.couponMinAmountNotMet);
+    }
+    if (msg.contains('cupón') || msg.contains('cupon')) {
+      return const Failure.validation(FailureCode.couponExpiredOrInactive);
+    }
+
+    // --- Dirección y cobertura ---
     if (msg.contains('código postal') ||
         msg.contains('codigo postal') ||
         msg.contains('cobertura')) {
@@ -69,6 +116,7 @@ mixin SupabaseHandleException {
       return const Failure.validation(FailureCode.invalidDeliveryAddress);
     }
 
+    // --- Cancelaciones y entrega ---
     if (msg.contains('motivo de cancelación') ||
         msg.contains('motivo de cancelacion')) {
       return const Failure.validation(FailureCode.invalidCancellationReason);
