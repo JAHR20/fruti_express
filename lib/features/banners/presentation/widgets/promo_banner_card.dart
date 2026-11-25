@@ -22,21 +22,34 @@ class PromoBannerCard extends StatelessWidget {
   });
 
   String? _scheduleLabel() {
+    final parts = <String>[];
+
     switch (banner.scheduleStatusAt(DateTime.now())) {
       case BannerScheduleStatus.scheduled:
-        return 'Empieza ${formatBannerDate(banner.startsAt!)}';
+        parts.add(
+          banner.endsAt == null
+              ? 'Empieza ${formatBannerDate(banner.startsAt!)}'
+              : 'Del ${formatBannerDate(banner.startsAt!)} al ${formatBannerDate(banner.endsAt!)}',
+        );
       case BannerScheduleStatus.expired:
-        return 'Venció ${formatBannerDate(banner.endsAt!)}';
+        parts.add('Venció ${formatBannerDate(banner.endsAt!)}');
       case BannerScheduleStatus.live:
-        return banner.endsAt == null
-            ? null
-            : 'Vence ${formatBannerDate(banner.endsAt!)}';
+        if (banner.endsAt != null) {
+          parts.add('Vence ${formatBannerDate(banner.endsAt!)}');
+        }
       case BannerScheduleStatus.always:
-        return null;
+        break;
     }
+
+    final days = weekdaysLabel(banner.weekdays);
+    if (days != null) parts.add(days);
+    if (banner.neverShows) parts.add('Nunca se muestra con esta programación');
+
+    return parts.isEmpty ? null : parts.join(' · ');
   }
 
   Color _scheduleColor(ColorScheme colors) {
+    if (banner.neverShows) return colors.error;
     switch (banner.scheduleStatusAt(DateTime.now())) {
       case BannerScheduleStatus.expired:
         return colors.error;
@@ -86,15 +99,25 @@ class PromoBannerCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.schedule, size: 16, color: _scheduleColor(colors)),
-                  const SizedBox(width: 6),
-                  Text(
-                    _scheduleLabel()!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 1),
+                    child: Icon(
+                      Icons.schedule,
+                      size: 16,
                       color: _scheduleColor(colors),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      _scheduleLabel()!,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: _scheduleColor(colors),
+                      ),
                     ),
                   ),
                 ],

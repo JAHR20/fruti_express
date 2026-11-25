@@ -29,6 +29,9 @@ _PromoBannerModel _$PromoBannerModelFromJson(Map<String, dynamic> json) =>
       endsAt: json['ends_at'] == null
           ? null
           : DateTime.parse(json['ends_at'] as String),
+      weekdays: (json['weekdays'] as List<dynamic>?)
+          ?.map((e) => (e as num).toInt())
+          .toList(),
     );
 
 Map<String, dynamic> _$PromoBannerModelToJson(_PromoBannerModel instance) =>
@@ -46,4 +49,5 @@ Map<String, dynamic> _$PromoBannerModelToJson(_PromoBannerModel instance) =>
       'created_at': instance.createdAt.toIso8601String(),
       'starts_at': instance.startsAt?.toIso8601String(),
       'ends_at': instance.endsAt?.toIso8601String(),
+      'weekdays': instance.weekdays,
     };

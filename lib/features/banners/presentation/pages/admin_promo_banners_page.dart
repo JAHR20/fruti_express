@@ -116,6 +116,7 @@ class _AdminPromoBannersPageState extends State<AdminPromoBannersPage>
                       styleConfig,
                       startsAt,
                       endsAt,
+                      weekdays
                     ) {
                       final generatedBanner = PromoBanner(
                         id: banner?.id ?? '',
@@ -130,6 +131,7 @@ class _AdminPromoBannersPageState extends State<AdminPromoBannersPage>
                         styleConfig: styleConfig,
                         startsAt: startsAt,
                         endsAt: endsAt,
+                        weekdays: weekdays,
                         createdAt: banner?.createdAt ?? DateTime.now(),
                       );
 

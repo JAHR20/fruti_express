@@ -4,6 +4,9 @@ import 'package:fruti_express_jahr_admin/features/banners/domain/entities/banner
 import 'package:fruti_express_jahr_admin/features/banners/domain/enums/banner_template.dart';
 import 'package:fruti_express_jahr_admin/features/categories/domain/entities/category.dart';
 
+/// Controles de la plantilla. No guarda datos: recibe los ajustes actuales y
+/// avisa de cada cambio, de modo que el formulario que lo contiene decide
+/// cuándo y cómo guardarlos.
 class BannerTemplateEditor extends StatefulWidget {
   const BannerTemplateEditor({
     super.key,
@@ -192,7 +195,11 @@ class _BannerTemplateEditorState extends State<BannerTemplateEditor> {
     final settings = widget.settings;
     final enabled = widget.enabled;
 
-    return Column(
+    // Los ListTile necesitan un Material propio: el fondo de la hoja inferior
+    // se pinta con un DecoratedBox y taparía el efecto al tocar.
+    return Material(
+      type: MaterialType.transparency,
+      child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SwitchListTile(
@@ -338,6 +345,7 @@ class _BannerTemplateEditorState extends State<BannerTemplateEditor> {
           ],
         ],
       ],
+      ),
     );
   }
 }

@@ -36,6 +36,7 @@ class PromoBannerFormBottomSheet extends StatefulWidget {
     BannerStyleConfig? styleConfig,
     DateTime? startsAt,
     DateTime? endsAt,
+    List<int> weekdays,
   ) onSave;
 
   const PromoBannerFormBottomSheet({
@@ -70,6 +71,17 @@ class _PromoBannerFormBottomSheetState
   DateTime? _startsAt;
   DateTime? _endsAt;
   String? _scheduleError;
+  late Set<int> _weekdays;
+
+  static const _weekdayOptions = [
+    (1, 'L', 'Lunes'),
+    (2, 'M', 'Martes'),
+    (3, 'X', 'Miércoles'),
+    (4, 'J', 'Jueves'),
+    (5, 'V', 'Viernes'),
+    (6, 'S', 'Sábado'),
+    (7, 'D', 'Domingo'),
+  ];
 
   File? _selectedImage;
   final ImagePicker _picker = ImagePicker();
@@ -92,6 +104,7 @@ class _PromoBannerFormBottomSheetState
 
     _startsAt = b?.startsAt?.toLocal();
     _endsAt = b?.endsAt?.toLocal();
+    _weekdays = {...(b?.weekdays ?? const <int>[])};
   }
 
   @override
@@ -156,6 +169,7 @@ class _PromoBannerFormBottomSheetState
       styleConfig: _buildStyleConfig(),
       startsAt: _startsAt,
       endsAt: _endsAt,
+      weekdays: (_weekdays.toList()..sort()),
     );
   }
 
@@ -290,7 +304,10 @@ class _PromoBannerFormBottomSheetState
     );
   }
 
-  void _submit() {
+  /// Con estas fechas y días, ningún día marcado cae dentro del periodo.
+  bool get _neverShows => _draftBanner().neverShows;
+
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     final start = _startsAt;
@@ -300,6 +317,31 @@ class _PromoBannerFormBottomSheetState
         _scheduleError = 'La fecha de fin debe ser posterior a la de inicio';
       });
       return;
+    }
+
+    if (_neverShows) {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Este banner no se mostrará'),
+          content: const Text(
+            'Con estas fechas y días, ningún día marcado cae dentro del '
+            'periodo, así que los clientes nunca lo verán. '
+            '¿Quieres guardarlo de todos modos?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Revisar'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              child: const Text('Guardar así'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !mounted) return;
     }
 
     widget.onSave(
@@ -314,6 +356,7 @@ class _PromoBannerFormBottomSheetState
       // Siempre en UTC (el modelo también lo asegura).
       start?.toUtc(),
       end?.toUtc(),
+      (_weekdays.toList()..sort()),
     );
   }
 
@@ -512,6 +555,71 @@ class _PromoBannerFormBottomSheetState
               Text(
                 _scheduleError!,
                 style: TextStyle(color: colors.error, fontSize: 12),
+              ),
+            ],
+            const SizedBox(height: 12),
+            const Text(
+              'Días de la semana',
+              style: TextStyle(fontWeight: FontWeight.w500),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Sin días marcados, se muestra todos los días. '
+              'Los días se cuentan con la hora de México.',
+              style: TextStyle(fontSize: 12, color: colors.onSurfaceVariant),
+            ),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 4,
+              children: [
+                for (final day in _weekdayOptions)
+                  FilterChip(
+                    label: Text(day.$2),
+                    tooltip: day.$3,
+                    selected: _weekdays.contains(day.$1),
+                    onSelected: widget.isSaving
+                        ? null
+                        : (selected) => setState(() {
+                            if (selected) {
+                              _weekdays.add(day.$1);
+                            } else {
+                              _weekdays.remove(day.$1);
+                            }
+                          }),
+                  ),
+              ],
+            ),
+            if (_neverShows) ...[
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: colors.errorContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.warning_amber_rounded,
+                      size: 20,
+                      color: colors.onErrorContainer,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        'Ningún día marcado cae entre esas fechas, así que '
+                        'este banner no se mostrará nunca. Cambia las fechas '
+                        'o los días.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colors.onErrorContainer,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ],
             const SizedBox(height: 16),

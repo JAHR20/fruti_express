@@ -24,6 +24,7 @@ abstract class PromoBannerModel with _$PromoBannerModel {
     @JsonKey(name: 'created_at') required DateTime createdAt,
     @JsonKey(name: 'starts_at') DateTime? startsAt,
     @JsonKey(name: 'ends_at') DateTime? endsAt,
+    @JsonKey(name: 'weekdays') List<int>? weekdays,
   }) = _PromoBannerModel;
 
   factory PromoBannerModel.fromJson(Map<String, dynamic> json) =>
@@ -45,6 +46,7 @@ extension PromoBannerModelX on PromoBannerModel {
     createdAt: createdAt,
     startsAt: startsAt,
     endsAt: endsAt,
+    weekdays: weekdays ?? const [],
   );
 
   static PromoBannerModel fromDomain(PromoBanner b) => PromoBannerModel(
@@ -65,5 +67,12 @@ extension PromoBannerModelX on PromoBannerModel {
     // y el banner se programaría desfasado.
     startsAt: b.startsAt?.toUtc(),
     endsAt: b.endsAt?.toUtc(),
+    // Sin días (o los 7) = null: todos los días. Ordenados y sin repetir.
+    weekdays: _normalizeWeekdays(b.weekdays),
   );
+
+  static List<int>? _normalizeWeekdays(List<int> days) {
+    final clean = days.where((d) => d >= 1 && d <= 7).toSet().toList()..sort();
+    return (clean.isEmpty || clean.length == 7) ? null : clean;
+  }
 }
