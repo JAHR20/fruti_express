@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_state.dart';
+import 'package:fruti_express_jahr_admin/features/auth/presentation/widgets/delete_account_section.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
+import 'package:fruti_express_jahr_admin/features/users/domain/enums/user_role.dart';
 import 'package:fruti_express_jahr_admin/features/users/presentation/cubits/edit_profile_cubit.dart';
 import 'package:fruti_express_jahr_admin/features/users/presentation/cubits/edit_profile_state.dart';
 import 'package:fruti_express_jahr_admin/features/users/presentation/extensions/tipo_usuario_ui_extension.dart';
@@ -18,7 +20,10 @@ class EditProfilePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: const Text('Mi Perfil', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'Mi Perfil',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ),
       body: EditProfileBody(onSaved: onSaved),
     );
@@ -91,6 +96,12 @@ class EditProfileBody extends StatelessWidget {
                   );
                 },
               ),
+              if (currentUser.role == UserRole.customer) ...[
+                const SizedBox(height: 32),
+                const Divider(),
+                const SizedBox(height: 16),
+                const DeleteAccountSection(),
+              ],
             ],
           ),
         );

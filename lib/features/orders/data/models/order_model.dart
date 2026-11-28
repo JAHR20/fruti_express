@@ -13,7 +13,7 @@ part 'order_model.g.dart';
 abstract class OrderModel with _$OrderModel {
   const factory OrderModel({
     required String id,
-    @JsonKey(name: 'customer_id') required String customerId,
+    @JsonKey(name: 'customer_id') required String? customerId,
     @JsonKey(name: 'branch_id') required String branchId,
     @JsonKey(name: 'coupon_id') String? couponId,
     @JsonKey(name: 'delivery_person_id') String? deliveryDriverId,

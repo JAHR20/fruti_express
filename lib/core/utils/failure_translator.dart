@@ -26,6 +26,10 @@ String translateFailure(Failure failure) {
   );
 
   switch (code) {
+    case FailureCode.accountHasPendingOrders:
+      return 'Tienes pedidos en curso. Podrás eliminar tu cuenta cuando terminen.';
+    case FailureCode.accountDeletionFailed:
+      return 'No pudimos eliminar tu cuenta. Intenta de nuevo en unos minutos.';
     case FailureCode.emptySearchId:
       return 'El ID de búsqueda no puede estar vacío.';
     case FailureCode.mustHaveOneActiveAdmin:

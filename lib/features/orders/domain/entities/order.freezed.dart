@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Order {
 
- String get id; String get customerId; String get branchId; String? get deliveryDriverId; String get customerNameSnapshot; String get customerPhoneSnapshot; String get addressSnapshot; int get subtotal; int get shippingCost; int get appliedDiscounts; int get total; OrderStatus get status; String? get deliveryEvidenceUrl; DateTime get createdAt; DeliveryMethod get deliveryMethod; DateTime? get estimatedDeliveryDate; DateTime? get deliveredAt; String? get idempotencyKey; PaymentMethodType? get paymentMethod; String? get confirmationCode; List<OrderItem> get items;
+ String get id; String? get customerId; String get branchId; String? get deliveryDriverId; String get customerNameSnapshot; String get customerPhoneSnapshot; String get addressSnapshot; int get subtotal; int get shippingCost; int get appliedDiscounts; int get total; OrderStatus get status; String? get deliveryEvidenceUrl; DateTime get createdAt; DeliveryMethod get deliveryMethod; DateTime? get estimatedDeliveryDate; DateTime? get deliveredAt; String? get idempotencyKey; PaymentMethodType? get paymentMethod; String? get confirmationCode; List<OrderItem> get items;
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -45,7 +45,7 @@ abstract mixin class $OrderCopyWith<$Res>  {
   factory $OrderCopyWith(Order value, $Res Function(Order) _then) = _$OrderCopyWithImpl;
 @useResult
 $Res call({
- String id, String customerId, String branchId, String? deliveryDriverId, String customerNameSnapshot, String customerPhoneSnapshot, String addressSnapshot, int subtotal, int shippingCost, int appliedDiscounts, int total, OrderStatus status, String? deliveryEvidenceUrl, DateTime createdAt, DeliveryMethod deliveryMethod, DateTime? estimatedDeliveryDate, DateTime? deliveredAt, String? idempotencyKey, PaymentMethodType? paymentMethod, String? confirmationCode, List<OrderItem> items
+ String id, String? customerId, String branchId, String? deliveryDriverId, String customerNameSnapshot, String customerPhoneSnapshot, String addressSnapshot, int subtotal, int shippingCost, int appliedDiscounts, int total, OrderStatus status, String? deliveryEvidenceUrl, DateTime createdAt, DeliveryMethod deliveryMethod, DateTime? estimatedDeliveryDate, DateTime? deliveredAt, String? idempotencyKey, PaymentMethodType? paymentMethod, String? confirmationCode, List<OrderItem> items
 });
 
 
@@ -62,11 +62,11 @@ class _$OrderCopyWithImpl<$Res>
 
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? customerId = null,Object? branchId = null,Object? deliveryDriverId = freezed,Object? customerNameSnapshot = null,Object? customerPhoneSnapshot = null,Object? addressSnapshot = null,Object? subtotal = null,Object? shippingCost = null,Object? appliedDiscounts = null,Object? total = null,Object? status = null,Object? deliveryEvidenceUrl = freezed,Object? createdAt = null,Object? deliveryMethod = null,Object? estimatedDeliveryDate = freezed,Object? deliveredAt = freezed,Object? idempotencyKey = freezed,Object? paymentMethod = freezed,Object? confirmationCode = freezed,Object? items = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? customerId = freezed,Object? branchId = null,Object? deliveryDriverId = freezed,Object? customerNameSnapshot = null,Object? customerPhoneSnapshot = null,Object? addressSnapshot = null,Object? subtotal = null,Object? shippingCost = null,Object? appliedDiscounts = null,Object? total = null,Object? status = null,Object? deliveryEvidenceUrl = freezed,Object? createdAt = null,Object? deliveryMethod = null,Object? estimatedDeliveryDate = freezed,Object? deliveredAt = freezed,Object? idempotencyKey = freezed,Object? paymentMethod = freezed,Object? confirmationCode = freezed,Object? items = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,customerId: null == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
-as String,branchId: null == branchId ? _self.branchId : branchId // ignore: cast_nullable_to_non_nullable
+as String,customerId: freezed == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
+as String?,branchId: null == branchId ? _self.branchId : branchId // ignore: cast_nullable_to_non_nullable
 as String,deliveryDriverId: freezed == deliveryDriverId ? _self.deliveryDriverId : deliveryDriverId // ignore: cast_nullable_to_non_nullable
 as String?,customerNameSnapshot: null == customerNameSnapshot ? _self.customerNameSnapshot : customerNameSnapshot // ignore: cast_nullable_to_non_nullable
 as String,customerPhoneSnapshot: null == customerPhoneSnapshot ? _self.customerPhoneSnapshot : customerPhoneSnapshot // ignore: cast_nullable_to_non_nullable
@@ -170,7 +170,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String? customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
 return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,_that.customerNameSnapshot,_that.customerPhoneSnapshot,_that.addressSnapshot,_that.subtotal,_that.shippingCost,_that.appliedDiscounts,_that.total,_that.status,_that.deliveryEvidenceUrl,_that.createdAt,_that.deliveryMethod,_that.estimatedDeliveryDate,_that.deliveredAt,_that.idempotencyKey,_that.paymentMethod,_that.confirmationCode,_that.items);case _:
@@ -191,7 +191,7 @@ return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String? customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)  $default,) {final _that = this;
 switch (_that) {
 case _Order():
 return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,_that.customerNameSnapshot,_that.customerPhoneSnapshot,_that.addressSnapshot,_that.subtotal,_that.shippingCost,_that.appliedDiscounts,_that.total,_that.status,_that.deliveryEvidenceUrl,_that.createdAt,_that.deliveryMethod,_that.estimatedDeliveryDate,_that.deliveredAt,_that.idempotencyKey,_that.paymentMethod,_that.confirmationCode,_that.items);case _:
@@ -211,7 +211,7 @@ return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String? customerId,  String branchId,  String? deliveryDriverId,  String customerNameSnapshot,  String customerPhoneSnapshot,  String addressSnapshot,  int subtotal,  int shippingCost,  int appliedDiscounts,  int total,  OrderStatus status,  String? deliveryEvidenceUrl,  DateTime createdAt,  DeliveryMethod deliveryMethod,  DateTime? estimatedDeliveryDate,  DateTime? deliveredAt,  String? idempotencyKey,  PaymentMethodType? paymentMethod,  String? confirmationCode,  List<OrderItem> items)?  $default,) {final _that = this;
 switch (_that) {
 case _Order() when $default != null:
 return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,_that.customerNameSnapshot,_that.customerPhoneSnapshot,_that.addressSnapshot,_that.subtotal,_that.shippingCost,_that.appliedDiscounts,_that.total,_that.status,_that.deliveryEvidenceUrl,_that.createdAt,_that.deliveryMethod,_that.estimatedDeliveryDate,_that.deliveredAt,_that.idempotencyKey,_that.paymentMethod,_that.confirmationCode,_that.items);case _:
@@ -226,11 +226,11 @@ return $default(_that.id,_that.customerId,_that.branchId,_that.deliveryDriverId,
 
 
 class _Order implements Order {
-  const _Order({required this.id, required this.customerId, required this.branchId, this.deliveryDriverId, required this.customerNameSnapshot, required this.customerPhoneSnapshot, required this.addressSnapshot, required this.subtotal, required this.shippingCost, required this.appliedDiscounts, required this.total, required this.status, this.deliveryEvidenceUrl, required this.createdAt, required this.deliveryMethod, this.estimatedDeliveryDate, this.deliveredAt, this.idempotencyKey, this.paymentMethod, this.confirmationCode, required final  List<OrderItem> items}): _items = items;
+  const _Order({required this.id, this.customerId, required this.branchId, this.deliveryDriverId, required this.customerNameSnapshot, required this.customerPhoneSnapshot, required this.addressSnapshot, required this.subtotal, required this.shippingCost, required this.appliedDiscounts, required this.total, required this.status, this.deliveryEvidenceUrl, required this.createdAt, required this.deliveryMethod, this.estimatedDeliveryDate, this.deliveredAt, this.idempotencyKey, this.paymentMethod, this.confirmationCode, required final  List<OrderItem> items}): _items = items;
   
 
 @override final  String id;
-@override final  String customerId;
+@override final  String? customerId;
 @override final  String branchId;
 @override final  String? deliveryDriverId;
 @override final  String customerNameSnapshot;
@@ -287,7 +287,7 @@ abstract mixin class _$OrderCopyWith<$Res> implements $OrderCopyWith<$Res> {
   factory _$OrderCopyWith(_Order value, $Res Function(_Order) _then) = __$OrderCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String customerId, String branchId, String? deliveryDriverId, String customerNameSnapshot, String customerPhoneSnapshot, String addressSnapshot, int subtotal, int shippingCost, int appliedDiscounts, int total, OrderStatus status, String? deliveryEvidenceUrl, DateTime createdAt, DeliveryMethod deliveryMethod, DateTime? estimatedDeliveryDate, DateTime? deliveredAt, String? idempotencyKey, PaymentMethodType? paymentMethod, String? confirmationCode, List<OrderItem> items
+ String id, String? customerId, String branchId, String? deliveryDriverId, String customerNameSnapshot, String customerPhoneSnapshot, String addressSnapshot, int subtotal, int shippingCost, int appliedDiscounts, int total, OrderStatus status, String? deliveryEvidenceUrl, DateTime createdAt, DeliveryMethod deliveryMethod, DateTime? estimatedDeliveryDate, DateTime? deliveredAt, String? idempotencyKey, PaymentMethodType? paymentMethod, String? confirmationCode, List<OrderItem> items
 });
 
 
@@ -304,11 +304,11 @@ class __$OrderCopyWithImpl<$Res>
 
 /// Create a copy of Order
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? customerId = null,Object? branchId = null,Object? deliveryDriverId = freezed,Object? customerNameSnapshot = null,Object? customerPhoneSnapshot = null,Object? addressSnapshot = null,Object? subtotal = null,Object? shippingCost = null,Object? appliedDiscounts = null,Object? total = null,Object? status = null,Object? deliveryEvidenceUrl = freezed,Object? createdAt = null,Object? deliveryMethod = null,Object? estimatedDeliveryDate = freezed,Object? deliveredAt = freezed,Object? idempotencyKey = freezed,Object? paymentMethod = freezed,Object? confirmationCode = freezed,Object? items = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? customerId = freezed,Object? branchId = null,Object? deliveryDriverId = freezed,Object? customerNameSnapshot = null,Object? customerPhoneSnapshot = null,Object? addressSnapshot = null,Object? subtotal = null,Object? shippingCost = null,Object? appliedDiscounts = null,Object? total = null,Object? status = null,Object? deliveryEvidenceUrl = freezed,Object? createdAt = null,Object? deliveryMethod = null,Object? estimatedDeliveryDate = freezed,Object? deliveredAt = freezed,Object? idempotencyKey = freezed,Object? paymentMethod = freezed,Object? confirmationCode = freezed,Object? items = null,}) {
   return _then(_Order(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,customerId: null == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
-as String,branchId: null == branchId ? _self.branchId : branchId // ignore: cast_nullable_to_non_nullable
+as String,customerId: freezed == customerId ? _self.customerId : customerId // ignore: cast_nullable_to_non_nullable
+as String?,branchId: null == branchId ? _self.branchId : branchId // ignore: cast_nullable_to_non_nullable
 as String,deliveryDriverId: freezed == deliveryDriverId ? _self.deliveryDriverId : deliveryDriverId // ignore: cast_nullable_to_non_nullable
 as String?,customerNameSnapshot: null == customerNameSnapshot ? _self.customerNameSnapshot : customerNameSnapshot // ignore: cast_nullable_to_non_nullable
 as String,customerPhoneSnapshot: null == customerPhoneSnapshot ? _self.customerPhoneSnapshot : customerPhoneSnapshot // ignore: cast_nullable_to_non_nullable

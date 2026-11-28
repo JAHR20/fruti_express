@@ -10,7 +10,7 @@ part 'order.freezed.dart';
 abstract class Order with _$Order {
   const factory Order({
     required String id,
-    required String customerId, 
+    String? customerId, 
     required String branchId, 
     String? deliveryDriverId, 
     required String customerNameSnapshot,

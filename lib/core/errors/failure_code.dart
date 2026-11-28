@@ -1,4 +1,8 @@
 enum FailureCode {
+  // --- Cuenta ---
+  accountHasPendingOrders,
+  accountDeletionFailed,
+
   // --- Validation ---
   emptySearchId,
   mustHaveOneActiveAdmin,

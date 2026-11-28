@@ -22,9 +22,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
     await GoogleSignIn.instance.initialize(
       serverClientId: dotenv.get('GOOGLE_WEB_CLIENT_ID'),
-      clientId: Platform.isIOS 
-        ? dotenv.get('APPLE_GOOGLE_OAUTH') 
-        : null,
+      clientId: Platform.isIOS ? dotenv.get('APPLE_GOOGLE_OAUTH') : null,
     );
     _googleSignInInitialized = true;
   }
@@ -116,7 +114,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       idToken: idToken,
     );
 
-    if (response.user == null) throw Exception('Error de autenticación con Google');
+    if (response.user == null)
+      throw Exception('Error de autenticación con Google');
 
     return await _fetchProfileFromDatabase(response.user!.id);
   }
@@ -128,5 +127,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (session == null) return null;
       return await _fetchProfileFromDatabase(session.user.id);
     });
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    // Lanza FunctionException si la función responde con un error (409, 403, 500...).
+    await supabase.functions.invoke(
+      'delete-account',
+      body: {'confirm': 'ELIMINAR'},
+    );
   }
 }

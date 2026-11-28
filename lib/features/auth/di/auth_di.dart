@@ -4,11 +4,13 @@ import 'package:fruti_express_jahr_admin/features/auth/data/repositories_impl/au
 import 'package:fruti_express_jahr_admin/features/auth/domain/repositories/auth_repository.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/auth_state_changes_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/check_auth_status_use_case.dart';
+import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/delete_account_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/login_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/logout_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/register_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/use_cases/sign_in_with_google_use_case.dart';
 import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/auth_cubit.dart';
+import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/delete_account_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 void initAuth(GetIt sl) {
@@ -19,6 +21,7 @@ void initAuth(GetIt sl) {
   sl.registerLazySingleton(() => CheckAuthStatusUseCase(sl()));
   sl.registerLazySingleton(() => SignInWithGoogleUseCase(sl()));
   sl.registerLazySingleton(() => AuthStateChangesUseCase(sl()));
+  sl.registerLazySingleton(() => DeleteAccountUseCase(sl()));
 
   // --- REPOSITORIOS ---
   // Registramos la Interfaz y le decimos que use la Implementación.
@@ -30,12 +33,16 @@ void initAuth(GetIt sl) {
   );
 
   // --- CUBITS ----
-  sl.registerLazySingleton<AuthCubit>(() => AuthCubit(
-    loginUseCase: sl(),
-    registerUseCase: sl(),
-    logoutUseCase: sl(),
-    checkAuthStatusUseCase: sl(),
-    signInWithGoogleUseCase: sl(),
-    authStateChangesUseCase: sl(),
-  ));
+  sl.registerLazySingleton<AuthCubit>(
+    () => AuthCubit(
+      loginUseCase: sl(),
+      registerUseCase: sl(),
+      logoutUseCase: sl(),
+      checkAuthStatusUseCase: sl(),
+      signInWithGoogleUseCase: sl(),
+      authStateChangesUseCase: sl(),
+    ),
+  );
+
+  sl.registerFactory(() => DeleteAccountCubit(deleteAccountUseCase: sl()));
 }

@@ -1,8 +1,11 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:fruti_express_jahr_admin/core/errors/failure_code.dart';
+import 'package:fruti_express_jahr_admin/core/errors/failures.dart';
 import 'package:fruti_express_jahr_admin/core/types/result.dart';
 import 'package:fruti_express_jahr_admin/core/errors/supabase_handle_exception.dart';
 import 'package:fruti_express_jahr_admin/features/auth/domain/repositories/auth_repository.dart';
 import 'package:fruti_express_jahr_admin/features/users/domain/entities/app_user.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../datasources/auth_remote_datasource.dart';
 
 class AuthRepositoryImpl
@@ -53,5 +56,22 @@ class AuthRepositoryImpl
       final model = await remoteDataSource.signInWithGoogle();
       return model.toEntity();
     }, handleException);
+  }
+
+  @override
+  ResultTask<Unit> deleteAccount() => TaskEither.tryCatch(() async {
+    await remoteDataSource.deleteAccount();
+    return unit;
+  }, _handleDeleteAccountError);
+  Failure _handleDeleteAccountError(Object error, StackTrace stackTrace) {
+    if (error is FunctionException) {
+      return switch (error.status) {
+        409 => const Failure.validation(FailureCode.accountHasPendingOrders),
+        401 => const Failure.unauthorized(FailureCode.accessDenied),
+        403 => const Failure.unauthorized(FailureCode.permissionDenied),
+        _ => const Failure.server(FailureCode.accountDeletionFailed),
+      };
+    }
+    return handleException(error, stackTrace);
   }
 }
