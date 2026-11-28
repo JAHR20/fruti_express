@@ -11,62 +11,11 @@ import 'package:fruti_express_jahr_admin/features/auth/presentation/cubits/delet
 class DeleteAccountSection extends StatelessWidget {
   const DeleteAccountSection({super.key});
 
-  static const _confirmWord = 'ELIMINAR';
-
   Future<bool> _confirm(BuildContext context) async {
-    final controller = TextEditingController();
-
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) {
-        final colors = Theme.of(dialogContext).colorScheme;
-
-        return StatefulBuilder(
-          builder: (context, setState) => AlertDialog(
-            title: const Text('Eliminar mi cuenta'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Se eliminarán tu cuenta y tus direcciones guardadas. '
-                  'Tus pedidos anteriores se conservan sin tus datos personales.\n\n'
-                  'Esta acción no se puede deshacer.',
-                ),
-                const SizedBox(height: 16),
-                TextField(
-                  controller: controller,
-                  autofocus: true,
-                  textCapitalization: TextCapitalization.characters,
-                  decoration: const InputDecoration(
-                    labelText: 'Escribe $_confirmWord para confirmar',
-                  ),
-                  onChanged: (_) => setState(() {}),
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext, false),
-                child: const Text('Cancelar'),
-              ),
-              FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: colors.error),
-                onPressed: controller.text.trim().toUpperCase() == _confirmWord
-                    ? () => Navigator.pop(dialogContext, true)
-                    : null,
-                child: Text(
-                  'Eliminar',
-                  style: TextStyle(color: colors.onError),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (_) => const _ConfirmDeleteDialog(),
     );
-
-    controller.dispose();
     return confirmed ?? false;
   }
 
@@ -145,6 +94,71 @@ class DeleteAccountSection extends StatelessWidget {
           );
         },
       ),
+    );
+  }
+}
+
+/// Diálogo de confirmación. Es un StatefulWidget propio para que él mismo
+/// cree y destruya su controlador: si se destruyera desde fuera al cerrar el
+/// diálogo, el campo de texto lo seguiría usando durante la animación de salida.
+class _ConfirmDeleteDialog extends StatefulWidget {
+  const _ConfirmDeleteDialog();
+
+  @override
+  State<_ConfirmDeleteDialog> createState() => _ConfirmDeleteDialogState();
+}
+
+class _ConfirmDeleteDialogState extends State<_ConfirmDeleteDialog> {
+  static const _confirmWord = 'ELIMINAR';
+
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  bool get _matches => _controller.text.trim().toUpperCase() == _confirmWord;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    return AlertDialog(
+      title: const Text('Eliminar mi cuenta'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Se eliminarán tu cuenta y tus direcciones guardadas. '
+            'Tus pedidos anteriores se conservan sin tus datos personales.\n\n'
+            'Esta acción no se puede deshacer.',
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.characters,
+            decoration: const InputDecoration(
+              labelText: 'Escribe $_confirmWord para confirmar',
+            ),
+            onChanged: (_) => setState(() {}),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, false),
+          child: const Text('Cancelar'),
+        ),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: colors.error),
+          onPressed: _matches ? () => Navigator.pop(context, true) : null,
+          child: Text('Eliminar', style: TextStyle(color: colors.onError)),
+        ),
+      ],
     );
   }
 }
